@@ -1,0 +1,29 @@
+---
+description: Redox Potential — When the user wants to estimate a one- or multi-electron oxidation/reduction potential vs. SHE, Ag/AgCl, or Fc⁺/Fc (e.g. "redox potential", "E1/2", "oxidation potential", "reduction potential", "E vs SHE", "electrochemistry", "compute E0"). For redox-active species only — neutral closed-shell hydrocarbons have no meaningful aqueous redox potential.
+---
+
+# Redox Potential
+
+Estimate a one- or n-electron redox potential against SHE, Ag/AgCl, or Fc⁺/Fc.
+
+## Arguments
+`$ARGUMENTS` should include:
+- An `.xyz` path (required — same geometry used for both oxidation states)
+- A method: `xtb` or `mopac` (required)
+- `--ox-charge N` and `--red-charge N` (required, e.g. 0 and −1 for a 1-electron reduction)
+- Optional: `--ox-mult` (default 1), `--red-mult` (default 2),
+  `--solvent` (strongly recommended), `--ref {SHE,Ag/AgCl,Fc+/Fc}` (default SHE),
+  `--n-electrons N` (default 1)
+
+## Steps
+1. Parse args. Stop and ask if any of `xyz`, method, `--ox-charge`, `--red-charge` missing.
+2. Run `chemkit redox --method <M> --ox-charge <Qo> --red-charge <Qr> --solvent <S> --ref <R> <XYZ>`.
+3. Read JSON, copy to `<basename>_redox_<method>.json`.
+4. Report:
+   - **E° vs reference** (in V)
+   - ΔE_redox (eV, kcal/mol)
+   - Energies of oxidized and reduced states
+   - **Warn explicitly**: semi-empirical methods give ±0.3–0.5 V at best; the calculation uses the same geometry for both states (no reorganization energy); solvation correction is implicit-only.
+
+## Recommendation
+For publication-grade values: optimize each oxidation state, run `freq` on each for ΔG, and ideally cross-check with a higher-level method. This skill is for screening, not final answers.

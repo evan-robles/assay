@@ -1,0 +1,136 @@
+"""Single-point energy task."""
+from __future__ import annotations
+import os
+from typing import Any, Dict, Optional
+
+from ..calculators import build_calculator, apply_calc_to_atoms
+from ..io import read_geometry
+from ..schema import base_result, energy_block_from_eV, element_warnings
+from ._mopac_parsers import parse_mopac_extras
+
+
+def run(
+    input_path: str,
+    *,
+    method: str,
+    charge: int = 0,
+    multiplicity: int = 1,
+    solvent: Optional[str] = None,
+    cli: str = "",
+) -> Dict[str, Any]:
+    atoms = read_geometry(input_path)
+    symbols = atoms.get_chemical_symbols()
+    calc = build_calculator(
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent
+    )
+    apply_calc_to_atoms(atoms, calc)
+
+    energy_eV = atoms.get_potential_energy()
+
+    # ASE's MOPAC calculator already returns the heat of formation (the canonical
+    # PM7 observable), which is what chemists usually mean by "the energy" of a
+    # semi-empirical calculation. Keep `total_energy_eV` aligned with that so
+    # `sp` matches `opt`/`freq`. The absolute electronic energy (ETOT from
+    # ENPART) is still available in code_specific.electronic_total_energy_eV.
+    result = base_result(
+        task="single_point",
+        method=("GFN2-xTB" if method == "xtb" else "PM7"),
+        program=method,
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms),
+        atoms=symbols,
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent,
+        cli=cli,
+    )
+    result.update(energy_block_from_eV(energy_eV))
+    result["energy_zero"] = (
+        "isolated atoms at infinity (xtb)"
+        if method == "xtb"
+        else "elements in their standard states (PM7 heat of formation)"
+    )
+
+    # Pull code-specific extras (HOMO/LUMO, dipole, heat of formation, etc.).
+    extras = _collect_extras(method, atoms, calc)
+    if method == "mopac" and "heat_of_formation_kcal_mol" in extras:
+        # Promote HoF to top level so the schema matches `opt` / `freq`.
+        result["final_heat_of_formation_kcal_mol"] = extras["heat_of_formation_kcal_mol"]
+    if extras:
+        result["code_specific"] = extras
+
+    warns = element_warnings(symbols, method)
+    if warns:
+        result["warnings"] = warns
+    return result
+
+
+def _collect_extras(method, atoms, calc):
+    extras: Dict[str, Any] = {}
+    if method == "xtb":
+        homo_lumo = _xtb_homo_lumo(atoms, calc)
+        if homo_lumo:
+            extras.update(homo_lumo)
+    elif method == "mopac":
+        workdir = getattr(calc, "_chemkit_workdir", None)
+        if workdir:
+            extras.update(parse_mopac_extras(workdir))
+    return extras
+
+
+def _xtb_homo_lumo(atoms, calc) -> Dict[str, Any]:
+    """Run a low-level xtb singlepoint to recover orbital eigenvalues.
+
+    The ASE-side XTB calculator only returns energy/forces/dipole; orbital
+    energies live on the xtb-python Calculator's Result object.
+    """
+    try:
+        import numpy as np
+        from xtb.interface import Calculator, Param
+        from xtb.libxtb import VERBOSITY_MUTED
+    except ImportError:
+        return {}
+
+    HARTREE_TO_EV = 27.211386245988
+    ANGSTROM_TO_BOHR = 1.8897261254535
+
+    numbers = np.array(atoms.get_atomic_numbers(), dtype=np.int32)
+    positions_bohr = np.asarray(atoms.get_positions()) * ANGSTROM_TO_BOHR
+
+    charge = float(getattr(calc, "_chemkit_charge", 0))
+    uhf = int(getattr(calc, "_chemkit_uhf", 0))
+
+    try:
+        xcalc = Calculator(Param.GFN2xTB, numbers, positions_bohr,
+                           charge=charge, uhf=uhf)
+        xcalc.set_verbosity(VERBOSITY_MUTED)
+        # ALPB solvent if configured on the ASE calc
+        solvent = getattr(calc, "parameters", {}).get("solvent")
+        if solvent:
+            try:
+                from xtb.utils import get_solvent, Solvent
+                sol = get_solvent(solvent)
+                if sol != Solvent.none:
+                    xcalc.set_solvent(sol)
+            except Exception:
+                pass
+        res = xcalc.singlepoint()
+        eigs = np.asarray(res.get_orbital_eigenvalues())   # Hartree
+        occs = np.asarray(res.get_orbital_occupations())
+    except Exception:
+        return {}
+
+    occupied = np.where(occs > 1e-6)[0]
+    virtual = np.where(occs < 1e-6)[0]
+    if occupied.size == 0 or virtual.size == 0:
+        return {}
+
+    homo_idx = int(occupied[-1])
+    lumo_idx = int(virtual[0])
+    homo_eV = float(eigs[homo_idx]) * HARTREE_TO_EV
+    lumo_eV = float(eigs[lumo_idx]) * HARTREE_TO_EV
+    return {
+        "homo_eV": homo_eV,
+        "lumo_eV": lumo_eV,
+        "homo_lumo_gap_eV": lumo_eV - homo_eV,
+    }

@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chemkit"
+version = "1.0.0"
+description = "ASE-based computational chemistry suite (xtb, MOPAC, COSMO)"
+requires-python = ">=3.9"
+dependencies = ["ase>=3.22", "numpy"]
+
+[project.optional-dependencies]
+xtb_python = ["xtb"]
+
+[project.scripts]
+chemkit = "chemkit.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

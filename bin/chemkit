@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Thin shim so `chemkit` works without `pip install -e .`
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PYTHONPATH="${HERE}/../src:${PYTHONPATH}"
+
+# Find a python that has `ase` installed. Prefer $CHEMKIT_PYTHON, then a
+# conda env with ase, then plain python3.
+if [ -n "$CHEMKIT_PYTHON" ]; then
+    PY="$CHEMKIT_PYTHON"
+elif command -v python3 >/dev/null && python3 -c "import ase" 2>/dev/null; then
+    PY="python3"
+elif [ -x "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3" ]; then
+    PY="/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3"
+else
+    echo "chemkit: cannot find a python3 with 'ase' installed." >&2
+    echo "  Set CHEMKIT_PYTHON=/path/to/python or 'conda activate anl_env'." >&2
+    exit 1
+fi
+
+exec "$PY" -m chemkit.cli "$@"
