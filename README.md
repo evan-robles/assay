@@ -19,7 +19,7 @@ ASE-based computational chemistry suite — xtb (GFN2) and MOPAC (PM7), with opt
 │       ├── redox.py      # E° via charge-state Δ on same geometry
 │       └── confsearch.py # CREST wrapper
 ├── bin/chemkit           # bash shim (works without pip install)
-├── claude/               # slash-command skill wrappers (symlinked into ~/.claude/commands/)
+├── skills/               # slash-command skill wrappers (symlinked into ~/.claude/commands/)
 └── tests/
 ```
 
@@ -53,7 +53,7 @@ All tasks write a single JSON file with a common header:
 
 ## How the agentic skills work
 
-`chemkit` itself is just a CLI — the `claude/*.md` files are what turn it into
+`chemkit` itself is just a CLI — the `skills/*.md` files are what turn it into
 something Claude Code can drive directly. Each one is a Markdown skill file
 with YAML frontmatter, symlinked into `~/.claude/commands/` so it shows up as
 a slash command (`/single_point_energy`, `/geometry_optimize`,
