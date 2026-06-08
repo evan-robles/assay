@@ -51,9 +51,46 @@ chemkit confsearch --method xtb mol.xyz
 All tasks write a single JSON file with a common header:
 `{task, method, program, input_file, n_atoms, atoms, charge, multiplicity, solvent, cli_invocation, ...}`
 
-## Slash commands
+## How the agentic skills work
 
-The `claude/*.md` files are symlinked into `~/.claude/commands/` so they appear as `/single_point_energy`, `/geometry_optimize`, `/vibrational_analysis`, `/binding_energy`, `/redox_potential`, `/conformer_search`.
+`chemkit` itself is just a CLI — the `claude/*.md` files are what turn it into
+something Claude Code can drive directly. Each one is a Markdown skill file
+with YAML frontmatter, symlinked into `~/.claude/commands/` so it shows up as
+a slash command (`/single_point_energy`, `/geometry_optimize`,
+`/vibrational_analysis`, `/binding_energy`, `/redox_potential`,
+`/conformer_search`, `/conformational_analysis`).
+
+Each skill follows the same pipeline:
+
+1. **Trigger** — the frontmatter `description:` is what Claude matches against
+   the user's request (e.g. "binding energy", "what's the energy of this
+   structure"); it also states what the skill should *not* be used for, to
+   disambiguate from neighboring skills (e.g. `single_point_energy` vs.
+   `geometry_optimize`).
+2. **Parse arguments** — the skill spells out which flags `$ARGUMENTS` should
+   contain (an `.xyz` path is always required) and which are optional
+   (`--method`, `--solvent`, `--charge`, `--mult`, task-specific flags like
+   `--postopt` for conformer search). If something required is missing, the
+   skill tells Claude to stop and either ask directly or use
+   **AskUserQuestion** (e.g. method selection for `single_point_energy`).
+3. **Invoke the CLI** — the skill gives the literal `chemkit <task> ...`
+   invocation to run as a subprocess.
+4. **Read the JSON** — every `chemkit` task prints one JSON result with the
+   common header described above plus task-specific fields. The skill tells
+   Claude to copy this to `<basename>_<task>_<method>.json` next to the
+   user's input (and, for tasks that produce structures, to copy the
+   accompanying `.xyz` files too) so results persist outside the tmp work
+   directory.
+5. **Report** — the skill enumerates exactly which fields to surface and how
+   (units, which `code_specific` keys matter, caveats to mention — e.g. that
+   xtb/MOPAC energy zeros aren't comparable, or that a single surviving
+   conformer after post-opt is the converged answer, not a bug).
+
+This keeps the heavy lifting (geometry I/O, calculator setup, parsing
+program output into a stable schema) inside `chemkit`, while the skill files
+encode the *judgment calls* — when to ask the user for clarification, what's
+worth flagging as a caveat, and how to translate raw JSON into something a
+chemist would actually want to read.
 
 ## Notes / caveats
 
