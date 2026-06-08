@@ -94,6 +94,5 @@ chemist would actually want to read.
 
 ## Notes / caveats
 
-- **Energy zeros differ between xtb and MOPAC.** xtb uses isolated atoms at infinity; MOPAC ENPART uses bare nuclei + free electrons. Only same-method differences are physically meaningful.
 - **PM7 transition-metal parameters are spotty** — the schema flags this in `warnings` when relevant.
 - **Redox potentials and conformer search are screening-grade**, not publication-grade. The skill output warns about this.
