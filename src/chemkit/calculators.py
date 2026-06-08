@@ -5,6 +5,8 @@ import shutil
 import tempfile
 from typing import Optional
 
+import numpy as np
+
 
 XTB_SOLVENT_MAP = {
     # ALPB solvents understood by xtb
@@ -122,10 +124,22 @@ def _build_mopac(charge, multiplicity, solvent, workdir):
 
 
 def apply_calc_to_atoms(atoms, calc):
-    """Attach calc to atoms and propagate xtb charge/uhf when needed."""
+    """Attach calc to atoms and propagate xtb charge/uhf when needed.
+
+    xtb-python's XTB calculator reads total charge and unpaired-electron count
+    from `atoms.get_initial_charges().sum()` / `get_initial_magnetic_moments().sum()`
+    — NOT from `atoms.info`. Only the sums matter to xtb (it solves for the
+    requested total charge/spin, not a per-atom partition), so we dump the
+    full charge/uhf onto the first atom and zero the rest.
+    """
     if hasattr(calc, "_chemkit_charge"):
-        atoms.info["charge"] = calc._chemkit_charge
-        atoms.info["uhf"] = calc._chemkit_uhf
+        charges = np.zeros(len(atoms))
+        charges[0] = calc._chemkit_charge
+        atoms.set_initial_charges(charges)
+
+        magmoms = np.zeros(len(atoms))
+        magmoms[0] = calc._chemkit_uhf
+        atoms.set_initial_magnetic_moments(magmoms)
     atoms.calc = calc
     return atoms
 
