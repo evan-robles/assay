@@ -263,7 +263,9 @@ def _run_mopac(
         )
 
     force = parse_mopac_force(workdir)
-    if not force.get("vibrational_frequencies_cm-1"):
+    # A monatomic species has zero vibrational modes by definition (3N-6 < 0) —
+    # an empty frequency list there is correct, not a parse failure.
+    if not force.get("vibrational_frequencies_cm-1") and len(atoms) > 1:
         with open(out_path) as f:
             out_text = f.read()
         raise RuntimeError(
