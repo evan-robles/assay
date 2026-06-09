@@ -150,6 +150,26 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     _add_chem_options(p_logp, with_solvent=False)
 
+    p_fukui = sub.add_parser(
+        "fukui",
+        help="Condensed Fukui functions + dual descriptor (atom-resolved reactivity).",
+    )
+    _add_common(p_fukui)
+    p_fukui.add_argument(
+        "--cation-mult", type=int, default=2,
+        help="Multiplicity of the N-1 (cation) state. Default 2 — correct for a "
+             "closed-shell neutral parent.",
+    )
+    p_fukui.add_argument(
+        "--anion-mult", type=int, default=2,
+        help="Multiplicity of the N+1 (anion) state. Default 2 — correct for a "
+             "closed-shell neutral parent.",
+    )
+    p_fukui.add_argument(
+        "--no-plot", dest="plot", action="store_false", default=True,
+        help="Skip the PNG bar chart of f+/f-/dual per atom.",
+    )
+
     p_ts = sub.add_parser(
         "ts", help="Transition-state search (locate a first-order saddle).",
     )
@@ -282,6 +302,16 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.input, method=args.method,
             charge=args.charge, multiplicity=args.multiplicity, cli=cli,
         )
+    elif args.task == "fukui":
+        from .tasks import fukui
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        result = fukui.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            cation_mult=args.cation_mult, anion_mult=args.anion_mult,
+            plot=args.plot, out_stem=out_stem, cli=cli,
+        )
     elif args.task == "ts":
         from .tasks import ts
         out_path_pre = args.out or _default_out(args.input, args.task, args.method)
@@ -361,6 +391,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             for k in ("trajectory_xyz", "plot_png"):
                 if d.get(k):
                     print(f"# {k}: {d[k]}", file=sys.stderr)
+    if args.task == "fukui" and result.get("plot_png"):
+        print(f"# plot_png: {result['plot_png']}", file=sys.stderr)
     return 0
 
 
