@@ -10,16 +10,25 @@ from . import __version__
 from .io import write_result, cli_invocation
 
 
-def _add_common(p):
-    p.add_argument("input", help="Path to input geometry (.xyz, .sdf, .pdb).")
+def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
+    """Shared CLI options. Set `with_solvent=False` for tasks where the
+    solvent is fixed by the task itself (e.g. logp pins water + octanol)."""
+    if with_input:
+        p.add_argument("input", help="Path to input geometry (.xyz, .sdf, .pdb).")
     p.add_argument("--method", choices=["xtb", "mopac"], required=True)
     p.add_argument("--charge", type=int, default=0)
     p.add_argument("--mult", "--multiplicity", dest="multiplicity",
                    type=int, default=1, help="Spin multiplicity 2S+1 (default 1).")
-    p.add_argument("--solvent", default=None,
-                   help="Implicit solvent (e.g. water, methanol, dmso). Gas phase if omitted.")
+    if with_solvent:
+        p.add_argument("--solvent", default=None,
+                       help="Implicit solvent (e.g. water, methanol, dmso). Gas phase if omitted.")
     p.add_argument("--out", default=None,
                    help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
+
+
+def _add_common(p):
+    """Back-compat shim — existing subparsers continue to use this."""
+    _add_chem_options(p)
 
 
 def _default_out(input_path: str, task: str, method: str) -> str:
@@ -128,6 +137,18 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="Dipole + atomic partial charges (single-point, no opt).",
     )
     _add_common(p_elst)
+
+    p_solv = sub.add_parser(
+        "solvation",
+        help="ΔG_solv = E(solvated) − E(gas) at fixed geometry (electronic only).",
+    )
+    _add_common(p_solv)
+
+    p_logp = sub.add_parser(
+        "logp",
+        help="logP from ΔG_solv(water) − ΔG_solv(octanol). Neutral species only.",
+    )
+    _add_chem_options(p_logp, with_solvent=False)
 
     p_ts = sub.add_parser(
         "ts", help="Transition-state search (locate a first-order saddle).",
@@ -246,6 +267,20 @@ def main(argv: Optional[List[str]] = None) -> int:
         result = electrostatics.run(
             args.input, method=args.method, charge=args.charge,
             multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+        )
+    elif args.task == "solvation":
+        if not args.solvent:
+            parser.error("solvation requires --solvent (e.g. --solvent water)")
+        from .tasks import solvation
+        result = solvation.run(
+            args.input, method=args.method, solvent=args.solvent,
+            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
+        )
+    elif args.task == "logp":
+        from .tasks import solvation
+        result = solvation.run_logp(
+            args.input, method=args.method,
+            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
         )
     elif args.task == "ts":
         from .tasks import ts

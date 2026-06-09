@@ -23,7 +23,13 @@ XTB_SOLVENT_MAP = {
     "benzene": "benzene",
     "hexane": "hexane",
     "ether": "ether",
+    "octanol": "octanol", "1-octanol": "octanol",
 }
+
+# Solvents supported by the xtb CLI's --alpb flag but NOT by the xtb-python
+# Solvent enum exposed via the ASE wrapper. For these we must route through the
+# CLI path (_XtbCliCalculator) rather than silently dropping the solvent.
+XTB_PYTHON_UNSUPPORTED_SOLVENTS = {"octanol"}
 
 # MOPAC COSMO: EPS=<dielectric>; pull common solvent constants.
 MOPAC_SOLVENT_EPS = {
@@ -40,6 +46,7 @@ MOPAC_SOLVENT_EPS = {
     "benzene": 2.27,
     "hexane": 1.88,
     "ether": 4.33,
+    "octanol": 10.30, "1-octanol": 10.30,  # 1-octanol, ε at 25 °C
 }
 
 
@@ -69,16 +76,25 @@ def build_calculator(
 
 
 def _build_xtb(charge, multiplicity, solvent, workdir):
-    """Prefer xtb-python (compiled); fall back to subprocess via a thin shim."""
+    """Prefer xtb-python (compiled); fall back to subprocess via a thin shim.
+
+    For solvents the xtb-python Solvent enum doesn't expose (octanol etc.) we
+    route through the CLI even when xtb-python is installed — otherwise the
+    ASE wrapper silently drops the solvent and reports gas-phase energies.
+    """
+    sol_key = solvent.lower() if solvent else None
+    if sol_key and sol_key not in XTB_SOLVENT_MAP:
+        raise ValueError(f"xtb: unknown solvent {solvent!r}")
+    if sol_key in XTB_PYTHON_UNSUPPORTED_SOLVENTS:
+        return _XtbCliCalculator(
+            charge=charge, uhf=max(0, multiplicity - 1),
+            solvent=solvent, workdir=workdir,
+        )
     try:
         from xtb.ase.calculator import XTB
         kwargs = {"method": "GFN2-xTB"}
         if solvent:
-            sol = XTB_SOLVENT_MAP.get(solvent.lower())
-            if sol is None:
-                raise ValueError(f"xtb: unknown solvent {solvent!r}")
-            kwargs["solvent"] = sol
-        # xtb-python takes charge/uhf via Atoms.info or set_parameters; pass below.
+            kwargs["solvent"] = XTB_SOLVENT_MAP[sol_key]
         calc = XTB(**kwargs)
         calc._chemkit_charge = charge
         calc._chemkit_uhf = max(0, multiplicity - 1)
