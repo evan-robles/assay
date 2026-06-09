@@ -7,7 +7,7 @@ import sys
 from typing import List, Optional
 
 from . import __version__
-from .io import write_result, write_summary, cli_invocation
+from .io import write_result, cli_invocation
 
 
 def _add_common(p):
@@ -206,7 +206,6 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     out_path = args.out or _default_out(args.input, args.task, args.method)
     write_result(result, out_path)
-    summary_path = write_summary(result, out_path)
 
     # For confsearch, also write the full conformer ensemble as an XYZ next
     # to the JSON so downstream tools have it without digging into tmp.
@@ -225,16 +224,14 @@ def main(argv: Optional[List[str]] = None) -> int:
             result["conformers_xyz"] = os.path.abspath(ensemble_dst)
             # Rewrite the JSON so it records the persistent xyz path.
             write_result(result, out_path)
-            summary_path = write_summary(result, out_path)
 
     print(json.dumps(result, indent=2, default=str))
     print(f"\n# result written to: {out_path}", file=sys.stderr)
-    print(f"# summary written to: {summary_path}", file=sys.stderr)
     if args.task == "confsearch" and result.get("conformers_xyz"):
         print(f"# conformers xyz written to: {result['conformers_xyz']}", file=sys.stderr)
     if args.task == "scan":
         for d in result.get("dihedrals", []):
-            for k in ("trajectory_xyz", "plot_png", "table_out"):
+            for k in ("trajectory_xyz", "plot_png"):
                 if d.get(k):
                     print(f"# {k}: {d[k]}", file=sys.stderr)
     return 0

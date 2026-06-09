@@ -8,7 +8,7 @@ optimize the geometry with that dihedral constrained, then record the
 Outputs per scanned dihedral:
   <stem>_scan_dih<i>_<a>_<b>_<l>.xyz  — relaxed trajectory (one frame/step)
   <stem>_scan_dih<i>_<a>_<b>_<l>.png  — matplotlib E vs angle plot
-  <stem>_scan_dih<i>_<a>_<b>_<l>.out  — tabular data
+  (tabular per-point data is embedded in the JSON under dihedrals[*].points)
 
 Constraint mechanics:
   xtb path  — ASE FixInternals: dihedral is *exactly* held at target.
@@ -322,10 +322,8 @@ def run(
         tag = _dihedral_tag(bond)
         traj_path = f"{out_stem}_dih{tag}.xyz"
         plot_path = f"{out_stem}_dih{tag}.png"
-        table_path = f"{out_stem}_dih{tag}.out"
 
         _write_trajectory(traj_path, traj_atoms, points)
-        _write_table(table_path, bond, points, method=method, input_path=input_path)
         if "_mol_name_cache" not in locals():
             _mol_name_cache = _lookup_molecule_name(input_path)
         if "_res_label_cache" not in locals():
@@ -359,7 +357,6 @@ def run(
             "barrier_kcal_mol": e_max_pt["energy_kcal_mol"] - e_min_pt["energy_kcal_mol"],
             "trajectory_xyz": traj_path,
             "plot_png": plot_path,
-            "table_out": table_path,
             "points": valid,
         })
 
@@ -593,57 +590,6 @@ def _write_trajectory(path: str, frames: List, points: List[Dict[str, Any]]) -> 
             )
             for sym, (x, y, z) in zip(symbols, pos):
                 f.write(f"{sym:<3s} {x:15.8f} {y:15.8f} {z:15.8f}\n")
-
-
-def _write_table(
-    path: str, bond: Dict[str, Any], points: List[Dict[str, Any]],
-    *, method: str, input_path: str,
-) -> None:
-    valid = [p for p in points if p["energy_kcal_mol"] is not None]
-    if valid:
-        e_min = min(p["energy_kcal_mol"] for p in valid)
-    else:
-        e_min = 0.0
-    width = 78
-    lines = []
-    lines.append("=" * width)
-    lines.append("  chemkit relaxed dihedral scan")
-    lines.append("=" * width)
-    lines.append(f"  input        : {os.path.abspath(input_path)}")
-    lines.append(f"  method       : {'GFN2-xTB' if method == 'xtb' else 'PM7 (MOPAC)'}")
-    lines.append(
-        f"  dihedral     : atoms ({bond['i']+1}, {bond['a']+1}, {bond['b']+1}, {bond['l']+1})  "
-        f"(rotating about bond {bond['a']+1}-{bond['b']+1}; 1-based indices)"
-    )
-    lines.append(f"  n points     : {len(points)}")
-    lines.append(f"  converged    : {sum(1 for p in points if p['converged'])}/{len(points)}")
-    lines.append(f"  E_min        : {e_min:.6f} kcal/mol")
-    lines.append("-" * width)
-    header = f"  {'step':>4}  {'target°':>9}  {'measured°':>10}  " \
-             f"{'E (kcal/mol)':>16}  {'ΔE (kcal/mol)':>14}  {'conv':>5}"
-    lines.append(header)
-    lines.append("-" * width)
-    for p in points:
-        if p["energy_kcal_mol"] is None:
-            lines.append(
-                f"  {p['step']:>4}  {p['target_deg']:>9.2f}  "
-                f"{'--':>10}  {'FAILED':>16}  {'--':>14}  {'no':>5}"
-            )
-        else:
-            dE = p["energy_kcal_mol"] - e_min
-            measured = "--" if p["measured_deg"] is None else f"{p['measured_deg']:.2f}"
-            lines.append(
-                f"  {p['step']:>4}  {p['target_deg']:>9.2f}  "
-                f"{measured:>10}  {p['energy_kcal_mol']:>16.6f}  "
-                f"{dE:>14.4f}  {('yes' if p['converged'] else 'no'):>5}"
-            )
-    lines.append("=" * width)
-    if valid:
-        e_max = max(p["energy_kcal_mol"] for p in valid)
-        lines.append(f"  Barrier (max - min) = {e_max - e_min:.4f} kcal/mol")
-        lines.append("=" * width)
-    with open(path, "w") as f:
-        f.write("\n".join(lines) + "\n")
 
 
 def _write_plot(
