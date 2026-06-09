@@ -169,12 +169,19 @@ def _run_ase(
     frequencies_cm = vib.get_frequencies()
     vib.clean()
 
-    # ASE Vibrations returns 3N modes — the 6 translational/rotational ones
-    # show up as tiny near-zero values (often slightly imaginary due to
-    # finite-difference noise). Only flag a mode as a genuine imaginary
-    # saddle if its magnitude exceeds the rot/trans noise floor.
-    NEAR_ZERO_CM = 30.0
-    real_vib_energies = [e.real for e in energies_eV if np.isreal(e) and e.real > 0]
+    # ASE Vibrations returns 3N modes — the 6 (or 5, linear) translational/
+    # rotational ones show up as tiny near-zero values (often slightly
+    # imaginary due to finite-difference noise). Filter them out of the
+    # vibrational set so IdealGasThermo only sees genuine (3N-6 or 3N-5)
+    # vibrations — otherwise the harmonic-oscillator entropy diverges on
+    # the near-zero "modes" and G blows up to ±inf (most visible for small
+    # linear diatomics where 5/6 of the modes are leftover rot/trans).
+    NEAR_ZERO_CM = 50.0
+    real_vib_energies = [
+        e.real for e, f in zip(energies_eV, frequencies_cm)
+        if np.isreal(e) and e.real > 0
+        and np.isreal(f) and f.real > NEAR_ZERO_CM
+    ]
     n_imag = sum(
         1 for f in frequencies_cm
         if np.iscomplex(f) and f.imag != 0 and abs(f.imag) > NEAR_ZERO_CM
