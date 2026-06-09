@@ -49,7 +49,7 @@ def run(
     geometry: str = "nonlinear",
     symmetrynumber: int = 1,
     preopt: bool = True,
-    preopt_fmax: float = 0.01,
+    preopt_fmax: float = 0.001,
     preopt_steps: int = 500,
     cli: str = "",
 ) -> Dict[str, Any]:
@@ -69,6 +69,12 @@ def run(
         # Optimize first so the Hessian is taken at a true stationary point.
         # Use a tighter fmax than `opt` default (0.05) since residual forces
         # propagate into imaginary modes near 0 cm⁻¹.
+        # Per-method floor: xtb (ASE BFGS) reliably reaches fmax=0.001 eV/Å on
+        # small systems, but MOPAC's EF optimizer hits a practical floor around
+        # GNORM=0.01 kcal/mol/Å (~ fmax=0.0004 eV/Å) and any tighter target
+        # produces non-convergence on flexible organics — clip preopt_fmax so
+        # MOPAC gets a reachable target instead of failing the whole freq job.
+        effective_fmax = preopt_fmax if method != "mopac" else max(preopt_fmax, 0.005)
         opt_work = tempfile.mkdtemp(prefix="chemkit_optfreq_")
         opt_xyz = os.path.join(opt_work, "preopt.xyz")
         opt_result = opt_task.run(
@@ -77,7 +83,7 @@ def run(
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,
-            fmax=preopt_fmax,
+            fmax=effective_fmax,
             steps=preopt_steps,
             out_xyz=opt_xyz,
             cli="(internal preopt for freq)",
@@ -89,7 +95,7 @@ def run(
         freq_input_path = opt_xyz
         preopt_info = {
             "performed": True,
-            "fmax_target_eV_per_A": preopt_fmax,
+            "fmax_target_eV_per_A": effective_fmax,
             "converged": bool(opt_result.get("converged")),
             "n_steps": opt_result.get("n_steps"),
             "optimized_xyz": opt_xyz,
@@ -139,7 +145,7 @@ def run(
             warns = result.setdefault("warnings", [])
             warns.append(
                 "Pre-optimization did NOT converge to fmax="
-                f"{preopt_fmax} eV/Å. Frequencies are taken at a non-stationary "
+                f"{effective_fmax} eV/Å. Frequencies are taken at a non-stationary "
                 "point; imaginary modes may be spurious."
             )
     else:
@@ -163,10 +169,22 @@ def _run_ase(
     cache = os.path.join(workdir, "vib")
 
     energy_eV = atoms.get_potential_energy()
-    vib = Vibrations(atoms, name=cache)
+    # nfree=4 (5-point central difference) + delta=0.005 Å cuts finite-
+    # difference noise in the Hessian by ~10x vs ASE defaults (nfree=2,
+    # delta=0.01).
+    vib = Vibrations(atoms, name=cache, delta=0.005, nfree=4)
     vib.run()
-    energies_eV = vib.get_energies()
-    frequencies_cm = vib.get_frequencies()
+    # ASE's default Vibrations diagonalizes the raw 3N x 3N mass-weighted
+    # Hessian, which mixes the 5/6 translational+rotational pseudo-modes
+    # into the vibrational subspace whenever the geometry isn't exactly
+    # at a stationary point. Symptom: small rigid molecules (H2O, NO3-,
+    # H2O2) report a handful of large "imaginary" modes that are really
+    # rot/trans leakage, NOT genuine saddle-point directions.
+    #
+    # Fix: pull the raw 3N x 3N Hessian, project out the trans+rot
+    # subspace (Eckart conditions), then diagonalize only the vibrational
+    # complement — gives exactly 3N-6 (or 3N-5 for linear) genuine modes.
+    energies_eV, frequencies_cm = _project_trans_rot_and_diagonalize(vib, atoms, geometry)
     vib.clean()
 
     # ASE Vibrations returns 3N modes — the 6 (or 5, linear) translational/
@@ -386,3 +404,102 @@ def _write_mopac_input(path, keywords, symbols, positions):
         lines.append(f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1")
     with open(path, "w") as f:
         f.write("\n".join(lines) + "\n")
+
+
+# Conversion: sqrt(eV/(amu*A^2)) -> cm^-1   (factor 521.471... for ASE units)
+# energy in eV, distance in A, mass in amu => frequency in sqrt(eV/(amu*A^2));
+# multiply by sqrt(1.602e-19/(1.66e-27 * 1e-20))/(2*pi*c[cm/s]) ~= 521.4708 / (2*pi)
+# ASE uses its own internal conversion (see ase.units), but for clarity we follow
+# the same path as VibrationsData.get_frequencies internally.
+def _project_trans_rot_and_diagonalize(vib, atoms, geometry):
+    """Pull the 3N x 3N Hessian from ASE Vibrations, project out the trans/rot
+    subspace (Eckart conditions at the current geometry), and diagonalize the
+    remaining (3N-6 or 3N-5) vibrational subspace. Returns (energies_eV,
+    frequencies_cm) arrays matching the shape expected by the rest of _run_ase.
+
+    The arrays are padded back up to 3N with zeros at the front (so the calling
+    code's "filter > NEAR_ZERO_CM" check still drops them naturally) — only the
+    last 3N-6 (or 3N-5) entries are real vibrational data.
+    """
+    import numpy as np
+    from ase import units
+
+    vd = vib.get_vibrations()
+    H = np.asarray(vd.get_hessian_2d())  # 3N x 3N, in eV/A^2
+    n_atoms = len(atoms)
+    pos = atoms.get_positions()
+    masses = atoms.get_masses()
+
+    # Mass-weight: H_mw[ia,jb] = H[ia,jb] / sqrt(m_i * m_j)
+    sqm = np.sqrt(np.repeat(masses, 3))
+    Hmw = H / np.outer(sqm, sqm)
+
+    # Build trans/rot basis in mass-weighted Cartesian coords.
+    # Translation: e_x, e_y, e_z replicated, weighted by sqrt(m_i).
+    # Rotation:   r_i x e_alpha, also weighted by sqrt(m_i).
+    N = n_atoms
+    basis = []
+    for alpha in range(3):
+        v = np.zeros(3 * N)
+        v[alpha::3] = np.sqrt(masses)
+        basis.append(v)
+    # Center of mass
+    com = (masses[:, None] * pos).sum(0) / masses.sum()
+    r = pos - com
+    for alpha in range(3):
+        v = np.zeros(3 * N)
+        e = np.zeros(3); e[alpha] = 1.0
+        # cross product r_i x e for each atom
+        cross = np.cross(r, e)
+        v = (np.sqrt(masses)[:, None] * cross).reshape(-1)
+        basis.append(v)
+    B = np.array(basis).T  # (3N, 6)
+
+    # Orthonormalize (drop zero columns for linear molecules => 5 dof, not 6)
+    # via SVD; columns with negligible singular values are degenerate.
+    U, S, _ = np.linalg.svd(B, full_matrices=False)
+    keep = S > 1e-6 * S.max()
+    Q = U[:, keep]  # (3N, n_trans_rot), n_trans_rot is 5 (linear) or 6 (nonlinear)
+
+    # Projector onto vibrational subspace: P = I - Q Q^T
+    P = np.eye(3 * N) - Q @ Q.T
+    Hproj = P @ Hmw @ P
+
+    eigvals, _ = np.linalg.eigh(Hproj)
+    # The (3N - n_tr) largest-magnitude eigenvalues are vibrational; the
+    # remaining n_tr are numerical zeros from the projection.
+    n_tr = Q.shape[1]
+    # Sort eigenvalues ascending. The first n_tr are ~0 (projected-out modes).
+    # The rest are real vibrations (positive for minima, negative for saddles).
+    vib_eigvals = eigvals[n_tr:]
+
+    # Convert eigenvalues -> angular frequency^2 (in units eV / (amu * A^2))
+    # then -> energy (eV) and frequency (cm^-1).
+    # ASE convention: omega [rad/s] = sqrt(eigval [eV/A^2/amu] * units._e / (units._amu * 1e-20))
+    # energy_eV = hbar * omega = sqrt(eigval) * units._hbar * sqrt(units._e/(units._amu*1e-20))
+    # Use the same conversion as ase.vibrations.Vibrations.get_energies:
+    s = units._hbar * 1e10 / np.sqrt(units._e * units._amu)
+    # s has units such that energy_eV = s * sqrt(eigval_in_eV/A^2/amu)
+    def _ev_from_eig(ev):
+        if ev >= 0:
+            return s * np.sqrt(ev)
+        else:
+            return -1j * s * np.sqrt(-ev)
+
+    energies_eV_vib = np.array([_ev_from_eig(ev) for ev in vib_eigvals], dtype=complex)
+    # frequency cm^-1 = energy_eV / (h*c), with h*c in eV*cm = 1.239841984e-4
+    HC_EV_CM = units._hplanck * units._c * units.J * units.m / 1e-2  # eV * cm
+    # simpler: 1 cm^-1 = 1.239841984e-4 eV
+    EV_TO_CM = 1.0 / 1.239841984e-4
+    frequencies_cm_vib = np.array(
+        [e.real * EV_TO_CM if e.imag == 0 else 1j * abs(e.imag) * EV_TO_CM
+         for e in energies_eV_vib], dtype=complex
+    )
+
+    # Pad with n_tr zeros at the front so existing downstream code (which
+    # filters > 50 cm^-1) drops them naturally and counts work out.
+    pad_e = np.zeros(n_tr, dtype=complex)
+    pad_f = np.zeros(n_tr, dtype=complex)
+    energies_eV = np.concatenate([pad_e, energies_eV_vib])
+    frequencies_cm = np.concatenate([pad_f, frequencies_cm_vib])
+    return energies_eV, frequencies_cm

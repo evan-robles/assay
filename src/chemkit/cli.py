@@ -61,7 +61,7 @@ def main(argv: Optional[List[str]] = None) -> int:
              "true stationary point.",
     )
     p_freq.add_argument(
-        "--preopt-fmax", type=float, default=0.01,
+        "--preopt-fmax", type=float, default=0.001,
         help="Force convergence (eV/Å) for the pre-opt step (default 0.01, "
              "tighter than `opt`'s 0.05 because residual forces propagate into "
              "near-zero imaginary modes).",
