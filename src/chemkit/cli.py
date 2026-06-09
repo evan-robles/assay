@@ -66,6 +66,15 @@ def main(argv: Optional[List[str]] = None) -> int:
              "tighter than `opt`'s 0.05 because residual forces propagate into "
              "near-zero imaginary modes).",
     )
+    p_freq.add_argument(
+        "--auto-confsearch", dest="auto_confsearch", action="store_true",
+        default=False,
+        help="Run a CREST conformer search (with PM7 postopt) before the freq "
+             "step and take the lowest-energy minimum as the input geometry. "
+             "Useful for flexible molecules where the user-supplied geometry "
+             "may not be the global minimum; otherwise soft-mode saddles show "
+             "up as spurious imaginary modes.",
+    )
 
     p_bind = sub.add_parser("binding", help="Binding/interaction energy.")
     _add_common(p_bind)
@@ -101,6 +110,17 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_conf.add_argument(
         "--postopt-ewin", type=float, default=6.0,
         help="Energy window (kcal/mol) to keep after post-optimization (default 6.0).",
+    )
+
+    p_front = sub.add_parser(
+        "frontier",
+        help="Frontier molecular orbital energies + HOMO-LUMO gap (no opt).",
+    )
+    _add_common(p_front)
+    p_front.add_argument(
+        "--nfrontier", type=int, default=3,
+        help="Number of occupied & virtual orbitals on each side of the gap "
+             "to report (default 3).",
     )
 
     p_scan = sub.add_parser(
@@ -147,6 +167,7 @@ def main(argv: Optional[List[str]] = None) -> int:
                           temperature_K=args.temperature, pressure_Pa=args.pressure,
                           geometry=args.geometry, symmetrynumber=args.symmetry,
                           preopt=args.preopt, preopt_fmax=args.preopt_fmax,
+                          auto_confsearch=args.auto_confsearch,
                           cli=cli)
     elif args.task == "binding":
         from .tasks import binding
@@ -174,6 +195,13 @@ def main(argv: Optional[List[str]] = None) -> int:
             postopt_ewin=args.postopt_ewin,
             charge=args.charge, multiplicity=args.multiplicity,
             cli=cli,
+        )
+    elif args.task == "frontier":
+        from .tasks import frontier
+        result = frontier.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            nfrontier=args.nfrontier, cli=cli,
         )
     elif args.task == "scan":
         from .tasks import scan

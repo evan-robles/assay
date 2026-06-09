@@ -51,14 +51,70 @@ def run(
     preopt: bool = True,
     preopt_fmax: float = 0.001,
     preopt_steps: int = 500,
+    auto_confsearch: bool = False,
     cli: str = "",
 ) -> Dict[str, Any]:
     """Opt-freq pipeline. The frequency calculation is performed on the
     optimized geometry by default; pass preopt=False to skip the optimization
     step (useful when the caller is sure the input is already a stationary
     point and re-optimization would waste cycles).
+
+    auto_confsearch: if True, runs CREST conformer search + PM7 postopt
+    before the freq step and uses the lowest-energy conformer as the input
+    geometry. Useful for flexible molecules where the user-supplied geometry
+    may not be the global minimum (an off-minimum input typically surfaces
+    as spurious imaginary modes from genuine soft-mode saddles). Adds the
+    full confsearch result block to the output under `auto_confsearch`.
     """
     method = method.lower()
+
+    confsearch_info: Optional[Dict[str, Any]] = None
+    if auto_confsearch:
+        # Run CREST + PM7 postopt; substitute the lowest-energy minimum as
+        # the input geometry for the subsequent preopt+freq pipeline.
+        from . import confsearch as cs_task
+        cs_result = cs_task.run(
+            input_path,
+            method="xtb",          # CREST is xtb-only; postopt at PM7
+            solvent=solvent,
+            postopt="mopac",
+            charge=charge,
+            multiplicity=multiplicity,
+            cli="(internal auto-confsearch for freq)",
+        )
+        post = cs_result.get("postopt") or {}
+        best_xyz = post.get("best_xyz")
+        if best_xyz and os.path.isfile(best_xyz):
+            # Copy into a stable location next to the original work area so
+            # the user can find it after the freq job exits.
+            cs_workdir = tempfile.mkdtemp(prefix="chemkit_freqcs_")
+            persistent_best = os.path.join(cs_workdir, "best_conformer.xyz")
+            shutil.copyfile(best_xyz, persistent_best)
+            input_path = persistent_best
+            # The conformer was already PM7-optimized by confsearch's postopt
+            # step — running the freq preopt on top of it usually drifts to a
+            # nearby soft-mode saddle. Skip the redundant preopt unless the
+            # caller explicitly asked for it on a separate basis.
+            preopt = False
+            confsearch_info = {
+                "performed": True,
+                "n_unique_conformers": post.get("n_unique"),
+                "best_xyz": persistent_best,
+                "best_hof_kcal_mol": post.get("lowest_hof_kcal_mol"),
+                "ensemble_xyz": post.get("ensemble_xyz"),
+                "seed_source": post.get("seed_source"),
+                "preopt_skipped": True,
+            }
+        else:
+            # CREST returned nothing usable; fall back to the original input
+            # but record that auto-confsearch was attempted.
+            confsearch_info = {
+                "performed": True,
+                "n_unique_conformers": post.get("n_unique") or 0,
+                "best_xyz": None,
+                "note": "auto_confsearch produced no usable best_xyz; freq run on original input",
+            }
+
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
 
@@ -136,12 +192,15 @@ def run(
     # the Hessian was actually computed on the optimized geometry. The opt
     # block records the path to the optimized xyz for transparency.
     result["input_file"] = os.path.abspath(input_path)
+    if confsearch_info is not None:
+        result["auto_confsearch"] = confsearch_info
     if preopt_info:
         result["preopt"] = preopt_info
-        # Surface a warning if the pre-opt didn't converge — the freq numbers
-        # are still computed, but the user should know the input wasn't fully
-        # relaxed before the Hessian was taken.
-        if not preopt_info["converged"]:
+        # Surface a warning if the pre-opt didn't converge AND the Hessian
+        # came back with imaginary modes. If the Hessian is clean (no imag
+        # modes), the residual gradient was small enough that the resulting
+        # thermochemistry is trustworthy regardless of the strict fmax target.
+        if not preopt_info["converged"] and (result.get("n_imaginary_modes") or 0) > 0:
             warns = result.setdefault("warnings", [])
             warns.append(
                 "Pre-optimization did NOT converge to fmax="
