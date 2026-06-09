@@ -256,6 +256,62 @@ def test_sp_emits_only_json(tmp_run, method):
 
 
 # ---------------------------------------------------------------------------
+# Frontier orbitals
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("method", ["xtb", "mopac"])
+def test_frontier_water(tmp_run, method):
+    """FEATURE test: frontier on neutral H2O should return finite HOMO, LUMO,
+    and a positive gap, plus the Koopmans descriptors block."""
+    if method == "xtb" and not _have("xtb"):
+        pytest.skip("xtb not on PATH")
+    if method == "mopac" and not _have("mopac"):
+        pytest.skip("mopac not on PATH")
+    out = tmp_run / f"h2o_frontier_{method}.json"
+    rc, *_ = _run_chemkit(
+        ["frontier", "--method", method, "--solvent", "water",
+         "h2o.xyz", "--out", str(out)],
+        cwd=str(tmp_run),
+    )
+    assert rc == 0
+    d = _load(out)
+    assert not _bad_num(d.get("homo_eV"))
+    assert not _bad_num(d.get("lumo_eV"))
+    assert d["homo_lumo_gap_eV"] > 0, "expected positive HOMO-LUMO gap for closed-shell H2O"
+    k = d.get("koopmans") or {}
+    assert "vertical_IP_eV" in k and "vertical_EA_eV" in k
+    assert "electronegativity_eV" in k and "chemical_hardness_eV" in k
+
+
+@pytest.mark.parametrize("species,charge", [
+    ("f_minus", -1),    # GFN2 minimal basis: 4 occupied, 0 virtual
+])
+def test_frontier_basis_saturated_anion_xtb(tmp_run, species, charge):
+    """REGRESSION: F- in GFN2's minimal valence basis is fully saturated
+    (2s + 2p = 4 occupied, 0 virtual). frontier used to crash with
+    'Could not partition orbitals into occupied/virtual' — should now
+    return a structured PARTIAL result with HOMO/IP but no LUMO,
+    plus a warning explaining why."""
+    if not _have("xtb"):
+        pytest.skip("xtb not on PATH")
+    out = tmp_run / f"{species}_frontier_xtb.json"
+    rc, *_ = _run_chemkit(
+        ["frontier", "--method", "xtb", "--charge", str(charge),
+         "--solvent", "water",
+         f"{species}.xyz", "--out", str(out)],
+        cwd=str(tmp_run),
+    )
+    assert rc == 0, "frontier should not crash on basis-saturated anions anymore"
+    d = _load(out)
+    assert not _bad_num(d.get("homo_eV")), "HOMO should still be computable"
+    assert d.get("lumo_eV") is None, "LUMO should be explicitly None when no virtuals"
+    assert d.get("homo_lumo_gap_eV") is None
+    warns = d.get("warnings") or []
+    assert any("virtual" in w.lower() for w in warns), \
+        "should warn about missing virtual orbitals"
+
+
+# ---------------------------------------------------------------------------
 # Auto-confsearch wrapper around freq (latest feature)
 # ---------------------------------------------------------------------------
 

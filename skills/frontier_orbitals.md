@@ -1,0 +1,38 @@
+---
+description: Frontier Molecular Orbitals + HOMO-LUMO Gap — When the user wants the energies of frontier orbitals (HOMO, LUMO, HOMO-1, LUMO+1, ...), the HOMO-LUMO gap, or Koopmans-based reactivity descriptors at a fixed geometry (e.g. "HOMO", "LUMO", "frontier orbitals", "FMO", "HOMO-LUMO gap", "orbital energies", "Koopmans IP/EA", "chemical hardness", "electronegativity", "electrophilicity index"). Do NOT use for TD-DFT spectra or to optimize the geometry first — use `/geometry_optimize` beforehand if needed.
+---
+
+# Frontier Orbitals + HOMO-LUMO Gap
+
+Compute HOMO, LUMO, the HOMO-LUMO gap, the K neighbouring frontier orbitals on each side
+(HOMO-K..HOMO and LUMO..LUMO+K), and the standard Koopmans-based global reactivity
+descriptors (vertical IP, vertical EA, electronegativity χ, hardness η, softness S,
+electrophilicity index ω). Uses GFN2-xTB (xtb-python) or PM7 (MOPAC). Geometry is taken
+as-is — no optimization.
+
+## Arguments
+`$ARGUMENTS` should include:
+- An `.xyz` path (required)
+- A method: `xtb` or `mopac` (required — if missing, use **AskUserQuestion**)
+- Optional: `--solvent <name>` (water, methanol, dmso, mecn, dcm, ...),
+  `--charge N`, `--mult N`
+- Optional: `--nfrontier K` (default 3 — orbitals on each side of the gap)
+
+## Steps
+1. Parse `$ARGUMENTS`. If `.xyz` missing → stop and ask. If method missing → AskUserQuestion (header "Method", options `xtb` / `mopac`).
+2. Run `chemkit frontier --method <METHOD> [--solvent <S>] [--charge <Q>] [--mult <M>] [--nfrontier <K>] <XYZ>`.
+3. Read the printed JSON. Copy the JSON result to `<basename>_frontier_<method>.json` in the cwd.
+4. Report to the user:
+   - **HOMO**, **LUMO**, **HOMO-LUMO gap** (eV)
+   - The full **frontier table** (HOMO-K..HOMO, LUMO..LUMO+K) — render as a compact table sorted by energy
+   - **Koopmans descriptors** from `koopmans`: vertical IP, vertical EA, χ, η, S, ω
+   - Method, solvent (or "gas phase"), charge, multiplicity
+   - Path to the JSON output
+   - For MOPAC: also surface heat of formation and dipole from `code_specific`
+   - Note: xtb and MOPAC orbital zeros differ — compare orbital energies only within the same method. Koopmans values are first-order estimates; for quantitative IP/EA use ΔSCF with DFT.
+
+## Errors
+- xtb / mopac not installed → install via `conda install -c conda-forge xtb mopac`.
+- xtb-python missing (orbital eigenvalues require it for the xtb path) → install via `conda install -c conda-forge xtb-python` or `pip install xtb`.
+- Malformed `.xyz` → report which line failed.
+- Open-shell systems: results are spin-restricted; flag `multiplicity > 1` in the report.
