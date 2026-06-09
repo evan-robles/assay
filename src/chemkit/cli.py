@@ -123,6 +123,44 @@ def main(argv: Optional[List[str]] = None) -> int:
              "to report (default 3).",
     )
 
+    p_elst = sub.add_parser(
+        "electrostatics",
+        help="Dipole + atomic partial charges (single-point, no opt).",
+    )
+    _add_common(p_elst)
+
+    p_ts = sub.add_parser(
+        "ts", help="Transition-state search (locate a first-order saddle).",
+    )
+    _add_common(p_ts)
+    p_ts.add_argument(
+        "--steps", type=int, default=500,
+        help="Max optimizer iterations (default 500).",
+    )
+    p_ts.add_argument(
+        "--verify-freq", dest="verify_freq", action="store_true", default=True,
+        help="Run a frequency calculation on the converged TS to verify it has "
+             "exactly one imaginary mode (the reaction-coordinate direction). "
+             "Default on.",
+    )
+    p_ts.add_argument(
+        "--no-verify-freq", dest="verify_freq", action="store_false",
+        help="Skip the post-TS frequency verification.",
+    )
+
+    p_irc = sub.add_parser(
+        "irc", help="Intrinsic reaction coordinate (walk down from a TS).",
+    )
+    _add_common(p_irc)
+    p_irc.add_argument(
+        "--max-points", type=int, default=40,
+        help="Max IRC points per direction (default 40).",
+    )
+    p_irc.add_argument(
+        "--step", type=float, default=0.05,
+        help="Mass-weighted step size in amu^1/2 * bohr (default 0.05). xtb path only.",
+    )
+
     p_scan = sub.add_parser(
         "scan", help="Relaxed dihedral scan (torsional energy profile).",
     )
@@ -202,6 +240,32 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.input, method=args.method, charge=args.charge,
             multiplicity=args.multiplicity, solvent=args.solvent,
             nfrontier=args.nfrontier, cli=cli,
+        )
+    elif args.task == "electrostatics":
+        from .tasks import electrostatics
+        result = electrostatics.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+        )
+    elif args.task == "ts":
+        from .tasks import ts
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        result = ts.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            steps=args.steps, verify_freq=args.verify_freq,
+            out_stem=out_stem, cli=cli,
+        )
+    elif args.task == "irc":
+        from .tasks import irc
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        result = irc.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            max_points=args.max_points, step=args.step,
+            out_stem=out_stem, cli=cli,
         )
     elif args.task == "scan":
         from .tasks import scan

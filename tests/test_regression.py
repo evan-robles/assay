@@ -312,6 +312,116 @@ def test_frontier_basis_saturated_anion_xtb(tmp_run, species, charge):
 
 
 # ---------------------------------------------------------------------------
+# Electrostatics
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("method", ["xtb", "mopac"])
+def test_electrostatics_water_dipole(tmp_run, method):
+    """FEATURE test: H2O dipole should be in the 1.8-3.0 Debye range
+    (experimental 1.85 D; xtb gives ~2.27, MOPAC ~2.14)."""
+    if method == "xtb" and not _have("xtb"):
+        pytest.skip("xtb not on PATH")
+    if method == "mopac" and not _have("mopac"):
+        pytest.skip("mopac not on PATH")
+    out = tmp_run / f"h2o_elst_{method}.json"
+    rc, *_ = _run_chemkit(
+        ["electrostatics", "--method", method,
+         "h2o.xyz", "--out", str(out)],
+        cwd=str(tmp_run),
+    )
+    assert rc == 0
+    d = _load(out)
+    dipole = d.get("dipole_debye")
+    assert dipole is not None and 1.5 < dipole < 3.5, (
+        f"H2O dipole = {dipole} Debye is outside the expected 1.5-3.5 D range"
+    )
+    charges = d.get("partial_charges")
+    assert charges is not None and len(charges) == 3, "expected 3 partial charges for H2O"
+    assert charges[0] < 0 and charges[1] > 0 and charges[2] > 0, \
+        "O should be negative, H atoms positive"
+    assert abs(d.get("sum_of_charges", 99) - 0) < 0.01, "neutral H2O charges should sum to ~0"
+
+
+def test_electrostatics_no3_minus_xtb(tmp_run):
+    """FEATURE test: NO3- charge sum should be -1 and the trigonal-planar
+    D3h symmetry should give near-zero dipole."""
+    if not _have("xtb"):
+        pytest.skip("xtb not on PATH")
+    out = tmp_run / "no3_elst.json"
+    rc, *_ = _run_chemkit(
+        ["electrostatics", "--method", "xtb", "--charge", "-1",
+         "no3_minus.xyz", "--out", str(out)],
+        cwd=str(tmp_run),
+    )
+    assert rc == 0
+    d = _load(out)
+    assert abs(d["sum_of_charges"] - (-1)) < 0.01
+    assert d["dipole_debye"] < 0.1, "D3h NO3- should have ~zero dipole"
+
+
+# ---------------------------------------------------------------------------
+# Transition state search + IRC pipeline
+# ---------------------------------------------------------------------------
+
+@pytest.mark.slow
+def test_ts_hcn_isomerization_mopac(tmp_run):
+    """FEATURE test: HCN/HNC isomerization TS via MOPAC's native TS
+    keyword should converge to a saddle with exactly 1 imaginary mode
+    (textbook value ~-1390 cm^-1 for the H migration)."""
+    if not _have("mopac"):
+        pytest.skip("mopac not on PATH")
+    out = tmp_run / "hcn_ts.json"
+    rc, *_ = _run_chemkit(
+        ["ts", "--method", "mopac", "hcn_ts_guess.xyz", "--out", str(out)],
+        cwd=str(tmp_run),
+        timeout=600,
+    )
+    assert rc == 0
+    d = _load(out)
+    assert d.get("converged") is True, f"TS did not converge: {d.get('mopac_status')}"
+    vf = d.get("verify_freq") or {}
+    assert vf.get("is_valid_ts") is True, (
+        f"verify_freq did not return a valid TS: n_imag={vf.get('n_imaginary_modes')}, "
+        f"freqs={vf.get('imaginary_frequencies_cm-1')}"
+    )
+    assert d.get("ts_xyz") and os.path.isfile(d["ts_xyz"])
+
+
+@pytest.mark.slow
+def test_irc_hcn_walks_to_distinct_endpoints(tmp_run):
+    """FEATURE test: IRC from the HCN/HNC TS should land on two distinct
+    endpoints. Uses the TS xyz produced by `chemkit ts` as input."""
+    if not _have("mopac"):
+        pytest.skip("mopac not on PATH")
+    # First find the TS (needed as input to IRC)
+    ts_out = tmp_run / "hcn_ts.json"
+    rc, *_ = _run_chemkit(
+        ["ts", "--method", "mopac", "hcn_ts_guess.xyz", "--out", str(ts_out)],
+        cwd=str(tmp_run), timeout=600,
+    )
+    assert rc == 0
+    ts_xyz = _load(ts_out)["ts_xyz"]
+    # Now run IRC
+    irc_out = tmp_run / "hcn_irc.json"
+    rc, *_ = _run_chemkit(
+        ["irc", "--method", "mopac", ts_xyz, "--out", str(irc_out)],
+        cwd=str(tmp_run), timeout=600,
+    )
+    assert rc == 0
+    d = _load(irc_out)
+    assert d.get("forward_n_points") and d["forward_n_points"] > 1
+    assert d.get("reverse_n_points") and d["reverse_n_points"] > 1
+    assert d.get("forward_trajectory_xyz") and os.path.isfile(d["forward_trajectory_xyz"])
+    assert d.get("reverse_trajectory_xyz") and os.path.isfile(d["reverse_trajectory_xyz"])
+    # The reverse direction should clearly drop below the TS (HCN is the stable
+    # isomer); forward toward HNC may stall short of the well within max_points.
+    assert d.get("reverse_drop_kcal_mol") is not None and d["reverse_drop_kcal_mol"] < -1.0, (
+        f"reverse IRC drop = {d.get('reverse_drop_kcal_mol')} kcal/mol — "
+        f"expected a clear downhill walk from the TS"
+    )
+
+
+# ---------------------------------------------------------------------------
 # Auto-confsearch wrapper around freq (latest feature)
 # ---------------------------------------------------------------------------
 
