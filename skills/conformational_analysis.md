@@ -6,8 +6,8 @@ description: Conformational Analysis (Relaxed Dihedral Scan) — When the user w
 
 Map the torsional energy profile around a rotatable bond. At each angle in a
 0–360° sweep, the geometry is re-optimized with the chosen dihedral held (or
-strongly biased toward) the target. Output is a per-dihedral PNG plot, a
-plaintext table, and a relaxed XYZ trajectory.
+strongly biased toward) the target. Output is a per-dihedral PNG plot and a
+relaxed XYZ trajectory; per-point data is recorded in the JSON.
 
 This complements `conformer_search`: confsearch *finds* minima stochastically,
 scan *connects* minima with a deterministic barrier profile.
@@ -58,12 +58,12 @@ A 24-point scan at `--tier standard` runs 24 constrained optimizations. For a 15
    - `n_converged` / `n_points`
    - **PNG path** (always surface this as a primary deliverable — it is the
      headline result of a torsional scan)
-   - Paths to the `.out` table and `.xyz` trajectory
+   - Path to the `.xyz` trajectory
 4. If `n_dihedrals_scanned == 0`, the molecule has no rotatable bonds. Suggest
    `--dihedral i,j,k,l` if the user wants to force a scan anyway.
 
-## Outputs (REQUIRED — every successful scan produces all three)
-For each scanned dihedral, three files are written next to the JSON:
+## Outputs (REQUIRED — every successful scan produces both)
+For each scanned dihedral, two files are written next to the JSON:
 - `<stem>_dih<i>_<a>_<b>_<l>.png` — **ΔE vs angle line plot** (matplotlib,
   150 dpi). This is a required deliverable, not optional. The title contains:
   - The molecule's IUPAC name (resolved via Open Babel → PubChem); falls back
@@ -73,8 +73,9 @@ For each scanned dihedral, three files are written next to the JSON:
     canonical chain index, **1-based** (e.g. `C1–C2–C3–C4`). For PDB inputs,
     labels use residue.atom notation (e.g. `ASP47.CA–ASP47.CB–ASP47.CG–ASP47.OD1`).
 - `<stem>_dih<i>_<a>_<b>_<l>.xyz` — relaxed trajectory, one frame per step
-- `<stem>_dih<i>_<a>_<b>_<l>.out` — fixed-width table with step / target° /
-  measured° / E (kcal/mol) / ΔE (kcal/mol) / converged
+
+Per-point data (step / target° / measured° / E / ΔE / converged) is recorded
+in the `points` array of the JSON result.
 
 Atom indices in filenames and labels reflect the canonical chain ordering that
 this task applies automatically (longest heavy-atom path via BFS, with RDKit

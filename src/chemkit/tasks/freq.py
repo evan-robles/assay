@@ -267,12 +267,31 @@ def _run_ase(
     # vibrations — otherwise the harmonic-oscillator entropy diverges on
     # the near-zero "modes" and G blows up to ±inf (most visible for small
     # linear diatomics where 5/6 of the modes are leftover rot/trans).
+    # The Eckart-projected diagonalization yields the right number of
+    # vibrational modes (3N-6 or 3N-5) with the projected-out trans/rot
+    # entries padded as zeros at the front of the array. Strip the zero pad,
+    # then raise any remaining tiny soft-modes up to a floor frequency
+    # (Truhlar's quasi-RRHO trick) — keeps the mode count correct and
+    # prevents the harmonic-oscillator entropy from diverging on near-zero
+    # torsions. (Dropping the modes outright crashes ASE's IdealGasThermo
+    # for any flexible organic with a low-frequency conformer mode.)
     NEAR_ZERO_CM = 50.0
-    real_vib_energies = [
-        e.real for e, f in zip(energies_eV, frequencies_cm)
-        if np.isreal(e) and e.real > 0
-        and np.isreal(f) and f.real > NEAR_ZERO_CM
-    ]
+    EV_PER_CM = 1.239841984e-4
+    FLOOR_eV = NEAR_ZERO_CM * EV_PER_CM
+    real_vib_energies = []
+    for e, f in zip(energies_eV, frequencies_cm):
+        # Skip the projected-out trans/rot padding (energies are exactly 0).
+        if np.isreal(e) and e.real == 0 and np.isreal(f) and f.real == 0:
+            continue
+        # Imaginary modes are not vibrations — counted separately.
+        if np.iscomplex(f) and f.imag != 0:
+            continue
+        if not np.isreal(e):
+            continue
+        if e.real < FLOOR_eV:
+            real_vib_energies.append(FLOOR_eV)   # raise soft modes to floor
+        else:
+            real_vib_energies.append(e.real)
     n_imag = sum(
         1 for f in frequencies_cm
         if np.iscomplex(f) and f.imag != 0 and abs(f.imag) > NEAR_ZERO_CM

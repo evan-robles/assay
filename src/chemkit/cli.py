@@ -160,6 +160,135 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     _add_chem_options(p_logp, with_solvent=False)
 
+    p_prof = sub.add_parser(
+        "profile",
+        help="Reaction profile: opt(R) + opt(P) + TS search + freq×3 + IRC "
+             "connectivity check + ΔE/ΔH/ΔG diagram PNG.",
+    )
+    p_prof.add_argument("--reactant", required=True, help="Reactant xyz.")
+    p_prof.add_argument("--product", required=True, help="Product xyz.")
+    p_prof.add_argument("--ts-guess", dest="ts_guess", required=True,
+                        help="TS guess xyz (often from /conformational_analysis).")
+    p_prof.add_argument(
+        "--method", choices=["xtb", "mopac", "dft", "hf"], required=True,
+        help="Same method is used for every species in the cycle.",
+    )
+    p_prof.add_argument("--charge", type=int, default=0)
+    p_prof.add_argument("--mult", "--multiplicity", dest="multiplicity",
+                        type=int, default=1)
+    p_prof.add_argument("--solvent", default=None)
+    p_prof.add_argument("--temperature", type=float, default=298.15)
+    p_prof.add_argument("--pressure", type=float, default=101325.0)
+    p_prof.add_argument(
+        "--rmsd-tol", type=float, default=0.5,
+        help="Å threshold for IRC-endpoint connectivity check (default 0.5).",
+    )
+    p_prof.add_argument(
+        "--no-irc", dest="skip_irc", action="store_true", default=False,
+        help="Skip the IRC connectivity check (only the RMSD-based check is "
+             "available for dft/hf anyway, so this is a noop there).",
+    )
+    p_prof.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_prof.add_argument("--functional", default=None)
+    p_prof.add_argument("--basis", default=None)
+    p_prof.add_argument("--out", default=None)
+
+    p_pka = sub.add_parser(
+        "pka",
+        help="pKa via thermodynamic cycle HA(aq) → A⁻(aq) + H⁺(aq). Requires "
+             "BOTH the protonated and deprotonated xyz files.",
+    )
+    p_pka.add_argument("--ha", required=True, help="xyz of the protonated form (HA).")
+    p_pka.add_argument("--a-minus", dest="a_minus", required=True,
+                       help="xyz of the deprotonated form (A⁻).")
+    p_pka.add_argument(
+        "--method", choices=["xtb", "mopac", "dft", "hf"], required=True,
+        help="Same method is applied to every species in the cycle.",
+    )
+    p_pka.add_argument(
+        "--mode", choices=["absolute", "reference"], default="absolute",
+        help="absolute: uses literature G(H+,aq). reference: uses a known acid "
+             "(--ref-ha, --ref-a-minus, --pka-ref). Reference is far more accurate.",
+    )
+    p_pka.add_argument(
+        "--solvent", default="water",
+        help="Implicit solvent (default 'water' — required for the absolute "
+             "G(H+) reference to apply).",
+    )
+    p_pka.add_argument("--ha-charge", type=int, default=0,
+                       help="Charge of HA (default 0). A⁻ charge is HA charge − 1.")
+    p_pka.add_argument("--ha-mult", type=int, default=1, help="HA multiplicity (default 1).")
+    p_pka.add_argument("--a-minus-mult", type=int, default=1, help="A⁻ multiplicity (default 1).")
+    p_pka.add_argument("--temperature", type=float, default=298.15)
+    p_pka.add_argument("--pressure", type=float, default=101325.0)
+    p_pka.add_argument(
+        "--hplus-reference", default="tissandier_1998",
+        choices=["tissandier_1998", "kelly_2006"],
+        help="Source for G(H+,aq). Tissandier −270.28 kcal/mol (default); "
+             "Kelly −265.9 kcal/mol shifts every pKa by ~1.4 units.",
+    )
+    # Reference-mode args
+    p_pka.add_argument("--ref-ha", default=None, help="Reference acid HA xyz (reference mode).")
+    p_pka.add_argument("--ref-a-minus", default=None, help="Reference base A⁻ xyz (reference mode).")
+    p_pka.add_argument("--pka-ref", type=float, default=None,
+                       help="Known experimental pKa of the reference acid (reference mode).")
+    p_pka.add_argument("--ref-ha-charge", type=int, default=0)
+    p_pka.add_argument("--ref-ha-mult", type=int, default=1)
+    p_pka.add_argument("--ref-a-minus-mult", type=int, default=1)
+    p_pka.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_pka.add_argument("--functional", default=None)
+    p_pka.add_argument("--basis", default=None)
+    p_pka.add_argument("--out", default=None)
+
+    p_build = sub.add_parser(
+        "build",
+        help="Build a 3D xyz from a SMILES string (RDKit ETKDG + MMFF/UFF cleanup, "
+             "optional QM refinement).",
+    )
+    p_build.add_argument("smiles", help="SMILES string of the target molecule.")
+    p_build.add_argument(
+        "--out-xyz", default=None,
+        help="Destination .xyz path. Default: <smiles-sanitized>.xyz in cwd.",
+    )
+    p_build.add_argument(
+        "--name", default=None,
+        help="Title comment for the xyz (default: canonical SMILES).",
+    )
+    p_build.add_argument(
+        "--n-confs", type=int, default=5,
+        help="ETKDG conformers to embed; lowest FF energy is selected (default 5).",
+    )
+    p_build.add_argument(
+        "--forcefield", choices=["mmff", "uff"], default="mmff",
+        help="Force field for the RDKit cleanup (default mmff).",
+    )
+    p_build.add_argument(
+        "--seed", type=int, default=0xC0FFEE,
+        help="ETKDG random seed (default 0xC0FFEE = 12648430).",
+    )
+    p_build.add_argument(
+        "--opt", dest="opt_method", choices=["xtb", "mopac", "dft", "hf"],
+        default=None,
+        help="Optional QM refinement step after FF cleanup. Calls `chemkit opt` "
+             "internally; the QM-relaxed xyz becomes the canonical output.",
+    )
+    p_build.add_argument(
+        "--solvent", default=None,
+        help="Implicit solvent for the optional QM step (ignored without --opt).",
+    )
+    p_build.add_argument(
+        "--charge", type=int, default=None,
+        help="Override the charge inferred from SMILES. Forwarded to the QM step.",
+    )
+    p_build.add_argument(
+        "--mult", "--multiplicity", dest="multiplicity", type=int, default=None,
+        help="Override the multiplicity inferred from SMILES.",
+    )
+    p_build.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_build.add_argument("--functional", default=None)
+    p_build.add_argument("--basis", default=None)
+    p_build.add_argument("--out", default=None, help="Result JSON path.")
+
     p_fukui = sub.add_parser(
         "fukui",
         help="Condensed Fukui functions + dual descriptor (atom-resolved reactivity).",
@@ -211,6 +340,29 @@ def main(argv: Optional[List[str]] = None) -> int:
         "--step", type=float, default=0.05,
         help="Mass-weighted step size in amu^1/2 * bohr (default 0.05). xtb path only.",
     )
+
+    p_rxn = sub.add_parser(
+        "rxn-energy",
+        help="Reaction energy ΔE / ΔH / ΔG for reactants → products.",
+    )
+    # rxn-energy has no single 'input' file. Species come from repeated
+    # --reactant / --product flags. Method/solvent/PySCF knobs still apply.
+    _add_chem_options(p_rxn, with_input=False)
+    p_rxn.add_argument(
+        "--reactant", action="append", default=None, required=True,
+        help="Species spec '[COEF*]PATH[,charge=Q][,mult=M]'. Repeat per reactant.",
+    )
+    p_rxn.add_argument(
+        "--product", action="append", default=None, required=True,
+        help="Species spec '[COEF*]PATH[,charge=Q][,mult=M]'. Repeat per product.",
+    )
+    p_rxn.add_argument(
+        "--mode", choices=["sp", "opt", "freq"], default="sp",
+        help="sp: single-point on each input xyz (default). opt: optimize then SP. "
+             "freq: full opt+freq → reports ΔE, ΔH, ΔG.",
+    )
+    p_rxn.add_argument("--temperature", type=float, default=298.15)
+    p_rxn.add_argument("--pressure", type=float, default=101325.0)
 
     p_scan = sub.add_parser(
         "scan", help="Relaxed dihedral scan (torsional energy profile).",
@@ -352,6 +504,62 @@ def main(argv: Optional[List[str]] = None) -> int:
             max_points=args.max_points, step=args.step,
             out_stem=out_stem, cli=cli, **pyscf_kwargs,
         )
+    elif args.task == "rxn-energy":
+        from .tasks import reaction_energy
+        result = reaction_energy.run(
+            reactants=args.reactant, products=args.product,
+            method=args.method, mode=args.mode, solvent=args.solvent,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "profile":
+        from .tasks import reaction_profile as profile_task
+        out_path_pre = (
+            args.out
+            or _default_out(args.reactant, args.task, args.method)
+        )
+        out_stem = os.path.splitext(out_path_pre)[0]
+        result = profile_task.run(
+            reactant_xyz=args.reactant, product_xyz=args.product,
+            ts_guess_xyz=args.ts_guess, method=args.method,
+            charge=args.charge, multiplicity=args.multiplicity,
+            solvent=args.solvent,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            rmsd_tol=args.rmsd_tol, skip_irc=args.skip_irc,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "pka":
+        from .tasks import pka as pka_task
+        result = pka_task.run(
+            ha_xyz=args.ha, a_minus_xyz=args.a_minus,
+            method=args.method, mode=args.mode, solvent=args.solvent,
+            ha_charge=args.ha_charge, ha_multiplicity=args.ha_mult,
+            a_minus_multiplicity=args.a_minus_mult,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            hplus_reference=args.hplus_reference,
+            ref_ha_xyz=args.ref_ha, ref_a_minus_xyz=args.ref_a_minus,
+            ref_pka=args.pka_ref,
+            ref_ha_charge=args.ref_ha_charge,
+            ref_ha_multiplicity=args.ref_ha_mult,
+            ref_a_minus_multiplicity=args.ref_a_minus_mult,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "build":
+        import re
+        from .tasks import build as build_task
+        if args.out_xyz:
+            out_xyz = args.out_xyz
+        else:
+            safe = re.sub(r"[^A-Za-z0-9_-]", "_", args.smiles)[:60] or "molecule"
+            out_xyz = os.path.abspath(f"{safe}.xyz")
+        result = build_task.run(
+            smiles=args.smiles, out_xyz=out_xyz, name=args.name,
+            n_confs=args.n_confs, forcefield=args.forcefield, seed=args.seed,
+            opt_method=args.opt_method, opt_solvent=args.solvent,
+            opt_charge=args.charge, opt_multiplicity=args.multiplicity,
+            tier=args.tier, functional=args.functional, basis=args.basis,
+            cli=cli,
+        )
     elif args.task == "scan":
         from .tasks import scan
         dihedral_tuple = None
@@ -381,7 +589,25 @@ def main(argv: Optional[List[str]] = None) -> int:
         parser.error(f"Unknown task {args.task!r}")
         return 2
 
-    out_path = args.out or _default_out(args.input, args.task, args.method)
+    # Tasks without a single `input` xyz need bespoke default-output paths.
+    if args.task == "rxn-energy":
+        from .tasks.reaction_energy import _parse_species_spec
+        first_path, _, _, _ = _parse_species_spec(args.reactant[0])
+        out_path = args.out or _default_out(first_path, args.task, args.method)
+    elif args.task == "pka":
+        out_path = args.out or _default_out(args.ha, args.task, args.method)
+    elif args.task == "profile":
+        out_path = args.out or _default_out(args.reactant, args.task, args.method)
+    elif args.task == "build":
+        # build's input is a SMILES string and its --opt is optional, so the
+        # naming convention is simpler: drop next to the xyz it wrote.
+        if args.out:
+            out_path = args.out
+        else:
+            stem = os.path.splitext(result["xyz_path"])[0]
+            out_path = os.path.abspath(f"{stem}_build.json")
+    else:
+        out_path = args.out or _default_out(args.input, args.task, args.method)
     write_result(result, out_path)
 
     # For confsearch, also write the full conformer ensemble as an XYZ next
