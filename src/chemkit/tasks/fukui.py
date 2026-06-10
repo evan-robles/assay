@@ -124,7 +124,7 @@ def run(
     if plot and out_stem:
         png_path = f"{out_stem}.png"
         _write_plot(png_path, symbols, f_plus, f_minus, dual,
-                    method=method, input_path=input_path)
+                    method=neutral["method"], input_path=input_path)
         if os.path.isfile(png_path):
             result["plot_png"] = os.path.abspath(png_path)
     return result
@@ -187,7 +187,7 @@ def _write_plot(
     ax.axhline(0.0, color="black", linewidth=0.6, alpha=0.7)
     ax.grid(True, axis="y", alpha=0.3)
 
-    method_label = "GFN2-xTB" if method == "xtb" else "PM7 / MOPAC"
+    method_label = method
     mol_name = (os.path.splitext(os.path.basename(input_path))[0]
                 if input_path else "")
     title = f"Condensed Fukui functions — {method_label}"
