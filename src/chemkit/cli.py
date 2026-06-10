@@ -24,11 +24,11 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
                        help="Implicit solvent (e.g. water, methanol, dmso). Gas phase if omitted.")
     # PySCF-only knobs; silently ignored for xtb/mopac.
     p.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None,
-                   help="DFT tier preset (fast=r2SCAN/def2-SVP, standard=wB97X-D3BJ/def2-TZVP, "
+                   help="DFT tier preset (fast=r2SCAN/def2-SVP, standard=wB97X-V/def2-TZVP, "
                         "accurate=wB97M-V/def2-QZVPP). Ignored unless --method dft.")
     p.add_argument("--functional", default=None,
-                   help="DFT functional override, libxc name (e.g. b3lyp, pbe0, wb97x_d3bj). "
-                        "Ignored unless --method dft.")
+                   help="DFT functional override, libxc name (e.g. b3lyp, pbe0, wb97x_v, "
+                        "wb97m_v, wb97x-d3bj). Ignored unless --method dft.")
     p.add_argument("--basis", default=None,
                    help="Basis-set override for DFT/HF (e.g. def2-tzvp, cc-pvtz). "
                         "Ignored unless --method dft or --method hf.")
