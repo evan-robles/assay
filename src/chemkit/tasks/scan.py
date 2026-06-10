@@ -410,7 +410,7 @@ def _resolve_dihedrals(
         return [{
             "a": a, "b": b, "side_b": list(side_b), "i": i, "l": l,
         }]
-    return _detect_rotatable_bonds(atoms)
+    return _detect_rotatable_bonds(atoms, include_methyl=True)
 
 
 def _dihedral_tag(bond: Dict[str, Any]) -> str:

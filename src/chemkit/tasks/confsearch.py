@@ -310,8 +310,13 @@ def _detect_rings(atoms, *, min_size: int = 4, max_size: int = 8) -> List[Dict[s
     return minimal
 
 
-def _detect_rotatable_bonds(atoms) -> List[Dict[str, Any]]:
-    """Identify rotatable single bonds (non-methyl, non-ring C-C bonds).
+def _detect_rotatable_bonds(atoms, include_methyl: bool = False) -> List[Dict[str, Any]]:
+    """Identify rotatable single bonds (non-ring C-C bonds).
+
+    By default methyl-terminated bonds are skipped because their 3-fold
+    symmetric rotation generates no distinct conformers — useful for
+    conformer_search. Pass include_methyl=True (e.g. from `scan`) to keep
+    them, since the rotation barrier itself is a legitimate observable.
 
     Returns a list of dicts with keys:
       a, b           — bond endpoint indices (a<b)
@@ -334,10 +339,11 @@ def _detect_rotatable_bonds(atoms) -> List[Dict[str, Any]]:
                 continue
             if symbols[a] != "C" or symbols[b] != "C":
                 continue
-            if _is_methyl_end(neighbors, symbols, a, b):
-                continue
-            if _is_methyl_end(neighbors, symbols, b, a):
-                continue
+            if not include_methyl:
+                if _is_methyl_end(neighbors, symbols, a, b):
+                    continue
+                if _is_methyl_end(neighbors, symbols, b, a):
+                    continue
             if _bond_in_ring(neighbors, a, b, n):
                 continue
             side_b = _component_excluding(neighbors, start=b, blocked=a, n=n)

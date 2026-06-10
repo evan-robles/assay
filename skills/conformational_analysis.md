@@ -19,8 +19,8 @@ scan *connects* minima with a deterministic barrier profile.
 - Optional:
   - `--dihedral i,j,k,l` — **1-based** atom indices of the four atoms defining
     the torsion (matches the C1, C2, ... labels in plots and filenames). If
-    omitted, the task auto-detects all non-methyl, non-ring rotatable single
-    bonds and scans each independently.
+    omitted, the task auto-detects all non-ring rotatable single bonds
+    (including methyl rotors) and scans each independently.
   - `--steps N` (default 24, i.e. 15° resolution)
   - `--fmax <eV/Å>` (default 0.05) — per-step force convergence
   - `--opt-steps N` (default 200) — max iterations per scan point

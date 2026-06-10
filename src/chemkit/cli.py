@@ -372,8 +372,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         "--dihedral", default=None,
         help="Comma-separated 1-based atom indices i,j,k,l defining the dihedral "
              "to scan (matches the C1, C2, ... labels in plots and filenames). "
-             "If omitted, auto-detects all non-methyl, non-ring rotatable bonds "
-             "and scans each.",
+             "If omitted, auto-detects all non-ring rotatable C–C bonds "
+             "(including methyl rotors) and scans each.",
     )
     p_scan.add_argument(
         "--steps", type=int, default=24,
