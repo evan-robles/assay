@@ -316,8 +316,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             **pyscf_kwargs,
         )
     elif args.task == "logp":
-        from .tasks import solvation
-        result = solvation.run_logp(
+        from .tasks import logp
+        result = logp.run(
             args.input, method=args.method,
             charge=args.charge, multiplicity=args.multiplicity, cli=cli,
             **pyscf_kwargs,
