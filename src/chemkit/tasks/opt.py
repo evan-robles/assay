@@ -19,7 +19,6 @@ from typing import Any, Dict, List, Optional, Tuple
 from ..calculators import MOPAC_SOLVENT_EPS
 from ..io import read_geometry
 from ..schema import (
-    HARTREE_TO_KCAL,
     base_result,
     energy_block_from_eV,
     element_warnings,

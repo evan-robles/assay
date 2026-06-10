@@ -25,12 +25,11 @@ import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-from ase.io import write as ase_write
 
 from ..calculators import build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS
 from ..io import read_geometry
 from ..schema import base_result, element_warnings
-from ._mopac_parsers import parse_mopac_extras, _find_with_ext
+from ._mopac_parsers import _find_with_ext
 
 EV_TO_KCAL = 23.060547830619026
 
@@ -320,7 +319,6 @@ def _imag_mode_eigenvector_xtb(atoms, charge, multiplicity, solvent):
     eigenvector (length 3N).
     """
     from ase.vibrations import Vibrations
-    from . import freq as freq_task
 
     calc = build_calculator(
         "xtb", charge=charge, multiplicity=multiplicity, solvent=solvent
@@ -370,8 +368,6 @@ def _xtb_descend(atoms, init_disp_A, charge, multiplicity, solvent,
     """Simple gradient-following descent starting from atoms.positions
     displaced by init_disp_A * step. Stops when |grad| < threshold or
     max_points reached."""
-    from copy import deepcopy
-
     work = atoms.copy()
     work.set_positions(atoms.get_positions() + init_disp_A * step)
     calc = build_calculator(

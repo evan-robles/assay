@@ -1,5 +1,5 @@
 ---
-description: Conformational Analysis (Relaxed Dihedral Scan) — When the user wants a deterministic torsional energy profile or rotation barrier around a specific bond (e.g. "dihedral scan", "torsion scan", "rotation barrier", "torsional energy profile", "scan this bond", "conformational analysis"). Produces a PNG plot, relaxed trajectory, and tabular data per dihedral. Do NOT use for stochastic conformer ensemble sampling — that's conformer_search.
+description: Conformational Analysis (Relaxed Dihedral Scan) — When the user wants a deterministic torsional energy profile or rotation barrier around a specific bond (e.g. "dihedral scan", "torsion scan", "rotation barrier", "torsional energy profile", "scan this bond", "conformational analysis"). Produces a PNG plot and a relaxed trajectory per dihedral, with per-point data recorded in the JSON. Do NOT use for stochastic conformer ensemble sampling — that's conformer_search.
 ---
 
 # Conformational Analysis (Relaxed Dihedral Scan)

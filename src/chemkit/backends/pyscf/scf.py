@@ -158,7 +158,6 @@ def pack_scf_result(mf) -> Dict[str, Any]:
 
     # Mulliken partial charges — needed by the electrostatics/fukui tasks.
     try:
-        from pyscf import scf as scf_mod
         # mulliken_pop returns (pop, charges); charges length = n_atoms.
         _, q_mulliken = mf.mulliken_pop(verbose=0)
         out["partial_charges"] = [float(x) for x in q_mulliken]

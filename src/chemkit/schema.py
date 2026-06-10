@@ -48,10 +48,10 @@ def energy_block_from_eV(energy_eV: float) -> Dict[str, float]:
 
 
 # Element coverage warnings — flag transition metals etc. that semi-empiricals
-# treat marginally.
+# treat marginally. GFN2-xTB covers Z=1..86 with no PM7-style gaps, so only
+# the MOPAC/PM7 set is needed here.
 PM7_WEAK_ELEMENTS = {"Fe", "Ru", "Os", "Co", "Rh", "Ir", "Mn", "Tc", "Re",
                      "Cr", "Mo", "W", "V", "Nb", "Ta", "Sc", "Y"}
-XTB_WEAK_ELEMENTS = set()  # GFN2-xTB covers Z=1..86
 
 
 def element_warnings(symbols: List[str], method: str) -> List[str]:

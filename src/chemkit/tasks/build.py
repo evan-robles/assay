@@ -18,7 +18,6 @@ requiring them to fire up Avogadro or paste into PubChem.
 """
 from __future__ import annotations
 import os
-import re
 from typing import Any, Dict, Optional
 
 
@@ -203,7 +202,6 @@ def run(
     # Optional QM refinement step
     if opt_method:
         from . import opt as opt_task
-        from ..io import read_geometry  # ensure it's importable
         q = inferred_charge if opt_charge is None else opt_charge
         m = inferred_mult if opt_multiplicity is None else opt_multiplicity
         qm_xyz = os.path.splitext(out_xyz)[0] + f"_{opt_method}.xyz"

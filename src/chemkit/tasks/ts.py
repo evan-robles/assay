@@ -20,9 +20,8 @@ import re
 import shutil
 import subprocess
 import tempfile
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
-import numpy as np
 from ase.io import write as ase_write
 
 from ..calculators import (
