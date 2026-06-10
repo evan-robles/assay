@@ -4,26 +4,37 @@ description: Geometry Optimization — When the user wants to relax a structure 
 
 # Geometry Optimization
 
-Relax a molecular structure to a local minimum on the GFN2-xTB or PM7 surface.
+Relax a molecular structure to a local minimum on the chosen PES. Supported methods:
+- `xtb` (GFN2-xTB) — fast semi-empirical, ASE BFGS
+- `mopac` (PM7) — fast semi-empirical, MOPAC's native EF optimizer
+- `dft` — ab initio DFT via PySCF, ASE BFGS with analytic gradients
+- `hf` — Hartree-Fock via PySCF, ASE BFGS with analytic gradients
 
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path (required)
-- A method: `xtb` or `mopac` (required — if missing, use **AskUserQuestion**)
-- Optional: `--solvent <name>`, `--charge N`, `--mult N`, `--fmax <eV/Å>` (default 0.05)
+- `--method {xtb,mopac,dft,hf}` (required — if missing, use **AskUserQuestion**)
+- All methods: `--solvent <name>`, `--charge N`, `--mult N`, `--fmax <eV/Å>` (default 0.05)
+- `dft` only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+- `hf` only: `--basis <name>`
+
+## DFT/HF cost
+DFT optimizations are 10–100× slower than xtb. Default to `--tier fast` (r²SCAN/def2-SVP) for first-pass relaxation, then re-optimize at `--tier standard` if needed. For very flexible molecules consider pre-optimizing at `--method xtb` first.
 
 ## Steps
 1. Parse args (same rules as single_point_energy).
-2. Run `chemkit opt --method <METHOD> [...] <XYZ>`.
+2. Run `chemkit opt --method <METHOD> [--tier <T>] [--functional <F>] [--basis <B>] [...] <XYZ>`.
 3. Read the JSON. Copy the produced `*_opt.xyz` next to the user's input file as `<stem>_<method>_opt.xyz`.
 4. Report:
    - Whether the optimization converged
-     - For `xtb`: include the number of BFGS steps (`n_steps`)
+     - For `xtb`/`dft`/`hf`: include the number of BFGS steps (`n_steps`)
      - For `mopac`: include `mopac_status` and `mopac_gradient_norm_kcal_per_A` (MOPAC uses its native EF optimizer, not BFGS — `n_steps` is not reported)
    - Final total energy (and `final_heat_of_formation_kcal_mol` when present, for `mopac`)
+   - For `dft`/`hf`: also surface functional/basis/tier
    - Path to the optimized `.xyz` file (paste its contents in a fenced block)
    - Path to the JSON
    - Any `warnings` entries verbatim
 
 ## Errors
 - If not converged → still deliver the last geometry, flag `converged: false` prominently.
+- pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).

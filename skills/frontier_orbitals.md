@@ -7,20 +7,22 @@ description: Frontier Molecular Orbitals + HOMO-LUMO Gap — When the user wants
 Compute HOMO, LUMO, the HOMO-LUMO gap, the K neighbouring frontier orbitals on each side
 (HOMO-K..HOMO and LUMO..LUMO+K), and the standard Koopmans-based global reactivity
 descriptors (vertical IP, vertical EA, electronegativity χ, hardness η, softness S,
-electrophilicity index ω). Uses GFN2-xTB (xtb-python) or PM7 (MOPAC). Geometry is taken
-as-is — no optimization.
+electrophilicity index ω). Backends: GFN2-xTB (xtb-python), PM7 (MOPAC), DFT (PySCF
+Kohn-Sham eigenvalues), HF (PySCF). Geometry is taken as-is — no optimization.
 
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path (required)
-- A method: `xtb` or `mopac` (required — if missing, use **AskUserQuestion**)
+- `--method {xtb,mopac,dft,hf}` (required — if missing, use **AskUserQuestion**)
 - Optional: `--solvent <name>` (water, methanol, dmso, mecn, dcm, ...),
   `--charge N`, `--mult N`
 - Optional: `--nfrontier K` (default 3 — orbitals on each side of the gap)
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+- HF-only: `--basis <name>`
 
 ## Steps
-1. Parse `$ARGUMENTS`. If `.xyz` missing → stop and ask. If method missing → AskUserQuestion (header "Method", options `xtb` / `mopac`).
-2. Run `chemkit frontier --method <METHOD> [--solvent <S>] [--charge <Q>] [--mult <M>] [--nfrontier <K>] <XYZ>`.
+1. Parse `$ARGUMENTS`. If `.xyz` missing → stop and ask. If method missing → AskUserQuestion (header "Method", options `xtb` / `mopac` / `dft` / `hf`).
+2. Run `chemkit frontier --method <METHOD> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge <Q>] [--mult <M>] [--nfrontier <K>] <XYZ>`.
 3. Read the printed JSON. Copy the JSON result to `<basename>_frontier_<method>.json` in the cwd.
 4. Report to the user:
    - **HOMO**, **LUMO**, **HOMO-LUMO gap** (eV)
@@ -34,5 +36,6 @@ as-is — no optimization.
 ## Errors
 - xtb / mopac not installed → install via `conda install -c conda-forge xtb mopac`.
 - xtb-python missing (orbital eigenvalues require it for the xtb path) → install via `conda install -c conda-forge xtb-python` or `pip install xtb`.
+- pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).
 - Malformed `.xyz` → report which line failed.
 - Open-shell systems: results are spin-restricted; flag `multiplicity > 1` in the report.

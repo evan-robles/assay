@@ -18,18 +18,23 @@ with the same method and don't want to repeat it).
 `$ARGUMENTS` should include:
 - An `.xyz` path (required) — does NOT need to be pre-optimized; the freq
   step optimizes it first by default
-- A method: `xtb` or `mopac` (required)
+- `--method {xtb,mopac,dft,hf}` (required)
 - Optional:
   - `--solvent`, `--charge`, `--mult`
   - `--temperature <K>` (default 298.15)
   - `--pressure <Pa>` (default 101325)
-  - `--geometry {linear,nonlinear,monatomic}` (default nonlinear) — only used
-    for the xtb (`IdealGasThermo`) path; MOPAC detects this from the moment of
-    inertia internally.
-  - `--symmetry <σ>` (default 1) — rotational symmetry number, again xtb path only
+  - `--geometry {linear,nonlinear,monatomic}` (default nonlinear) — used for
+    the xtb/dft/hf (`IdealGasThermo`) path; MOPAC detects this from the
+    moment of inertia internally.
+  - `--symmetry <σ>` (default 1) — rotational symmetry number, IdealGasThermo path only
   - `--no-preopt` — skip the automatic optimization step
   - `--preopt-fmax <eV/Å>` (default 0.01, tighter than `opt`'s 0.05) — residual
     forces propagate into near-zero imaginary modes, so the pre-opt aims tighter
+  - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+  - HF-only: `--basis <name>`
+
+## DFT/HF cost
+Hessians via PySCF are roughly (6N+1)× the SCF time. For a 20-atom molecule at `--tier standard` expect ~30 min on 8 cores. Default to `--tier fast` for screening and reserve `standard` for the final answer.
 
 ## Steps
 1. Parse args. If method missing, AskUserQuestion.

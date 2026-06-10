@@ -11,8 +11,12 @@ Sign convention: **positive logP → prefers octanol (lipophilic)**.
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path (required) of the **neutral** molecule
-- A method: `xtb` or `mopac` (required — if missing, **AskUserQuestion**)
+- `--method {xtb,mopac,dft,hf}` (required — if missing, **AskUserQuestion**)
 - Optional: `--mult N` (default 1 — for a closed-shell neutral)
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+- HF-only: `--basis <name>`
+
+DFT logP is slower but meaningfully better than semi-empirical for polar / H-bonding scaffolds. The ddCOSMO model in PySCF lacks cavitation / dispersion-repulsion terms (no SMD parameterization for octanol), so DFT logP here is still screening-grade — better than xtb/mopac but not a substitute for SMD-parameterized DFT in a dedicated package.
 
 ## Refuses
 - `--charge ≠ 0` — logP is defined for the neutral species. If the molecule is ionizable at physiological pH, what the user wants is **logD**, which is pH-dependent and out of scope here. Mention this and offer to compute ΔG_solv in water (via `/solvation`) on the relevant ionization state instead.

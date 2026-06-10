@@ -15,9 +15,11 @@ seeded by the lowest-eigenvalue mode of the Eckart-projected Hessian.
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path with a **TS geometry** (required — usually the output of /transition_state)
-- A method: `xtb` or `mopac` (required — if missing, AskUserQuestion)
+- `--method {xtb,mopac}` (required — if missing, AskUserQuestion)
 - Optional: `--solvent <name>`, `--charge N`, `--mult N`,
   `--max-points N` (default 40), `--step <au>` (xtb only, default 0.05)
+
+**Note**: `dft` and `hf` are NOT supported for IRC — the descent algorithm is xtb/mopac-specific and `chemkit irc --method dft` will error out with a clear message. To get a DFT-quality reaction path: run IRC with `--method xtb` or `--method mopac` first, then re-optimize each endpoint individually with `/geometry_optimize --method dft`.
 
 ## Steps
 1. Parse `$ARGUMENTS`. If `.xyz` missing → stop and ask. If method missing → AskUserQuestion (header "Method").

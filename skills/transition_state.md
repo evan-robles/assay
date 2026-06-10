@@ -9,20 +9,27 @@ energy-maximum frame of a /conformational_analysis dihedral scan as a good
 guess for rotation barriers; otherwise build the guess by hand.
 
 By default MOPAC's native EF saddle-search drives the optimization (most
-reliable for PM7); the xtb backend requires the Sella optimizer to be
-installed.
+reliable for PM7); the xtb, dft, and hf backends use the Sella optimizer,
+which must be installed separately (`pip install sella`).
 
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path with the TS guess (required)
-- A method: `xtb` or `mopac` (required — if missing, default to `mopac` since
-  the xtb path needs Sella to be installed separately)
+- `--method {xtb,mopac,dft,hf}` (required — if missing, default to `mopac` since
+  every other backend needs Sella to be installed separately)
 - Optional: `--solvent <name>`, `--charge N`, `--mult N`, `--steps N` (default 500),
   `--no-verify-freq` to skip the post-TS frequency verification
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+- HF-only: `--basis <name>`
+
+DFT/HF TS searches are 10–100× slower than MOPAC and benefit a lot from a
+high-quality guess. Default workflow: locate the saddle with `--method mopac`,
+then `/geometry_optimize` the converged geometry once at `--method dft --tier fast`
+to refine it.
 
 ## Steps
 1. Parse `$ARGUMENTS`. If `.xyz` missing → stop and ask. If method missing → AskUserQuestion (header "Method", default `mopac`).
-2. Run `chemkit ts --method <METHOD> [--solvent <S>] [--charge <Q>] [--mult <M>] <XYZ>`.
+2. Run `chemkit ts --method <METHOD> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge <Q>] [--mult <M>] <XYZ>`.
 3. Read the printed JSON. Copy to `<basename>_ts_<method>.json` in the cwd. The CLI also writes a `<basename>_ts_<method>.xyz` with the converged TS geometry; copy it next to the user's input.
 4. Report:
    - **Converged?** (true/false) and the optimizer status message
@@ -35,5 +42,6 @@ installed.
 5. Recommend running `/irc` next to confirm which reactant and product the TS connects.
 
 ## Errors
-- `xtb` selected but Sella not installed → suggest `pip install sella` or fall back to `--method mopac`.
+- `xtb`/`dft`/`hf` selected but Sella not installed → suggest `pip install sella` or fall back to `--method mopac`.
+- pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).
 - MOPAC TS did not converge → likely the input is too far from the saddle; recommend running a /conformational_analysis to find an energy maximum as a better guess.

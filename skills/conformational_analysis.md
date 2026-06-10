@@ -15,7 +15,7 @@ scan *connects* minima with a deterministic barrier profile.
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path (required)
-- `--method {xtb,mopac}` (required)
+- `--method {xtb,mopac,dft,hf}` (required)
 - Optional:
   - `--dihedral i,j,k,l` — **1-based** atom indices of the four atoms defining
     the torsion (matches the C1, C2, ... labels in plots and filenames). If
@@ -25,16 +25,21 @@ scan *connects* minima with a deterministic barrier profile.
   - `--fmax <eV/Å>` (default 0.05) — per-step force convergence
   - `--opt-steps N` (default 200) — max iterations per scan point
   - `--charge N`, `--mult N`, `--solvent <name>`
+  - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+  - HF-only: `--basis <name>`
 
 ## Constraint mechanics
-- **xtb**: ASE `FixInternals` holds the dihedral *exactly* at the target.
-  Measured ≈ target within ~0.1°.
+- **xtb / dft / hf**: ASE `FixInternals` holds the dihedral *exactly* at the
+  target. Measured ≈ target within ~0.1°.
 - **mopac**: PM7's EF optimizer doesn't expose a clean per-dihedral constraint,
   so each scan point pre-rotates the side atoms to the target dihedral and runs
   a normal optimization. EF may drift the dihedral by a few degrees while
   relaxing other internal modes; the reported `measured_deg` reflects what
   actually came out. This is the same trade-off `conformer_search`'s post-opt
   step makes — accept some drift in exchange for robust convergence.
+
+## DFT/HF cost
+A 24-point scan at `--tier standard` runs 24 constrained optimizations. For a 15-atom molecule expect ~30–60 min total on 8 cores. Use `--tier fast` (r²SCAN/def2-SVP) for screening, or pre-locate the dihedral with `--method xtb` then refine the saddle region with DFT.
 
 ## When to use
 - You want the **rotational barrier height** for a specific bond.

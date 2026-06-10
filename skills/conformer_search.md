@@ -17,8 +17,12 @@ optionally re-ranked at PM7 (MOPAC) to resolve minima that GFN2 smooths over.
   - `--postopt {none,mopac}` (default `mopac`) — re-optimize the CREST ensemble at PM7. Pass `none` to skip.
   - `--postopt-rmsd <Å>` (default 0.25) — RMSD threshold for deduping post-opt structures
   - `--postopt-ewin <kcal/mol>` (default 6.0) — energy window kept after post-opt
-- Method is always `xtb` here (CREST has no MOPAC backend; `--postopt mopac` is a
-  separate re-optimization step on top of CREST's xtb ensemble).
+- Method is always `xtb` here. CREST is built on GFN2-xTB; there is no DFT/HF/MOPAC
+  CREST backend. `--postopt mopac` is a separate re-optimization step on top of
+  CREST's xtb ensemble.
+- **For DFT-quality conformers**: run this skill with the xtb + mopac post-opt
+  pipeline, then re-optimize the top-K conformers individually with
+  `/geometry_optimize --method dft --tier standard`.
 
 ## When to use `--postopt mopac`
 GFN2-xTB underestimates rotational well depths for short alkanes and other

@@ -9,11 +9,15 @@ Estimate a one- or n-electron redox potential against SHE, Ag/AgCl, or Fc⁺/Fc.
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path (required — same geometry used for both oxidation states)
-- A method: `xtb` or `mopac` (required)
+- `--method {xtb,mopac,dft,hf}` (required)
 - `--ox-charge N` and `--red-charge N` (required, e.g. 0 and −1 for a 1-electron reduction)
 - Optional: `--ox-mult` (default 1), `--red-mult` (default 2),
   `--solvent` (strongly recommended), `--ref {SHE,Ag/AgCl,Fc+/Fc}` (default SHE),
   `--n-electrons N` (default 1)
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+- HF-only: `--basis <name>`
+
+DFT redox potentials are typically ±0.1–0.2 V vs experiment when computed with a range-separated hybrid + implicit solvent — significantly better than semi-empirical (±0.3–0.5 V). Anions auto-promote to diffuse basis (def2-tzvp → def2-tzvpd).
 
 ## Steps
 1. Parse args. Stop and ask if any of `xyz`, method, `--ox-charge`, `--red-charge` missing.

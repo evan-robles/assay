@@ -16,11 +16,13 @@ Atom-level reactivity from three finite-difference partial-charge calculations o
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path (required — already-optimized geometry recommended; use `/geometry_optimize` first if needed)
-- A method: `xtb` or `mopac` (required — if missing, **AskUserQuestion**)
+- `--method {xtb,mopac,dft,hf}` (required — if missing, **AskUserQuestion**)
 - Optional: `--charge`, `--mult` (of the neutral reference; defaults 0 / 1)
 - Optional: `--cation-mult`, `--anion-mult` (default 2 / 2 — correct for a closed-shell parent; **override** for open-shell parents)
 - Optional: `--solvent <name>`
 - Optional: `--no-plot` (skip the PNG bar chart)
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+- HF-only: `--basis <name>`
 
 ## Steps
 1. Parse `$ARGUMENTS`. If `.xyz` missing → stop and ask. If method missing → AskUserQuestion.
@@ -46,4 +48,5 @@ Both are Koopmans-style finite-difference quantities; they're complementary.
 
 ## Errors
 - xtb-python / MOPAC missing → install via `conda install -c conda-forge xtb-python mopac`.
+- pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).
 - Σ f± drifts > 0.05 → SCF in one of the trio likely diverged or converged to a bad state; try a different solvent setting or fall back to gas phase.

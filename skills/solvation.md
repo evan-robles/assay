@@ -9,9 +9,13 @@ Estimate ΔG_solv = E(solvated) − E(gas) using implicit solvation on the suppl
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path (required)
-- A method: `xtb` or `mopac` (required — if missing, **AskUserQuestion**)
+- `--method {xtb,mopac,dft,hf}` (required — if missing, **AskUserQuestion**)
 - A `--solvent <name>` (required — water, methanol, ethanol, acetone, mecn, dmso, thf, dcm, chloroform, toluene, benzene, hexane, ether, octanol)
 - Optional: `--charge N`, `--mult N`
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+- HF-only: `--basis <name>`
+
+DFT with `--tier standard` and an implicit solvent gives meaningfully better ΔG_solv than semi-empirical (~±1 kcal/mol vs ±2–3 for xtb/mopac) at much higher cost. The DFT path uses ddCOSMO; for true "research-grade" SMD parameterization you'd need PySCF's `pyscf.solvent.smd` directly.
 
 ## Steps
 1. Parse `$ARGUMENTS`. If `.xyz` missing → stop and ask. If method missing → AskUserQuestion. If solvent missing → stop and ask.
@@ -29,4 +33,5 @@ For tighter numbers, run `/geometry_optimize` separately in gas phase and in sol
 
 ## Errors
 - xtb-python / MOPAC missing → install via `conda install -c conda-forge xtb-python mopac`.
+- pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).
 - Unknown solvent → check the list above; `--solvent` is matched case-insensitively.

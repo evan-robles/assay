@@ -10,9 +10,13 @@ Compute ΔE_bind = E(complex) − Σ E(monomers).
 `$ARGUMENTS` should include:
 - The complex `.xyz` path (required)
 - One or more `--monomer <path.xyz>` arguments (required, ≥2)
-- A method: `xtb` or `mopac` (required)
+- `--method {xtb,mopac,dft,hf}` (required)
 - Optional: `--solvent`, `--charge`, `--mult` (apply to the complex),
   `--monomer-charge N` / `--monomer-mult N` (repeat per monomer)
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
+- HF-only: `--basis <name>`
+
+For non-covalent complexes (H-bonds, π-stacking, host-guest) dispersion matters: `--method dft --tier standard` (ωB97X-V) and `--tier accurate` (ωB97M-V) both include VV10 nonlocal correlation, which captures dispersion. Bare HF does not, so HF binding energies for non-covalent systems are systematically too repulsive.
 
 ## Steps
 1. Parse args. If method missing, AskUserQuestion. Monomer paths required — stop and ask if missing.
