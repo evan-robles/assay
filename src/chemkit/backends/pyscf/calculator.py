@@ -5,6 +5,14 @@ electrostatics, ...) pick up DFT and HF without per-task plumbing. The
 calculator caches its converged SCF object on the most recent geometry, so
 chained property requests (energy then forces; energy then dipole) avoid
 re-running the SCF.
+
+Warm-start: the converged density matrix from the most recent geometry is
+cached and passed as `dm0` to the next `kernel()` call. ASE driver loops
+(BFGS opt, Vibrations finite-difference Hessian) feed back small-displacement
+geometries, so the prior DM is an excellent initial guess and typically cuts
+the iteration count by 2-3×. If the warm-start fails to converge (rare; can
+happen at large displacements that drag the molecule through a near-
+degeneracy), we automatically fall back to a cold SCF.
 """
 from __future__ import annotations
 from typing import Optional
@@ -73,6 +81,16 @@ class PySCFCalculator(Calculator):
         self._mf = None
         self._cached_positions = None
 
+        # Warm-start density matrix from the previous converged SCF.
+        # Keyed on the full (symbols, charge, mult, basis, xc, method, solvent)
+        # tuple: any change invalidates the cached DM. The symbols guard catches
+        # different fragments (shape mismatch); the rest catch the case where
+        # something mutates the calculator's parameters between calls (current
+        # chemkit code doesn't, but the guard is cheap insurance against a
+        # silently-stale DM leaking through if that invariant ever breaks).
+        self._cached_dm = None
+        self._cached_dm_key: Optional[tuple] = None
+
     # ---- chemkit-side accessors (used by sp.py / electrostatics / frontier) --
 
     @property
@@ -126,11 +144,42 @@ class PySCFCalculator(Calculator):
                 auxbasis=self._auxbasis,
                 solvent=self._solvent,
             )
-            energy_hartree = float(self._mf.kernel())
+
+            # Warm-start: pass the previous converged density as initial guess
+            # iff every cache-key field matches. Symbols guard against shape
+            # mismatch; the rest guard against a stale DM if any calculator
+            # parameter mutated since the cache was written.
+            current_key = (
+                tuple(self.atoms.get_chemical_symbols()),
+                self._charge,
+                self._multiplicity,
+                self._basis,
+                self._xc,
+                self._method,
+                self._solvent,
+            )
+            dm0 = self._cached_dm if self._cached_dm_key == current_key else None
+
+            energy_hartree = _run_scf_with_warm_start(self._mf, dm0)
+
             self._cached_energy_eV = energy_hartree * HARTREE_TO_EV
             self._cached_positions = positions.copy()
             self._cached_forces = None
             self._cached_dipole = None
+
+            # Cache the converged density for the next geometry's warm start.
+            # Only when convergence succeeded — a non-converged DM would
+            # poison the next step.
+            if getattr(self._mf, "converged", False):
+                try:
+                    self._cached_dm = self._mf.make_rdm1()
+                    self._cached_dm_key = current_key
+                except Exception:
+                    self._cached_dm = None
+                    self._cached_dm_key = None
+            else:
+                self._cached_dm = None
+                self._cached_dm_key = None
 
         self.results["energy"] = self._cached_energy_eV
 
@@ -149,3 +198,29 @@ class PySCFCalculator(Calculator):
                 except Exception:
                     self._cached_dipole = np.zeros(3)
             self.results["dipole"] = self._cached_dipole
+
+
+def _run_scf_with_warm_start(mf, dm0):
+    """Run mf.kernel() with the previous converged DM as initial guess; if it
+    fails to converge (or raises), fall back to a cold SCF.
+
+    Two failure modes are handled:
+      1. dm0 has wrong shape (e.g. spin-restricted vs unrestricted mismatch
+         after a cached-from-different-method run leaked through). kernel()
+         raises ValueError on shape mismatch — caught, retried cold.
+      2. dm0 leads to non-convergence (rare; usually only at large
+         displacements through near-degeneracies). `mf.converged` is False;
+         we redo from atomic guess. Net cost: the wasted partial SCF.
+    """
+    if dm0 is None:
+        return float(mf.kernel())
+    try:
+        energy = float(mf.kernel(dm0=dm0))
+    except Exception:
+        # Shape mismatch or some other dm0-induced failure — drop it and
+        # let PySCF build the default atomic-density guess.
+        return float(mf.kernel())
+    if getattr(mf, "converged", False):
+        return energy
+    # Warm start converged to non-convergence; retry cold.
+    return float(mf.kernel())

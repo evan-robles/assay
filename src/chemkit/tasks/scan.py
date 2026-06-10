@@ -19,6 +19,7 @@ Constraint mechanics:
                drift per step is expected and noted in the table).
 """
 from __future__ import annotations
+import functools
 import os
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
@@ -535,6 +536,7 @@ def _opt_with_ase_dihedral_constraint(
     return atoms, energy_eV, bool(converged)
 
 
+@functools.lru_cache(maxsize=1)
 def _fixinternals_takes_degrees() -> bool:
     """Newer ASE FixInternals uses `dihedrals_deg`; older uses `dihedrals`."""
     try:

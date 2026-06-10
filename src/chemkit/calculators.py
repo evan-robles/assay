@@ -288,7 +288,11 @@ def _build_mopac(charge, multiplicity, solvent, workdir):
             raise ValueError(f"mopac: unknown solvent {solvent!r}")
         task_keywords.append(f"EPS={eps}")
     # Always request ENPART + AUX so we can recover the absolute electronic energy.
-    task_keywords += ["GRADIENTS", "AUX", "ENPART", "LARGE=-1", "THREADS=1", "GEO-OK"]
+    # THREADS scales with available cores; honor CHEMKIT_MOPAC_THREADS override.
+    n_threads = int(os.environ.get("CHEMKIT_MOPAC_THREADS") or (os.cpu_count() or 1))
+    task_keywords += [
+        "GRADIENTS", "AUX", "ENPART", "LARGE=-1", f"THREADS={n_threads}", "GEO-OK",
+    ]
 
     calc = MOPAC(
         label=os.path.join(workdir, "mopac"),

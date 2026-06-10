@@ -137,37 +137,58 @@ def run(
         # produces non-convergence on flexible organics — clip preopt_fmax so
         # MOPAC gets a reachable target instead of failing the whole freq job.
         effective_fmax = preopt_fmax if method != "mopac" else max(preopt_fmax, 0.005)
-        opt_work = tempfile.mkdtemp(prefix="chemkit_optfreq_")
-        opt_xyz = os.path.join(opt_work, "preopt.xyz")
-        opt_result = opt_task.run(
-            input_path=input_path,
-            method=method,
-            charge=charge,
-            multiplicity=multiplicity,
-            solvent=solvent,
-            fmax=effective_fmax,
-            steps=preopt_steps,
-            out_xyz=opt_xyz,
-            cli="(internal preopt for freq)",
-            tier=tier,
-            functional=functional,
-            basis=basis,
+
+        # Cheap pre-check: if the input geometry is *already* below the target
+        # fmax, skip the full opt. One force eval costs ~one opt step; a full
+        # opt is typically 10-50 steps, so this short-circuit pays for itself
+        # whenever the user feeds in something that's already converged (the
+        # common case for `chemkit opt` → `chemkit freq` pipelines).
+        probe_fmax = _probe_max_force(
+            atoms, method=method, charge=charge, multiplicity=multiplicity,
+            solvent=solvent, tier=tier, functional=functional, basis=basis,
         )
-        # Reload atoms from the optimized xyz so the freq step works on the
-        # exact geometry written to disk.
-        atoms = read_geometry(opt_xyz)
-        symbols = atoms.get_chemical_symbols()
-        freq_input_path = opt_xyz
-        preopt_info = {
-            "performed": True,
-            "fmax_target_eV_per_A": effective_fmax,
-            "converged": bool(opt_result.get("converged")),
-            "n_steps": opt_result.get("n_steps"),
-            "optimized_xyz": opt_xyz,
-            "preopt_energy_eV": opt_result.get("total_energy_eV"),
-            "preopt_heat_of_formation_kcal_mol":
-                opt_result.get("final_heat_of_formation_kcal_mol"),
-        }
+        if probe_fmax is not None and probe_fmax <= effective_fmax:
+            preopt_info = {
+                "performed": False,
+                "skipped_reason": (
+                    f"input already converged: |f|_max = {probe_fmax:.5f} eV/Å "
+                    f"<= preopt_fmax = {effective_fmax:.5f}"
+                ),
+                "probed_fmax_eV_per_A": probe_fmax,
+            }
+        else:
+            opt_work = tempfile.mkdtemp(prefix="chemkit_optfreq_")
+            opt_xyz = os.path.join(opt_work, "preopt.xyz")
+            opt_result = opt_task.run(
+                input_path=input_path,
+                method=method,
+                charge=charge,
+                multiplicity=multiplicity,
+                solvent=solvent,
+                fmax=effective_fmax,
+                steps=preopt_steps,
+                out_xyz=opt_xyz,
+                cli="(internal preopt for freq)",
+                tier=tier,
+                functional=functional,
+                basis=basis,
+            )
+            # Reload atoms from the optimized xyz so the freq step works on the
+            # exact geometry written to disk.
+            atoms = read_geometry(opt_xyz)
+            symbols = atoms.get_chemical_symbols()
+            freq_input_path = opt_xyz
+            preopt_info = {
+                "performed": True,
+                "fmax_target_eV_per_A": effective_fmax,
+                "converged": bool(opt_result.get("converged")),
+                "n_steps": opt_result.get("n_steps"),
+                "optimized_xyz": opt_xyz,
+                "preopt_energy_eV": opt_result.get("total_energy_eV"),
+                "preopt_heat_of_formation_kcal_mol":
+                    opt_result.get("final_heat_of_formation_kcal_mol"),
+                "probed_fmax_eV_per_A": probe_fmax,
+            }
 
     if method == "mopac":
         result = _run_mopac(
@@ -208,11 +229,17 @@ def run(
         result["auto_confsearch"] = confsearch_info
     if preopt_info:
         result["preopt"] = preopt_info
-        # Surface a warning if the pre-opt didn't converge AND the Hessian
-        # came back with imaginary modes. If the Hessian is clean (no imag
-        # modes), the residual gradient was small enough that the resulting
-        # thermochemistry is trustworthy regardless of the strict fmax target.
-        if not preopt_info["converged"] and (result.get("n_imaginary_modes") or 0) > 0:
+        # Surface a warning only if pre-opt actually ran AND didn't converge
+        # AND the Hessian came back with imaginary modes. The skip-because-
+        # already-converged branch leaves no `converged` key and shouldn't
+        # trigger this. If the Hessian is clean (no imag modes), the residual
+        # gradient was small enough that the resulting thermochemistry is
+        # trustworthy regardless of the strict fmax target.
+        if (
+            preopt_info.get("performed")
+            and not preopt_info.get("converged")
+            and (result.get("n_imaginary_modes") or 0) > 0
+        ):
             warns = result.setdefault("warnings", [])
             warns.append(
                 "Pre-optimization did NOT converge to fmax="
@@ -222,6 +249,29 @@ def run(
     else:
         result["preopt"] = {"performed": False}
     return result
+
+
+def _probe_max_force(
+    atoms, *, method, charge, multiplicity, solvent,
+    tier=None, functional=None, basis=None,
+) -> Optional[float]:
+    """One force evaluation on `atoms`; return max |f| in eV/Å, or None if it
+    failed (in which case the caller falls through to the full opt).
+
+    Cheap relative to a full opt (1 step vs 10-50), so this pays for itself
+    the moment the input geometry is already at the target fmax.
+    """
+    try:
+        probe = atoms.copy()
+        calc = build_calculator(
+            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+            tier=tier, functional=functional, basis=basis,
+        )
+        apply_calc_to_atoms(probe, calc)
+        forces = probe.get_forces()
+        return float(np.max(np.linalg.norm(forces, axis=1)))
+    except Exception:
+        return None
 
 
 def _run_ase(
@@ -579,9 +629,6 @@ def _project_trans_rot_and_diagonalize(vib, atoms, geometry):
             return -1j * s * np.sqrt(-ev)
 
     energies_eV_vib = np.array([_ev_from_eig(ev) for ev in vib_eigvals], dtype=complex)
-    # frequency cm^-1 = energy_eV / (h*c), with h*c in eV*cm = 1.239841984e-4
-    HC_EV_CM = units._hplanck * units._c * units.J * units.m / 1e-2  # eV * cm
-    # simpler: 1 cm^-1 = 1.239841984e-4 eV
     EV_TO_CM = 1.0 / 1.239841984e-4
     frequencies_cm_vib = np.array(
         [e.real * EV_TO_CM if e.imag == 0 else 1j * abs(e.imag) * EV_TO_CM

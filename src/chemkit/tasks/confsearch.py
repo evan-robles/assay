@@ -53,8 +53,12 @@ def run(
     src_xyz = os.path.join(workdir, "input.xyz")
     ase_write(src_xyz, read_geometry(input_path))
 
+    # Honor CHEMKIT_CREST_THREADS if set; otherwise use all cores. Falls back
+    # to 4 if cpu_count() can't tell (unusual; matches the prior default).
+    n_threads = int(os.environ.get("CHEMKIT_CREST_THREADS") or (os.cpu_count() or 4))
+
     def _run_crest(xyz_path):
-        cmd = [crest_path, xyz_path, "--gfn2", "-T", "4"]
+        cmd = [crest_path, xyz_path, "--gfn2", "-T", str(n_threads)]
         if solvent:
             cmd += ["--alpb", solvent]
         if charge:
@@ -543,7 +547,6 @@ def _xtb_constrained_ring_relax(
 
 def _ring_dihedrals(atoms, ring_atoms: List[int]) -> List[float]:
     """Measure the ring dihedrals (one per ring atom)."""
-    from ase.geometry import get_dihedrals
     N = len(ring_atoms)
     out = []
     for i in range(N):
