@@ -54,7 +54,7 @@ All tasks write a single JSON file with a common header:
 ## How the agentic skills work
 
 `chemkit` itself is just a CLI — the `skills/*.md` files are what turn it into
-something Claude Code can drive directly. Each one is a Markdown skill file
+something an agent can drive directly. Each one is a Markdown skill file
 with YAML frontmatter, symlinked into `~/.claude/commands/` so it shows up as
 a slash command (`/single_point_energy`, `/geometry_optimize`,
 `/vibrational_analysis`, `/binding_energy`, `/redox_potential`,
@@ -62,7 +62,7 @@ a slash command (`/single_point_energy`, `/geometry_optimize`,
 
 Each skill follows the same pipeline:
 
-1. **Trigger** — the frontmatter `description:` is what Claude matches against
+1. **Trigger** — the frontmatter `description:` is what the agent matches against
    the user's request (e.g. "binding energy", "what's the energy of this
    structure"); it also states what the skill should *not* be used for, to
    disambiguate from neighboring skills (e.g. `single_point_energy` vs.
@@ -71,13 +71,13 @@ Each skill follows the same pipeline:
    contain (an `.xyz` path is always required) and which are optional
    (`--method`, `--solvent`, `--charge`, `--mult`, task-specific flags like
    `--postopt` for conformer search). If something required is missing, the
-   skill tells Claude to stop and either ask directly or use
+   skill tells the agent to stop and either ask directly or use
    **AskUserQuestion** (e.g. method selection for `single_point_energy`).
 3. **Invoke the CLI** — the skill gives the literal `chemkit <task> ...`
    invocation to run as a subprocess.
 4. **Read the JSON** — every `chemkit` task prints one JSON result with the
    common header described above plus task-specific fields. The skill tells
-   Claude to copy this to `<basename>_<task>_<method>.json` next to the
+   the agent to copy this to `<basename>_<task>_<method>.json` next to the
    user's input (and, for tasks that produce structures, to copy the
    accompanying `.xyz` files too) so results persist outside the tmp work
    directory.
