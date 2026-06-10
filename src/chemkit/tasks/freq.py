@@ -25,7 +25,10 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from ..calculators import build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS
+from ..calculators import (
+    build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
+    method_label, program_label,
+)
 from ..io import read_geometry
 from ..schema import base_result, element_warnings
 from ._mopac_parsers import parse_mopac_extras, parse_mopac_force
@@ -53,6 +56,9 @@ def run(
     preopt_steps: int = 500,
     auto_confsearch: bool = False,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Opt-freq pipeline. The frequency calculation is performed on the
     optimized geometry by default; pass preopt=False to skip the optimization
@@ -143,6 +149,9 @@ def run(
             steps=preopt_steps,
             out_xyz=opt_xyz,
             cli="(internal preopt for freq)",
+            tier=tier,
+            functional=functional,
+            basis=basis,
         )
         # Reload atoms from the optimized xyz so the freq step works on the
         # exact geometry written to disk.
@@ -186,6 +195,9 @@ def run(
             geometry=geometry,
             symmetrynumber=symmetrynumber,
             cli=cli,
+            tier=tier,
+            functional=functional,
+            basis=basis,
         )
 
     # Always report the original user-supplied input as `input_file`, even if
@@ -215,12 +227,14 @@ def run(
 def _run_ase(
     *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
     temperature_K, pressure_Pa, geometry, symmetrynumber, cli,
+    tier=None, functional=None, basis=None,
 ) -> Dict[str, Any]:
     from ase.thermochemistry import IdealGasThermo
     from ase.vibrations import Vibrations
 
     calc = build_calculator(
-        method, charge=charge, multiplicity=multiplicity, solvent=solvent
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis,
     )
     apply_calc_to_atoms(atoms, calc)
 
@@ -279,8 +293,8 @@ def _run_ase(
 
     result = base_result(
         task="vibrational_thermochemistry",
-        method="GFN2-xTB",
-        program="xtb",
+        method=method_label(method, calc),
+        program=program_label(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms),
         atoms=symbols,

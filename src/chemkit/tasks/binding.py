@@ -4,6 +4,7 @@ import os
 from typing import Any, Dict, List, Optional
 
 from . import sp as sp_task
+from ..calculators import program_label
 from ..io import read_geometry
 from ..schema import base_result, EV_TO_HARTREE, EV_TO_KCAL
 
@@ -19,6 +20,9 @@ def run(
     monomer_charges: Optional[List[int]] = None,
     monomer_multiplicities: Optional[List[int]] = None,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     if len(monomer_paths) < 2:
         raise ValueError("Need at least two monomer geometries.")
@@ -30,12 +34,14 @@ def run(
     complex_sp = sp_task.run(
         complex_path, method=method, charge=charge,
         multiplicity=multiplicity, solvent=solvent, cli=cli,
+        tier=tier, functional=functional, basis=basis,
     )
     monomer_results = []
     monomer_sum_eV = 0.0
     for path, q, m in zip(monomer_paths, monomer_charges, monomer_multiplicities):
         r = sp_task.run(path, method=method, charge=q, multiplicity=m,
-                        solvent=solvent, cli=cli)
+                        solvent=solvent, cli=cli,
+                        tier=tier, functional=functional, basis=basis)
         monomer_results.append(r)
         monomer_sum_eV += r["total_energy_eV"]
 
@@ -46,7 +52,7 @@ def run(
     result = base_result(
         task="binding_energy",
         method=complex_sp["method"],
-        program=method,
+        program=program_label(method),
         input_path=os.path.abspath(complex_path),
         n_atoms=len(atoms_complex),
         atoms=symbols,

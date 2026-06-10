@@ -22,7 +22,10 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from ..calculators import build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS
+from ..calculators import (
+    build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
+    method_label, program_label, collect_calc_extras,
+)
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
 from ._mopac_parsers import parse_mopac_extras, _parse_aux_array, _find_with_ext
@@ -39,16 +42,26 @@ def run(
     multiplicity: int = 1,
     solvent: Optional[str] = None,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Electrostatics single-point on the supplied geometry."""
     method = method.lower()
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
 
+    calc_for_label = None
+    if method in ("dft", "hf"):
+        calc_for_label = build_calculator(
+            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+            tier=tier, functional=functional, basis=basis,
+        )
+
     result = base_result(
         task="electrostatics",
-        method=("GFN2-xTB" if method == "xtb" else "PM7"),
-        program=method,
+        method=method_label(method, calc_for_label),
+        program=program_label(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms),
         atoms=symbols,
@@ -63,6 +76,8 @@ def run(
     elif method == "mopac":
         body = _run_mopac(atoms, symbols, charge=charge, multiplicity=multiplicity,
                           solvent=solvent)
+    elif method in ("dft", "hf"):
+        body = _run_generic(atoms, calc=calc_for_label, method=method)
     else:
         raise ValueError(f"Unknown method {method!r}")
 
@@ -72,6 +87,37 @@ def run(
         existing = result.get("warnings") or []
         result["warnings"] = existing + warns
     return result
+
+
+# ---------------------------------------------------------------------------
+# Generic PySCF (dft/hf) backend
+# ---------------------------------------------------------------------------
+
+def _run_generic(atoms, *, calc, method) -> Dict[str, Any]:
+    """DFT/HF electrostatics via the PySCF backend.
+
+    Expects the PySCF calculator to stash a `dipole_debye` vector and
+    `partial_charges` array on `_chemkit_extras`.
+    """
+    apply_calc_to_atoms(atoms, calc)
+    energy_eV = float(atoms.get_potential_energy())
+    extras = collect_calc_extras(method, atoms, calc) or {}
+    out: Dict[str, Any] = {}
+    out.update(energy_block_from_eV(energy_eV))
+    dip_vec = extras.get("dipole_vector_debye")
+    if dip_vec is not None:
+        out["dipole_vector_debye"] = list(dip_vec)
+        out["dipole_debye"] = float(np.linalg.norm(dip_vec))
+    elif "dipole_debye" in extras:
+        out["dipole_debye"] = extras["dipole_debye"]
+    charges = extras.get("partial_charges") or extras.get("mulliken_charges")
+    if charges is not None:
+        out["partial_charges"] = list(charges)
+        out["partial_charges_scheme"] = extras.get(
+            "partial_charges_scheme", f"Mulliken ({method.upper()})",
+        )
+        out["sum_of_charges"] = float(sum(charges))
+    return out
 
 
 # ---------------------------------------------------------------------------

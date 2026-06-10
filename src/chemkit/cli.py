@@ -15,13 +15,23 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
     solvent is fixed by the task itself (e.g. logp pins water + octanol)."""
     if with_input:
         p.add_argument("input", help="Path to input geometry (.xyz, .sdf, .pdb).")
-    p.add_argument("--method", choices=["xtb", "mopac"], required=True)
+    p.add_argument("--method", choices=["xtb", "mopac", "dft", "hf"], required=True)
     p.add_argument("--charge", type=int, default=0)
     p.add_argument("--mult", "--multiplicity", dest="multiplicity",
                    type=int, default=1, help="Spin multiplicity 2S+1 (default 1).")
     if with_solvent:
         p.add_argument("--solvent", default=None,
                        help="Implicit solvent (e.g. water, methanol, dmso). Gas phase if omitted.")
+    # PySCF-only knobs; silently ignored for xtb/mopac.
+    p.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None,
+                   help="DFT tier preset (fast=r2SCAN/def2-SVP, standard=wB97X-D3BJ/def2-TZVP, "
+                        "accurate=wB97M-V/def2-QZVPP). Ignored unless --method dft.")
+    p.add_argument("--functional", default=None,
+                   help="DFT functional override, libxc name (e.g. b3lyp, pbe0, wb97x_d3bj). "
+                        "Ignored unless --method dft.")
+    p.add_argument("--basis", default=None,
+                   help="Basis-set override for DFT/HF (e.g. def2-tzvp, cc-pvtz). "
+                        "Ignored unless --method dft or --method hf.")
     p.add_argument("--out", default=None,
                    help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
 
@@ -229,16 +239,21 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
     cli = cli_invocation()
 
+    # PySCF-only knobs threaded into every task.run(...) call below.
+    # Tasks that don't use them ignore them; tasks that use dft/hf consume them.
+    pyscf_kwargs = dict(tier=args.tier, functional=args.functional, basis=args.basis)
+
     if args.task == "sp":
         from .tasks import sp
         result = sp.run(args.input, method=args.method, charge=args.charge,
-                        multiplicity=args.multiplicity, solvent=args.solvent, cli=cli)
+                        multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+                        **pyscf_kwargs)
     elif args.task == "opt":
         from .tasks import opt
         result = opt.run(args.input, method=args.method, charge=args.charge,
                          multiplicity=args.multiplicity, solvent=args.solvent,
                          fmax=args.fmax, steps=args.steps, out_xyz=args.xyz_out,
-                         cli=cli)
+                         cli=cli, **pyscf_kwargs)
     elif args.task == "freq":
         from .tasks import freq
         result = freq.run(args.input, method=args.method, charge=args.charge,
@@ -247,14 +262,15 @@ def main(argv: Optional[List[str]] = None) -> int:
                           geometry=args.geometry, symmetrynumber=args.symmetry,
                           preopt=args.preopt, preopt_fmax=args.preopt_fmax,
                           auto_confsearch=args.auto_confsearch,
-                          cli=cli)
+                          cli=cli, **pyscf_kwargs)
     elif args.task == "binding":
         from .tasks import binding
         result = binding.run(args.input, args.monomer, method=args.method,
                              charge=args.charge, multiplicity=args.multiplicity,
                              solvent=args.solvent,
                              monomer_charges=args.monomer_charge,
-                             monomer_multiplicities=args.monomer_mult, cli=cli)
+                             monomer_multiplicities=args.monomer_mult, cli=cli,
+                             **pyscf_kwargs)
     elif args.task == "redox":
         from .tasks import redox
         result = redox.run(args.input, method=args.method,
@@ -263,7 +279,8 @@ def main(argv: Optional[List[str]] = None) -> int:
                            oxidized_multiplicity=args.ox_mult,
                            reduced_multiplicity=args.red_mult,
                            solvent=args.solvent, reference=args.ref,
-                           n_electrons=args.n_electrons, cli=cli)
+                           n_electrons=args.n_electrons, cli=cli,
+                           **pyscf_kwargs)
     elif args.task == "confsearch":
         from .tasks import confsearch
         result = confsearch.run(
@@ -273,20 +290,21 @@ def main(argv: Optional[List[str]] = None) -> int:
             postopt_rmsd=args.postopt_rmsd,
             postopt_ewin=args.postopt_ewin,
             charge=args.charge, multiplicity=args.multiplicity,
-            cli=cli,
+            cli=cli, **pyscf_kwargs,
         )
     elif args.task == "frontier":
         from .tasks import frontier
         result = frontier.run(
             args.input, method=args.method, charge=args.charge,
             multiplicity=args.multiplicity, solvent=args.solvent,
-            nfrontier=args.nfrontier, cli=cli,
+            nfrontier=args.nfrontier, cli=cli, **pyscf_kwargs,
         )
     elif args.task == "electrostatics":
         from .tasks import electrostatics
         result = electrostatics.run(
             args.input, method=args.method, charge=args.charge,
             multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+            **pyscf_kwargs,
         )
     elif args.task == "solvation":
         if not args.solvent:
@@ -295,12 +313,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         result = solvation.run(
             args.input, method=args.method, solvent=args.solvent,
             charge=args.charge, multiplicity=args.multiplicity, cli=cli,
+            **pyscf_kwargs,
         )
     elif args.task == "logp":
         from .tasks import solvation
         result = solvation.run_logp(
             args.input, method=args.method,
             charge=args.charge, multiplicity=args.multiplicity, cli=cli,
+            **pyscf_kwargs,
         )
     elif args.task == "fukui":
         from .tasks import fukui
@@ -310,7 +330,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.input, method=args.method, charge=args.charge,
             multiplicity=args.multiplicity, solvent=args.solvent,
             cation_mult=args.cation_mult, anion_mult=args.anion_mult,
-            plot=args.plot, out_stem=out_stem, cli=cli,
+            plot=args.plot, out_stem=out_stem, cli=cli, **pyscf_kwargs,
         )
     elif args.task == "ts":
         from .tasks import ts
@@ -320,7 +340,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.input, method=args.method, charge=args.charge,
             multiplicity=args.multiplicity, solvent=args.solvent,
             steps=args.steps, verify_freq=args.verify_freq,
-            out_stem=out_stem, cli=cli,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
         )
     elif args.task == "irc":
         from .tasks import irc
@@ -330,7 +350,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             args.input, method=args.method, charge=args.charge,
             multiplicity=args.multiplicity, solvent=args.solvent,
             max_points=args.max_points, step=args.step,
-            out_stem=out_stem, cli=cli,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
         )
     elif args.task == "scan":
         from .tasks import scan
@@ -355,7 +375,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             multiplicity=args.multiplicity, solvent=args.solvent,
             dihedral=dihedral_tuple, n_steps=args.steps,
             fmax=args.fmax, opt_steps=args.opt_steps,
-            out_stem=out_stem, cli=cli,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
         )
     else:
         parser.error(f"Unknown task {args.task!r}")

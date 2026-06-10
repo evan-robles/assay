@@ -39,22 +39,26 @@ def run(
     plot: bool = True,
     out_stem: Optional[str] = None,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Three partial-charge SPs (N, N+1, N-1) → condensed Fukui + dual descriptor."""
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
 
+    es_kwargs = dict(tier=tier, functional=functional, basis=basis)
     neutral = electrostatics.run(
         input_path, method=method, charge=charge,
-        multiplicity=multiplicity, solvent=solvent, cli=cli,
+        multiplicity=multiplicity, solvent=solvent, cli=cli, **es_kwargs,
     )
     cation = electrostatics.run(
         input_path, method=method, charge=charge + 1,
-        multiplicity=cation_mult, solvent=solvent, cli=cli,
+        multiplicity=cation_mult, solvent=solvent, cli=cli, **es_kwargs,
     )
     anion = electrostatics.run(
         input_path, method=method, charge=charge - 1,
-        multiplicity=anion_mult, solvent=solvent, cli=cli,
+        multiplicity=anion_mult, solvent=solvent, cli=cli, **es_kwargs,
     )
 
     q_N  = neutral.get("partial_charges")

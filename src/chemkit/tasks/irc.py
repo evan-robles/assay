@@ -46,8 +46,19 @@ def run(
     step: float = 0.05,
     out_stem: Optional[str] = None,
     cli: str = "",
+    # Accepted for CLI uniformity; IRC walks are xtb/mopac only today.
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     method = method.lower()
+    if method in ("dft", "hf"):
+        raise NotImplementedError(
+            f"chemkit irc does not yet support --method {method}. Use xtb or "
+            "mopac for the IRC walk; you can re-optimize the endpoints with "
+            "--method dft/hf afterwards."
+        )
+    del tier, functional, basis  # silenced; no PySCF route yet
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
 

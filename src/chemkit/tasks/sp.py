@@ -3,10 +3,12 @@ from __future__ import annotations
 import os
 from typing import Any, Dict, Optional
 
-from ..calculators import build_calculator, apply_calc_to_atoms
+from ..calculators import (
+    build_calculator, apply_calc_to_atoms,
+    method_label, program_label, collect_calc_extras,
+)
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
-from ._mopac_parsers import parse_mopac_extras
 
 
 def run(
@@ -17,11 +19,15 @@ def run(
     multiplicity: int = 1,
     solvent: Optional[str] = None,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
     calc = build_calculator(
-        method, charge=charge, multiplicity=multiplicity, solvent=solvent
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis,
     )
     apply_calc_to_atoms(atoms, calc)
 
@@ -34,8 +40,8 @@ def run(
     # ENPART) is still available in code_specific.electronic_total_energy_eV.
     result = base_result(
         task="single_point",
-        method=("GFN2-xTB" if method == "xtb" else "PM7"),
-        program=method,
+        method=method_label(method, calc),
+        program=program_label(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms),
         atoms=symbols,
@@ -45,14 +51,15 @@ def run(
         cli=cli,
     )
     result.update(energy_block_from_eV(energy_eV))
-    result["energy_zero"] = (
-        "isolated atoms at infinity (xtb)"
-        if method == "xtb"
-        else "elements in their standard states (PM7 heat of formation)"
-    )
+    if method == "xtb":
+        result["energy_zero"] = "isolated atoms at infinity (xtb)"
+    elif method == "mopac":
+        result["energy_zero"] = "elements in their standard states (PM7 heat of formation)"
+    else:
+        result["energy_zero"] = "electronic energy (bare nuclei + electrons)"
 
     # Pull code-specific extras (HOMO/LUMO, dipole, heat of formation, etc.).
-    extras = _collect_extras(method, atoms, calc)
+    extras = collect_calc_extras(method, atoms, calc)
     if method == "mopac" and "heat_of_formation_kcal_mol" in extras:
         # Promote HoF to top level so the schema matches `opt` / `freq`.
         result["final_heat_of_formation_kcal_mol"] = extras["heat_of_formation_kcal_mol"]
@@ -65,24 +72,14 @@ def run(
     return result
 
 
-def _collect_extras(method, atoms, calc):
-    extras: Dict[str, Any] = {}
-    if method == "xtb":
-        homo_lumo = _xtb_homo_lumo(atoms, calc)
-        if homo_lumo:
-            extras.update(homo_lumo)
-    elif method == "mopac":
-        workdir = getattr(calc, "_chemkit_workdir", None)
-        if workdir:
-            extras.update(parse_mopac_extras(workdir))
-    return extras
-
-
 def _xtb_homo_lumo(atoms, calc) -> Dict[str, Any]:
     """Run a low-level xtb singlepoint to recover orbital eigenvalues.
 
     The ASE-side XTB calculator only returns energy/forces/dipole; orbital
     energies live on the xtb-python Calculator's Result object.
+
+    Kept here (rather than in calculators.py) to avoid importing xtb at
+    module-load time on systems without xtb-python installed.
     """
     try:
         import numpy as np

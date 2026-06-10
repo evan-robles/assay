@@ -14,6 +14,7 @@ import os
 from typing import Any, Dict, Optional
 
 from . import sp as sp_task
+from ..calculators import program_label
 from ..io import read_geometry
 from ..schema import base_result, EV_TO_KCAL
 
@@ -38,6 +39,9 @@ def run(
     reference: str = "SHE",
     n_electrons: int = 1,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     if reference not in REFERENCE_POTENTIALS_V:
         raise ValueError(
@@ -48,10 +52,12 @@ def run(
     ox_sp = sp_task.run(
         input_path, method=method, charge=oxidized_charge,
         multiplicity=oxidized_multiplicity, solvent=solvent, cli=cli,
+        tier=tier, functional=functional, basis=basis,
     )
     red_sp = sp_task.run(
         input_path, method=method, charge=reduced_charge,
         multiplicity=reduced_multiplicity, solvent=solvent, cli=cli,
+        tier=tier, functional=functional, basis=basis,
     )
 
     delta_E_eV = red_sp["total_energy_eV"] - ox_sp["total_energy_eV"]
@@ -62,7 +68,7 @@ def run(
     result = base_result(
         task="redox_potential",
         method=ox_sp["method"],
-        program=method,
+        program=program_label(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms),
         atoms=atoms.get_chemical_symbols(),

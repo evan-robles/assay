@@ -57,12 +57,16 @@ def build_calculator(
     multiplicity: int = 1,
     solvent: Optional[str] = None,
     workdir: Optional[str] = None,
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ):
     """Return an ASE calculator for the requested method.
 
-    method: 'xtb' (GFN2-xTB) or 'mopac' (PM7)
+    method: 'xtb' (GFN2-xTB), 'mopac' (PM7), 'dft' (PySCF DFT), 'hf' (PySCF HF)
     multiplicity: 2S+1 (ASE uses unpaired-electron count internally for some calcs)
     solvent: e.g. 'water' for ALPB (xtb) or COSMO EPS=... (MOPAC). None = gas phase.
+    tier/functional/basis: PySCF-only knobs. Silently ignored for xtb/mopac.
     """
     method = method.lower()
     if workdir is None:
@@ -72,7 +76,164 @@ def build_calculator(
         return _build_xtb(charge, multiplicity, solvent, workdir)
     if method == "mopac":
         return _build_mopac(charge, multiplicity, solvent, workdir)
-    raise ValueError(f"Unknown method {method!r}. Expected 'xtb' or 'mopac'.")
+    if method in ("dft", "hf"):
+        return _build_pyscf(
+            method, charge, multiplicity, solvent, workdir,
+            tier=tier, functional=functional, basis=basis,
+        )
+    raise ValueError(
+        f"Unknown method {method!r}. Expected 'xtb', 'mopac', 'dft', or 'hf'."
+    )
+
+
+def _build_pyscf(method, charge, multiplicity, solvent, workdir,
+                 *, tier=None, functional=None, basis=None):
+    """Dispatch DFT/HF to the PySCF backend (lazy import).
+
+    The PySCF backend lives in chemkit.backends.pyscf and exposes an
+    ASE-compatible Calculator class. We import lazily so users without
+    PySCF installed can still use xtb/mopac.
+
+    DFT tier presets bundle (xc, basis, grid_level, auxbasis); explicit
+    `--functional`/`--basis` override the tier defaults. HF takes only a
+    `--basis` (default def2-tzvp).
+    """
+    try:
+        from .backends.pyscf import (
+            PySCFCalculator, resolve_dft_tier, HF_DEFAULT_BASIS,
+        )
+    except ImportError as e:
+        raise ImportError(
+            f"chemkit.backends.pyscf is unavailable ({e}). "
+            "Install pyscf to use --method dft or --method hf."
+        )
+
+    if method == "dft":
+        cfg = resolve_dft_tier(tier, functional, basis)
+        calc = PySCFCalculator(
+            method="dft",
+            xc=cfg["xc"],
+            basis=cfg["basis"],
+            grid_level=cfg["grid"],
+            auxbasis=cfg["aux"],
+            charge=charge,
+            multiplicity=multiplicity,
+            solvent=solvent,
+        )
+        calc._chemkit_tier = cfg["tier"]
+        calc._chemkit_functional = cfg["xc"]
+        # Read the post-promotion basis off the calculator — PySCFCalculator
+        # auto-promotes def2-tzvp → def2-tzvpd etc. for anions, so cfg["basis"]
+        # would otherwise lie about what was actually used.
+        calc._chemkit_basis = calc.basis
+    else:  # hf
+        used_basis = basis or HF_DEFAULT_BASIS
+        calc = PySCFCalculator(
+            method="hf",
+            basis=used_basis,
+            charge=charge,
+            multiplicity=multiplicity,
+            solvent=solvent,
+        )
+        calc._chemkit_tier = None
+        calc._chemkit_functional = None
+        calc._chemkit_basis = calc.basis  # honors anion auto-promotion
+
+    calc._chemkit_method = method
+    calc._chemkit_workdir = workdir
+    return calc
+
+
+# ---------------------------------------------------------------------------
+# Per-method label helpers used by task modules to populate result JSON
+# without scattering hardcoded strings.
+# ---------------------------------------------------------------------------
+
+def method_label(method: str, calc=None) -> str:
+    """Human-readable method label for the `method` field of result JSON.
+
+    For DFT we want to surface the functional + basis (or tier preset) since
+    those are the actual scientific knobs. For xtb/mopac we just return the
+    canonical name.
+    """
+    m = (method or "").lower()
+    if m == "xtb":
+        return "GFN2-xTB"
+    if m == "mopac":
+        return "PM7"
+    if m in ("dft", "hf"):
+        if calc is not None:
+            functional = getattr(calc, "_chemkit_functional", None)
+            basis = getattr(calc, "_chemkit_basis", None)
+            tier = getattr(calc, "_chemkit_tier", None)
+            if m == "hf":
+                return f"HF/{basis}" if basis else "HF"
+            # DFT
+            if functional and basis:
+                return f"{functional}/{basis}"
+            if functional:
+                return functional
+            if tier:
+                return f"DFT[{tier}]"
+            return "DFT"
+        return m.upper()
+    return m
+
+
+def program_label(method: str) -> str:
+    """Underlying program string for the `program` field."""
+    m = (method or "").lower()
+    if m == "xtb":
+        return "xtb"
+    if m == "mopac":
+        return "mopac"
+    if m in ("dft", "hf"):
+        return "pyscf"
+    return m
+
+
+def collect_calc_extras(method: str, atoms, calc) -> dict:
+    """Return code-specific extras dict appropriate for `method`.
+
+    For xtb: tries to recover HOMO/LUMO via xtb-python.
+    For mopac: parses HOMO/LUMO, dipole, HoF, ENPART from the workdir.
+    For dft/hf: pulls anything the PySCF calculator stashed on itself
+    (e.g. orbital energies, dipole). Returns {} if nothing is available.
+    """
+    m = (method or "").lower()
+    extras: dict = {}
+    if m == "xtb":
+        try:
+            from .tasks.sp import _xtb_homo_lumo  # local import to avoid cycle at top
+            extras.update(_xtb_homo_lumo(atoms, calc) or {})
+        except Exception:
+            pass
+    elif m == "mopac":
+        try:
+            from .tasks._mopac_parsers import parse_mopac_extras
+        except ImportError:
+            return extras
+        workdir = getattr(calc, "_chemkit_workdir", None)
+        if workdir:
+            extras.update(parse_mopac_extras(workdir) or {})
+    elif m in ("dft", "hf"):
+        mf = getattr(calc, "mean_field", None)
+        if mf is not None:
+            try:
+                from .backends.pyscf.scf import pack_scf_result
+                extras.update(pack_scf_result(mf))
+            except Exception:
+                pass
+        functional = getattr(calc, "_chemkit_functional", None)
+        basis = getattr(calc, "_chemkit_basis", None)
+        tier = getattr(calc, "_chemkit_tier", None)
+        if functional:
+            extras["functional"] = functional
+        if basis:
+            extras["basis"] = basis
+        if tier:
+            extras["tier"] = tier
+    return extras
 
 
 def _build_xtb(charge, multiplicity, solvent, workdir):

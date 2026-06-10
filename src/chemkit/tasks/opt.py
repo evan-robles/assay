@@ -40,6 +40,9 @@ def run(
     steps: int = 500,
     out_xyz: Optional[str] = None,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     method = method.lower()
     atoms = read_geometry(input_path)
@@ -75,19 +78,27 @@ def run(
         steps=steps,
         out_xyz=out_xyz,
         cli=cli,
+        tier=tier,
+        functional=functional,
+        basis=basis,
     )
 
 
 def _run_ase(
     *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
     fmax, steps, out_xyz, cli,
+    tier=None, functional=None, basis=None,
 ) -> Dict[str, Any]:
     from ase.io import write as ase_write
     from ase.optimize import BFGS
-    from ..calculators import build_calculator, apply_calc_to_atoms
+    from ..calculators import (
+        build_calculator, apply_calc_to_atoms,
+        method_label, program_label,
+    )
 
     calc = build_calculator(
-        method, charge=charge, multiplicity=multiplicity, solvent=solvent
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis,
     )
     apply_calc_to_atoms(atoms, calc)
 
@@ -98,8 +109,8 @@ def _run_ase(
 
     result = base_result(
         task="geometry_optimization",
-        method="GFN2-xTB" if method == "xtb" else method.upper(),
-        program=method,
+        method=method_label(method, calc),
+        program=program_label(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms),
         atoms=symbols,

@@ -25,7 +25,10 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 from ase.io import write as ase_write
 
-from ..calculators import build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS
+from ..calculators import (
+    build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
+    method_label, program_label,
+)
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
 from ._mopac_parsers import parse_mopac_extras, _find_with_ext
@@ -43,15 +46,25 @@ def run(
     verify_freq: bool = True,
     out_stem: Optional[str] = None,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     method = method.lower()
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
 
+    calc_for_label = None
+    if method in ("dft", "hf"):
+        calc_for_label = build_calculator(
+            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+            tier=tier, functional=functional, basis=basis,
+        )
+
     result = base_result(
         task="transition_state",
-        method=("GFN2-xTB" if method == "xtb" else "PM7"),
-        program=method,
+        method=method_label(method, calc_for_label),
+        program=program_label(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms),
         atoms=symbols,
@@ -67,10 +80,12 @@ def run(
             charge=charge, multiplicity=multiplicity, solvent=solvent,
             steps=steps,
         )
-    elif method == "xtb":
-        body, ts_atoms = _ts_xtb_sella(
-            atoms, charge=charge, multiplicity=multiplicity, solvent=solvent,
+    elif method in ("xtb", "dft", "hf"):
+        body, ts_atoms = _ts_sella(
+            atoms, method=method,
+            charge=charge, multiplicity=multiplicity, solvent=solvent,
             steps=steps,
+            tier=tier, functional=functional, basis=basis,
         )
     else:
         raise ValueError(f"Unknown method {method!r}")
@@ -97,6 +112,9 @@ def run(
                 solvent=solvent,
                 preopt=False,           # already at the TS; preopt would walk off
                 cli="(internal TS verification)",
+                tier=tier,
+                functional=functional,
+                basis=basis,
             )
             n_imag = freq_result.get("n_imaginary_modes") or 0
             freqs = freq_result.get("vibrational_frequencies_cm-1") or []
@@ -245,17 +263,19 @@ def _parse_mopac_final_geometry(arc_path, symbols):
 # xtb + Sella TS (optional)
 # ---------------------------------------------------------------------------
 
-def _ts_xtb_sella(atoms, *, charge, multiplicity, solvent, steps):
+def _ts_sella(atoms, *, method, charge, multiplicity, solvent, steps,
+              tier=None, functional=None, basis=None):
     try:
         from sella import Sella
     except ImportError as e:
         raise RuntimeError(
-            "xtb TS search requires Sella (xtb-python has no TS optimizer). "
+            f"{method} TS search requires Sella (no native TS optimizer). "
             "Install with `pip install sella`, or use --method mopac instead."
         ) from e
 
     calc = build_calculator(
-        "xtb", charge=charge, multiplicity=multiplicity, solvent=solvent
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis,
     )
     apply_calc_to_atoms(atoms, calc)
     ts_opt = Sella(atoms, internal=True, order=1)

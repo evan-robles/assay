@@ -253,9 +253,12 @@ def run(
     opt_steps: int = 200,
     out_stem: Optional[str] = None,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     method = method.lower()
-    if method not in {"xtb", "mopac"}:
+    if method not in {"xtb", "mopac", "dft", "hf"}:
         raise ValueError(f"scan: unsupported method {method!r}")
 
     atoms = read_geometry(input_path)
@@ -273,10 +276,16 @@ def run(
     if out_stem is None:
         out_stem = os.path.splitext(os.path.abspath(input_path))[0] + f"_scan_{method}"
 
+    from ..calculators import method_label as _ml, program_label as _pl, build_calculator as _bc
+    _calc_for_label = None
+    if method in ("dft", "hf"):
+        _calc_for_label = _bc(method, charge=charge, multiplicity=multiplicity,
+                              solvent=solvent, tier=tier, functional=functional,
+                              basis=basis)
     result = base_result(
         task="conformational_analysis",
-        method=("GFN2-xTB" if method == "xtb" else "PM7"),
-        program=method,
+        method=_ml(method, _calc_for_label),
+        program=_pl(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms),
         atoms=symbols,
@@ -310,6 +319,7 @@ def run(
             atoms.copy(), bond,
             method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, n_steps=n_steps, fmax=fmax, opt_steps=opt_steps,
+            tier=tier, functional=functional, basis=basis,
         )
         if not points:
             dihedral_records.append({
@@ -414,6 +424,8 @@ def _dihedral_tag(bond: Dict[str, Any]) -> str:
 def _scan_one_dihedral(
     atoms, bond: Dict[str, Any], *, method: str, charge: int, multiplicity: int,
     solvent: Optional[str], n_steps: int, fmax: float, opt_steps: int,
+    tier: Optional[str] = None, functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Tuple[List[Dict[str, Any]], List]:
     """Sweep one dihedral through n_steps equally-spaced target angles.
 
@@ -444,16 +456,19 @@ def _scan_one_dihedral(
         delta = target - current_phi
         _set_dihedral_about_bond(seed, a, b, side_b, delta)
 
-        if method == "xtb":
-            opt_atoms, energy_eV, converged = _opt_with_xtb_dihedral_constraint(
-                seed, dihedral=(i, a, b, l), target_deg=target,
-                charge=charge, multiplicity=multiplicity, solvent=solvent,
-                fmax=fmax, steps=opt_steps,
-            )
-        else:
+        if method == "mopac":
             opt_atoms, energy_eV, converged = _opt_with_mopac_relaxation(
                 seed, charge=charge, multiplicity=multiplicity, solvent=solvent,
                 fmax=fmax, steps=opt_steps,
+            )
+        else:
+            # xtb, dft, hf: ASE BFGS + FixInternals constraint via build_calculator.
+            opt_atoms, energy_eV, converged = _opt_with_ase_dihedral_constraint(
+                seed, dihedral=(i, a, b, l), target_deg=target,
+                method=method,
+                charge=charge, multiplicity=multiplicity, solvent=solvent,
+                fmax=fmax, steps=opt_steps,
+                tier=tier, functional=functional, basis=basis,
             )
 
         if opt_atoms is None or energy_eV is None or not np.isfinite(energy_eV):
@@ -482,17 +497,21 @@ def _scan_one_dihedral(
     return points, frames
 
 
-def _opt_with_xtb_dihedral_constraint(
+def _opt_with_ase_dihedral_constraint(
     atoms, *, dihedral: Tuple[int, int, int, int], target_deg: float,
+    method: str,
     charge: int, multiplicity: int, solvent: Optional[str],
     fmax: float, steps: int,
+    tier: Optional[str] = None, functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Tuple[Optional[Any], Optional[float], bool]:
     from ase.constraints import FixInternals
     from ase.optimize import BFGS
     from ..calculators import build_calculator, apply_calc_to_atoms
 
     calc = build_calculator(
-        "xtb", charge=charge, multiplicity=multiplicity, solvent=solvent
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis,
     )
     apply_calc_to_atoms(atoms, calc)
 
@@ -631,7 +650,16 @@ def _write_plot(
     ax.plot(angles, dE, "o-", color="#2e6fdf", markersize=5, linewidth=1.4)
     ax.set_xlabel(f"Dihedral {labeled} (degrees)")
     ax.set_ylabel(r"$\Delta E$ (kcal/mol)")
-    method_label = "GFN2-xTB" if method == "xtb" else "PM7 / MOPAC"
+    if method == "xtb":
+        method_label = "GFN2-xTB"
+    elif method == "mopac":
+        method_label = "PM7 / MOPAC"
+    elif method == "dft":
+        method_label = "DFT (PySCF)"
+    elif method == "hf":
+        method_label = "HF (PySCF)"
+    else:
+        method_label = method.upper()
     if molecule_name:
         mol_name = molecule_name
     elif input_path:

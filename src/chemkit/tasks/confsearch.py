@@ -32,7 +32,13 @@ def run(
     charge: int = 0,
     multiplicity: int = 1,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
+    # tier/functional/basis are accepted for CLI uniformity but ignored:
+    # CREST is xtb-only and the post-opt path is xtb/mopac-only.
+    del tier, functional, basis
     if method != "xtb":
         raise ValueError("confsearch currently only supports method='xtb' (via CREST).")
 

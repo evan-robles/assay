@@ -11,7 +11,10 @@ import re
 import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..calculators import build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS
+from ..calculators import (
+    build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
+    method_label, program_label, collect_calc_extras,
+)
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
 from ._mopac_parsers import parse_mopac_extras
@@ -31,15 +34,27 @@ def run(
     solvent: Optional[str] = None,
     nfrontier: int = 3,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Single-point frontier orbital analysis on the supplied geometry."""
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
 
+    # Build the calc up-front for label/extras consistency (used by the
+    # generic dft/hf branch and for label inference even on xtb/mopac).
+    calc_for_label = None
+    if method in ("dft", "hf"):
+        calc_for_label = build_calculator(
+            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+            tier=tier, functional=functional, basis=basis,
+        )
+
     result = base_result(
         task="frontier_orbitals",
-        method=("GFN2-xTB" if method == "xtb" else "PM7"),
-        program=method,
+        method=method_label(method, calc_for_label),
+        program=program_label(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms),
         atoms=symbols,
@@ -55,14 +70,41 @@ def run(
     elif method == "mopac":
         body = _run_mopac(atoms, charge=charge, multiplicity=multiplicity,
                           solvent=solvent, nfrontier=nfrontier)
+    elif method in ("dft", "hf"):
+        body = _run_generic(atoms, calc=calc_for_label, method=method,
+                            nfrontier=nfrontier)
     else:
-        raise ValueError(f"Unknown method {method!r}. Expected 'xtb' or 'mopac'.")
+        raise ValueError(
+            f"Unknown method {method!r}. Expected 'xtb', 'mopac', 'dft', or 'hf'."
+        )
 
     result.update(body)
     warns = element_warnings(symbols, method)
     if warns:
         result["warnings"] = warns
     return result
+
+
+def _run_generic(atoms, *, calc, method, nfrontier) -> Dict[str, Any]:
+    """DFT/HF frontier-orbital extraction via the PySCF backend.
+
+    Relies on the PySCFCalculator stashing eigenvalues/occupations on itself
+    as `_chemkit_extras` (orbital_energies_eV, orbital_occupations).
+    """
+    apply_calc_to_atoms(atoms, calc)
+    total_energy_eV = float(atoms.get_potential_energy())
+    extras = collect_calc_extras(method, atoms, calc) or {}
+    eigs_eV = extras.get("orbital_energies_eV") or extras.get("eigenvalues_eV")
+    occs = extras.get("orbital_occupations") or extras.get("occupations")
+    if not eigs_eV or occs is None:
+        raise RuntimeError(
+            f"frontier ({method}): PySCF calculator did not return orbital "
+            "eigenvalues/occupations (expected on calc._chemkit_extras)."
+        )
+    body = _build_block(list(eigs_eV), list(occs), total_energy_eV,
+                        energy_zero="electronic energy (bare nuclei + electrons)",
+                        nfrontier=nfrontier)
+    return body
 
 
 # ---------------------------------------------------------------------------

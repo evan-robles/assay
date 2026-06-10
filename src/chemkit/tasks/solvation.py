@@ -17,6 +17,7 @@ import os
 from typing import Any, Dict, Optional
 
 from . import sp as sp_task
+from ..calculators import program_label
 from ..io import read_geometry
 from ..schema import base_result, EV_TO_HARTREE, EV_TO_KCAL, element_warnings
 
@@ -39,15 +40,20 @@ def run(
     charge: int = 0,
     multiplicity: int = 1,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Solvation free energy ΔG_solv = E(solvated) − E(gas) on the same geometry."""
     if not solvent:
         raise ValueError("solvation requires --solvent")
 
     gas = sp_task.run(input_path, method=method, charge=charge,
-                      multiplicity=multiplicity, solvent=None, cli=cli)
+                      multiplicity=multiplicity, solvent=None, cli=cli,
+                      tier=tier, functional=functional, basis=basis)
     solv = sp_task.run(input_path, method=method, charge=charge,
-                       multiplicity=multiplicity, solvent=solvent, cli=cli)
+                       multiplicity=multiplicity, solvent=solvent, cli=cli,
+                       tier=tier, functional=functional, basis=basis)
 
     delta_eV = solv["total_energy_eV"] - gas["total_energy_eV"]
     atoms = read_geometry(input_path)
@@ -55,7 +61,7 @@ def run(
 
     result = base_result(
         task="solvation",
-        method=gas["method"], program=method,
+        method=gas["method"], program=program_label(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms), atoms=symbols,
         charge=charge, multiplicity=multiplicity, solvent=solvent, cli=cli,
@@ -89,6 +95,9 @@ def run_logp(
     charge: int = 0,
     multiplicity: int = 1,
     cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     """logP from ΔG_solv(water) − ΔG_solv(octanol). Pinned to 298.15 K.
 
@@ -103,11 +112,14 @@ def run_logp(
         )
 
     gas = sp_task.run(input_path, method=method, charge=charge,
-                      multiplicity=multiplicity, solvent=None, cli=cli)
+                      multiplicity=multiplicity, solvent=None, cli=cli,
+                      tier=tier, functional=functional, basis=basis)
     water = sp_task.run(input_path, method=method, charge=charge,
-                        multiplicity=multiplicity, solvent="water", cli=cli)
+                        multiplicity=multiplicity, solvent="water", cli=cli,
+                        tier=tier, functional=functional, basis=basis)
     octanol = sp_task.run(input_path, method=method, charge=charge,
-                          multiplicity=multiplicity, solvent="octanol", cli=cli)
+                          multiplicity=multiplicity, solvent="octanol", cli=cli,
+                          tier=tier, functional=functional, basis=basis)
 
     dG_w_kcal = (water["total_energy_eV"]   - gas["total_energy_eV"]) * EV_TO_KCAL
     dG_o_kcal = (octanol["total_energy_eV"] - gas["total_energy_eV"]) * EV_TO_KCAL
@@ -118,7 +130,7 @@ def run_logp(
     symbols = atoms.get_chemical_symbols()
     result = base_result(
         task="logp",
-        method=gas["method"], program=method,
+        method=gas["method"], program=program_label(method),
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms), atoms=symbols,
         charge=charge, multiplicity=multiplicity, solvent=None, cli=cli,
