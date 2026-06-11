@@ -22,7 +22,7 @@ from ..schema import base_result, EV_TO_KCAL
 # E_abs(SHE) ≈ 4.281 V (Trasatti / IUPAC recommended).
 REFERENCE_POTENTIALS_V = {
     "SHE": 4.281,
-    "Ag/AgCl": 4.281 - 0.222,
+    "Ag/AgCl": 4.281 + 0.222,
     "Fc+/Fc": 4.281 + 0.40,   # approximate; depends on solvent
 }
 

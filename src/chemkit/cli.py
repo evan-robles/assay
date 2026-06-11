@@ -70,9 +70,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_freq.add_argument("--temperature", type=float, default=298.15)
     p_freq.add_argument("--pressure", type=float, default=101325.0)
     p_freq.add_argument("--geometry", choices=["monatomic", "linear", "nonlinear"],
-                        default="nonlinear")
-    p_freq.add_argument("--symmetry", type=int, default=1,
-                        help="Rotational symmetry number σ (default 1).")
+                        default=None,
+                        help="Override molecular geometry (monatomic/linear/nonlinear). "
+                             "If omitted, auto-detected from the input atoms.")
+    p_freq.add_argument("--symmetry", type=int, default=None,
+                        help="Rotational symmetry number σ. If omitted, defaults to "
+                             "1 with a warning — look up σ for your point group "
+                             "(H2O σ=2, NH3 σ=3, CH4/benzene σ=12) to avoid "
+                             "overestimating rotational entropy by R·ln σ.")
     p_freq.add_argument(
         "--no-preopt", dest="preopt", action="store_false", default=True,
         help="Skip the automatic pre-optimization step. By default freq always "

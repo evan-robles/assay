@@ -44,26 +44,37 @@ from . import freq as freq_task
 # Thermodynamic constants (kcal/mol unless noted)
 # ---------------------------------------------------------------------------
 
-# RT ln(10) at 298.15 K, in kcal/mol. (Same constant as in solvation.py)
-RT_LN10_KCAL_MOL_298K = 1.3643
+import math
 
-# Solvated proton free energy at 298.15 K, in water.
-# Tissandier 1998: ΔG_solv(H+) = -264.0 kcal/mol; with G_gas(H+) = -6.28 kcal/mol
-# (Sackur-Tetrode at 298 K, 1 atm), the total is -270.28 kcal/mol.
-# This is the most-cited value; Kelly/Cramer/Truhlar 2006 gives -265.9 kcal/mol
-# (cluster-continuum approach). Switching adds a ~1.4 pKa-unit systematic shift.
+# Gas constant in kcal/(mol·K) — used to scale RT ln 10 and the 1 atm → 1 M
+# correction at user-supplied temperatures.
+R_KCAL_MOL_K = 1.987204258e-3
+# Molar volume of an ideal gas at 1 atm, in L/mol per K: V_m = (R/P)*T.
+# Using R = 0.08205736 L·atm/(mol·K) so V_m(T) [L/mol] = R_LATM * T.
+R_LATM_MOL_K = 0.08205736
+
+# At 298.15 K these give 1.3643 and 1.894 kcal/mol — matching the historical
+# constants used elsewhere in chemkit.
+def rt_ln10_kcal_mol(T_K: float) -> float:
+    """RT ln 10 at temperature T, in kcal/mol. The pKa denominator."""
+    return R_KCAL_MOL_K * T_K * math.log(10.0)
+
+def standard_state_1atm_to_1m_kcal_mol(T_K: float) -> float:
+    """RT ln(V_m(T) / 1 L·mol⁻¹) — the correction for switching one species
+    from the gas-phase 1 atm convention to the aqueous 1 M convention."""
+    Vm_L = R_LATM_MOL_K * T_K          # ≈ 24.466 L/mol at 298.15 K
+    return R_KCAL_MOL_K * T_K * math.log(Vm_L)
+
+# Solvated proton free energy in water. Both reference values are tabulated at
+# 298.15 K. Temperature scaling of G(H+,aq) is non-trivial (it involves
+# d(ΔG_solv)/dT and the Sackur-Tetrode entropy of the gas-phase proton); we
+# warn the user when temperature_K deviates and let them apply their own
+# correction rather than silently using a 298 K number at 350 K.
 G_HPLUS_AQUEOUS_KCAL_MOL = {
     "tissandier_1998": -270.28,
     "kelly_2006":      -265.9,
 }
 DEFAULT_HPLUS_REF = "tissandier_1998"
-
-# Standard-state correction for going from 1 atm (gas-phase thermochemistry
-# convention) to 1 M (aqueous-phase convention) at 298 K:
-#   ΔG = RT ln(V_atm / V_1M) = RT ln(24.46) = +1.89 kcal/mol per species.
-# For HA → A⁻ + H⁺ with all three species in solution at 1 M, this enters
-# once (one extra mole appears on the RHS).
-STANDARD_STATE_1ATM_TO_1M_KCAL_MOL = 1.89
 
 # Common reference acids — used when the user picks --mode reference and
 # wants a "pick a sensible default" path. Experimental pKa in water at 298 K.
@@ -194,14 +205,18 @@ def run(
 
     warnings: List[str] = []
 
+    rt_ln10 = rt_ln10_kcal_mol(temperature_K)
+    ss_corr = standard_state_1atm_to_1m_kcal_mol(temperature_K)
+
     if mode == "absolute":
         G_H = G_HPLUS_AQUEOUS_KCAL_MOL[hplus_reference]
-        delta_G_kcal = G_A_kcal + G_H - G_HA_kcal + STANDARD_STATE_1ATM_TO_1M_KCAL_MOL
-        pka = delta_G_kcal / RT_LN10_KCAL_MOL_298K
+        delta_G_kcal = G_A_kcal + G_H - G_HA_kcal + ss_corr
+        pka = delta_G_kcal / rt_ln10
 
         result["hplus_reference"] = hplus_reference
         result["G_Hplus_aq_kcal_mol"] = G_H
-        result["standard_state_correction_kcal_mol"] = STANDARD_STATE_1ATM_TO_1M_KCAL_MOL
+        result["standard_state_correction_kcal_mol"] = ss_corr
+        result["RT_ln10_kcal_mol"] = rt_ln10
         result["delta_G_dissociation_kcal_mol"] = delta_G_kcal
         result["pKa"] = pka
 
@@ -209,6 +224,13 @@ def run(
             warnings.append(
                 f"Absolute pKa uses an aqueous G(H+) reference but solvent is "
                 f"{solvent!r}; predicted pKa is not on the aqueous scale."
+            )
+        if abs(temperature_K - 298.15) > 0.1:
+            warnings.append(
+                f"G(H+,aq) reference {hplus_reference!r} is tabulated at 298.15 K "
+                f"but temperature_K={temperature_K:.2f}; the RT-dependent factors "
+                "are scaled but the H+ reference itself is not. Add your own "
+                "ΔG(H+,aq) temperature correction if you need T ≠ 298 K."
             )
         warnings.append(
             "Absolute pKa is highly sensitive to the G(H+,aq) reference "
@@ -233,7 +255,8 @@ def run(
         # pKa(HA) = pKa(Ref) + ΔG_iso / (RT ln10)
         # No standard-state correction needed: same number of moles on both sides.
         dG_iso_kcal = (G_A_kcal + G_ref_HA_kcal) - (G_HA_kcal + G_ref_A_kcal)
-        pka = ref_pka + dG_iso_kcal / RT_LN10_KCAL_MOL_298K
+        pka = ref_pka + dG_iso_kcal / rt_ln10
+        result["RT_ln10_kcal_mol"] = rt_ln10
 
         species_blocks["ref_HA"] = _species_summary(
             ref_ha_xyz, ref_ha_res, ref_ha_charge, ref_ha_multiplicity,

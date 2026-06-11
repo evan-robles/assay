@@ -49,8 +49,8 @@ def run(
     solvent: Optional[str] = None,
     temperature_K: float = 298.15,
     pressure_Pa: float = 101325.0,
-    geometry: str = "nonlinear",
-    symmetrynumber: int = 1,
+    geometry: Optional[str] = None,
+    symmetrynumber: Optional[int] = None,
     preopt: bool = True,
     preopt_fmax: float = 0.001,
     preopt_steps: int = 500,
@@ -200,6 +200,7 @@ def run(
             solvent=solvent,
             temperature_K=temperature_K,
             pressure_Pa=pressure_Pa,
+            symmetrynumber=symmetrynumber,
             cli=cli,
         )
     else:
@@ -251,6 +252,31 @@ def run(
     return result
 
 
+def _detect_geometry(atoms) -> str:
+    """Return 'monatomic', 'linear', or 'nonlinear' based on atom coordinates.
+    Tolerance for collinearity is 1e-3 Å on the cross-product magnitude — well
+    below any chemically meaningful deviation, above numerical noise."""
+    pos = np.asarray(atoms.get_positions())
+    n = len(pos)
+    if n == 1:
+        return "monatomic"
+    if n == 2:
+        return "linear"
+    # Test collinearity: pick the longest reference bond and check cross products
+    # against it.
+    rel = pos - pos[0]
+    norms = np.linalg.norm(rel[1:], axis=1)
+    i = int(np.argmax(norms)) + 1
+    ref = rel[i] / norms[i - 1]
+    for k in range(1, n):
+        if k == i:
+            continue
+        cross_mag = np.linalg.norm(np.cross(rel[k], ref))
+        if cross_mag > 1e-3:
+            return "nonlinear"
+    return "linear"
+
+
 def _probe_max_force(
     atoms, *, method, charge, multiplicity, solvent,
     tier=None, functional=None, basis=None,
@@ -281,6 +307,21 @@ def _run_ase(
 ) -> Dict[str, Any]:
     from ase.thermochemistry import IdealGasThermo
     from ase.vibrations import Vibrations
+
+    geometry_was_default = geometry is None
+    if geometry is None:
+        geometry = _detect_geometry(atoms)
+    symmetry_was_default = symmetrynumber is None
+    if symmetrynumber is None:
+        symmetrynumber = 1
+
+    if geometry == "monatomic":
+        return _run_atomic(
+            input_path=input_path, atoms=atoms, symbols=symbols, method=method,
+            charge=charge, multiplicity=multiplicity, solvent=solvent,
+            temperature_K=temperature_K, pressure_Pa=pressure_Pa, cli=cli,
+            tier=tier, functional=functional, basis=basis,
+        )
 
     calc = build_calculator(
         method, charge=charge, multiplicity=multiplicity, solvent=solvent,
@@ -333,7 +374,7 @@ def _run_ase(
         # Skip the projected-out trans/rot padding (energies are exactly 0).
         if np.isreal(e) and e.real == 0 and np.isreal(f) and f.real == 0:
             continue
-        # Imaginary modes are not vibrations — counted separately.
+        # Imaginary modes are not vibrations — counted separately below.
         if np.iscomplex(f) and f.imag != 0:
             continue
         if not np.isreal(e):
@@ -342,9 +383,14 @@ def _run_ase(
             real_vib_energies.append(FLOOR_eV)   # raise soft modes to floor
         else:
             real_vib_energies.append(e.real)
+    # Count ANY mode with a nonzero imaginary frequency — including soft imag
+    # modes between 0 and 50 cm⁻¹. A real TS often has the reaction-coordinate
+    # mode in the 100–800i cm⁻¹ range, but conformational saddles can have
+    # imag modes as soft as 20i. Dropping them silently turned saddles into
+    # "minima" in the previous version.
     n_imag = sum(
         1 for f in frequencies_cm
-        if np.iscomplex(f) and f.imag != 0 and abs(f.imag) > NEAR_ZERO_CM
+        if np.iscomplex(f) and f.imag != 0
     )
 
     thermo = IdealGasThermo(
@@ -394,6 +440,84 @@ def _run_ase(
             f"{n_imag} imaginary mode(s) detected — geometry is not a true minimum. "
             "Thermochemistry values are approximate; re-optimize and re-run."
         )
+    if geometry_was_default:
+        result["geometry_auto_detected"] = True
+    if symmetry_was_default and symmetrynumber == 1:
+        # Rotational entropy is over-estimated by R·ln(σ) when σ_true > 1.
+        # Common cases: H2O σ=2, NH3 σ=3, CH4/benzene σ=12. Surface a warning
+        # rather than silently defaulting; the user must look up σ for their
+        # point group and re-run with --symmetry-number if needed.
+        warns.append(
+            "symmetry_number defaulted to 1; if the molecule has rotational "
+            "symmetry (e.g. H2O σ=2, NH3 σ=3, CH4 σ=12) the entropy and Gibbs "
+            "energy are over-estimated by R·ln(σ). Re-run with --symmetry-number "
+            "set to the correct value for your point group."
+        )
+    if warns:
+        result["warnings"] = warns
+    return result
+
+
+def _run_atomic(
+    *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
+    temperature_K, pressure_Pa, cli,
+    tier=None, functional=None, basis=None,
+) -> Dict[str, Any]:
+    """Thermochemistry for a single atom: no vibrational, no rotational; only
+    electronic + translational contributions. ASE's IdealGasThermo refuses
+    natoms==1 with geometry='nonlinear', so we compute the closed-form values
+    here. ZPE = 0, H = E_elec + (5/2) RT, S = S_trans only (Sackur-Tetrode),
+    G = H − T·S."""
+    from ase.thermochemistry import IdealGasThermo
+
+    calc = build_calculator(
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis,
+    )
+    apply_calc_to_atoms(atoms, calc)
+    energy_eV = atoms.get_potential_energy()
+
+    # IdealGasThermo supports `geometry='monatomic'` with vib_energies=[].
+    thermo = IdealGasThermo(
+        vib_energies=[],
+        potentialenergy=energy_eV,
+        atoms=atoms,
+        geometry="monatomic",
+        symmetrynumber=1,
+        spin=(multiplicity - 1) / 2.0,
+    )
+    zpe_eV = 0.0
+    H_eV = thermo.get_enthalpy(temperature_K, verbose=False)
+    S_eV_per_K = thermo.get_entropy(temperature_K, pressure_Pa, verbose=False)
+    G_eV = thermo.get_gibbs_energy(temperature_K, pressure_Pa, verbose=False)
+
+    result = base_result(
+        task="vibrational_thermochemistry",
+        method=method_label(method, calc),
+        program=program_label(method),
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms),
+        atoms=symbols,
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent,
+        cli=cli,
+    )
+    result["electronic_energy_eV"] = energy_eV
+    result["zpe_eV"] = zpe_eV
+    result["zpe_kcal_mol"] = 0.0
+    result["enthalpy_eV"] = H_eV
+    result["entropy_eV_per_K"] = S_eV_per_K
+    result["gibbs_free_energy_eV"] = G_eV
+    result["temperature_K"] = temperature_K
+    result["pressure_Pa"] = pressure_Pa
+    result["geometry"] = "monatomic"
+    result["symmetry_number"] = 1
+    result["n_real_vib_modes"] = 0
+    result["n_imaginary_modes"] = 0
+    result["vibrational_frequencies_cm-1"] = []
+    result["geometry_auto_detected"] = True
+    warns = element_warnings(symbols, method)
     if warns:
         result["warnings"] = warns
     return result
@@ -401,12 +525,16 @@ def _run_ase(
 
 def _run_mopac(
     *, input_path, atoms, symbols, charge, multiplicity, solvent,
-    temperature_K, pressure_Pa, cli,
+    temperature_K, pressure_Pa, symmetrynumber, cli,
 ) -> Dict[str, Any]:
     """Drive MOPAC's native FORCE+THERMO calculation."""
     mopac_exe = shutil.which("mopac")
     if mopac_exe is None:
         raise FileNotFoundError("mopac executable not found in PATH.")
+
+    symmetry_was_default = symmetrynumber is None
+    if symmetrynumber is None:
+        symmetrynumber = 1
 
     workdir = tempfile.mkdtemp(prefix="chemkit_mopac_freq_")
     mop_path = os.path.join(workdir, "mopac.mop")
@@ -414,7 +542,7 @@ def _run_mopac(
 
     keywords = _mopac_freq_keywords(
         charge=charge, multiplicity=multiplicity, solvent=solvent,
-        temperature_K=temperature_K,
+        temperature_K=temperature_K, symmetrynumber=symmetrynumber,
     )
     _write_mopac_input(mop_path, keywords, symbols, atoms.get_positions())
 
@@ -503,6 +631,7 @@ def _run_mopac(
         if extras:
             result["code_specific"] = extras
 
+    result["symmetry_number"] = symmetrynumber
     warns = element_warnings(symbols, "mopac")
     n_imag = force.get("n_imaginary_modes") or 0
     if n_imag > 0:
@@ -510,13 +639,20 @@ def _run_mopac(
             f"{n_imag} imaginary mode(s) detected — geometry is not a true minimum. "
             "Thermochemistry values are approximate; re-optimize and re-run."
         )
+    if symmetry_was_default and symmetrynumber == 1:
+        warns.append(
+            "symmetry_number defaulted to 1; if the molecule has rotational "
+            "symmetry (H2O σ=2, NH3 σ=3, CH4 σ=12) the entropy and Gibbs "
+            "energy are over-estimated by R·ln(σ). Re-run with --symmetry-number "
+            "set to the correct value for your point group."
+        )
     if warns:
         result["warnings"] = warns
     return result
 
 
 def _mopac_freq_keywords(
-    *, charge, multiplicity, solvent, temperature_K,
+    *, charge, multiplicity, solvent, temperature_K, symmetrynumber,
 ) -> List[str]:
     kw = ["PM7", "FORCE", "THERMO", "AUX", "LET", "GEO-OK"]
     if charge != 0:
@@ -532,10 +668,9 @@ def _mopac_freq_keywords(
         if eps is None:
             raise ValueError(f"mopac: unknown solvent {solvent!r}")
         kw.append(f"EPS={eps}")
-    # Set temperature range so THERMO emits values at the requested T.
-    # MOPAC's THERMO defaults to a sweep starting at 200 K with 298 prepended.
-    # ROT=1 (sigma=1) — user can override at the call site if needed.
-    kw.append("ROT=1")
+    # ROT=σ enters S_rot = R(ln(q_rot) - ln σ); σ=1 over-estimates S for any
+    # molecule with rotational symmetry.
+    kw.append(f"ROT={int(symmetrynumber)}")
     n_threads = int(os.environ.get("CHEMKIT_MOPAC_THREADS") or (os.cpu_count() or 1))
     kw.append(f"THREADS={n_threads}")
     return kw

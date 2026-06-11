@@ -168,8 +168,9 @@ def _run_one_irc_direction(atoms, symbols, direction, charge, multiplicity,
     workdir = tempfile.mkdtemp(prefix=f"chemkit_irc_{('fwd' if direction>0 else 'rev')}_")
     mop_path = os.path.join(workdir, "irc.mop")
 
-    # MOPAC IRC=N runs N points; sign of N is forward/reverse
-    irc_key = f"IRC={direction}*"
+    # MOPAC IRC=N runs the IRC in direction N (+1 forward, -1 reverse).
+    # Trailing '*' is NOT valid syntax — that turns IRC=N into a different keyword.
+    irc_key = f"IRC={direction}"
     keywords = ["PM7", irc_key, "AUX", "GEO-OK", "X-PRIORITY=0.0"]
     if charge != 0:
         keywords.append(f"CHARGE={charge}")
