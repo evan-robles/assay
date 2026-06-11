@@ -535,8 +535,9 @@ def _mopac_freq_keywords(
     # Set temperature range so THERMO emits values at the requested T.
     # MOPAC's THERMO defaults to a sweep starting at 200 K with 298 prepended.
     # ROT=1 (sigma=1) — user can override at the call site if needed.
-    kw.append(f"ROT=1")
-    kw.append("THREADS=1")
+    kw.append("ROT=1")
+    n_threads = int(os.environ.get("CHEMKIT_MOPAC_THREADS") or (os.cpu_count() or 1))
+    kw.append(f"THREADS={n_threads}")
     return kw
 
 
