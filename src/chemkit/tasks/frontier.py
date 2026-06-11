@@ -14,6 +14,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
     method_label, program_label, collect_calc_extras, mopac_spin_keyword,
+    register_auto_tempdir,
 )
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
@@ -89,19 +90,35 @@ def _run_generic(atoms, *, calc, method, nfrontier) -> Dict[str, Any]:
     """DFT/HF frontier-orbital extraction via the PySCF backend.
 
     Relies on the PySCFCalculator stashing eigenvalues/occupations on itself
-    as `_chemkit_extras` (orbital_energies_eV, orbital_occupations).
+    as `_chemkit_extras` (orbital_energies_eV, orbital_occupations). For UKS
+    /UHF, those fields are dicts {alpha: [...], beta: [...]} and we merge
+    both channels (occupation 1.0 per electron) into a single sorted list so
+    HOMO = highest occupied across both spins.
     """
     apply_calc_to_atoms(atoms, calc)
     total_energy_eV = float(atoms.get_potential_energy())
     extras = collect_calc_extras(method, atoms, calc) or {}
     eigs_eV = extras.get("orbital_energies_eV") or extras.get("eigenvalues_eV")
     occs = extras.get("orbital_occupations") or extras.get("occupations")
-    if not eigs_eV or occs is None:
+    if eigs_eV is None or occs is None:
         raise RuntimeError(
             f"frontier ({method}): PySCF calculator did not return orbital "
             "eigenvalues/occupations (expected on calc._chemkit_extras)."
         )
-    body = _build_block(list(eigs_eV), list(occs), total_energy_eV,
+    # Unrestricted: merge α + β channels into a single sorted (energy, occ) list.
+    if isinstance(eigs_eV, dict):
+        e_a = list(eigs_eV.get("alpha", []))
+        e_b = list(eigs_eV.get("beta", []))
+        o_a = list(occs.get("alpha", []))
+        o_b = list(occs.get("beta", []))
+        combined = list(zip(e_a + e_b, o_a + o_b))
+        combined.sort(key=lambda eo: eo[0])
+        eigs_flat = [e for e, _ in combined]
+        occs_flat = [o for _, o in combined]
+    else:
+        eigs_flat = list(eigs_eV)
+        occs_flat = list(occs)
+    body = _build_block(eigs_flat, occs_flat, total_energy_eV,
                         energy_zero="electronic energy (bare nuclei + electrons)",
                         nfrontier=nfrontier)
     return body
@@ -168,7 +185,7 @@ def _run_mopac(atoms, *, charge, multiplicity, solvent, nfrontier) -> Dict[str, 
             raise ValueError(f"mopac: unknown solvent {solvent!r}")
         keywords.append(f"EPS={eps}")
 
-    workdir = tempfile.mkdtemp(prefix="chemkit_frontier_mopac_")
+    workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_frontier_mopac_"))
     calc = MOPAC(label=os.path.join(workdir, "mopac"),
                  task=" ".join(keywords), relscf=0.01)
     calc._chemkit_keywords = keywords

@@ -27,7 +27,7 @@ import numpy as np
 
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-    method_label, program_label, mopac_spin_keyword,
+    method_label, program_label, mopac_spin_keyword, register_auto_tempdir,
 )
 from ..io import read_geometry
 from ..schema import base_result, element_warnings
@@ -93,6 +93,8 @@ def run(
         if best_xyz and os.path.isfile(best_xyz):
             # Copy into a stable location next to the original work area so
             # the user can find it after the freq job exits.
+            # Intentionally NOT auto-cleaned: `best_xyz` below is surfaced in
+            # the result JSON and the user expects to be able to inspect/reuse it.
             cs_workdir = tempfile.mkdtemp(prefix="chemkit_freqcs_")
             persistent_best = os.path.join(cs_workdir, "best_conformer.xyz")
             shutil.copyfile(best_xyz, persistent_best)
@@ -157,7 +159,7 @@ def run(
                 "probed_fmax_eV_per_A": probe_fmax,
             }
         else:
-            opt_work = tempfile.mkdtemp(prefix="chemkit_optfreq_")
+            opt_work = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_optfreq_"))
             opt_xyz = os.path.join(opt_work, "preopt.xyz")
             opt_result = opt_task.run(
                 input_path=input_path,
@@ -329,7 +331,7 @@ def _run_ase(
     )
     apply_calc_to_atoms(atoms, calc)
 
-    workdir = tempfile.mkdtemp(prefix="chemkit_freq_")
+    workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_freq_"))
     cache = os.path.join(workdir, "vib")
 
     energy_eV = atoms.get_potential_energy()

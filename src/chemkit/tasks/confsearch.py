@@ -184,22 +184,59 @@ def run(
 
 
 def _parse_crest_energies(path, fallback_xyz):
+    """Pull per-conformer energies (Hartree) from a CREST run.
+
+    Modern CREST (≥2.12) usually does NOT write `crest.energies`; the
+    energies live in the xyz comment line of `crest_conformers.xyz`. Each
+    frame's comment is typically a bare scientific-notation float, but some
+    builds emit `<index> <energy>` or `<energy> <degeneracy>`. Parse out the
+    first parseable float-like token; if no token looks like an energy
+    (large negative Hartree value), fall back to whichever token in the
+    comment looks most energy-like.
+    """
     if os.path.isfile(path):
         with open(path) as f:
-            return [float(line.split()[0]) for line in f if line.strip()]
+            energies = []
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                # `crest.energies` rows are typically `<idx> <E_Hartree>` or
+                # just `<E_Hartree>`. Take whichever token is the most
+                # negative-looking (real energies in Hartree are negative
+                # and large in magnitude; integer indices are small).
+                tokens = line.split()
+                floats = []
+                for t in tokens:
+                    try:
+                        floats.append(float(t.replace("D", "E").replace("d", "e")))
+                    except ValueError:
+                        pass
+                if floats:
+                    energies.append(min(floats))
+        if energies:
+            return energies
+    # Fallback: per-frame xyz comment line. Same picking strategy.
+    if not fallback_xyz or not os.path.isfile(fallback_xyz):
+        return []
     energies = []
     with open(fallback_xyz) as f:
         lines = f.read().splitlines()
     i = 0
     while i < len(lines):
         try:
-            n = int(lines[i].strip())
-        except ValueError:
+            n = int(lines[i].strip().split()[0])
+        except (ValueError, IndexError):
             break
         comment = lines[i + 1] if i + 1 < len(lines) else ""
-        m = re.search(r"[-+]?\d+\.\d+", comment)
-        if m:
-            energies.append(float(m.group()))
+        floats = []
+        for tok in re.findall(r"[-+]?\d+\.\d+(?:[EeDd][-+]?\d+)?", comment):
+            try:
+                floats.append(float(tok.replace("D", "E").replace("d", "e")))
+            except ValueError:
+                pass
+        if floats:
+            energies.append(min(floats))
         i += n + 2
     return energies
 
@@ -631,7 +668,9 @@ def _ring_pucker_seeds(
 
     targets = _cp_pucker_targets(N)[:max_per_ring]
     seeds: List[Tuple[str, Any]] = []
-    seed_workdir = workdir or tempfile.mkdtemp(prefix="chemkit_cpseed_")
+    from ..calculators import register_auto_tempdir
+    seed_workdir = workdir or register_auto_tempdir(
+        tempfile.mkdtemp(prefix="chemkit_cpseed_"))
     for target in targets:
         z_new = _cp_z_displacements(N, target)
         # Build dz array for each atom

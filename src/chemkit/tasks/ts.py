@@ -26,7 +26,7 @@ from ase.io import write as ase_write
 
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-    method_label, program_label, mopac_spin_keyword,
+    method_label, program_label, mopac_spin_keyword, register_auto_tempdir,
 )
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
@@ -100,7 +100,7 @@ def run(
     # Verify: run a freq on the converged TS, count imaginary modes
     if verify_freq and ts_atoms is not None and body.get("converged"):
         try:
-            freq_workdir = tempfile.mkdtemp(prefix="chemkit_ts_verify_")
+            freq_workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_ts_verify_"))
             ts_input = os.path.join(freq_workdir, "ts.xyz")
             ase_write(ts_input, ts_atoms)
             freq_result = freq_task.run(
@@ -193,22 +193,45 @@ def _ts_mopac(atoms, symbols, *, charge, multiplicity, solvent, steps):
     if ts_atoms is None:
         ts_atoms = atoms.copy()
 
-    # Convergence check: MOPAC TS reports "TS = " success line or "WAS NOT OBTAINED"
+    # Convergence detection. MOPAC's TS run is the EF saddle-point optimizer;
+    # MOPAC reports the same "GEOMETRY OPTIMISED USING EIGENVECTOR FOLLOWING"
+    # message whether it landed on a true first-order saddle or a nearby min,
+    # so this flag only means "the optimizer terminated cleanly" — saddle
+    # character must be verified separately via vibrational analysis.
+    # Failure signatures: explicit "NOT OBTAINED", "FAILED", "GRADIENT IS TOO
+    # LARGE", "NUMERICAL PROBLEMS", or hitting the cycle limit with no
+    # OPTIMISED message.
     converged = False
     msg = ""
     if out_path:
         with open(out_path) as f:
             txt = f.read()
-        if "GRADIENT" in txt and re.search(r"GEOMETRY OPTIMISED USING [A-Z]+", txt):
+        upper = txt.upper()
+        failure_signatures = (
+            "GRADIENT IS TOO LARGE",
+            "NUMERICAL PROBLEMS",
+            "NOT OBTAINED",
+            "WAS NOT LOCATED",
+            "EXCESS NUMBER OF OPTIMIZATION CYCLES",
+            "HEAT OF FORMATION IS",  # this appears only in failed-TS post-mortem section
+        )
+        # The success message — required, not sufficient.
+        m_ok = re.search(r"GEOMETRY OPTIMISED USING ([A-Z ]+)", txt)
+        explicit_failure = any(sig in upper for sig in failure_signatures[:5])
+        if m_ok and not explicit_failure:
             converged = True
-            m = re.search(r"GEOMETRY OPTIMISED USING ([A-Z]+)", txt)
-            msg = f"{m.group(1)} reported geometry optimised." if m else "optimised"
-        elif "TRANSITION STATE WAS LOCATED" in txt.upper():
-            converged = True
-            msg = "MOPAC reported TS located."
-        elif "NOT OBTAINED" in txt.upper() or "FAILED" in txt.upper():
+            msg = (f"{m_ok.group(1).strip()} reported geometry optimised "
+                   "(saddle character must be verified by freq).")
+        elif explicit_failure:
             converged = False
-            msg = "MOPAC reported TS search did not converge."
+            for sig in failure_signatures[:5]:
+                if sig in upper:
+                    msg = f"MOPAC TS failed: {sig.lower()}."
+                    break
+        else:
+            converged = False
+            msg = ("MOPAC TS produced no OPTIMISED success message and no "
+                   "explicit failure marker — likely hit the cycle limit.")
 
     extras = parse_mopac_extras(workdir)
     hof = extras.get("heat_of_formation_kcal_mol")

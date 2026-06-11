@@ -74,6 +74,37 @@ MOPAC_SOLVENT_EPS = {
 }
 
 
+# Track tempdirs allocated implicitly by build_calculator so we can clean
+# them up at process exit. Tempdirs registered here are NOT surfaced in the
+# result JSON (caller passed workdir=None, so the path isn't known outside
+# this module). Tasks that expose their workdir to the user (freq, ts, irc,
+# confsearch) bypass build_calculator's allocation by passing workdir=... in.
+_AUTO_TEMPDIRS: list = []
+
+def register_auto_tempdir(path: str) -> str:
+    """Mark a workdir for cleanup at process exit. Call from tasks whose
+    workdir is NOT surfaced in the result JSON (intermediate freq/opt
+    preopt dirs, vibration finite-difference caches, etc.). Tasks that
+    expose `*_workdir` to the user should skip this — those need to
+    survive past the chemkit process so the user can inspect the files.
+
+    Returns the path so callers can write `workdir = register_auto_tempdir(
+    tempfile.mkdtemp(prefix='...'))` in one line.
+    """
+    _AUTO_TEMPDIRS.append(path)
+    return path
+
+def _cleanup_auto_tempdirs():
+    import shutil as _sh
+    for d in _AUTO_TEMPDIRS:
+        try:
+            _sh.rmtree(d, ignore_errors=True)
+        except Exception:
+            pass
+import atexit as _atexit
+_atexit.register(_cleanup_auto_tempdirs)
+
+
 def build_calculator(
     method: str,
     *,
@@ -91,10 +122,16 @@ def build_calculator(
     multiplicity: 2S+1 (ASE uses unpaired-electron count internally for some calcs)
     solvent: e.g. 'water' for ALPB (xtb) or COSMO EPS=... (MOPAC). None = gas phase.
     tier/functional/basis: PySCF-only knobs. Silently ignored for xtb/mopac.
+
+    If `workdir` is None a fresh tempdir is allocated and registered for
+    auto-cleanup at process exit. Callers that want the workdir to persist
+    past the chemkit run (e.g. so result['mopac_workdir'] is still readable
+    afterwards) must pass `workdir=...` explicitly.
     """
     method = method.lower()
     if workdir is None:
         workdir = tempfile.mkdtemp(prefix=f"chemkit_{method}_")
+        _AUTO_TEMPDIRS.append(workdir)
 
     if method == "xtb":
         return _build_xtb(charge, multiplicity, solvent, workdir)

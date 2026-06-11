@@ -26,7 +26,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
-from ..calculators import build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS, mopac_spin_keyword
+from ..calculators import (build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
+                            mopac_spin_keyword, register_auto_tempdir)
 from ..io import read_geometry
 from ..schema import base_result, element_warnings
 from ._mopac_parsers import _find_with_ext
@@ -322,7 +323,7 @@ def _imag_mode_eigenvector_xtb(atoms, charge, multiplicity, solvent):
         "xtb", charge=charge, multiplicity=multiplicity, solvent=solvent
     )
     apply_calc_to_atoms(atoms, calc)
-    workdir = tempfile.mkdtemp(prefix="chemkit_irc_vib_")
+    workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_irc_vib_"))
     vib = Vibrations(atoms, name=os.path.join(workdir, "vib"),
                      delta=0.005, nfree=4)
     vib.run()

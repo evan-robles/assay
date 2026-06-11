@@ -243,7 +243,11 @@ def run(
     # Spin balance is harder to check rigorously (multiplicity 2S+1 doesn't
     # add linearly), so we surface the totals as a hint but don't warn.
 
-    # Atom-count balance per element. Warn if mismatched.
+    # Atom-count balance per element. Warn if mismatched. Use a tolerance for
+    # comparison since float coefficients (e.g. 1.5*X) can produce sums that
+    # equal each other only to within numerical noise (0.3 + 0.3 + 0.4 != 1.0
+    # exactly in IEEE 754).
+    ATOM_BALANCE_TOL = 1e-6
     def _atom_counts(blocks):
         counts: Dict[str, float] = {}
         for b in blocks:
@@ -253,7 +257,11 @@ def run(
         return counts
     r_atoms = _atom_counts(r_blocks)
     p_atoms = _atom_counts(p_blocks)
-    atom_balance_ok = (r_atoms == p_atoms)
+    all_elements = set(r_atoms) | set(p_atoms)
+    atom_balance_ok = all(
+        abs(r_atoms.get(el, 0.0) - p_atoms.get(el, 0.0)) < ATOM_BALANCE_TOL
+        for el in all_elements
+    )
 
     # The method label comes from one of the species' result blocks — every
     # species used the same calculator, so any of them carries the canonical
@@ -275,6 +283,12 @@ def run(
     first_path = r_blocks[0]["path"]
     n_atoms_total = sum(int(b["coef"] * len(read_geometry(b["path"])))
                         for b in r_blocks + p_blocks)
+    # `charge`/`multiplicity` aren't meaningful for a composite reaction
+    # (the cycle aggregates several species). Pass None rather than 0 — 0 is a
+    # valid singlet-multiplicity value that downstream consumers may treat as
+    # a real charge state. int(r_charge) would also silently truncate a float
+    # total (e.g. 1.5 from 1.5*X coefficients). For the composite, the
+    # per-species charges live in the `balance` block.
     result = base_result(
         task="reaction_energy",
         method=canonical_method,
@@ -282,8 +296,8 @@ def run(
         input_path=first_path,
         n_atoms=n_atoms_total,
         atoms=[],  # composite reaction; per-species symbols are in the blocks
-        charge=int(r_charge),
-        multiplicity=0,  # not meaningful for the composite reaction
+        charge=None,
+        multiplicity=None,
         solvent=solvent,
         cli=cli,
     )

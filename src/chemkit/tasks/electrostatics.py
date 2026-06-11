@@ -25,6 +25,7 @@ import numpy as np
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
     method_label, program_label, collect_calc_extras, mopac_spin_keyword,
+    register_auto_tempdir,
 )
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
@@ -179,7 +180,7 @@ def _run_mopac(atoms, symbols, *, charge: int, multiplicity: int,
     if mopac_exe is None:
         raise FileNotFoundError("mopac executable not found in PATH.")
 
-    workdir = tempfile.mkdtemp(prefix="chemkit_elst_")
+    workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_elst_"))
     mop_path = os.path.join(workdir, "mopac.mop")
 
     keywords = ["PM7", "1SCF", "AUX", "GEO-OK"]

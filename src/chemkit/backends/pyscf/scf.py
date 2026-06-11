@@ -118,33 +118,67 @@ def pack_scf_result(mf) -> Dict[str, Any]:
         "scf_cycles": int(getattr(mf, "cycles", 0) or 0),
     }
 
-    # Orbital eigenvalues. UKS/UHF return a tuple (alpha, beta); we report the
-    # alpha-channel HOMO/LUMO as a pragmatic default and flag the open-shell
-    # case so consumers know not to over-interpret a single gap.
+    # Orbital eigenvalues. For UKS/UHF, mo_energy is a (2, n_mo) array or a
+    # 2-tuple — α and β channels. The reported HOMO is the highest occupied
+    # across BOTH channels, and LUMO is the lowest unoccupied across both;
+    # the gap is the difference. (Previously the α channel was reported
+    # alone, which is wrong whenever β HOMO sits above α HOMO — common in
+    # high-spin systems with significant exchange splitting.)
     try:
         mo_energy = mf.mo_energy
         mo_occ = mf.mo_occ
-        if isinstance(mo_energy, (list, tuple)) or (hasattr(mo_energy, "ndim") and mo_energy.ndim == 2):
+        is_uks = isinstance(mo_energy, (list, tuple)) or (
+            hasattr(mo_energy, "ndim") and mo_energy.ndim == 2
+        )
+        out["spin_unrestricted"] = bool(is_uks)
+
+        if is_uks:
             e_a = np.asarray(mo_energy[0])
+            e_b = np.asarray(mo_energy[1])
             occ_a = np.asarray(mo_occ[0])
-            out["spin_unrestricted"] = True
+            occ_b = np.asarray(mo_occ[1])
+            # Per-channel arrays for the frontier task; consumers that need
+            # spin-resolved gaps can use these directly.
+            out["orbital_energies_eV"] = {
+                "alpha": (e_a * HARTREE_TO_EV).tolist(),
+                "beta": (e_b * HARTREE_TO_EV).tolist(),
+            }
+            out["orbital_occupations"] = {
+                "alpha": occ_a.tolist(),
+                "beta": occ_b.tolist(),
+            }
+            # Merge channels with occupation 1.0 per electron and find HOMO/LUMO
+            # in the merged set. For UHF, occupied means occ > 0.5 (each channel
+            # contributes 0 or 1).
+            occ_thresh = 0.5
+            homo_candidates = []
+            lumo_candidates = []
+            for e, occ in ((e_a, occ_a), (e_b, occ_b)):
+                occ_idx = np.where(occ > occ_thresh)[0]
+                vir_idx = np.where(occ < occ_thresh)[0]
+                if occ_idx.size:
+                    homo_candidates.append(float(e[occ_idx[-1]]) * HARTREE_TO_EV)
+                if vir_idx.size:
+                    lumo_candidates.append(float(e[vir_idx[0]]) * HARTREE_TO_EV)
+            if homo_candidates and lumo_candidates:
+                homo = max(homo_candidates)
+                lumo = min(lumo_candidates)
+                out["homo_eV"] = homo
+                out["lumo_eV"] = lumo
+                out["homo_lumo_gap_eV"] = lumo - homo
         else:
             e_a = np.asarray(mo_energy)
             occ_a = np.asarray(mo_occ)
-            out["spin_unrestricted"] = False
-
-        # Full eigenvalue/occupation arrays — needed by the frontier task.
-        out["orbital_energies_eV"] = (e_a * HARTREE_TO_EV).tolist()
-        out["orbital_occupations"] = occ_a.tolist()
-
-        occ_idx = np.where(occ_a > 1e-6)[0]
-        vir_idx = np.where(occ_a < 1e-6)[0]
-        if occ_idx.size and vir_idx.size:
-            homo = float(e_a[occ_idx[-1]]) * HARTREE_TO_EV
-            lumo = float(e_a[vir_idx[0]]) * HARTREE_TO_EV
-            out["homo_eV"] = homo
-            out["lumo_eV"] = lumo
-            out["homo_lumo_gap_eV"] = lumo - homo
+            out["orbital_energies_eV"] = (e_a * HARTREE_TO_EV).tolist()
+            out["orbital_occupations"] = occ_a.tolist()
+            occ_idx = np.where(occ_a > 1e-6)[0]
+            vir_idx = np.where(occ_a < 1e-6)[0]
+            if occ_idx.size and vir_idx.size:
+                homo = float(e_a[occ_idx[-1]]) * HARTREE_TO_EV
+                lumo = float(e_a[vir_idx[0]]) * HARTREE_TO_EV
+                out["homo_eV"] = homo
+                out["lumo_eV"] = lumo
+                out["homo_lumo_gap_eV"] = lumo - homo
     except Exception:
         pass
 
