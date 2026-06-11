@@ -32,6 +32,30 @@ XTB_SOLVENT_MAP = {
 XTB_PYTHON_UNSUPPORTED_SOLVENTS = {"octanol"}
 
 # MOPAC COSMO: EPS=<dielectric>; pull common solvent constants.
+# MOPAC spin keywords. Map covers up to mult=11 (decuplet) which is more than
+# enough for any real molecule — even Mn²⁺/Fe³⁺ high-spin sit at mult ≤ 6.
+_MOPAC_SPIN_NAMES = {
+    2: "DOUBLET",  3: "TRIPLET",  4: "QUARTET",  5: "QUINTET",
+    6: "SEXTET",   7: "SEPTET",   8: "OCTET",    9: "NONET",
+}
+
+def mopac_spin_keyword(multiplicity: int) -> str:
+    """Return the MOPAC keyword for a given spin multiplicity. Raises for
+    closed-shell (multiplicity ≤ 1) and for values outside MOPAC's table."""
+    if multiplicity <= 1:
+        raise ValueError(
+            f"mopac_spin_keyword: multiplicity must be > 1 (got {multiplicity}); "
+            "closed-shell calculations don't take a spin keyword."
+        )
+    name = _MOPAC_SPIN_NAMES.get(int(multiplicity))
+    if name is None:
+        raise ValueError(
+            f"MOPAC does not support spin multiplicity {multiplicity}. "
+            f"Known: {sorted(_MOPAC_SPIN_NAMES)}."
+        )
+    return name
+
+
 MOPAC_SOLVENT_EPS = {
     "water": 78.4, "h2o": 78.4,
     "methanol": 32.6, "meoh": 32.6,
@@ -102,6 +126,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
         from .backends.pyscf import (
             PySCFCalculator, resolve_dft_tier, HF_DEFAULT_BASIS,
         )
+        from .backends.pyscf.hf import HF_TIERS, DEFAULT_TIER as HF_DEFAULT_TIER
     except ImportError as e:
         raise ImportError(
             f"chemkit.backends.pyscf is unavailable ({e}). "
@@ -115,6 +140,8 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             xc=cfg["xc"],
             basis=cfg["basis"],
             grid_level=cfg["grid"],
+            scf_tol=cfg["scf_tol"],
+            max_cycle=cfg["max_cycle"],
             auxbasis=cfg["aux"],
             charge=charge,
             multiplicity=multiplicity,
@@ -128,14 +155,20 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
         calc._chemkit_basis = calc.basis
     else:  # hf
         used_basis = basis or HF_DEFAULT_BASIS
+        hf_tier = (tier or HF_DEFAULT_TIER).lower()
+        if hf_tier not in HF_TIERS:
+            raise ValueError(f"Unknown HF tier {tier!r}. Choose from {sorted(HF_TIERS)}.")
+        hf_cfg = HF_TIERS[hf_tier]
         calc = PySCFCalculator(
             method="hf",
             basis=used_basis,
+            scf_tol=hf_cfg["scf_tol"],
+            max_cycle=hf_cfg["max_cycle"],
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,
         )
-        calc._chemkit_tier = None
+        calc._chemkit_tier = hf_tier
         calc._chemkit_functional = None
         calc._chemkit_basis = calc.basis  # honors anion auto-promotion
 
@@ -276,12 +309,8 @@ def _build_mopac(charge, multiplicity, solvent, workdir):
     if charge != 0:
         task_keywords.append(f"CHARGE={charge}")
     if multiplicity > 1:
-        names = {2: "DOUBLET", 3: "TRIPLET", 4: "QUARTET", 5: "QUINTET"}
-        spin = names.get(multiplicity)
-        if spin:
-            task_keywords.append(spin)
-        if multiplicity > 1:
-            task_keywords.append("UHF")
+        task_keywords.append(mopac_spin_keyword(multiplicity))
+        task_keywords.append("UHF")
     if solvent:
         eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
         if eps is None:

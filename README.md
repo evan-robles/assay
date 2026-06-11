@@ -30,7 +30,12 @@ ASE-based computational chemistry suite — xtb (GFN2) and MOPAC (PM7), with opt
 conda install -c conda-forge xtb mopac ase
 pip install xtb  # optional: faster xtb-python bindings
 
-# 2. Either pip install the package
+# 2. Optional: install Sella for transition-state searches with the
+#    xtb / dft / hf backends. MOPAC has a native TS optimizer and does
+#    NOT need Sella; every other backend does.
+pip install sella
+
+# 3. Either pip install the package
 pip install -e ~/chem-skills
 
 # OR use the bash shim

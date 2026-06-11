@@ -12,10 +12,21 @@ from .scf import build_mean_field, pack_scf_result
 
 DEFAULT_BASIS = "def2-tzvp"
 
+# HF has no functional, but convergence still varies with how tight you want
+# the answer. Same scf_tol/max_cycle ladder as DFT so chemkit's --tier flag
+# means the same thing across methods.
+HF_TIERS = {
+    "fast":     {"scf_tol": 1e-7,  "max_cycle": 80},
+    "standard": {"scf_tol": 1e-8,  "max_cycle": 150},
+    "accurate": {"scf_tol": 1e-10, "max_cycle": 300},
+}
+DEFAULT_TIER = "standard"
+
 
 def run_sp(
     atoms,
     *,
+    tier: Optional[str] = None,
     basis: Optional[str] = None,
     charge: int = 0,
     multiplicity: int = 1,
@@ -25,6 +36,10 @@ def run_sp(
     """Run an HF single-point and return {energy_hartree, extras, warnings}."""
     chosen_basis = basis or DEFAULT_BASIS
     used_basis, promoted = promote_basis_for_anion(chosen_basis, charge)
+    tier_name = (tier or DEFAULT_TIER).lower()
+    if tier_name not in HF_TIERS:
+        raise ValueError(f"Unknown HF tier {tier!r}. Choose from {sorted(HF_TIERS)}.")
+    tcfg = HF_TIERS[tier_name]
 
     mol = build_mol(
         atoms,
@@ -37,6 +52,8 @@ def run_sp(
     mf = build_mean_field(
         mol,
         method="hf",
+        scf_tol=tcfg["scf_tol"],
+        max_cycle=tcfg["max_cycle"],
         solvent=solvent,
     )
 
@@ -44,7 +61,10 @@ def run_sp(
 
     extras = pack_scf_result(mf)
     extras.update({
+        "tier": tier_name,
         "basis": used_basis,
+        "scf_tol": tcfg["scf_tol"],
+        "scf_max_cycle": tcfg["max_cycle"],
         "density_fit": True,
         "solvent_model": ("ddCOSMO" if solvent else None),
     })

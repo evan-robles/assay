@@ -16,7 +16,7 @@ import subprocess
 import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..calculators import MOPAC_SOLVENT_EPS
+from ..calculators import MOPAC_SOLVENT_EPS, mopac_spin_keyword
 from ..io import read_geometry
 from ..schema import (
     base_result,
@@ -242,10 +242,7 @@ def _mopac_opt_keywords(
     if charge != 0:
         kw.append(f"CHARGE={charge}")
     if multiplicity > 1:
-        names = {2: "DOUBLET", 3: "TRIPLET", 4: "QUARTET", 5: "QUINTET"}
-        spin = names.get(multiplicity)
-        if spin:
-            kw.append(spin)
+        kw.append(mopac_spin_keyword(multiplicity))
         kw.append("UHF")
     if solvent:
         eps = MOPAC_SOLVENT_EPS.get(solvent.lower())

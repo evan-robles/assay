@@ -16,9 +16,12 @@ from .scf import build_mean_field, pack_scf_result
 # wB97X-D3BJ would be a hair better at the standard tier but requires
 # pyscf-dispersion, which currently fails to load on Python 3.13.
 TIERS = {
-    "fast":     {"xc": "r2scan",  "basis": "def2-svp",   "grid": 3, "aux": "def2-universal-jfit"},
-    "standard": {"xc": "wb97x_v", "basis": "def2-tzvp",  "grid": 4, "aux": "def2-universal-jfit"},
-    "accurate": {"xc": "wb97m_v", "basis": "def2-qzvpp", "grid": 5, "aux": "def2-universal-jfit"},
+    "fast":     {"xc": "r2scan",  "basis": "def2-svp",   "grid": 3, "aux": "def2-universal-jfit",
+                 "scf_tol": 1e-7,  "max_cycle": 80},
+    "standard": {"xc": "wb97x_v", "basis": "def2-tzvp",  "grid": 4, "aux": "def2-universal-jfit",
+                 "scf_tol": 1e-8,  "max_cycle": 150},
+    "accurate": {"xc": "wb97m_v", "basis": "def2-qzvpp", "grid": 5, "aux": "def2-universal-jfit",
+                 "scf_tol": 1e-10, "max_cycle": 300},
 }
 DEFAULT_TIER = "standard"
 
@@ -76,6 +79,8 @@ def run_sp(
         method="dft",
         xc=cfg["xc"],
         grid_level=cfg["grid"],
+        scf_tol=cfg["scf_tol"],
+        max_cycle=cfg["max_cycle"],
         auxbasis=cfg["aux"],
         solvent=solvent,
     )
@@ -89,6 +94,8 @@ def run_sp(
         "basis": cfg["basis"],
         "grid_level": cfg["grid"],
         "auxbasis": cfg["aux"],
+        "scf_tol": cfg["scf_tol"],
+        "scf_max_cycle": cfg["max_cycle"],
         "density_fit": True,
         "solvent_model": ("ddCOSMO" if solvent else None),
     })

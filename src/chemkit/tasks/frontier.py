@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-    method_label, program_label, collect_calc_extras,
+    method_label, program_label, collect_calc_extras, mopac_spin_keyword,
 )
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
@@ -160,10 +160,7 @@ def _run_mopac(atoms, *, charge, multiplicity, solvent, nfrontier) -> Dict[str, 
     if charge != 0:
         keywords.append(f"CHARGE={charge}")
     if multiplicity > 1:
-        names = {2: "DOUBLET", 3: "TRIPLET", 4: "QUARTET", 5: "QUINTET"}
-        spin = names.get(multiplicity)
-        if spin:
-            keywords.append(spin)
+        keywords.append(mopac_spin_keyword(multiplicity))
         keywords.append("UHF")
     if solvent:
         eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
@@ -198,22 +195,45 @@ def _run_mopac(atoms, *, charge, multiplicity, solvent, nfrontier) -> Dict[str, 
 
 
 def _parse_mopac_eigenvalues(workdir: str) -> Tuple[List[float], List[float]]:
+    """Return a merged-and-sorted (eigenvalues_eV, occupations) list.
+
+    Open-shell (UHF) MOPAC runs have separate α and β blocks; we concatenate
+    them (with occupations 1.0/1.0 for occupied α/β orbitals) and sort by
+    energy so HOMO = highest-occupied across both spin channels. This matches
+    how chemists report the "HOMO" of a radical (whichever spin is highest).
+    """
     aux_path = _find_with_ext(workdir, ".aux")
     if aux_path and os.path.isfile(aux_path):
         with open(aux_path) as f:
             aux_text = f.read()
-        eigs = _parse_aux_array(aux_text, "EIGENVALUES")
-        if not eigs:
-            eigs = _parse_aux_array(aux_text, "ALPHA_EIGENVALUES")
-        if eigs:
-            occs = _occupations_from_aux(aux_text, len(eigs))
-            return eigs, occs
+        # Restricted: single EIGENVALUES block.
+        eigs_r = _parse_aux_array(aux_text, "EIGENVALUES")
+        if eigs_r:
+            occs = _occupations_from_aux(aux_text, len(eigs_r))
+            return eigs_r, occs
+        # Unrestricted: separate ALPHA / BETA blocks.
+        eigs_a = _parse_aux_array(aux_text, "ALPHA_EIGENVALUES")
+        eigs_b = _parse_aux_array(aux_text, "BETA_EIGENVALUES")
+        if eigs_a or eigs_b:
+            return _merge_uhf_orbitals(aux_text, eigs_a, eigs_b)
 
     out_path = _find_with_ext(workdir, ".out")
     if out_path and os.path.isfile(out_path):
         with open(out_path) as f:
             out_text = f.read()
-        eigs = _parse_eigenvalues_from_out(out_text)
+        # First try unrestricted: separate "ALPHA EIGENVALUES" / "BETA EIGENVALUES"
+        eigs_a = _parse_eigenvalues_from_out(out_text, header="ALPHA EIGENVALUES")
+        eigs_b = _parse_eigenvalues_from_out(out_text, header="BETA EIGENVALUES")
+        if eigs_a or eigs_b:
+            n_alpha = _parse_int_aux(_safe_read(aux_path), "NUM_ALPHA_ELECTRONS") if aux_path else None
+            n_beta = _parse_int_aux(_safe_read(aux_path), "NUM_BETA_ELECTRONS") if aux_path else None
+            if n_alpha is None or n_beta is None:
+                # No AUX → guess: assume the first half of each block is occupied.
+                n_alpha = len(eigs_a) // 2 if eigs_a else 0
+                n_beta = len(eigs_b) // 2 if eigs_b else 0
+            return _zip_uhf(eigs_a, eigs_b, n_alpha, n_beta)
+        # Restricted closed-shell only — look for the standalone EIGENVALUES block.
+        eigs = _parse_eigenvalues_from_out(out_text, header="EIGENVALUES")
         if eigs:
             n_electrons = _parse_int_aux(_safe_read(aux_path), "NUM_ELECTRONS") if aux_path else None
             if n_electrons is None:
@@ -233,6 +253,30 @@ def _occupations_from_aux(aux_text: str, n_orb: int) -> List[float]:
         return []
     n_occ = n_electrons // 2
     return [2.0] * n_occ + [0.0] * (n_orb - n_occ)
+
+
+def _merge_uhf_orbitals(
+    aux_text: str, eigs_a: List[float], eigs_b: List[float],
+) -> Tuple[List[float], List[float]]:
+    """For UHF: zip α + β eigenvalues into a single sorted list with
+    spin-channel occupations (1.0 occupied, 0.0 virtual per channel)."""
+    n_alpha = _parse_int_aux(aux_text, "NUM_ALPHA_ELECTRONS")
+    n_beta = _parse_int_aux(aux_text, "NUM_BETA_ELECTRONS")
+    if n_alpha is None or n_beta is None:
+        # Fall back to per-channel "half occupied" guess.
+        n_alpha = len(eigs_a) // 2 if eigs_a else 0
+        n_beta = len(eigs_b) // 2 if eigs_b else 0
+    return _zip_uhf(eigs_a, eigs_b, n_alpha, n_beta)
+
+
+def _zip_uhf(
+    eigs_a: List[float], eigs_b: List[float], n_alpha: int, n_beta: int,
+) -> Tuple[List[float], List[float]]:
+    occ_a = [1.0] * n_alpha + [0.0] * max(0, len(eigs_a) - n_alpha)
+    occ_b = [1.0] * n_beta + [0.0] * max(0, len(eigs_b) - n_beta)
+    combined = list(zip(eigs_a + eigs_b, occ_a + occ_b))
+    combined.sort(key=lambda eo: eo[0])
+    return [e for e, _ in combined], [o for _, o in combined]
 
 
 def _parse_int_aux(aux_text: Optional[str], key: str) -> Optional[int]:
@@ -262,8 +306,12 @@ def _parse_aux_array(aux_text: str, key: str) -> List[float]:
     return out
 
 
-def _parse_eigenvalues_from_out(out_text: str) -> List[float]:
-    m = re.search(r"EIGENVALUES\s*\n(.*?)(?:\n\s*\n|NET ATOMIC)", out_text, re.DOTALL)
+def _parse_eigenvalues_from_out(out_text: str, *, header: str = "EIGENVALUES") -> List[float]:
+    # Anchor with a word boundary on the LEFT so 'EIGENVALUES' does not match
+    # inside 'ALPHA_EIGENVALUES' / 'BETA_EIGENVALUES'. The header is taken as a
+    # whole token; e.g. header='EIGENVALUES' won't match 'ALPHA EIGENVALUES'.
+    pat = r"(?<![A-Z_])" + re.escape(header) + r"\s*\n(.*?)(?:\n\s*\n|NET ATOMIC)"
+    m = re.search(pat, out_text, re.DOTALL)
     if not m:
         return []
     vals: List[float] = []

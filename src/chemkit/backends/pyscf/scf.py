@@ -37,6 +37,7 @@ def build_mean_field(
     xc: Optional[str] = None,
     grid_level: int = 3,
     scf_tol: float = 1e-8,
+    max_cycle: Optional[int] = None,
     density_fit: bool = True,
     auxbasis: str = "def2-universal-jfit",
     solvent: Optional[str] = None,
@@ -69,6 +70,8 @@ def build_mean_field(
         mf = attach_solvent(mf, solvent)
 
     mf.conv_tol = float(scf_tol)
+    if max_cycle is not None:
+        mf.max_cycle = int(max_cycle)
     return mf
 
 

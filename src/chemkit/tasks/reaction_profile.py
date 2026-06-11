@@ -249,10 +249,20 @@ def run(
             )
             fwd_xyz = irc_res.get("forward_trajectory_xyz")
             rev_xyz = irc_res.get("reverse_trajectory_xyz")
-            # The result dict shape varies slightly between mopac/xtb; pull
-            # the last frame of each trajectory file by reading the xyz.
-            fwd_end = _last_xyz_frame(fwd_xyz) if fwd_xyz else None
-            rev_end = _last_xyz_frame(rev_xyz) if rev_xyz else None
+            # MOPAC's IRC=N takes small mass-weighted steps and stops after N
+            # points — it doesn't walk to the minimum. To make the connectivity
+            # check robust, relax each IRC endpoint with a regular opt before
+            # comparing to the supplied R/P minima. This was previously masked
+            # by the IRC=N* keyword bug (the trailing * accidentally requested
+            # walk-to-convergence behavior).
+            fwd_end = _relax_endpoint(
+                _last_xyz_frame(fwd_xyz), atoms_template=ts_xyz, label="fwd",
+                workdir=workdir, **common_kw,
+            ) if fwd_xyz else None
+            rev_end = _relax_endpoint(
+                _last_xyz_frame(rev_xyz), atoms_template=ts_xyz, label="rev",
+                workdir=workdir, **common_kw,
+            ) if rev_xyz else None
             r_pos = read_geometry(r_opt_xyz).get_positions()
             p_pos = read_geometry(p_opt_xyz).get_positions()
 
@@ -292,6 +302,12 @@ def run(
         }
 
     # ----- 6) Diagram PNG -----
+    # Ensure the destination directory exists — user can pass --out into a
+    # nested results/run-N/ path that nothing else has created yet. Diagram
+    # PNG and persistent xyz copies both land in `dirname(stem)`.
+    out_dir = os.path.dirname(stem) or "."
+    os.makedirs(out_dir, exist_ok=True)
+
     # Y-axis: ΔG relative to reactants in kcal/mol
     G_R_rel = 0.0
     G_TS_rel = dG_act_kcal
@@ -416,6 +432,40 @@ def run(
         result["warnings"] = warnings
     result["workdir"] = workdir
     return result
+
+
+def _relax_endpoint(coords, *, atoms_template, label, workdir,
+                    method, charge, multiplicity, solvent,
+                    tier=None, functional=None, basis=None):
+    """Write `coords` (with atom symbols pulled from `atoms_template`) to xyz
+    and run a quick opt — returns the relaxed positions or None on failure.
+
+    Used by the IRC connectivity check: MOPAC's IRC=N stops after N small
+    steps and doesn't reach the minimum, so we relax the endpoint before
+    comparing it to the supplied R/P minima. Returns coords unchanged if
+    the opt fails (better than dropping the endpoint entirely)."""
+    if coords is None:
+        return None
+    template = read_geometry(atoms_template)
+    syms = template.get_chemical_symbols()
+    if len(syms) != len(coords):
+        return coords
+    in_xyz = os.path.join(workdir, f"irc_{label}_endpoint.xyz")
+    out_xyz = os.path.join(workdir, f"irc_{label}_endpoint_opt.xyz")
+    with open(in_xyz, "w") as f:
+        f.write(f"{len(syms)}\nIRC {label} endpoint\n")
+        for s, (x, y, z) in zip(syms, coords):
+            f.write(f"{s:<3s} {x:15.8f} {y:15.8f} {z:15.8f}\n")
+    try:
+        opt_task.run(
+            in_xyz, out_xyz=out_xyz,
+            method=method, charge=charge, multiplicity=multiplicity,
+            solvent=solvent, tier=tier, functional=functional, basis=basis,
+            cli=f"(internal reaction_profile: relax IRC {label} endpoint)",
+        )
+        return read_geometry(out_xyz).get_positions()
+    except Exception:
+        return coords
 
 
 def _last_xyz_frame(xyz_path: str):

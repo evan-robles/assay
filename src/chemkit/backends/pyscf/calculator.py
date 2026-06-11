@@ -49,6 +49,7 @@ class PySCFCalculator(Calculator):
         solvent: Optional[str] = None,
         grid_level: int = 4,
         scf_tol: float = 1e-8,
+        max_cycle: Optional[int] = None,
         density_fit: bool = True,
         auxbasis: str = "def2-universal-jfit",
         max_memory_mb: int = 8000,
@@ -68,6 +69,7 @@ class PySCFCalculator(Calculator):
         self._solvent = solvent
         self._grid_level = int(grid_level)
         self._scf_tol = float(scf_tol)
+        self._max_cycle = max_cycle if max_cycle is None else int(max_cycle)
         self._density_fit = bool(density_fit)
         self._auxbasis = auxbasis
         self._max_memory_mb = int(max_memory_mb)
@@ -140,6 +142,7 @@ class PySCFCalculator(Calculator):
                 xc=self._xc,
                 grid_level=self._grid_level,
                 scf_tol=self._scf_tol,
+                max_cycle=self._max_cycle,
                 density_fit=self._density_fit,
                 auxbasis=self._auxbasis,
                 solvent=self._solvent,

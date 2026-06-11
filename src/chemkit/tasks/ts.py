@@ -26,7 +26,7 @@ from ase.io import write as ase_write
 
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-    method_label, program_label,
+    method_label, program_label, mopac_spin_keyword,
 )
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
@@ -167,10 +167,7 @@ def _ts_mopac(atoms, symbols, *, charge, multiplicity, solvent, steps):
     if charge != 0:
         keywords.append(f"CHARGE={charge}")
     if multiplicity > 1:
-        names = {2: "DOUBLET", 3: "TRIPLET", 4: "QUARTET", 5: "QUINTET", 6: "SEXTET"}
-        spin = names.get(multiplicity)
-        if spin:
-            keywords.append(spin)
+        keywords.append(mopac_spin_keyword(multiplicity))
         keywords.append("UHF")
     if solvent:
         eps = MOPAC_SOLVENT_EPS.get(solvent.lower())

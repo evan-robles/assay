@@ -34,8 +34,8 @@ def run(
     charge: int = 0,
     multiplicity: int = 1,
     solvent: Optional[str] = None,
-    cation_mult: int = 2,
-    anion_mult: int = 2,
+    cation_mult: Optional[int] = None,
+    anion_mult: Optional[int] = None,
     plot: bool = True,
     out_stem: Optional[str] = None,
     cli: str = "",
@@ -46,6 +46,32 @@ def run(
     """Three partial-charge SPs (N, N+1, N-1) → condensed Fukui + dual descriptor."""
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
+
+    # When the user doesn't specify cation/anion mult, derive it from parent:
+    # changing N by ±1 must flip spin parity. The natural default is the
+    # lower of the two parity-flipped options, i.e. M+1 for a singlet parent
+    # (singlet → doublet) and M-1 for any higher-spin parent (triplet → doublet,
+    # quartet → triplet, …). Users with non-default spin states (e.g. O2 triplet
+    # whose cation/anion are doublet OR quartet) should override explicitly.
+    cation_mult_was_default = cation_mult is None
+    anion_mult_was_default = anion_mult is None
+    if cation_mult is None:
+        cation_mult = multiplicity + 1 if multiplicity == 1 else multiplicity - 1
+    if anion_mult is None:
+        anion_mult = multiplicity + 1 if multiplicity == 1 else multiplicity - 1
+    # Spin-parity sanity check — any user-supplied combination must keep parity right.
+    if (cation_mult - multiplicity) % 2 != 1:
+        raise ValueError(
+            f"cation_mult ({cation_mult}) and parent multiplicity ({multiplicity}) "
+            "have the same spin parity — impossible after removing one electron. "
+            "Spin parity must flip; use multiplicity ± 1."
+        )
+    if (anion_mult - multiplicity) % 2 != 1:
+        raise ValueError(
+            f"anion_mult ({anion_mult}) and parent multiplicity ({multiplicity}) "
+            "have the same spin parity — impossible after adding one electron. "
+            "Spin parity must flip; use multiplicity ± 1."
+        )
 
     es_kwargs = dict(tier=tier, functional=functional, basis=basis)
     neutral = electrostatics.run(
@@ -118,6 +144,13 @@ def run(
 
     warns = _validate(f_plus, f_minus, symbols)
     warns += element_warnings(symbols, method)
+    if multiplicity > 1 and (cation_mult_was_default or anion_mult_was_default):
+        warns.append(
+            f"Parent multiplicity={multiplicity}; cation_mult/anion_mult defaulted "
+            f"to {multiplicity - 1} (the lower parity-flipped option). For systems "
+            "where the high-spin N±1 state is the ground state (e.g. O2 anion is "
+            "doublet vs cation quartet), override --cation-mult / --anion-mult."
+        )
     if warns:
         result["warnings"] = warns
 

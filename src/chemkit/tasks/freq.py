@@ -27,7 +27,7 @@ import numpy as np
 
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-    method_label, program_label,
+    method_label, program_label, mopac_spin_keyword,
 )
 from ..io import read_geometry
 from ..schema import base_result, element_warnings
@@ -658,10 +658,7 @@ def _mopac_freq_keywords(
     if charge != 0:
         kw.append(f"CHARGE={charge}")
     if multiplicity > 1:
-        names = {2: "DOUBLET", 3: "TRIPLET", 4: "QUARTET", 5: "QUINTET"}
-        spin = names.get(multiplicity)
-        if spin:
-            kw.append(spin)
+        kw.append(mopac_spin_keyword(multiplicity))
         kw.append("UHF")
     if solvent:
         eps = MOPAC_SOLVENT_EPS.get(solvent.lower())

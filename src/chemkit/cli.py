@@ -300,14 +300,15 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     _add_common(p_fukui)
     p_fukui.add_argument(
-        "--cation-mult", type=int, default=2,
-        help="Multiplicity of the N-1 (cation) state. Default 2 — correct for a "
-             "closed-shell neutral parent.",
+        "--cation-mult", type=int, default=None,
+        help="Multiplicity of the N-1 (cation) state. If omitted, derived from "
+             "--mult: singlet parent → doublet (M+1), higher-spin parent → M-1. "
+             "Override for systems where the high-spin N-1 is the ground state.",
     )
     p_fukui.add_argument(
-        "--anion-mult", type=int, default=2,
-        help="Multiplicity of the N+1 (anion) state. Default 2 — correct for a "
-             "closed-shell neutral parent.",
+        "--anion-mult", type=int, default=None,
+        help="Multiplicity of the N+1 (anion) state. If omitted, derived from "
+             "--mult: singlet parent → doublet (M+1), higher-spin parent → M-1.",
     )
     p_fukui.add_argument(
         "--no-plot", dest="plot", action="store_false", default=True,

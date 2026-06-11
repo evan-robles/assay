@@ -49,6 +49,31 @@ def run(
             f"Choose from: {list(REFERENCE_POTENTIALS_V)}"
         )
 
+    # The reduction Ox + n e⁻ → Red implies reduced_charge − oxidized_charge = −n.
+    # Reject obvious mismatches: passing n_electrons=2 with Δcharge=−1 (or any
+    # combination where they disagree) produces a meaningless E°.
+    expected_dq = -int(n_electrons)
+    actual_dq = int(reduced_charge) - int(oxidized_charge)
+    if actual_dq != expected_dq:
+        raise ValueError(
+            f"redox: n_electrons={n_electrons} but reduced_charge - oxidized_charge "
+            f"= {actual_dq} (expected {expected_dq}). The reduced form must have "
+            f"exactly n more electrons than the oxidized form (one less unit of charge "
+            "per electron added)."
+        )
+    # Spin parity: each unpaired-electron count changes by ±1 per added electron,
+    # so the multiplicities must differ by exactly n_electrons modulo 2.
+    expected_parity = n_electrons % 2
+    actual_parity = abs(int(reduced_multiplicity) - int(oxidized_multiplicity)) % 2
+    if actual_parity != expected_parity:
+        raise ValueError(
+            f"redox: |reduced_mult - oxidized_mult| has parity {actual_parity}, "
+            f"expected {expected_parity} for {n_electrons}-electron transfer. "
+            "Adding n electrons flips spin parity n times; check that your "
+            "ox/red multiplicities are consistent (e.g. neutral singlet ↔ "
+            "anion-radical doublet for n=1)."
+        )
+
     ox_sp = sp_task.run(
         input_path, method=method, charge=oxidized_charge,
         multiplicity=oxidized_multiplicity, solvent=solvent, cli=cli,
