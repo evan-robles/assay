@@ -12,6 +12,12 @@ By default MOPAC's native EF saddle-search drives the optimization (most
 reliable for PM7); the xtb, dft, and hf backends use the Sella optimizer,
 which must be installed separately (`pip install sella`).
 
+## Dependencies
+- `--method mopac` — uses MOPAC's native `TS` keyword. **No extra install.**
+- `--method xtb`, `--method dft`, `--method hf` — require **Sella**, which
+  is not bundled with chemkit. Install once with `pip install sella`. If
+  Sella is missing the task errors out immediately with a clear message.
+
 ## Arguments
 `$ARGUMENTS` should include:
 - An `.xyz` path with the TS guess (required)

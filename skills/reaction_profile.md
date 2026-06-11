@@ -46,6 +46,12 @@ is much weaker) is reported. The typical workflow for DFT-quality profiles
 is: run this skill with `--method mopac` first to validate the topology,
 then re-run with `--method dft` (which skips IRC but gives the energetics).
 
+**Sella dependency**: the internal TS step uses MOPAC's native saddle-search
+for `--method mopac` but requires the Sella package
+(`pip install sella`) for `--method xtb`, `--method dft`, and `--method hf`.
+If Sella is missing the pipeline will error out at the TS stage; either
+install it or fall back to `--method mopac`.
+
 ## Atom ordering matters
 The Kabsch RMSD used in the IRC check is **not** permutation-invariant —
 the reactant, product, TS-guess, and IRC endpoints must all share the same
