@@ -304,7 +304,6 @@ def run(
     )
 
     # ----- 7) Persist intermediate xyz files next to the JSON -----
-    out_dir = os.path.dirname(stem) or "."
     persistent: Dict[str, str] = {}
     for label, src in [("reactant_opt_xyz", r_opt_xyz),
                        ("product_opt_xyz", p_opt_xyz),

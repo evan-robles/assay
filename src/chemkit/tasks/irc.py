@@ -170,7 +170,7 @@ def _run_one_irc_direction(atoms, symbols, direction, charge, multiplicity,
 
     # MOPAC IRC=N runs N points; sign of N is forward/reverse
     irc_key = f"IRC={direction}*"
-    keywords = ["PM7", irc_key, "AUX", "GEO-OK", f"X-PRIORITY=0.0"]
+    keywords = ["PM7", irc_key, "AUX", "GEO-OK", "X-PRIORITY=0.0"]
     if charge != 0:
         keywords.append(f"CHARGE={charge}")
     if multiplicity > 1:
@@ -383,7 +383,7 @@ def _xtb_descend(atoms, init_disp_A, charge, multiplicity, solvent,
         try:
             e = work.get_potential_energy()
             f = work.get_forces()
-        except Exception as ex:
+        except Exception:
             break
         traj.append((list(work.get_chemical_symbols()),
                      work.get_positions().copy(),

@@ -150,11 +150,11 @@ def run(
 
     ha_res = freq_task.run(
         ha_xyz, charge=ha_charge, multiplicity=ha_multiplicity,
-        cli=f"(internal pka: HA)", **common_kw,
+        cli="(internal pka: HA)", **common_kw,
     )
     a_res = freq_task.run(
         a_minus_xyz, charge=a_minus_charge, multiplicity=a_minus_multiplicity,
-        cli=f"(internal pka: A-)", **common_kw,
+        cli="(internal pka: A-)", **common_kw,
     )
 
     # Pull G(HA, aq) and G(A-, aq) — eV → kcal/mol.
@@ -212,18 +212,18 @@ def run(
             )
         warnings.append(
             "Absolute pKa is highly sensitive to the G(H+,aq) reference "
-            f"(~1.4 unit shift between Tissandier 1998 and Kelly 2006). "
+            "(~1.4 unit shift between Tissandier 1998 and Kelly 2006). "
             "Prefer mode='reference' against a known acid in the same family."
         )
 
     else:  # reference mode
         ref_ha_res = freq_task.run(
             ref_ha_xyz, charge=ref_ha_charge, multiplicity=ref_ha_multiplicity,
-            cli=f"(internal pka: ref_HA)", **common_kw,
+            cli="(internal pka: ref_HA)", **common_kw,
         )
         ref_a_res = freq_task.run(
             ref_a_minus_xyz, charge=ref_a_minus_charge, multiplicity=ref_a_minus_multiplicity,
-            cli=f"(internal pka: ref_A-)", **common_kw,
+            cli="(internal pka: ref_A-)", **common_kw,
         )
         G_ref_HA_kcal = ref_ha_res["gibbs_free_energy_eV"] * EV_TO_KCAL
         G_ref_A_kcal  = ref_a_res["gibbs_free_energy_eV"]  * EV_TO_KCAL

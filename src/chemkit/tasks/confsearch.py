@@ -603,10 +603,6 @@ def _ring_pucker_seeds(
     centered = ring_pos - centroid
     _, _, Vt = np.linalg.svd(centered, full_matrices=False)
     z_axis = Vt[2]
-    # Pick a stable in-plane axis: project ring atom 0 onto the plane
-    x_raw = centered[0] - np.dot(centered[0], z_axis) * z_axis
-    x_axis = x_raw / (np.linalg.norm(x_raw) + 1e-12)
-    y_axis = np.cross(z_axis, x_axis)
 
     # Compute current z (in local frame) for each ring atom
     local_z_current = centered @ z_axis  # length N
@@ -913,7 +909,7 @@ def _postopt_mopac(
                 out_xyz=out_xyz,
                 cli="(internal post-opt)",
             )
-        except Exception as exc:
+        except Exception:
             failures += 1
             continue
         hof = res.get("final_heat_of_formation_kcal_mol")
