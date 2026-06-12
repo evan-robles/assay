@@ -93,8 +93,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_freq.add_argument(
         "--auto-confsearch", dest="auto_confsearch", action="store_true",
         default=False,
-        help="Run a CREST conformer search (with PM7 postopt) before the freq "
-             "step and take the lowest-energy minimum as the input geometry. "
+        help="Run an Open Babel conformer search (with PM7 postopt) before the "
+             "freq step and take the lowest-energy minimum as the input geometry. "
              "Useful for flexible molecules where the user-supplied geometry "
              "may not be the global minimum; otherwise soft-mode saddles show "
              "up as spurious imaginary modes.",
@@ -116,7 +116,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_redox.add_argument("--ref", choices=["SHE", "Ag/AgCl", "Fc+/Fc"], default="SHE")
     p_redox.add_argument("--n-electrons", type=int, default=1)
 
-    p_conf = sub.add_parser("confsearch", help="Conformer search via CREST.")
+    p_conf = sub.add_parser("confsearch", help="Conformer search via Open Babel (confab).")
     _add_common(p_conf)
     p_conf.add_argument("--max-conformers", type=int, default=20)
     p_conf.add_argument(

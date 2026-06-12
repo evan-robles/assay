@@ -1,9 +1,11 @@
-"""Conformational search: thin wrapper around CREST.
+"""Conformational search via Open Babel (confab diverse generator).
 
-GFN2-xTB's PES smooths over shallow conformers (e.g. n-pentane's gauche minima
-collapse to anti during optimization), so we optionally re-optimize the CREST
-ensemble with a harder method (PM7 via MOPAC) to recover those minima and
-re-rank by HoF.
+Conformers are sampled with Open Babel's force-field `confab` generator and
+ranked by force-field energy (obenergy, MMFF94 with UFF fallback). Force-field
+sampling smooths over shallow conformers (e.g. n-pentane's gauche minima
+collapse to anti), so we optionally re-optimize the ensemble with a harder
+method (PM7 via MOPAC) — plus explicit ring-pucker and dihedral-grid seeding —
+to recover those minima and re-rank by heat of formation.
 """
 from __future__ import annotations
 import os
@@ -23,7 +25,7 @@ from ..schema import base_result
 def run(
     input_path: str,
     *,
-    method: str = "xtb",          # CREST is built on xtb; mopac path not supported
+    method: str = "xtb",          # canonical token; sampler is obabel confab
     solvent: Optional[str] = None,
     n_max_conformers: int = 20,
     postopt: str = "none",        # 'none' or 'mopac'
@@ -37,102 +39,54 @@ def run(
     basis: Optional[str] = None,
 ) -> Dict[str, Any]:
     # tier/functional/basis are accepted for CLI uniformity but ignored:
-    # CREST is xtb-only and the post-opt path is xtb/mopac-only.
+    # the obabel sampler is force-field based and the post-opt path is
+    # xtb/mopac-only.
     del tier, functional, basis
     if method != "xtb":
-        raise ValueError("confsearch currently only supports method='xtb' (via CREST).")
-
-    crest_path = shutil.which("crest")
-    if crest_path is None:
-        raise RuntimeError(
-            "CREST is not installed. Install with `conda install -c conda-forge crest`. "
-            "Naive dihedral fallback not implemented in this version."
+        # 'xtb' is retained as the canonical method token for CLI uniformity,
+        # but the conformer sampler is now Open Babel (force-field confab).
+        raise ValueError(
+            "confsearch only accepts method='xtb' (the default); the sampler "
+            "is Open Babel confab and the optional post-opt is PM7 (MOPAC)."
         )
 
-    workdir = tempfile.mkdtemp(prefix="chemkit_crest_")
+    workdir = tempfile.mkdtemp(prefix="chemkit_confsearch_")
     src_xyz = os.path.join(workdir, "input.xyz")
     ase_write(src_xyz, read_geometry(input_path))
 
-    # Honor CHEMKIT_CREST_THREADS if set; otherwise use all cores. Falls back
-    # to 4 if cpu_count() can't tell (unusual; matches the prior default).
-    n_threads = int(os.environ.get("CHEMKIT_CREST_THREADS") or (os.cpu_count() or 4))
-
-    def _run_crest(xyz_path):
-        cmd = [crest_path, xyz_path, "--gfn2", "-T", str(n_threads)]
-        if solvent:
-            cmd += ["--alpb", solvent]
-        if charge:
-            cmd += ["--chrg", str(charge)]
-        if multiplicity > 1:
-            cmd += ["--uhf", str(multiplicity - 1)]
-        return subprocess.run(
-            cmd, capture_output=True, text=True, cwd=workdir, timeout=3600,
-        )
-
-    res = _run_crest(src_xyz)
-    conformer_xyz = os.path.join(workdir, "crest_conformers.xyz")
     preopt_note: Optional[str] = None
 
-    if not os.path.isfile(conformer_xyz):
-        # CREST's brittle internal optimizer often dies on sketch-quality input
-        # ("Initial geometry optimization failed!"). Retry once after a clean
-        # GFN2-xTB BFGS opt.
-        if "Initial geometry optimization failed" in (res.stdout + res.stderr):
-            from ase.optimize import BFGS
-            from ..calculators import build_calculator, apply_calc_to_atoms
-            atoms_pre = read_geometry(input_path)
-            calc = build_calculator(
-                "xtb", charge=charge, multiplicity=multiplicity, solvent=solvent,
-            )
-            apply_calc_to_atoms(atoms_pre, calc)
-            BFGS(atoms_pre, logfile=None).run(fmax=0.05, steps=300)
-            preopt_xyz = os.path.join(workdir, "input_preopt.xyz")
-            ase_write(preopt_xyz, atoms_pre, format="xyz")
-            res = _run_crest(preopt_xyz)
-            preopt_note = (
-                "CREST initial optimization failed on raw input; "
-                "retried after GFN2-xTB BFGS pre-optimization."
-            )
-    crest_failed = not os.path.isfile(conformer_xyz)
-    if crest_failed:
-        # CREST gave up. Fall back to using the input geometry as the single
-        # "conformer" so that ring-pucker seeding + post-opt can still run.
-        # The user gets ring conformers even if CREST's MTD/optimizer choked.
-        fallback_atoms = read_geometry(input_path)
-        from ase.optimize import BFGS
-        from ..calculators import build_calculator, apply_calc_to_atoms
-        calc = build_calculator(
-            "xtb", charge=charge, multiplicity=multiplicity, solvent=solvent,
-        )
-        apply_calc_to_atoms(fallback_atoms, calc)
-        try:
-            BFGS(fallback_atoms, logfile=None).run(fmax=0.05, steps=300)
-        except Exception:
-            pass
-        ase_write(conformer_xyz, fallback_atoms, format="xyz")
-        # Also write a fake crest_best so downstream paths don't break
-        ase_write(os.path.join(workdir, "crest_best.xyz"), fallback_atoms, format="xyz")
-        preopt_note = (
-            (preopt_note or "")
-            + " CREST failed to produce a conformer ensemble; "
-            "using BFGS-optimized input as the single seed and proceeding "
-            "with ring-pucker / dihedral-grid seeding for post-opt."
-        ).strip()
-
-    conformers = ase_read(conformer_xyz, index=":")
-    if isinstance(conformers, list):
-        pass
-    else:
-        conformers = [conformers]
-    energies_Eh = _parse_crest_energies(
-        os.path.join(workdir, "crest.energies"), conformer_xyz,
+    # Sample conformers with Open Babel's confab (diverse FF generator), with
+    # graceful fallback to the genetic search and finally the input geometry.
+    conformer_xyz, conformers = _run_obabel_confab(
+        src_xyz, workdir, n_max=n_max_conformers, rmsd=postopt_rmsd,
     )
+    if len(conformers) <= 1:
+        preopt_note = (
+            "Open Babel produced a single conformer; proceeding with "
+            "ring-pucker / dihedral-grid seeding for post-opt."
+        )
+
+    # Rank by force-field energy (obenergy MMFF94 -> UFF fallback).
+    energies_kcal = _energies_for_frames(conformers, workdir)
+    order = sorted(
+        range(len(conformers)),
+        key=lambda i: (energies_kcal[i] if energies_kcal[i] is not None
+                       else float("inf")),
+    )
+    conformers = [conformers[i] for i in order]
+    energies_kcal = [energies_kcal[i] for i in order]
+
+    # Persist the ranked ensemble and the lowest-energy conformer.
+    ase_write(conformer_xyz, conformers, format="xyz")
+    best_xyz = os.path.join(workdir, "obabel_best.xyz")
+    ase_write(best_xyz, conformers[0], format="xyz")
 
     atoms = read_geometry(input_path)
     result = base_result(
         task="conformational_search",
-        method="GFN2-xTB (via CREST)",
-        program="crest",
+        method="MMFF94 confab (Open Babel)",
+        program="openbabel",
         input_path=os.path.abspath(input_path),
         n_atoms=len(atoms),
         atoms=atoms.get_chemical_symbols(),
@@ -144,14 +98,15 @@ def run(
     result["n_conformers_found"] = len(conformers)
     result["n_conformers_kept"] = keep
     result["work_directory"] = workdir
-    result["best_conformer_xyz"] = os.path.join(workdir, "crest_best.xyz")
+    result["best_conformer_xyz"] = best_xyz
     result["all_conformers_xyz"] = conformer_xyz
     if preopt_note:
         result["preoptimization"] = preopt_note
-    if energies_Eh:
-        e0 = energies_Eh[0]
+    finite = [e for e in energies_kcal[:keep] if e is not None]
+    if finite:
+        e0 = finite[0]
         result["conformer_relative_energies_kcal_mol"] = [
-            (e - e0) * 627.5094740631 for e in energies_Eh[:keep]
+            (e - e0) if e is not None else None for e in energies_kcal[:keep]
         ]
 
     if postopt == "mopac":
@@ -159,7 +114,7 @@ def run(
         rings = _detect_rings(atoms)
         seeds, seed_source = _gather_postopt_seeds(
             workdir=workdir,
-            crest_conformers=conformers,
+            base_conformers=conformers,
             max_seeds=max(n_max_conformers, 81),
             rotatable_bonds=rotatable_bonds,
             rings=rings,
@@ -183,61 +138,115 @@ def run(
     return result
 
 
-def _parse_crest_energies(path, fallback_xyz):
-    """Pull per-conformer energies (Hartree) from a CREST run.
+def _require_obabel() -> str:
+    """Return the path to the obabel executable or raise a helpful error."""
+    exe = shutil.which("obabel")
+    if exe is None:
+        raise RuntimeError(
+            "chemkit confsearch requires Open Babel (`obabel`), which was not "
+            "found on PATH. Install with `conda install -c conda-forge openbabel`."
+        )
+    return exe
 
-    Modern CREST (≥2.12) usually does NOT write `crest.energies`; the
-    energies live in the xyz comment line of `crest_conformers.xyz`. Each
-    frame's comment is typically a bare scientific-notation float, but some
-    builds emit `<index> <energy>` or `<energy> <degeneracy>`. Parse out the
-    first parseable float-like token; if no token looks like an energy
-    (large negative Hartree value), fall back to whichever token in the
-    comment looks most energy-like.
+
+def _run_obabel_confab(
+    src_xyz: str, workdir: str, *, n_max: int, rmsd: float,
+) -> Tuple[str, list]:
+    """Generate a diverse conformer ensemble with Open Babel's confab.
+
+    confab is Open Babel's diverse-conformer generator (force-field based). It
+    will not write a usable multi-conformer .xyz directly (it emits 0 frames to
+    .xyz), so we route through an SDF intermediate and convert to multi-xyz.
+
+    Falls back to the genetic `--conformer` search, and finally to the input
+    geometry as a single seed, so the downstream ring-pucker / dihedral-grid
+    seeding and PM7 post-opt can still run even when sampling is sparse.
+
+    Returns (multi_xyz_path, list_of_Atoms).
     """
-    if os.path.isfile(path):
-        with open(path) as f:
-            energies = []
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                # `crest.energies` rows are typically `<idx> <E_Hartree>` or
-                # just `<E_Hartree>`. Take whichever token is the most
-                # negative-looking (real energies in Hartree are negative
-                # and large in magnitude; integer indices are small).
-                tokens = line.split()
-                floats = []
-                for t in tokens:
-                    try:
-                        floats.append(float(t.replace("D", "E").replace("d", "e")))
-                    except ValueError:
-                        pass
-                if floats:
-                    energies.append(min(floats))
-        if energies:
-            return energies
-    # Fallback: per-frame xyz comment line. Same picking strategy.
-    if not fallback_xyz or not os.path.isfile(fallback_xyz):
-        return []
-    energies = []
-    with open(fallback_xyz) as f:
-        lines = f.read().splitlines()
-    i = 0
-    while i < len(lines):
+    obabel = _require_obabel()
+    multi_xyz = os.path.join(workdir, "obabel_conformers.xyz")
+
+    def _convert_sdf_to_xyz(sdf_path: str) -> list:
+        if not (os.path.isfile(sdf_path) and os.path.getsize(sdf_path) > 0):
+            return []
+        subprocess.run(
+            [obabel, sdf_path, "-O", multi_xyz],
+            capture_output=True, text=True, cwd=workdir, timeout=600,
+        )
+        if not (os.path.isfile(multi_xyz) and os.path.getsize(multi_xyz) > 0):
+            return []
+        frames = ase_read(multi_xyz, index=":")
+        return frames if isinstance(frames, list) else [frames]
+
+    # 1. confab diverse search (SDF intermediate).
+    confab_sdf = os.path.join(workdir, "confab.sdf")
+    subprocess.run(
+        [obabel, src_xyz, "-O", confab_sdf, "--confab",
+         "--conf", str(max(n_max * 4, 50)),
+         "--rcutoff", str(rmsd), "--ecutoff", "50"],
+        capture_output=True, text=True, cwd=workdir, timeout=1800,
+    )
+    frames = _convert_sdf_to_xyz(confab_sdf)
+    if len(frames) > 1:
+        return multi_xyz, frames
+
+    # 2. Fallback: genetic --conformer search written straight to xyz.
+    wc_xyz = os.path.join(workdir, "obabel_conformer_ga.xyz")
+    subprocess.run(
+        [obabel, src_xyz, "-O", wc_xyz, "--conformer",
+         "--nconf", str(max(n_max, 30)), "--writeconformers"],
+        capture_output=True, text=True, cwd=workdir, timeout=1800,
+    )
+    if os.path.isfile(wc_xyz) and os.path.getsize(wc_xyz) > 0:
+        ga_frames = ase_read(wc_xyz, index=":")
+        ga_frames = ga_frames if isinstance(ga_frames, list) else [ga_frames]
+        if len(ga_frames) > 1:
+            shutil.copyfile(wc_xyz, multi_xyz)
+            return multi_xyz, ga_frames
+
+    # 3. Last resort: the input geometry as a single seed.
+    atoms = read_geometry(src_xyz)
+    ase_write(multi_xyz, atoms, format="xyz")
+    return multi_xyz, [atoms]
+
+
+def _obenergy(xyz_path: str, ff: str = "MMFF94") -> Optional[float]:
+    """Single-point force-field energy (kcal/mol) via Open Babel's obenergy.
+
+    Tries MMFF94 first, falls back to UFF (covers elements MMFF lacks params
+    for). Returns None if both fail or no energy could be parsed.
+    """
+    exe = shutil.which("obenergy")
+    if exe is None:
+        return None
+    for forcefield in (ff, "UFF"):
         try:
-            n = int(lines[i].strip().split()[0])
-        except (ValueError, IndexError):
-            break
-        comment = lines[i + 1] if i + 1 < len(lines) else ""
-        floats = []
-        for tok in re.findall(r"[-+]?\d+\.\d+(?:[EeDd][-+]?\d+)?", comment):
+            proc = subprocess.run(
+                [exe, "-ff", forcefield, xyz_path],
+                capture_output=True, text=True, timeout=120,
+            )
+        except (OSError, subprocess.SubprocessError):
+            continue
+        m = re.search(
+            r"TOTAL ENERGY\s*=\s*([-+]?\d+\.?\d*(?:[Ee][-+]?\d+)?)",
+            proc.stdout,
+        )
+        if m:
             try:
-                floats.append(float(tok.replace("D", "E").replace("d", "e")))
+                return float(m.group(1))
             except ValueError:
-                pass
-        if floats:
-            energies.append(min(floats))
-        i += n + 2
+                continue
+    return None
+
+
+def _energies_for_frames(frames: list, workdir: str) -> List[Optional[float]]:
+    """obenergy each conformer frame; returns kcal/mol (None where it failed)."""
+    energies: List[Optional[float]] = []
+    tmp = os.path.join(workdir, "_score.xyz")
+    for atoms in frames:
+        ase_write(tmp, atoms, format="xyz")
+        energies.append(_obenergy(tmp))
     return energies
 
 
@@ -725,7 +734,7 @@ def _is_eclipsed_saddle(atoms, rotatable_bonds: List[Dict[str, Any]],
 
 
 def _gather_postopt_seeds(
-    *, workdir: str, crest_conformers: list, max_seeds: int,
+    *, workdir: str, base_conformers: list, max_seeds: int,
     rotatable_bonds: Optional[List[Dict[str, Any]]] = None,
     rings: Optional[List[Dict[str, Any]]] = None,
     base_atoms: Optional[Any] = None,
@@ -734,12 +743,12 @@ def _gather_postopt_seeds(
 
     Strategy:
       - Always add ring-pucker seeds (chair/twist-boat/etc.) for any detected
-        ring. CREST's GFN2 surface smooths over shallow ring conformers (e.g.
-        cyclohexane's twist-boat at +5.5 kcal/mol); seeding the puckers
-        explicitly is the only way to recover them.
-      - If CREST returned multiple conformers, use those plus the ring seeds.
+        ring. Force-field conformer sampling smooths over shallow ring
+        conformers (e.g. cyclohexane's twist-boat at +5.5 kcal/mol); seeding
+        the puckers explicitly is the only way to recover them.
+      - If the sampler returned multiple conformers, use those plus ring seeds.
       - Otherwise also build seeds by rotating each rotatable single bond
-        through {60°, 180°, 300°}, plus evenly-spaced MTD trajectory frames.
+        through {60°, 180°, 300°}.
     """
     parts: List[Any] = []
     sources: List[str] = []
@@ -762,17 +771,17 @@ def _gather_postopt_seeds(
         if ring_seeds_added:
             sources.append(f"ring_pucker ({ring_seeds_added})")
 
-    if len(crest_conformers) > 1:
+    if len(base_conformers) > 1:
         room = max_seeds - len(parts)
-        parts.extend(list(crest_conformers[:room]))
-        sources.insert(0, f"crest_conformers ({min(len(crest_conformers), room)})")
+        parts.extend(list(base_conformers[:room]))
+        sources.insert(0, f"obabel_conformers ({min(len(base_conformers), room)})")
         return parts[:max_seeds], " + ".join(sources)
 
-    if crest_conformers:
-        parts.insert(0, crest_conformers[0])
-        sources.insert(0, "crest_best")
+    if base_conformers:
+        parts.insert(0, base_conformers[0])
+        sources.insert(0, "obabel_best")
 
-    base = crest_conformers[0] if crest_conformers else None
+    base = base_conformers[0] if base_conformers else None
     if base is not None and len(parts) < max_seeds:
         try:
             rotated = _dihedral_grid_seeds(
@@ -785,23 +794,8 @@ def _gather_postopt_seeds(
             parts.extend(rotated)
             sources.append(f"dihedral_grid ({len(rotated)})")
 
-    traj_path = os.path.join(workdir, "crest_dynamics.trj")
-    remaining = max_seeds - len(parts)
-    if remaining > 0 and os.path.isfile(traj_path):
-        try:
-            frames = ase_read(traj_path, index=":", format="xyz")
-        except Exception:
-            frames = []
-        if frames:
-            stride = max(1, len(frames) // remaining)
-            sampled = frames[::stride][:remaining]
-            parts.extend(sampled)
-            sources.append(
-                f"crest_dynamics.trj ({len(sampled)} frames, stride {stride})"
-            )
-
     if not sources:
-        sources.append("crest_conformers (single)")
+        sources.append("obabel_conformers (single)")
     return parts[:max_seeds], " + ".join(sources)
 
 
@@ -911,7 +905,7 @@ def _postopt_mopac(
     rmsd_threshold, ewin_kcal,
     rotatable_bonds: Optional[List[Dict[str, Any]]] = None,
 ):
-    """Re-optimize each CREST conformer with PM7 (native EF), then dedup."""
+    """Re-optimize each seed conformer with PM7 (native EF), then dedup."""
     from .opt import _run_mopac
 
     post_dir = os.path.join(workdir, "postopt_mopac")

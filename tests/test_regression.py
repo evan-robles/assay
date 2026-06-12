@@ -654,14 +654,45 @@ def test_irc_hcn_walks_to_distinct_endpoints(tmp_run):
     assert d.get("reverse_drop_kcal_mol") is not None and d["reverse_drop_kcal_mol"] < -0.1
 
 
+def test_confsearch_obabel_pentane(tmp_run):
+    """Open Babel confab samples pentane's conformers and ranks them by FF
+    energy. We check the sampler wiring + result contract, not exact counts."""
+    if not _have_obabel():
+        pytest.skip("obabel not available")
+    if not _have("obenergy"):
+        pytest.skip("obenergy not available")
+    xyz = tmp_run / "pentane.xyz"
+    rc, _, err = _run_chemkit(
+        ["build", "CCCCC", "--out-xyz", str(xyz)],
+        cwd=str(tmp_run), timeout=120,
+    )
+    assert rc == 0, err
+    out = tmp_run / "pentane_cs.json"
+    rc, _, err = _run_chemkit(
+        ["confsearch", "--method", "xtb", "--postopt", "none",
+         str(xyz), "--out", str(out)],
+        cwd=str(tmp_run), timeout=600,
+    )
+    assert rc == 0, err
+    d = _load(out)
+    assert d["program"] == "openbabel"
+    assert d["n_conformers_found"] >= 1
+    assert os.path.isfile(d["all_conformers_xyz"])
+    assert os.path.isfile(d["best_conformer_xyz"])
+    rels = d.get("conformer_relative_energies_kcal_mol")
+    assert rels is not None and rels[0] == 0.0
+    # Persisted ensemble next to the JSON.
+    assert d.get("conformers_xyz") and os.path.isfile(d["conformers_xyz"])
+
+
 @pytest.mark.slow
 def test_freq_auto_confsearch_wires_through(tmp_run):
-    """FEATURE: `freq --auto-confsearch` routes hydroquinone through CREST
-    + PM7 postopt before the Hessian step. We verify the *wiring*, not zero
-    imaginary modes — hydroquinone has many near-degenerate OH-torsion
-    conformers and CREST's stochastic sampling occasionally lands on a
-    soft-mode saddle, which is chemistry, not a tool bug."""
-    for tool in ("crest", "xtb", "mopac"):
+    """FEATURE: `freq --auto-confsearch` routes hydroquinone through the
+    Open Babel conformer search + PM7 postopt before the Hessian step. We
+    verify the *wiring*, not zero imaginary modes — hydroquinone has many
+    near-degenerate OH-torsion conformers and force-field sampling occasionally
+    lands on a soft-mode saddle, which is chemistry, not a tool bug."""
+    for tool in ("obabel", "xtb", "mopac"):
         if not _have(tool):
             pytest.skip(f"{tool} not on PATH")
     out = tmp_run / "hq_auto.json"
