@@ -29,5 +29,8 @@ DFT redox potentials are typically ±0.1–0.2 V vs experiment when computed wit
    - Energies of oxidized and reduced states
    - **Warn explicitly**: semi-empirical methods give ±0.3–0.5 V at best; the calculation uses the same geometry for both states (no reorganization energy); solvation correction is implicit-only.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Recommendation
 For publication-grade values: optimize each oxidation state, run `freq` on each for ΔG, and ideally cross-check with a higher-level method. This skill is for screening, not final answers.

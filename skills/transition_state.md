@@ -47,6 +47,9 @@ to refine it.
    - Path to the saved TS xyz
 5. Recommend running `/irc` next to confirm which reactant and product the TS connects.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - `xtb`/`dft`/`hf` selected but Sella not installed → suggest `pip install sella` or fall back to `--method mopac`.
 - pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).

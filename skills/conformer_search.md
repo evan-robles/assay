@@ -77,6 +77,9 @@ preopt), ring-pucker seeds still get optimized at PM7 and reported.
 5. If only one conformer survives both stages and the molecule has rotatable
    bonds, mention that this is the converged answer at PM7 (not a bug).
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Notes
 - CREST must be installed (`conda install -c conda-forge crest`).
 - For rigid molecules the search may return only one or two conformers — expected.

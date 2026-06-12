@@ -36,5 +36,8 @@ DFT logP is slower but meaningfully better than semi-empirical for polar / H-bon
 ## Recommendation
 For numerical comparison, RDKit's `Crippen.MolLogP` (group-contribution) is faster and often comparably accurate for drug-like molecules. The chemkit thermodynamic-cycle approach has the advantage of reflecting the actual electronic structure / conformation, which matters for unusual scaffolds where group-contribution models fail.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - xtb-python / MOPAC missing → install via `conda install -c conda-forge xtb-python mopac`.

@@ -29,3 +29,6 @@ For non-covalent complexes (H-bonds, π-stacking, host-guest) dispersion matters
 
 ## Recommendation
 Run `/geometry_optimize` on the complex and each monomer separately before calling this — otherwise the "binding energy" is contaminated by deformation energy.
+
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.

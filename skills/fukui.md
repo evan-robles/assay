@@ -46,6 +46,9 @@ Both are Koopmans-style finite-difference quantities; they're complementary.
 - For **open-shell parents** (radicals), set `--mult 2` and pick `--cation-mult`/`--anion-mult` such that each adds/removes a single electron with the right total spin.
 - Condensed Fukui from Mulliken charges is basis-set-dependent and somewhat noisy — interpret as **rankings** between atoms in one molecule, not absolute numbers between molecules.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - xtb-python / MOPAC missing → install via `conda install -c conda-forge xtb-python mopac`.
 - pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).

@@ -82,6 +82,9 @@ this task applies automatically (longest heavy-atom path via BFS, with RDKit
 canonical ranks for direction tie-breaks). User-supplied `--dihedral i,j,k,l`
 indices are remapped to this ordering automatically.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Notes
 - Default 24 points is sufficient for typical sp3-sp3 alkane rotation barriers
   (3-fold periodicity → 8 points per well). Bump to 36 (10° resolution) or 72

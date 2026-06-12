@@ -33,6 +33,9 @@ seeded by the lowest-eigenvalue mode of the Eckart-projected Hessian.
    - Status messages from each direction
 5. If `distinct_endpoints` is false, mention that both directions relaxed to the same minimum — usually means the input geometry was not a true TS, or the imaginary mode was very weak. Recommend re-running /transition_state with a different guess or running /vibrational_analysis to verify the input has exactly one imaginary mode.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - mopac not in PATH → install via `conda install -c conda-forge mopac`.
 - xtb path: if no imaginary mode is found at the input geometry, the steepest-descent will collapse to the input itself; flag this and recommend confirming the TS character with /vibrational_analysis first.

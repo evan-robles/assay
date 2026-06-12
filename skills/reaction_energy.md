@@ -93,6 +93,9 @@ chemkit rxn-energy --method dft --tier standard --solvent water --mode freq \
   `/transition_state` + `/vibrational_analysis` on the saddle, or the
   composite `/reaction_profile` skill.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - Mismatched stoichiometry → check the `balance` block in the JSON; the
   per-element difference is reported.

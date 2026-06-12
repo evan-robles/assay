@@ -103,6 +103,9 @@ automatically build the deprotonated form. Two reliable ways:
   the experimental measurement uncertainty is also large; treat predictions
   as order-of-magnitude.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - Backend missing → `conda install -c conda-forge xtb-python mopac` or `pip install pyscf`.
 - "Too few vibration modes" → known issue on flexible molecules with very

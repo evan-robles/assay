@@ -125,6 +125,9 @@ chemkit profile --method dft --tier standard \
 - IRC skipped → verdict relies only on imaginary-mode counts. Mention this
   caveat in the report.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - Backend missing → install (xtb / mopac / pyscf).
 - Sella missing for `--method xtb/dft/hf` TS → `pip install sella`.

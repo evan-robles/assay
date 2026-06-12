@@ -65,3 +65,6 @@ Hessians via PySCF are roughly (6N+1)× the SCF time. For a 20-atom molecule at 
   translational partition functions.
 - The `preopt` block in the result JSON records the path to the optimized xyz
   used for the Hessian, plus its energy/HoF — useful for cross-checking.
+
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.

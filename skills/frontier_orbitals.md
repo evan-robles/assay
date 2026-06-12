@@ -33,6 +33,9 @@ Kohn-Sham eigenvalues), HF (PySCF). Geometry is taken as-is — no optimization.
    - For MOPAC: also surface heat of formation and dipole from `code_specific`
    - Note: xtb and MOPAC orbital zeros differ — compare orbital energies only within the same method. Koopmans values are first-order estimates; for quantitative IP/EA use ΔSCF with DFT.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - xtb / mopac not installed → install via `conda install -c conda-forge xtb mopac`.
 - xtb-python missing (orbital eigenvalues require it for the xtb path) → install via `conda install -c conda-forge xtb-python` or `pip install xtb`.

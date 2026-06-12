@@ -39,6 +39,9 @@ Compute the total electronic energy of a molecule with one of four backends:
    - Note: energy zeros differ across backends — only same-method energies are directly comparable.
 5. If `code_specific.heat_of_formation_kcal_mol` is also in the JSON, surface it.
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - xtb / mopac not installed → `conda install -c conda-forge xtb mopac`.
 - pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).

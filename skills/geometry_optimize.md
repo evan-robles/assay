@@ -35,6 +35,9 @@ DFT optimizations are 10–100× slower than xtb. Default to `--tier fast` (r²S
    - Path to the JSON
    - Any `warnings` entries verbatim
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - If not converged → still deliver the last geometry, flag `converged: false` prominently.
 - pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).

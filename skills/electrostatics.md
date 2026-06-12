@@ -29,6 +29,9 @@ No geometry optimization — pass an already-optimized xyz.
    - Mention the partitioning scheme used (Mulliken for every backend)
    - Note: Mulliken charges are basis-set-dependent and not a physical observable; for transferable charges use ESP-fit methods (not available in this build).
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - xtb-python missing → install via `conda install -c conda-forge xtb-python` or `pip install xtb`.
 - mopac not in PATH → install via `conda install -c conda-forge mopac`.

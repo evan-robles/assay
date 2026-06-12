@@ -31,6 +31,9 @@ DFT with `--tier standard` and an implicit solvent gives meaningfully better ΔG
 ## Recommendation
 For tighter numbers, run `/geometry_optimize` separately in gas phase and in solvent and compute ΔG_solv from those (chemkit uses ONE geometry for both — quick but ignores geometry relaxation in solvent). For research-grade values, use DFT with a continuum model that includes non-electrostatic terms (e.g. SMD).
 
+## Reporting policy
+- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+
 ## Errors
 - xtb-python / MOPAC missing → install via `conda install -c conda-forge xtb-python mopac`.
 - pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).
