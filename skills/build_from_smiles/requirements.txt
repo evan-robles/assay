@@ -5,4 +5,4 @@ numpy
 # External binaries (NOT pip-installable — install separately, e.g. via conda):
 #   xtb      conda install -c conda-forge xtb       (--method xtb)
 #   mopac    conda install -c conda-forge mopac     (--method mopac / PM7 postopt)
-#   openbabel  conda install -c conda-forge openbabel  (obabel: SMILES->3D, name lookup)
+#   openbabel  conda install -c conda-forge openbabel  (obabel/obenergy: SMILES->3D, name lookup, confab)

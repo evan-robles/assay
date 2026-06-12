@@ -1,18 +1,4839 @@
 #!/usr/bin/env python3
-"""Standalone entry point for the `pka` skill.
+"""Self-contained `pka` skill — chemistry engine inlined.
 
-Self-contained: imports only the bundled `_engine` package in this folder, so
-this folder runs with nothing else on the path. Delegates to the chemkit CLI
-pinned to the `pka` subcommand, preserving the full argument contract.
+This single file bundles everything the `pka` skill needs. It registers the
+embedded engine modules into sys.modules under their real names (preserving each
+module's namespace, so tasks that share function names like run()/_run_mopac do
+NOT collide), then runs the chemkit CLI pinned to the `pka` subcommand.
 
-Usage:  python pka.py [args...]      (see --help)
+Run standalone:  python pka.py --help
 """
+import base64 as _b64
+import importlib.abc as _iabc
+import importlib.machinery as _imach
+import sys as _sys
+
+# Lazy in-memory loader: the embedded module sources are exec'd by Python's
+# normal import machinery ON FIRST IMPORT, so dependency order is driven by the
+# actual `import` statements (not by us). Each module keeps its own namespace,
+# so tasks that share top-level names (run(), _run_mopac, ...) never collide.
+class _EmbeddedFinder(_iabc.MetaPathFinder, _iabc.Loader):
+    def __init__(self, modules):
+        # name -> (is_package, source_text)
+        self._mods = {}
+        for modname, is_pkg, payload, is_b64 in modules:
+            src = _b64.b64decode(payload).decode("utf-8") if is_b64 else payload
+            self._mods[modname] = (is_pkg, src)
+
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname not in self._mods:
+            return None
+        is_pkg, _src = self._mods[fullname]
+        return _imach.ModuleSpec(fullname, self, is_package=is_pkg)
+
+    def create_module(self, spec):
+        return None  # default module creation
+
+    def exec_module(self, module):
+        is_pkg, src = self._mods[module.__name__]
+        if is_pkg:
+            # Mark as a package so submodule + relative imports resolve.
+            module.__path__ = []
+        exec(compile(src, "<embedded:%s>" % module.__name__, "exec"),
+             module.__dict__)
+
+
+def _register_embedded(_MODULES):
+    _sys.meta_path.insert(0, _EmbeddedFinder(_MODULES))
+
+
+_EMBEDDED = [
+    ('_engine', True, r'''"""chemkit: ASE-based computational chemistry suite."""
+__version__ = "1.0.0"
+''', False),
+    ('_engine.io', False, r'''"""I/O helpers: read molecular geometry; write structured JSON result files."""
+from __future__ import annotations
+import json
+import math
+import os
+import pathlib
+import sys
+from typing import Any, Dict
+
+from ase.io import read as ase_read
+
+
+def read_geometry(path: str):
+    """Read xyz/sdf/pdb (anything ASE recognizes) and return an Atoms object."""
+    if not os.path.isfile(path):
+        raise FileNotFoundError(f"Geometry file not found: {path}")
+    atoms = ase_read(path)
+    return atoms
+
+
+def write_result(result: Dict[str, Any], out_path: str) -> str:
+    """Write result dict to JSON; create parent dir if missing. Returns abs path.
+
+    NaN and ±Infinity are coerced to None so the output is strict-JSON valid
+    (browsers, Go, Rust will choke on `NaN` literals). A failed calculation
+    that propagates NaN into a result field is still readable by consumers
+    rather than silently producing malformed JSON.
+    """
+    out_path = os.path.abspath(out_path)
+    os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
+    with open(out_path, "w") as f:
+        json.dump(_scrub(result), f, indent=2, default=_default_json,
+                 allow_nan=False)
+    return out_path
+
+
+def _default_json(o):
+    # numpy scalars and arrays — must come before generic .tolist() since
+    # np.bool_ defines neither tolist() (it returns a Python bool) nor a
+    # numpy.integer/floating MRO link.
+    try:
+        import numpy as np
+        if isinstance(o, np.ndarray):
+            return _scrub(o.tolist())
+        if isinstance(o, np.bool_):
+            return bool(o)
+        if isinstance(o, np.floating):
+            v = float(o)
+            return v if math.isfinite(v) else None
+        if isinstance(o, np.integer):
+            return int(o)
+        if isinstance(o, np.complexfloating):
+            return {"real": float(o.real), "imag": float(o.imag)}
+    except ImportError:
+        pass
+    if isinstance(o, (pathlib.Path, os.PathLike)):
+        return os.fspath(o)
+    if isinstance(o, (set, frozenset)):
+        return sorted(o)
+    if isinstance(o, complex):
+        return {"real": o.real, "imag": o.imag}
+    if hasattr(o, "tolist"):
+        return _scrub(o.tolist())
+    raise TypeError(f"Not JSON-serializable: {type(o).__name__}")
+
+
+def _scrub(value):
+    """Recursively replace non-finite floats with None (the JSON-strict
+    representation of NaN/Inf). Walks lists/tuples/dicts only — leaves
+    everything else alone."""
+    if isinstance(value, float):
+        return value if math.isfinite(value) else None
+    if isinstance(value, list):
+        return [_scrub(v) for v in value]
+    if isinstance(value, tuple):
+        return [_scrub(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _scrub(v) for k, v in value.items()}
+    return value
+
+
+def cli_invocation() -> str:
+    """Reconstruct the command line that produced this run (for reproducibility)."""
+    return " ".join(sys.argv)
+
+
+''', False),
+    ('_engine.schema', False, r'''"""Shared JSON result schema used by every task."""
+from __future__ import annotations
+from typing import Any, Dict, List, Optional
+
+
+HARTREE_TO_EV = 27.211386245988
+HARTREE_TO_KCAL = 627.5094740631
+EV_TO_HARTREE = 1.0 / HARTREE_TO_EV
+EV_TO_KCAL = HARTREE_TO_KCAL / HARTREE_TO_EV
+
+
+def base_result(
+    *,
+    task: str,
+    method: str,
+    program: str,
+    input_path: str,
+    n_atoms: int,
+    atoms: List[str],
+    charge: int = 0,
+    multiplicity: int = 1,
+    solvent: Optional[str] = None,
+    cli: str = "",
+) -> Dict[str, Any]:
+    """Construct the common header for any chemkit result."""
+    return {
+        "task": task,
+        "method": method,
+        "program": program,
+        "input_file": input_path,
+        "n_atoms": n_atoms,
+        "atoms": atoms,
+        "charge": charge,
+        "multiplicity": multiplicity,
+        "solvent": solvent,
+        "cli_invocation": cli,
+        # Task-specific keys are added by each task.
+    }
+
+
+def energy_block_from_eV(energy_eV: float) -> Dict[str, float]:
+    """Convert an eV energy into the standard three-unit block."""
+    return {
+        "total_energy_eV": energy_eV,
+        "total_energy_hartree": energy_eV * EV_TO_HARTREE,
+        "total_energy_kcal_mol": energy_eV * EV_TO_KCAL,
+    }
+
+
+# Element coverage warnings — flag transition metals etc. that semi-empiricals
+# treat marginally. GFN2-xTB covers Z=1..86 with no PM7-style gaps, so only
+# the MOPAC/PM7 set is needed here.
+PM7_WEAK_ELEMENTS = {"Fe", "Ru", "Os", "Co", "Rh", "Ir", "Mn", "Tc", "Re",
+                     "Cr", "Mo", "W", "V", "Nb", "Ta", "Sc", "Y"}
+
+
+def element_warnings(symbols: List[str], method: str) -> List[str]:
+    warns = []
+    s = set(symbols)
+    if method == "mopac":
+        bad = s & PM7_WEAK_ELEMENTS
+        if bad:
+            warns.append(
+                f"PM7 has poorly validated parameters for: {sorted(bad)}. "
+                "Treat absolute energies and barriers with skepticism."
+            )
+    return warns
+''', False),
+    ('_engine.calculators', False, r'''"""ASE calculator factory for xtb (xtb-python or CLI), MOPAC, optional COSMO solvation."""
+from __future__ import annotations
+import os
+import shutil
+import tempfile
+from typing import Optional
+
+import numpy as np
+
+
+XTB_SOLVENT_MAP = {
+    # ALPB solvents understood by xtb
+    "water": "water", "h2o": "water",
+    "methanol": "methanol", "meoh": "methanol",
+    "ethanol": "ethanol", "etoh": "ethanol",
+    "acetone": "acetone",
+    "acetonitrile": "acetonitrile", "mecn": "acetonitrile",
+    "dmso": "dmso",
+    "thf": "thf",
+    "dcm": "ch2cl2", "ch2cl2": "ch2cl2",
+    "chloroform": "chcl3", "chcl3": "chcl3",
+    "toluene": "toluene",
+    "benzene": "benzene",
+    "hexane": "hexane",
+    "ether": "ether",
+    "octanol": "octanol", "1-octanol": "octanol",
+}
+
+# Solvents supported by the xtb CLI's --alpb flag but NOT by the xtb-python
+# Solvent enum exposed via the ASE wrapper. For these we must route through the
+# CLI path (_XtbCliCalculator) rather than silently dropping the solvent.
+XTB_PYTHON_UNSUPPORTED_SOLVENTS = {"octanol"}
+
+# MOPAC COSMO: EPS=<dielectric>; pull common solvent constants.
+# MOPAC spin keywords. Map covers up to mult=11 (decuplet) which is more than
+# enough for any real molecule — even Mn²⁺/Fe³⁺ high-spin sit at mult ≤ 6.
+_MOPAC_SPIN_NAMES = {
+    2: "DOUBLET",  3: "TRIPLET",  4: "QUARTET",  5: "QUINTET",
+    6: "SEXTET",   7: "SEPTET",   8: "OCTET",    9: "NONET",
+}
+
+def mopac_spin_keyword(multiplicity: int) -> str:
+    """Return the MOPAC keyword for a given spin multiplicity. Raises for
+    closed-shell (multiplicity ≤ 1) and for values outside MOPAC's table."""
+    if multiplicity <= 1:
+        raise ValueError(
+            f"mopac_spin_keyword: multiplicity must be > 1 (got {multiplicity}); "
+            "closed-shell calculations don't take a spin keyword."
+        )
+    name = _MOPAC_SPIN_NAMES.get(int(multiplicity))
+    if name is None:
+        raise ValueError(
+            f"MOPAC does not support spin multiplicity {multiplicity}. "
+            f"Known: {sorted(_MOPAC_SPIN_NAMES)}."
+        )
+    return name
+
+
+MOPAC_SOLVENT_EPS = {
+    "water": 78.4, "h2o": 78.4,
+    "methanol": 32.6, "meoh": 32.6,
+    "ethanol": 24.5, "etoh": 24.5,
+    "acetone": 20.7,
+    "acetonitrile": 37.5, "mecn": 37.5,
+    "dmso": 46.7,
+    "thf": 7.58,
+    "dcm": 8.93, "ch2cl2": 8.93,
+    "chloroform": 4.81, "chcl3": 4.81,
+    "toluene": 2.38,
+    "benzene": 2.27,
+    "hexane": 1.88,
+    "ether": 4.33,
+    "octanol": 10.30, "1-octanol": 10.30,  # 1-octanol, ε at 25 °C
+}
+
+
+# Track tempdirs allocated implicitly by build_calculator so we can clean
+# them up at process exit. Tempdirs registered here are NOT surfaced in the
+# result JSON (caller passed workdir=None, so the path isn't known outside
+# this module). Tasks that expose their workdir to the user (freq, ts, irc,
+# confsearch) bypass build_calculator's allocation by passing workdir=... in.
+_AUTO_TEMPDIRS: list = []
+
+def register_auto_tempdir(path: str) -> str:
+    """Mark a workdir for cleanup at process exit. Call from tasks whose
+    workdir is NOT surfaced in the result JSON (intermediate freq/opt
+    preopt dirs, vibration finite-difference caches, etc.). Tasks that
+    expose `*_workdir` to the user should skip this — those need to
+    survive past the chemkit process so the user can inspect the files.
+
+    Returns the path so callers can write `workdir = register_auto_tempdir(
+    tempfile.mkdtemp(prefix='...'))` in one line.
+    """
+    _AUTO_TEMPDIRS.append(path)
+    return path
+
+def _cleanup_auto_tempdirs():
+    import shutil as _sh
+    for d in _AUTO_TEMPDIRS:
+        try:
+            _sh.rmtree(d, ignore_errors=True)
+        except Exception:
+            pass
+import atexit as _atexit
+_atexit.register(_cleanup_auto_tempdirs)
+
+
+def build_calculator(
+    method: str,
+    *,
+    charge: int = 0,
+    multiplicity: int = 1,
+    solvent: Optional[str] = None,
+    workdir: Optional[str] = None,
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
+):
+    """Return an ASE calculator for the requested method.
+
+    method: 'xtb' (GFN2-xTB), 'mopac' (PM7), 'dft' (PySCF DFT), 'hf' (PySCF HF)
+    multiplicity: 2S+1 (ASE uses unpaired-electron count internally for some calcs)
+    solvent: e.g. 'water' for ALPB (xtb) or COSMO EPS=... (MOPAC). None = gas phase.
+    tier/functional/basis: PySCF-only knobs. Silently ignored for xtb/mopac.
+
+    If `workdir` is None a fresh tempdir is allocated and registered for
+    auto-cleanup at process exit. Callers that want the workdir to persist
+    past the chemkit run (e.g. so result['mopac_workdir'] is still readable
+    afterwards) must pass `workdir=...` explicitly.
+    """
+    method = method.lower()
+    if workdir is None:
+        workdir = tempfile.mkdtemp(prefix=f"chemkit_{method}_")
+        _AUTO_TEMPDIRS.append(workdir)
+
+    if method == "xtb":
+        return _build_xtb(charge, multiplicity, solvent, workdir)
+    if method == "mopac":
+        return _build_mopac(charge, multiplicity, solvent, workdir)
+    if method in ("dft", "hf"):
+        return _build_pyscf(
+            method, charge, multiplicity, solvent, workdir,
+            tier=tier, functional=functional, basis=basis,
+        )
+    raise ValueError(
+        f"Unknown method {method!r}. Expected 'xtb', 'mopac', 'dft', or 'hf'."
+    )
+
+
+def _build_pyscf(method, charge, multiplicity, solvent, workdir,
+                 *, tier=None, functional=None, basis=None):
+    """Dispatch DFT/HF to the PySCF backend (lazy import).
+
+    The PySCF backend lives in chemkit.backends.pyscf and exposes an
+    ASE-compatible Calculator class. We import lazily so users without
+    PySCF installed can still use xtb/mopac.
+
+    DFT tier presets bundle (xc, basis, grid_level, auxbasis); explicit
+    `--functional`/`--basis` override the tier defaults. HF takes only a
+    `--basis` (default def2-tzvp).
+    """
+    try:
+        from _engine.backends.pyscf import (
+            PySCFCalculator, resolve_dft_tier, HF_DEFAULT_BASIS,
+        )
+        from _engine.backends.pyscf.hf import HF_TIERS, DEFAULT_TIER as HF_DEFAULT_TIER
+    except ImportError as e:
+        raise ImportError(
+            f"chemkit.backends.pyscf is unavailable ({e}). "
+            "Install pyscf to use --method dft or --method hf."
+        )
+
+    if method == "dft":
+        cfg = resolve_dft_tier(tier, functional, basis)
+        calc = PySCFCalculator(
+            method="dft",
+            xc=cfg["xc"],
+            basis=cfg["basis"],
+            grid_level=cfg["grid"],
+            scf_tol=cfg["scf_tol"],
+            max_cycle=cfg["max_cycle"],
+            auxbasis=cfg["aux"],
+            charge=charge,
+            multiplicity=multiplicity,
+            solvent=solvent,
+        )
+        calc._chemkit_tier = cfg["tier"]
+        calc._chemkit_functional = cfg["xc"]
+        # Read the post-promotion basis off the calculator — PySCFCalculator
+        # auto-promotes def2-tzvp → def2-tzvpd etc. for anions, so cfg["basis"]
+        # would otherwise lie about what was actually used.
+        calc._chemkit_basis = calc.basis
+    else:  # hf
+        used_basis = basis or HF_DEFAULT_BASIS
+        hf_tier = (tier or HF_DEFAULT_TIER).lower()
+        if hf_tier not in HF_TIERS:
+            raise ValueError(f"Unknown HF tier {tier!r}. Choose from {sorted(HF_TIERS)}.")
+        hf_cfg = HF_TIERS[hf_tier]
+        calc = PySCFCalculator(
+            method="hf",
+            basis=used_basis,
+            scf_tol=hf_cfg["scf_tol"],
+            max_cycle=hf_cfg["max_cycle"],
+            charge=charge,
+            multiplicity=multiplicity,
+            solvent=solvent,
+        )
+        calc._chemkit_tier = hf_tier
+        calc._chemkit_functional = None
+        calc._chemkit_basis = calc.basis  # honors anion auto-promotion
+
+    calc._chemkit_method = method
+    calc._chemkit_workdir = workdir
+    return calc
+
+
+# ---------------------------------------------------------------------------
+# Per-method label helpers used by task modules to populate result JSON
+# without scattering hardcoded strings.
+# ---------------------------------------------------------------------------
+
+def method_label(method: str, calc=None) -> str:
+    """Human-readable method label for the `method` field of result JSON.
+
+    For DFT we want to surface the functional + basis (or tier preset) since
+    those are the actual scientific knobs. For xtb/mopac we just return the
+    canonical name.
+    """
+    m = (method or "").lower()
+    if m == "xtb":
+        return "GFN2-xTB"
+    if m == "mopac":
+        return "PM7"
+    if m in ("dft", "hf"):
+        if calc is not None:
+            functional = getattr(calc, "_chemkit_functional", None)
+            basis = getattr(calc, "_chemkit_basis", None)
+            tier = getattr(calc, "_chemkit_tier", None)
+            if m == "hf":
+                return f"HF/{basis}" if basis else "HF"
+            # DFT
+            if functional and basis:
+                return f"{functional}/{basis}"
+            if functional:
+                return functional
+            if tier:
+                return f"DFT[{tier}]"
+            return "DFT"
+        return m.upper()
+    return m
+
+
+def program_label(method: str) -> str:
+    """Underlying program string for the `program` field."""
+    m = (method or "").lower()
+    if m == "xtb":
+        return "xtb"
+    if m == "mopac":
+        return "mopac"
+    if m in ("dft", "hf"):
+        return "pyscf"
+    return m
+
+
+def collect_calc_extras(method: str, atoms, calc) -> dict:
+    """Return code-specific extras dict appropriate for `method`.
+
+    For xtb: tries to recover HOMO/LUMO via xtb-python.
+    For mopac: parses HOMO/LUMO, dipole, HoF, ENPART from the workdir.
+    For dft/hf: pulls anything the PySCF calculator stashed on itself
+    (e.g. orbital energies, dipole). Returns {} if nothing is available.
+    """
+    m = (method or "").lower()
+    extras: dict = {}
+    if m == "xtb":
+        try:
+            from _engine.tasks.sp import _xtb_homo_lumo  # local import to avoid cycle at top
+            extras.update(_xtb_homo_lumo(atoms, calc) or {})
+        except Exception:
+            pass
+    elif m == "mopac":
+        try:
+            from _engine.tasks._mopac_parsers import parse_mopac_extras
+        except ImportError:
+            return extras
+        workdir = getattr(calc, "_chemkit_workdir", None)
+        if workdir:
+            extras.update(parse_mopac_extras(workdir) or {})
+    elif m in ("dft", "hf"):
+        mf = getattr(calc, "mean_field", None)
+        if mf is not None:
+            try:
+                from _engine.backends.pyscf.scf import pack_scf_result
+                extras.update(pack_scf_result(mf))
+            except Exception:
+                pass
+        functional = getattr(calc, "_chemkit_functional", None)
+        basis = getattr(calc, "_chemkit_basis", None)
+        tier = getattr(calc, "_chemkit_tier", None)
+        if functional:
+            extras["functional"] = functional
+        if basis:
+            extras["basis"] = basis
+        if tier:
+            extras["tier"] = tier
+    return extras
+
+
+def _build_xtb(charge, multiplicity, solvent, workdir):
+    """Prefer xtb-python (compiled); fall back to subprocess via a thin shim.
+
+    For solvents the xtb-python Solvent enum doesn't expose (octanol etc.) we
+    route through the CLI even when xtb-python is installed — otherwise the
+    ASE wrapper silently drops the solvent and reports gas-phase energies.
+    """
+    sol_key = solvent.lower() if solvent else None
+    if sol_key and sol_key not in XTB_SOLVENT_MAP:
+        raise ValueError(f"xtb: unknown solvent {solvent!r}")
+    if sol_key in XTB_PYTHON_UNSUPPORTED_SOLVENTS:
+        return _XtbCliCalculator(
+            charge=charge, uhf=max(0, multiplicity - 1),
+            solvent=solvent, workdir=workdir,
+        )
+    try:
+        from xtb.ase.calculator import XTB
+        kwargs = {"method": "GFN2-xTB"}
+        if solvent:
+            kwargs["solvent"] = XTB_SOLVENT_MAP[sol_key]
+        calc = XTB(**kwargs)
+        calc._chemkit_charge = charge
+        calc._chemkit_uhf = max(0, multiplicity - 1)
+        return calc
+    except ImportError:
+        return _XtbCliCalculator(
+            charge=charge,
+            uhf=max(0, multiplicity - 1),
+            solvent=solvent,
+            workdir=workdir,
+        )
+
+
+def _build_mopac(charge, multiplicity, solvent, workdir):
+    from ase.calculators.mopac import MOPAC
+
+    task_keywords = ["PM7"]
+    if charge != 0:
+        task_keywords.append(f"CHARGE={charge}")
+    if multiplicity > 1:
+        task_keywords.append(mopac_spin_keyword(multiplicity))
+        task_keywords.append("UHF")
+    if solvent:
+        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
+        if eps is None:
+            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        task_keywords.append(f"EPS={eps}")
+    # Always request ENPART + AUX so we can recover the absolute electronic energy.
+    # THREADS scales with available cores; honor CHEMKIT_MOPAC_THREADS override.
+    n_threads = int(os.environ.get("CHEMKIT_MOPAC_THREADS") or (os.cpu_count() or 1))
+    task_keywords += [
+        "GRADIENTS", "AUX", "ENPART", "LARGE=-1", f"THREADS={n_threads}", "GEO-OK",
+    ]
+
+    calc = MOPAC(
+        label=os.path.join(workdir, "mopac"),
+        task=" ".join(task_keywords),
+        relscf=0.01,
+    )
+    calc._chemkit_keywords = task_keywords
+    calc._chemkit_workdir = workdir
+    return calc
+
+
+def apply_calc_to_atoms(atoms, calc):
+    """Attach calc to atoms and propagate xtb charge/uhf when needed.
+
+    xtb-python's XTB calculator reads total charge and unpaired-electron count
+    from `atoms.get_initial_charges().sum()` / `get_initial_magnetic_moments().sum()`
+    — NOT from `atoms.info`. Only the sums matter to xtb (it solves for the
+    requested total charge/spin, not a per-atom partition), so we dump the
+    full charge/uhf onto the first atom and zero the rest.
+    """
+    if hasattr(calc, "_chemkit_charge"):
+        charges = np.zeros(len(atoms))
+        charges[0] = calc._chemkit_charge
+        atoms.set_initial_charges(charges)
+
+        magmoms = np.zeros(len(atoms))
+        magmoms[0] = calc._chemkit_uhf
+        atoms.set_initial_magnetic_moments(magmoms)
+    atoms.calc = calc
+    return atoms
+
+
+class _XtbCliCalculator:
+    """Minimal ASE-compatible wrapper around the `xtb` CLI when xtb-python is absent."""
+
+    implemented_properties = ["energy", "forces"]
+    name = "xtb-cli"
+
+    def __init__(self, *, charge=0, uhf=0, solvent=None, workdir):
+        if not shutil.which("xtb"):
+            raise FileNotFoundError("xtb CLI not found and xtb-python unavailable.")
+        self.charge = charge
+        self.uhf = uhf
+        self.solvent = solvent
+        self.workdir = workdir
+        self.parameters = {}
+        self.results = {}
+        self.atoms = None
+
+    def get_potential_energy(self, atoms=None):
+        from ase.io import write as ase_write
+        import re, subprocess
+        if atoms is not None:
+            self.atoms = atoms
+        xyz = os.path.join(self.workdir, "mol.xyz")
+        ase_write(xyz, self.atoms)
+        cmd = ["xtb", xyz, "--gfn", "2", "--sp",
+               "--chrg", str(self.charge), "--uhf", str(self.uhf)]
+        if self.solvent:
+            sol = XTB_SOLVENT_MAP.get(self.solvent.lower(), self.solvent)
+            cmd += ["--alpb", sol]
+        res = subprocess.run(cmd, capture_output=True, text=True,
+                             cwd=self.workdir, timeout=300)
+        m = re.search(r"total energy\s+([-+]?\d+\.\d+)\s*Eh", res.stdout)
+        if not m:
+            raise RuntimeError("xtb CLI: could not parse total energy.\n" + res.stdout[-2000:])
+        # Convert Hartree -> eV to match ASE convention.
+        energy_eV = float(m.group(1)) * 27.211386245988
+        self.results["energy"] = energy_eV
+        return energy_eV
+
+    def calculate(self, atoms, properties, system_changes):
+        self.atoms = atoms
+        self.get_potential_energy(atoms)
+
+    def get_property(self, name, atoms=None, allow_calculation=True):
+        if name == "energy":
+            return self.get_potential_energy(atoms)
+        raise NotImplementedError(name)
+''', False),
+    ('_engine.cli', False, r'''"""`chemkit` command-line interface."""
+from __future__ import annotations
+import argparse
+import json
 import os
 import sys
+from typing import List, Optional
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from _engine import __version__
+from _engine.io import write_result, cli_invocation
 
-from _engine.cli import main  # noqa: E402
+
+def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
+    """Shared CLI options. Set `with_solvent=False` for tasks where the
+    solvent is fixed by the task itself (e.g. logp pins water + octanol)."""
+    if with_input:
+        p.add_argument("input", help="Path to input geometry (.xyz, .sdf, .pdb).")
+    p.add_argument("--method", choices=["xtb", "mopac", "dft", "hf"], required=True)
+    p.add_argument("--charge", type=int, default=0)
+    p.add_argument("--mult", "--multiplicity", dest="multiplicity",
+                   type=int, default=1, help="Spin multiplicity 2S+1 (default 1).")
+    if with_solvent:
+        p.add_argument("--solvent", default=None,
+                       help="Implicit solvent (e.g. water, methanol, dmso). Gas phase if omitted.")
+    # PySCF-only knobs; silently ignored for xtb/mopac.
+    p.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None,
+                   help="DFT tier preset (fast=r2SCAN/def2-SVP, standard=wB97X-V/def2-TZVP, "
+                        "accurate=wB97M-V/def2-QZVPP). Ignored unless --method dft.")
+    p.add_argument("--functional", default=None,
+                   help="DFT functional override, libxc name (e.g. b3lyp, pbe0, wb97x_v, "
+                        "wb97m_v, wb97x-d3bj). Ignored unless --method dft.")
+    p.add_argument("--basis", default=None,
+                   help="Basis-set override for DFT/HF (e.g. def2-tzvp, cc-pvtz). "
+                        "Ignored unless --method dft or --method hf.")
+    p.add_argument("--out", default=None,
+                   help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
+
+
+def _add_common(p):
+    """Back-compat shim — existing subparsers continue to use this."""
+    _add_chem_options(p)
+
+
+def _default_out(input_path: str, task: str, method: str) -> str:
+    stem = os.path.splitext(os.path.basename(input_path))[0]
+    return os.path.abspath(f"{stem}_{task}_{method}.json")
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = argparse.ArgumentParser(
+        prog="chemkit",
+        description="ASE-based computational chemistry suite (xtb, MOPAC).",
+    )
+    parser.add_argument("--version", action="version", version=f"chemkit {__version__}")
+    sub = parser.add_subparsers(dest="task", required=True)
+
+    p_sp = sub.add_parser("sp", help="Single-point energy.")
+    _add_common(p_sp)
+
+    p_opt = sub.add_parser("opt", help="Geometry optimization.")
+    _add_common(p_opt)
+    p_opt.add_argument("--fmax", type=float, default=0.05,
+                       help="Force convergence threshold in eV/Å (default 0.05).")
+    p_opt.add_argument("--steps", type=int, default=500)
+    p_opt.add_argument("--xyz-out", default=None,
+                       help="Optimized geometry destination. Default: <stem>_<method>_opt.xyz")
+
+    p_freq = sub.add_parser("freq", help="Opt-freq: optimize then vibrational analysis + thermochemistry.")
+    _add_common(p_freq)
+    p_freq.add_argument("--temperature", type=float, default=298.15)
+    p_freq.add_argument("--pressure", type=float, default=101325.0)
+    p_freq.add_argument("--geometry", choices=["monatomic", "linear", "nonlinear"],
+                        default=None,
+                        help="Override molecular geometry (monatomic/linear/nonlinear). "
+                             "If omitted, auto-detected from the input atoms.")
+    p_freq.add_argument("--symmetry", type=int, default=None,
+                        help="Rotational symmetry number σ. If omitted, defaults to "
+                             "1 with a warning — look up σ for your point group "
+                             "(H2O σ=2, NH3 σ=3, CH4/benzene σ=12) to avoid "
+                             "overestimating rotational entropy by R·ln σ.")
+    p_freq.add_argument(
+        "--no-preopt", dest="preopt", action="store_false", default=True,
+        help="Skip the automatic pre-optimization step. By default freq always "
+             "optimizes the input geometry first so the Hessian is taken at a "
+             "true stationary point.",
+    )
+    p_freq.add_argument(
+        "--preopt-fmax", type=float, default=0.001,
+        help="Force convergence (eV/Å) for the pre-opt step (default 0.01, "
+             "tighter than `opt`'s 0.05 because residual forces propagate into "
+             "near-zero imaginary modes).",
+    )
+    p_freq.add_argument(
+        "--auto-confsearch", dest="auto_confsearch", action="store_true",
+        default=False,
+        help="Run an Open Babel conformer search (with PM7 postopt) before the "
+             "freq step and take the lowest-energy minimum as the input geometry. "
+             "Useful for flexible molecules where the user-supplied geometry "
+             "may not be the global minimum; otherwise soft-mode saddles show "
+             "up as spurious imaginary modes.",
+    )
+
+    p_bind = sub.add_parser("binding", help="Binding/interaction energy.")
+    _add_common(p_bind)
+    p_bind.add_argument("--monomer", action="append", required=True,
+                        help="Path to a monomer geometry. Repeat for each fragment.")
+    p_bind.add_argument("--monomer-charge", action="append", type=int, default=None)
+    p_bind.add_argument("--monomer-mult", action="append", type=int, default=None)
+
+    p_redox = sub.add_parser("redox", help="Redox potential vs SHE / Ag-AgCl / Fc+-Fc.")
+    _add_common(p_redox)
+    p_redox.add_argument("--ox-charge", type=int, required=True)
+    p_redox.add_argument("--red-charge", type=int, required=True)
+    p_redox.add_argument("--ox-mult", type=int, default=1)
+    p_redox.add_argument("--red-mult", type=int, default=2)
+    p_redox.add_argument("--ref", choices=["SHE", "Ag/AgCl", "Fc+/Fc"], default="SHE")
+    p_redox.add_argument("--n-electrons", type=int, default=1)
+
+    p_conf = sub.add_parser("confsearch", help="Conformer search via Open Babel (confab).")
+    _add_common(p_conf)
+    p_conf.add_argument("--max-conformers", type=int, default=20)
+    p_conf.add_argument(
+        "--postopt", choices=["none", "mopac"], default="mopac",
+        help=(
+            "Re-optimize CREST conformers with another method to recover "
+            "shallow minima that GFN2-xTB smooths over. 'mopac' uses PM7 "
+            "(default). Pass 'none' to skip."
+        ),
+    )
+    p_conf.add_argument(
+        "--postopt-rmsd", type=float, default=0.25,
+        help="RMSD threshold (Å) for deduping post-optimized conformers (default 0.25).",
+    )
+    p_conf.add_argument(
+        "--postopt-ewin", type=float, default=6.0,
+        help="Energy window (kcal/mol) to keep after post-optimization (default 6.0).",
+    )
+
+    p_front = sub.add_parser(
+        "frontier",
+        help="Frontier molecular orbital energies + HOMO-LUMO gap (no opt).",
+    )
+    _add_common(p_front)
+    p_front.add_argument(
+        "--nfrontier", type=int, default=3,
+        help="Number of occupied & virtual orbitals on each side of the gap "
+             "to report (default 3).",
+    )
+
+    p_elst = sub.add_parser(
+        "electrostatics",
+        help="Dipole + atomic partial charges (single-point, no opt).",
+    )
+    _add_common(p_elst)
+
+    p_solv = sub.add_parser(
+        "solvation",
+        help="ΔG_solv = E(solvated) − E(gas) at fixed geometry (electronic only).",
+    )
+    _add_common(p_solv)
+
+    p_logp = sub.add_parser(
+        "logp",
+        help="logP from ΔG_solv(water) − ΔG_solv(octanol). Neutral species only.",
+    )
+    _add_chem_options(p_logp, with_solvent=False)
+
+    p_prof = sub.add_parser(
+        "profile",
+        help="Reaction profile: opt(R) + opt(P) + TS search + freq×3 + IRC "
+             "connectivity check + ΔE/ΔH/ΔG diagram PNG.",
+    )
+    p_prof.add_argument("--reactant", required=True, help="Reactant xyz.")
+    p_prof.add_argument("--product", required=True, help="Product xyz.")
+    p_prof.add_argument("--ts-guess", dest="ts_guess", required=True,
+                        help="TS guess xyz (often from /conformational_analysis).")
+    p_prof.add_argument(
+        "--method", choices=["xtb", "mopac", "dft", "hf"], required=True,
+        help="Same method is used for every species in the cycle.",
+    )
+    p_prof.add_argument("--charge", type=int, default=0)
+    p_prof.add_argument("--mult", "--multiplicity", dest="multiplicity",
+                        type=int, default=1)
+    p_prof.add_argument("--solvent", default=None)
+    p_prof.add_argument("--temperature", type=float, default=298.15)
+    p_prof.add_argument("--pressure", type=float, default=101325.0)
+    p_prof.add_argument(
+        "--rmsd-tol", type=float, default=0.5,
+        help="Å threshold for IRC-endpoint connectivity check (default 0.5).",
+    )
+    p_prof.add_argument(
+        "--no-irc", dest="skip_irc", action="store_true", default=False,
+        help="Skip the IRC connectivity check (only the RMSD-based check is "
+             "available for dft/hf anyway, so this is a noop there).",
+    )
+    p_prof.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_prof.add_argument("--functional", default=None)
+    p_prof.add_argument("--basis", default=None)
+    p_prof.add_argument("--out", default=None)
+
+    p_pka = sub.add_parser(
+        "pka",
+        help="pKa via thermodynamic cycle HA(aq) → A⁻(aq) + H⁺(aq). Requires "
+             "BOTH the protonated and deprotonated xyz files.",
+    )
+    p_pka.add_argument("--ha", required=True, help="xyz of the protonated form (HA).")
+    p_pka.add_argument("--a-minus", dest="a_minus", required=True,
+                       help="xyz of the deprotonated form (A⁻).")
+    p_pka.add_argument(
+        "--method", choices=["xtb", "mopac", "dft", "hf"], required=True,
+        help="Same method is applied to every species in the cycle.",
+    )
+    p_pka.add_argument(
+        "--mode", choices=["absolute", "reference"], default="absolute",
+        help="absolute: uses literature G(H+,aq). reference: uses a known acid "
+             "(--ref-ha, --ref-a-minus, --pka-ref). Reference is far more accurate.",
+    )
+    p_pka.add_argument(
+        "--solvent", default="water",
+        help="Implicit solvent (default 'water' — required for the absolute "
+             "G(H+) reference to apply).",
+    )
+    p_pka.add_argument("--ha-charge", type=int, default=0,
+                       help="Charge of HA (default 0). A⁻ charge is HA charge − 1.")
+    p_pka.add_argument("--ha-mult", type=int, default=1, help="HA multiplicity (default 1).")
+    p_pka.add_argument("--a-minus-mult", type=int, default=1, help="A⁻ multiplicity (default 1).")
+    p_pka.add_argument("--temperature", type=float, default=298.15)
+    p_pka.add_argument("--pressure", type=float, default=101325.0)
+    p_pka.add_argument(
+        "--hplus-reference", default="tissandier_1998",
+        choices=["tissandier_1998", "kelly_2006"],
+        help="Source for G(H+,aq). Tissandier −270.28 kcal/mol (default); "
+             "Kelly −265.9 kcal/mol shifts every pKa by ~1.4 units.",
+    )
+    # Reference-mode args
+    p_pka.add_argument("--ref-ha", default=None, help="Reference acid HA xyz (reference mode).")
+    p_pka.add_argument("--ref-a-minus", default=None, help="Reference base A⁻ xyz (reference mode).")
+    p_pka.add_argument("--pka-ref", type=float, default=None,
+                       help="Known experimental pKa of the reference acid (reference mode).")
+    p_pka.add_argument("--ref-ha-charge", type=int, default=0)
+    p_pka.add_argument("--ref-ha-mult", type=int, default=1)
+    p_pka.add_argument("--ref-a-minus-mult", type=int, default=1)
+    p_pka.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_pka.add_argument("--functional", default=None)
+    p_pka.add_argument("--basis", default=None)
+    p_pka.add_argument("--out", default=None)
+
+    p_build = sub.add_parser(
+        "build",
+        help="Build a 3D xyz from a SMILES string OR a molecule name (Open Babel "
+             "--gen3d; names are resolved online via PubChem/OPSIN/NIST).",
+    )
+    p_build.add_argument(
+        "smiles",
+        help="SMILES string (e.g. 'CCO') or a plain molecule name (e.g. "
+             "'ethanol'). A name is resolved to SMILES online and the source "
+             "is reported.",
+    )
+    p_build.add_argument(
+        "--out-xyz", default=None,
+        help="Destination .xyz path. Default: <input-sanitized>.xyz in cwd.",
+    )
+    p_build.add_argument(
+        "--name", default=None,
+        help="Title comment for the xyz (default: the SMILES string).",
+    )
+    p_build.add_argument(
+        "--opt", dest="opt_method", choices=["xtb", "mopac", "dft", "hf"],
+        default=None,
+        help="Optional QM refinement step after the obabel build. Calls "
+             "`chemkit opt` internally; the QM-relaxed xyz becomes the canonical "
+             "output.",
+    )
+    p_build.add_argument(
+        "--solvent", default=None,
+        help="Implicit solvent for the optional QM step (ignored without --opt).",
+    )
+    p_build.add_argument(
+        "--charge", type=int, default=None,
+        help="Net charge forwarded to the QM step (default 0).",
+    )
+    p_build.add_argument(
+        "--mult", "--multiplicity", dest="multiplicity", type=int, default=None,
+        help="Spin multiplicity forwarded to the QM step (default 1).",
+    )
+    p_build.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_build.add_argument("--functional", default=None)
+    p_build.add_argument("--basis", default=None)
+    p_build.add_argument("--out", default=None, help="Result JSON path.")
+
+    p_fukui = sub.add_parser(
+        "fukui",
+        help="Condensed Fukui functions + dual descriptor (atom-resolved reactivity).",
+    )
+    _add_common(p_fukui)
+    p_fukui.add_argument(
+        "--cation-mult", type=int, default=None,
+        help="Multiplicity of the N-1 (cation) state. If omitted, derived from "
+             "--mult: singlet parent → doublet (M+1), higher-spin parent → M-1. "
+             "Override for systems where the high-spin N-1 is the ground state.",
+    )
+    p_fukui.add_argument(
+        "--anion-mult", type=int, default=None,
+        help="Multiplicity of the N+1 (anion) state. If omitted, derived from "
+             "--mult: singlet parent → doublet (M+1), higher-spin parent → M-1.",
+    )
+    p_fukui.add_argument(
+        "--no-plot", dest="plot", action="store_false", default=True,
+        help="Skip the PNG bar chart of f+/f-/dual per atom.",
+    )
+
+    p_ts = sub.add_parser(
+        "ts", help="Transition-state search (locate a first-order saddle).",
+    )
+    _add_common(p_ts)
+    p_ts.add_argument(
+        "--steps", type=int, default=500,
+        help="Max optimizer iterations (default 500).",
+    )
+    p_ts.add_argument(
+        "--verify-freq", dest="verify_freq", action="store_true", default=True,
+        help="Run a frequency calculation on the converged TS to verify it has "
+             "exactly one imaginary mode (the reaction-coordinate direction). "
+             "Default on.",
+    )
+    p_ts.add_argument(
+        "--no-verify-freq", dest="verify_freq", action="store_false",
+        help="Skip the post-TS frequency verification.",
+    )
+
+    p_irc = sub.add_parser(
+        "irc", help="Intrinsic reaction coordinate (walk down from a TS).",
+    )
+    _add_common(p_irc)
+    p_irc.add_argument(
+        "--max-points", type=int, default=40,
+        help="Max IRC points per direction (default 40).",
+    )
+    p_irc.add_argument(
+        "--step", type=float, default=0.05,
+        help="Mass-weighted step size in amu^1/2 * bohr (default 0.05). xtb path only.",
+    )
+
+    p_rxn = sub.add_parser(
+        "rxn-energy",
+        help="Reaction energy ΔE / ΔH / ΔG for reactants → products.",
+    )
+    # rxn-energy has no single 'input' file. Species come from repeated
+    # --reactant / --product flags. Method/solvent/PySCF knobs still apply.
+    _add_chem_options(p_rxn, with_input=False)
+    p_rxn.add_argument(
+        "--reactant", action="append", default=None, required=True,
+        help="Species spec '[COEF*]PATH[,charge=Q][,mult=M]'. Repeat per reactant.",
+    )
+    p_rxn.add_argument(
+        "--product", action="append", default=None, required=True,
+        help="Species spec '[COEF*]PATH[,charge=Q][,mult=M]'. Repeat per product.",
+    )
+    p_rxn.add_argument(
+        "--mode", choices=["sp", "opt", "freq"], default="sp",
+        help="sp: single-point on each input xyz (default). opt: optimize then SP. "
+             "freq: full opt+freq → reports ΔE, ΔH, ΔG.",
+    )
+    p_rxn.add_argument("--temperature", type=float, default=298.15)
+    p_rxn.add_argument("--pressure", type=float, default=101325.0)
+
+    p_scan = sub.add_parser(
+        "scan", help="Relaxed dihedral scan (torsional energy profile).",
+    )
+    _add_common(p_scan)
+    p_scan.add_argument(
+        "--dihedral", default=None,
+        help="Comma-separated 1-based atom indices i,j,k,l defining the dihedral "
+             "to scan (matches the C1, C2, ... labels in plots and filenames). "
+             "If omitted, auto-detects all non-ring rotatable C–C bonds "
+             "(including methyl rotors) and scans each.",
+    )
+    p_scan.add_argument(
+        "--steps", type=int, default=24,
+        help="Number of points around 360° (default 24 = 15° resolution).",
+    )
+    p_scan.add_argument(
+        "--fmax", type=float, default=0.05,
+        help="Per-step force convergence (eV/Å, default 0.05).",
+    )
+    p_scan.add_argument(
+        "--opt-steps", type=int, default=200,
+        help="Max optimizer iterations per scan point (default 200).",
+    )
+
+    args = parser.parse_args(argv)
+    cli = cli_invocation()
+
+    # PySCF-only knobs threaded into every task.run(...) call below.
+    # Tasks that don't use them ignore them; tasks that use dft/hf consume them.
+    pyscf_kwargs = dict(tier=args.tier, functional=args.functional, basis=args.basis)
+
+    if args.task == "sp":
+        from _engine.tasks import sp
+        result = sp.run(args.input, method=args.method, charge=args.charge,
+                        multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+                        **pyscf_kwargs)
+    elif args.task == "opt":
+        from _engine.tasks import opt
+        result = opt.run(args.input, method=args.method, charge=args.charge,
+                         multiplicity=args.multiplicity, solvent=args.solvent,
+                         fmax=args.fmax, steps=args.steps, out_xyz=args.xyz_out,
+                         cli=cli, **pyscf_kwargs)
+    elif args.task == "freq":
+        from _engine.tasks import freq
+        result = freq.run(args.input, method=args.method, charge=args.charge,
+                          multiplicity=args.multiplicity, solvent=args.solvent,
+                          temperature_K=args.temperature, pressure_Pa=args.pressure,
+                          geometry=args.geometry, symmetrynumber=args.symmetry,
+                          preopt=args.preopt, preopt_fmax=args.preopt_fmax,
+                          auto_confsearch=args.auto_confsearch,
+                          cli=cli, **pyscf_kwargs)
+    elif args.task == "binding":
+        from _engine.tasks import binding
+        result = binding.run(args.input, args.monomer, method=args.method,
+                             charge=args.charge, multiplicity=args.multiplicity,
+                             solvent=args.solvent,
+                             monomer_charges=args.monomer_charge,
+                             monomer_multiplicities=args.monomer_mult, cli=cli,
+                             **pyscf_kwargs)
+    elif args.task == "redox":
+        from _engine.tasks import redox
+        result = redox.run(args.input, method=args.method,
+                           oxidized_charge=args.ox_charge,
+                           reduced_charge=args.red_charge,
+                           oxidized_multiplicity=args.ox_mult,
+                           reduced_multiplicity=args.red_mult,
+                           solvent=args.solvent, reference=args.ref,
+                           n_electrons=args.n_electrons, cli=cli,
+                           **pyscf_kwargs)
+    elif args.task == "confsearch":
+        from _engine.tasks import confsearch
+        result = confsearch.run(
+            args.input, method=args.method, solvent=args.solvent,
+            n_max_conformers=args.max_conformers,
+            postopt=args.postopt,
+            postopt_rmsd=args.postopt_rmsd,
+            postopt_ewin=args.postopt_ewin,
+            charge=args.charge, multiplicity=args.multiplicity,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "frontier":
+        from _engine.tasks import frontier
+        result = frontier.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            nfrontier=args.nfrontier, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "electrostatics":
+        from _engine.tasks import electrostatics
+        result = electrostatics.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+            **pyscf_kwargs,
+        )
+    elif args.task == "solvation":
+        if not args.solvent:
+            parser.error("solvation requires --solvent (e.g. --solvent water)")
+        from _engine.tasks import solvation
+        result = solvation.run(
+            args.input, method=args.method, solvent=args.solvent,
+            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
+            **pyscf_kwargs,
+        )
+    elif args.task == "logp":
+        from _engine.tasks import logp
+        result = logp.run(
+            args.input, method=args.method,
+            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
+            **pyscf_kwargs,
+        )
+    elif args.task == "fukui":
+        from _engine.tasks import fukui
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        result = fukui.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            cation_mult=args.cation_mult, anion_mult=args.anion_mult,
+            plot=args.plot, out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "ts":
+        from _engine.tasks import ts
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        result = ts.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            steps=args.steps, verify_freq=args.verify_freq,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "irc":
+        from _engine.tasks import irc
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        result = irc.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            max_points=args.max_points, step=args.step,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "rxn-energy":
+        from _engine.tasks import reaction_energy
+        result = reaction_energy.run(
+            reactants=args.reactant, products=args.product,
+            method=args.method, mode=args.mode, solvent=args.solvent,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "profile":
+        from _engine.tasks import reaction_profile as profile_task
+        out_path_pre = (
+            args.out
+            or _default_out(args.reactant, args.task, args.method)
+        )
+        out_stem = os.path.splitext(out_path_pre)[0]
+        result = profile_task.run(
+            reactant_xyz=args.reactant, product_xyz=args.product,
+            ts_guess_xyz=args.ts_guess, method=args.method,
+            charge=args.charge, multiplicity=args.multiplicity,
+            solvent=args.solvent,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            rmsd_tol=args.rmsd_tol, skip_irc=args.skip_irc,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "pka":
+        from _engine.tasks import pka as pka_task
+        result = pka_task.run(
+            ha_xyz=args.ha, a_minus_xyz=args.a_minus,
+            method=args.method, mode=args.mode, solvent=args.solvent,
+            ha_charge=args.ha_charge, ha_multiplicity=args.ha_mult,
+            a_minus_multiplicity=args.a_minus_mult,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            hplus_reference=args.hplus_reference,
+            ref_ha_xyz=args.ref_ha, ref_a_minus_xyz=args.ref_a_minus,
+            ref_pka=args.pka_ref,
+            ref_ha_charge=args.ref_ha_charge,
+            ref_ha_multiplicity=args.ref_ha_mult,
+            ref_a_minus_multiplicity=args.ref_a_minus_mult,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "build":
+        import re
+        from _engine.tasks import build as build_task
+        if args.out_xyz:
+            out_xyz = args.out_xyz
+        else:
+            safe = re.sub(r"[^A-Za-z0-9_-]", "_", args.smiles)[:60] or "molecule"
+            out_xyz = os.path.abspath(f"{safe}.xyz")
+        result = build_task.run(
+            molecule=args.smiles, out_xyz=out_xyz, name=args.name,
+            opt_method=args.opt_method, opt_solvent=args.solvent,
+            opt_charge=args.charge, opt_multiplicity=args.multiplicity,
+            tier=args.tier, functional=args.functional, basis=args.basis,
+            cli=cli,
+        )
+    elif args.task == "scan":
+        from _engine.tasks import scan
+        dihedral_tuple = None
+        if args.dihedral:
+            parts = [p.strip() for p in args.dihedral.split(",")]
+            if len(parts) != 4:
+                parser.error("--dihedral must be 4 comma-separated atom indices")
+            try:
+                one_based = tuple(int(p) for p in parts)
+            except ValueError:
+                parser.error("--dihedral atom indices must be integers")
+            if any(k < 1 for k in one_based):
+                parser.error("--dihedral atom indices are 1-based (must be >= 1)")
+            dihedral_tuple = tuple(k - 1 for k in one_based)
+        # Compute the JSON path early so scan.run can place its auxiliary
+        # files (xyz / png / out) with a matching stem.
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        result = scan.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            dihedral=dihedral_tuple, n_steps=args.steps,
+            fmax=args.fmax, opt_steps=args.opt_steps,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    else:
+        parser.error(f"Unknown task {args.task!r}")
+        return 2
+
+    # Tasks without a single `input` xyz need bespoke default-output paths.
+    if args.task == "rxn-energy":
+        from _engine.tasks.reaction_energy import _parse_species_spec
+        first_path, _, _, _ = _parse_species_spec(args.reactant[0])
+        out_path = args.out or _default_out(first_path, args.task, args.method)
+    elif args.task == "pka":
+        out_path = args.out or _default_out(args.ha, args.task, args.method)
+    elif args.task == "profile":
+        out_path = args.out or _default_out(args.reactant, args.task, args.method)
+    elif args.task == "build":
+        # build's input is a SMILES string and its --opt is optional, so the
+        # naming convention is simpler: drop next to the xyz it wrote.
+        if args.out:
+            out_path = args.out
+        else:
+            stem = os.path.splitext(result["xyz_path"])[0]
+            out_path = os.path.abspath(f"{stem}_build.json")
+    else:
+        out_path = args.out or _default_out(args.input, args.task, args.method)
+    write_result(result, out_path)
+
+    # For confsearch, also write the full conformer ensemble as an XYZ next
+    # to the JSON so downstream tools have it without digging into tmp.
+    if args.task == "confsearch":
+        import shutil
+        stem = os.path.splitext(out_path)[0]
+        ensemble_dst = f"{stem}_conformers.xyz"
+        ensemble_src = None
+        post = result.get("postopt")
+        if post and post.get("ensemble_xyz") and os.path.isfile(post["ensemble_xyz"]):
+            ensemble_src = post["ensemble_xyz"]
+        elif result.get("all_conformers_xyz") and os.path.isfile(result["all_conformers_xyz"]):
+            ensemble_src = result["all_conformers_xyz"]
+        if ensemble_src:
+            shutil.copyfile(ensemble_src, ensemble_dst)
+            result["conformers_xyz"] = os.path.abspath(ensemble_dst)
+            # Rewrite the JSON so it records the persistent xyz path.
+            write_result(result, out_path)
+
+    print(json.dumps(result, indent=2, default=str))
+    print(f"\n# result written to: {out_path}", file=sys.stderr)
+    if args.task == "confsearch" and result.get("conformers_xyz"):
+        print(f"# conformers xyz written to: {result['conformers_xyz']}", file=sys.stderr)
+    if args.task == "scan":
+        for d in result.get("dihedrals", []):
+            for k in ("trajectory_xyz", "plot_png"):
+                if d.get(k):
+                    print(f"# {k}: {d[k]}", file=sys.stderr)
+    if args.task == "fukui" and result.get("plot_png"):
+        print(f"# plot_png: {result['plot_png']}", file=sys.stderr)
+    return 0
+
 
 if __name__ == "__main__":
-    sys.exit(main(["pka", *sys.argv[1:]]))
+    sys.exit(main())
+''', False),
+    ('_engine.tasks', True, r"""""", False),
+    ('_engine.tasks._mopac_parsers', False, r'''"""MOPAC .out / .aux scrapers for properties ASE doesn't surface."""
+from __future__ import annotations
+import os
+import re
+from typing import Any, Dict, List, Optional
+
+NUM = r"[-+]?\d+\.\d+(?:[DdEe][-+]?\d+)?"
+
+
+def _ff(s: str) -> float:
+    return float(s.replace("D", "E").replace("d", "e"))
+
+
+def parse_mopac_extras(workdir: str) -> Dict[str, Any]:
+    """Return HOMO/LUMO, dipole, heat of formation, IP, ENPART components."""
+    out_path = _find_with_ext(workdir, ".out")
+    aux_path = _find_with_ext(workdir, ".aux")
+    extras: Dict[str, Any] = {}
+    if out_path is None:
+        return extras
+
+    with open(out_path) as f:
+        out_text = f.read()
+
+    # AUX file: structured KEY:UNIT=value entries
+    if aux_path is not None and os.path.isfile(aux_path):
+        with open(aux_path) as f:
+            aux_text = f.read()
+        aux_vals = {}
+        for m in re.finditer(
+            rf"^\s*([A-Z_][A-Z0-9_]*)(?::([A-Z/]+))?=\s*({NUM})\s*$",
+            aux_text, re.MULTILINE,
+        ):
+            aux_vals[(m.group(1), m.group(2))] = _ff(m.group(3))
+        if ("HEAT_OF_FORMATION", "KCAL/MOL") in aux_vals:
+            extras["heat_of_formation_kcal_mol"] = aux_vals[("HEAT_OF_FORMATION", "KCAL/MOL")]
+        if ("IONIZATION_POTENTIAL", "EV") in aux_vals:
+            extras["ionization_potential_eV"] = aux_vals[("IONIZATION_POTENTIAL", "EV")]
+        if ("DIPOLE", "DEBYE") in aux_vals:
+            extras["dipole_debye"] = aux_vals[("DIPOLE", "DEBYE")]
+
+    for line in out_text.split("\n"):
+        upper = line.upper()
+        if "ETOT (EONE + ETWO)" in upper:
+            m = re.search(rf"({NUM})\s*EV", line)
+            if m:
+                extras["electronic_total_energy_eV"] = _ff(m.group(1))
+        elif upper.lstrip().startswith("ELECTRON-NUCLEAR") and "EV" in upper and "ATTRACTION" not in upper:
+            m = re.search(rf"({NUM})\s*EV", line)
+            if m:
+                extras["electron_nuclear_energy_eV"] = _ff(m.group(1))
+        elif upper.lstrip().startswith("ELECTRON-ELECTRON") and "EV" in upper and "REPULSION" not in upper:
+            m = re.search(rf"({NUM})\s*EV", line)
+            if m:
+                extras["electron_electron_energy_eV"] = _ff(m.group(1))
+        elif "NUCLEAR-NUCLEAR REPULSION" in upper and "EV" in upper:
+            m = re.search(rf"({NUM})\s*EV", line)
+            if m:
+                extras["nuclear_nuclear_repulsion_eV"] = _ff(m.group(1))
+        elif "HOMO LUMO ENERGIES" in upper:
+            nums = re.findall(NUM, line)
+            if len(nums) >= 2:
+                extras["homo_eV"] = float(nums[0])
+                extras["lumo_eV"] = float(nums[1])
+                extras["homo_lumo_gap_eV"] = float(nums[1]) - float(nums[0])
+        elif "FINAL HEAT OF FORMATION" in upper and "heat_of_formation_kcal_mol" not in extras:
+            m = re.search(rf"=\s*({NUM})\s*KCAL", upper)
+            if m:
+                extras["heat_of_formation_kcal_mol"] = _ff(m.group(1))
+    return extras
+
+
+def _find_with_ext(workdir: str, ext: str):
+    for name in os.listdir(workdir):
+        if name.lower().endswith(ext):
+            return os.path.join(workdir, name)
+    return None
+
+
+def _parse_n_atoms(aux_text: str) -> Optional[int]:
+    m = re.search(r"^\s*NUM_ATOMS\s*=\s*(\d+)", aux_text, re.MULTILINE)
+    if m:
+        return int(m.group(1))
+    m = re.search(r"^\s*ATOM_EL\s*\[\s*(\d+)\s*\]", aux_text, re.MULTILINE)
+    if m:
+        return int(m.group(1))
+    return None
+
+
+def _is_linear(aux_text: str) -> bool:
+    m = re.search(
+        rf"^\s*PRI_MOM_OF_I[^=]*=\s*({NUM})\s+({NUM})\s+({NUM})",
+        aux_text, re.MULTILINE,
+    )
+    if not m:
+        return False
+    moms = [abs(_ff(m.group(i))) for i in (1, 2, 3)]
+    # A linear molecule has one principal moment ≈ 0 (much smaller than the others).
+    return min(moms) < 1e-3 * max(moms)
+
+
+def _parse_aux_array(aux_text: str, key: str) -> List[float]:
+    """Pull a multi-line numeric array out of a MOPAC .aux file.
+
+    AUX arrays look like:
+        KEY:UNIT[count]=
+          v1 v2 v3 ...
+          v4 v5 v6 ...
+        NEXT_KEY...
+    """
+    pattern = rf"^\s*{re.escape(key)}(?::[A-Z()/0-9\-]+)?\s*\[\d+\]\s*=\s*$"
+    lines = aux_text.splitlines()
+    out: List[float] = []
+    in_block = False
+    for ln in lines:
+        if re.match(pattern, ln):
+            in_block = True
+            continue
+        if not in_block:
+            continue
+        # End of block: a new KEY[...]=... line, or a non-numeric line
+        if re.match(r"^\s*[A-Z_][A-Z0-9_]*", ln) and "=" in ln:
+            break
+        nums = re.findall(NUM, ln)
+        if not nums and ln.strip():
+            # Some entries include a header before the numbers; skip non-numeric
+            continue
+        for n in nums:
+            try:
+                out.append(_ff(n))
+            except ValueError:
+                pass
+    return out
+
+
+def parse_mopac_force(workdir: str) -> Dict[str, Any]:
+    """Parse a MOPAC FORCE/THERMO run (PM7) — frequencies + thermo at 298 K.
+
+    Returns:
+      frequencies_cm: list of floats (negative = imaginary)
+      zpe_kcal_mol: zero-point vibrational energy
+      heat_of_formation_kcal_mol: HoF at the geometry passed in (no thermal correction)
+      enthalpy_cal_mol_298, entropy_cal_K_mol_298, heat_capacity_cal_K_mol_298,
+      gibbs_kcal_mol_298, h_of_T_kcal_mol_298 (HoF + thermal corrections at 298 K)
+      temperature_K, n_imaginary_modes, n_real_vib_modes
+    """
+    aux_path = _find_with_ext(workdir, ".aux")
+    out_path = _find_with_ext(workdir, ".out")
+    result: Dict[str, Any] = {}
+
+    if aux_path and os.path.isfile(aux_path):
+        with open(aux_path) as f:
+            aux_text = f.read()
+
+        all_freqs = _parse_aux_array(aux_text, "VIB._FREQ")
+        # MOPAC AUX writes 3N modes total in this order: the 3N-6 (or 3N-5 for
+        # linear) genuine vibrational modes FIRST, then the 5 or 6 translational
+        # /rotational modes at the end (often appearing as small numbers, but
+        # not necessarily near zero — for larger molecules they can be -150+).
+        # Slice by position rather than magnitude.
+        natoms = _parse_n_atoms(aux_text)
+        if natoms and len(all_freqs) == 3 * natoms:
+            linear = _is_linear(aux_text)
+            n_genuine = 3 * natoms - (5 if linear else 6)
+            genuine = all_freqs[:n_genuine]
+            drop = all_freqs[n_genuine:]
+            result["vibrational_frequencies_cm-1"] = genuine
+            result["mopac_dropped_trans_rot_cm-1"] = drop
+        else:
+            genuine = all_freqs
+            result["vibrational_frequencies_cm-1"] = genuine
+
+        result["n_imaginary_modes"] = sum(1 for f in genuine if f < -20.0)
+        result["n_real_vib_modes"] = sum(1 for f in genuine if f > 20.0)
+
+        m = re.search(rf"^\s*ZERO_POINT_ENERGY:KCAL/MOL\s*=\s*({NUM})",
+                      aux_text, re.MULTILINE)
+        if m:
+            result["zpe_kcal_mol"] = _ff(m.group(1))
+
+        m = re.search(rf"^\s*HEAT_OF_FORMATION:KCAL/MOL\s*=\s*({NUM})",
+                      aux_text, re.MULTILINE)
+        if m:
+            result["heat_of_formation_kcal_mol"] = _ff(m.group(1))
+
+        # Thermo arrays — first entry is at 298 K (the input temperature)
+        temps = _parse_aux_array(aux_text, "THERMODYNAMIC_PROPERTIES_TEMPS")
+        H_arr = _parse_aux_array(aux_text, "ENTHALPY_TOT")
+        S_arr = _parse_aux_array(aux_text, "ENTROPY_TOT")
+        Cp_arr = _parse_aux_array(aux_text, "HEAT_CAPACITY_TOT")
+        HofT_arr = _parse_aux_array(aux_text, "H_O_F(T)")
+
+        # MOPAC writes 298 K first by default
+        if temps and H_arr:
+            T = temps[0]
+            result["temperature_K"] = T
+            result["enthalpy_correction_cal_mol"] = H_arr[0]
+            if S_arr:
+                result["entropy_cal_K_mol"] = S_arr[0]
+            if Cp_arr:
+                result["heat_capacity_cal_K_mol"] = Cp_arr[0]
+            if HofT_arr:
+                result["heat_of_formation_T_kcal_mol"] = HofT_arr[0]
+                # Gibbs free energy of formation at T:
+                # G(T) = ΔHf(T) - T·S(T)
+                if S_arr:
+                    G_kcal = HofT_arr[0] - T * S_arr[0] / 1000.0
+                    result["gibbs_free_energy_of_formation_kcal_mol"] = G_kcal
+
+    if out_path and "vibrational_frequencies_cm-1" not in result:
+        # AUX missing — fall back to scraping the .out file
+        with open(out_path) as f:
+            out_text = f.read()
+        result.update(_parse_mopac_force_outfile(out_text))
+
+    return result
+
+
+def _parse_mopac_force_outfile(out_text: str) -> Dict[str, Any]:
+    """Fallback: pull frequencies + ZPE + thermo block from the .out file."""
+    result: Dict[str, Any] = {}
+
+    # ZPE
+    m = re.search(rf"ZERO POINT ENERGY\s+({NUM})\s+KCAL/MOL", out_text)
+    if m:
+        result["zpe_kcal_mol"] = _ff(m.group(1))
+
+    # NORMAL COORDINATE ANALYSIS block contains the frequency rows
+    freqs: List[float] = []
+    nca = re.search(
+        r"NORMAL COORDINATE ANALYSIS.*?(?=MASS-WEIGHTED COORDINATE|CARTESIAN FORCE|$)",
+        out_text, re.DOTALL,
+    )
+    if nca:
+        for line in nca.group(0).splitlines():
+            stripped = line.strip()
+            # Frequency rows are pure numbers (no atom labels, no Root No header)
+            if not stripped or re.match(r"[A-Za-z]", stripped):
+                continue
+            if "Root No" in line or "Angstrom" in line:
+                continue
+            nums = re.findall(NUM, stripped)
+            # Skip mode-displacement rows: those have a leading integer index
+            if re.match(r"^\s*\d+\s+[-+]?\d", line):
+                continue
+            if nums and all(abs(_ff(n)) < 1e5 for n in nums):
+                vals = [_ff(n) for n in nums]
+                # Only accept rows that look like frequency rows: 1-3 entries,
+                # values bounded to typical vibrational range
+                if 1 <= len(vals) <= 3 and all(-2000 < v < 5000 for v in vals):
+                    freqs.extend(vals)
+    if freqs:
+        result["vibrational_frequencies_cm-1"] = freqs
+        result["n_imaginary_modes"] = sum(1 for f in freqs if f < -20.0)
+        result["n_real_vib_modes"] = sum(1 for f in freqs if f > 20.0)
+
+    # Thermo table — first non-header line after "CALCULATED THERMODYNAMIC PROPERTIES"
+    thermo_match = re.search(
+        r"(\d+(?:\.\d+)?)\s+TOT\.\s+([-\d.D+E]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)",
+        out_text,
+    )
+    if thermo_match:
+        result["temperature_K"] = float(thermo_match.group(1))
+        result["heat_of_formation_T_kcal_mol"] = float(thermo_match.group(2))
+        result["enthalpy_correction_cal_mol"] = float(thermo_match.group(3))
+        result["heat_capacity_cal_K_mol"] = float(thermo_match.group(4))
+        result["entropy_cal_K_mol"] = float(thermo_match.group(5))
+    return result
+''', False),
+    ('_engine.tasks.pka', False, r'''"""pKa estimation via the thermodynamic cycle HA(aq) → A⁻(aq) + H⁺(aq).
+
+Two modes:
+
+  absolute   pKa = (G(A⁻,aq) + G(H⁺,aq) − G(HA,aq)) / (RT ln10)
+             + standard-state correction (1 atm gas → 1 M aq)
+             G(H⁺,aq) is taken from the literature (Tissandier 1998:
+             ΔG_solv(H⁺) = −264.0 kcal/mol; G_gas(H⁺) = −6.28 kcal/mol;
+             total G(H⁺,aq) ≈ −270.28 kcal/mol). The choice of this
+             reference is the single biggest source of systematic error
+             in absolute pKa; switching to the Kelly 2006 value
+             (-265.9 kcal/mol) shifts every predicted pKa by ~1.4 units.
+
+  reference  pKa(HA) = pKa(ref) +
+             (G(A⁻) + G(HRef) − G(HA) − G(Ref⁻)) / (RT ln10)
+             Cancels most systematic errors (basis-set + solvation-model
+             biases mostly subtract). Strongly recommended over absolute.
+             User must supply (a) `ref-acid` xyz, (b) `ref-base` xyz,
+             (c) `--pka-ref` value, and the charges on each.
+
+Both modes require: input HA xyz, A⁻ xyz, --solvent (defaults to water).
+A full opt + freq is run in solvent on every species at the same method.
+
+Pre-conditions on the user side:
+  - HA and A⁻ xyz files must have charges differing by exactly +1/0 with the
+    A⁻ being the deprotonated form. (We don't auto-build A⁻ from HA — the
+    user picks which proton to remove.)
+  - Multiplicities must match (closed-shell HA and closed-shell A⁻ for
+    typical organic acids; this is what the defaults assume).
+  - The solvent should be water for the most predictable absolute reference
+    constants; the absolute mode warns if a non-water solvent is used.
+"""
+from __future__ import annotations
+import os
+from typing import Any, Dict, List, Optional
+
+from _engine.calculators import program_label, method_label, build_calculator
+from _engine.io import read_geometry
+from _engine.schema import base_result, EV_TO_KCAL
+from _engine.tasks import freq as freq_task
+
+
+# ---------------------------------------------------------------------------
+# Thermodynamic constants (kcal/mol unless noted)
+# ---------------------------------------------------------------------------
+
+import math
+
+# Gas constant in kcal/(mol·K) — used to scale RT ln 10 and the 1 atm → 1 M
+# correction at user-supplied temperatures.
+R_KCAL_MOL_K = 1.987204258e-3
+# Molar volume of an ideal gas at 1 atm, in L/mol per K: V_m = (R/P)*T.
+# Using R = 0.08205736 L·atm/(mol·K) so V_m(T) [L/mol] = R_LATM * T.
+R_LATM_MOL_K = 0.08205736
+
+# At 298.15 K these give 1.3643 and 1.894 kcal/mol — matching the historical
+# constants used elsewhere in chemkit.
+def rt_ln10_kcal_mol(T_K: float) -> float:
+    """RT ln 10 at temperature T, in kcal/mol. The pKa denominator."""
+    return R_KCAL_MOL_K * T_K * math.log(10.0)
+
+def standard_state_1atm_to_1m_kcal_mol(T_K: float) -> float:
+    """RT ln(V_m(T) / 1 L·mol⁻¹) — the correction for switching one species
+    from the gas-phase 1 atm convention to the aqueous 1 M convention."""
+    Vm_L = R_LATM_MOL_K * T_K          # ≈ 24.466 L/mol at 298.15 K
+    return R_KCAL_MOL_K * T_K * math.log(Vm_L)
+
+# Solvated proton free energy in water. Both reference values are tabulated at
+# 298.15 K. Temperature scaling of G(H+,aq) is non-trivial (it involves
+# d(ΔG_solv)/dT and the Sackur-Tetrode entropy of the gas-phase proton); we
+# warn the user when temperature_K deviates and let them apply their own
+# correction rather than silently using a 298 K number at 350 K.
+G_HPLUS_AQUEOUS_KCAL_MOL = {
+    "tissandier_1998": -270.28,
+    "kelly_2006":      -265.9,
+}
+DEFAULT_HPLUS_REF = "tissandier_1998"
+
+# Common reference acids — used when the user picks --mode reference and
+# wants a "pick a sensible default" path. Experimental pKa in water at 298 K.
+# Only included for documentation / sanity-check; actual --mode reference
+# requires the user to supply --pka-ref since they're the one who must also
+# provide the xyz files.
+REFERENCE_ACIDS_KNOWN_PKA = {
+    "acetic_acid":    4.76,
+    "formic_acid":    3.75,
+    "phenol":         9.99,
+    "methanol":      15.5,
+    "ammonium":       9.25,   # NH4+ → NH3 + H+
+    "water":         15.7,    # H2O → OH- + H+
+}
+
+
+# ---------------------------------------------------------------------------
+# Public entry point
+# ---------------------------------------------------------------------------
+
+def run(
+    *,
+    ha_xyz: str,
+    a_minus_xyz: str,
+    method: str,
+    mode: str = "absolute",
+    solvent: str = "water",
+    ha_charge: int = 0,
+    ha_multiplicity: int = 1,
+    a_minus_charge: Optional[int] = None,   # default: ha_charge − 1
+    a_minus_multiplicity: int = 1,
+    temperature_K: float = 298.15,
+    pressure_Pa: float = 101325.0,
+    hplus_reference: str = DEFAULT_HPLUS_REF,
+    # reference-mode args
+    ref_ha_xyz: Optional[str] = None,
+    ref_a_minus_xyz: Optional[str] = None,
+    ref_pka: Optional[float] = None,
+    ref_ha_charge: int = 0,
+    ref_ha_multiplicity: int = 1,
+    ref_a_minus_charge: Optional[int] = None,
+    ref_a_minus_multiplicity: int = 1,
+    cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Compute pKa from a thermodynamic cycle.
+
+    `ha_charge` and `a_minus_charge` must differ by exactly +1: removing one
+    proton (H+, +1 charge) drops the molecular charge by 1. If
+    `a_minus_charge` is None, we default to `ha_charge - 1`.
+    """
+    if mode not in ("absolute", "reference"):
+        raise ValueError(f"mode must be 'absolute' or 'reference', got {mode!r}")
+    if a_minus_charge is None:
+        a_minus_charge = ha_charge - 1
+    if a_minus_charge != ha_charge - 1:
+        raise ValueError(
+            f"a_minus_charge ({a_minus_charge}) must equal ha_charge ({ha_charge}) − 1; "
+            "the deprotonated form has one less proton (charge drops by 1)."
+        )
+
+    if mode == "reference":
+        if not (ref_ha_xyz and ref_a_minus_xyz and ref_pka is not None):
+            raise ValueError(
+                "mode='reference' requires --ref-ha, --ref-a-minus, and --pka-ref."
+            )
+        if ref_a_minus_charge is None:
+            ref_a_minus_charge = ref_ha_charge - 1
+
+    if hplus_reference not in G_HPLUS_AQUEOUS_KCAL_MOL:
+        raise ValueError(
+            f"Unknown hplus_reference {hplus_reference!r}. Options: "
+            f"{sorted(G_HPLUS_AQUEOUS_KCAL_MOL)}"
+        )
+
+    # Run the four (or two) opt+freq calculations.
+    common_kw = dict(
+        method=method, solvent=solvent,
+        temperature_K=temperature_K, pressure_Pa=pressure_Pa,
+        tier=tier, functional=functional, basis=basis,
+    )
+
+    ha_res = freq_task.run(
+        ha_xyz, charge=ha_charge, multiplicity=ha_multiplicity,
+        cli="(internal pka: HA)", **common_kw,
+    )
+    a_res = freq_task.run(
+        a_minus_xyz, charge=a_minus_charge, multiplicity=a_minus_multiplicity,
+        cli="(internal pka: A-)", **common_kw,
+    )
+
+    # Pull G(HA, aq) and G(A-, aq) — eV → kcal/mol.
+    G_HA_kcal  = ha_res["gibbs_free_energy_eV"] * EV_TO_KCAL
+    G_A_kcal   = a_res["gibbs_free_energy_eV"]  * EV_TO_KCAL
+
+    species_blocks = {
+        "HA": _species_summary(ha_xyz, ha_res, ha_charge, ha_multiplicity),
+        "A_minus": _species_summary(a_minus_xyz, a_res, a_minus_charge, a_minus_multiplicity),
+    }
+
+    canonical_method = method_label(method)
+    if method in ("dft", "hf"):
+        any_calc = build_calculator(
+            method, charge=0, multiplicity=1, solvent=solvent,
+            tier=tier, functional=functional, basis=basis,
+        )
+        canonical_method = method_label(method, any_calc)
+
+    result = base_result(
+        task="pka",
+        method=canonical_method,
+        program=program_label(method),
+        input_path=os.path.abspath(ha_xyz),
+        n_atoms=len(read_geometry(ha_xyz)),
+        atoms=read_geometry(ha_xyz).get_chemical_symbols(),
+        charge=ha_charge,
+        multiplicity=ha_multiplicity,
+        solvent=solvent,
+        cli=cli,
+    )
+    result["mode"] = mode
+    result["temperature_K"] = temperature_K
+    result["pressure_Pa"] = pressure_Pa
+    result["G_HA_kcal_mol"] = G_HA_kcal
+    result["G_A_minus_kcal_mol"] = G_A_kcal
+
+    warnings: List[str] = []
+
+    rt_ln10 = rt_ln10_kcal_mol(temperature_K)
+    ss_corr = standard_state_1atm_to_1m_kcal_mol(temperature_K)
+
+    if mode == "absolute":
+        G_H = G_HPLUS_AQUEOUS_KCAL_MOL[hplus_reference]
+        delta_G_kcal = G_A_kcal + G_H - G_HA_kcal + ss_corr
+        pka = delta_G_kcal / rt_ln10
+
+        result["hplus_reference"] = hplus_reference
+        result["G_Hplus_aq_kcal_mol"] = G_H
+        result["standard_state_correction_kcal_mol"] = ss_corr
+        result["RT_ln10_kcal_mol"] = rt_ln10
+        result["delta_G_dissociation_kcal_mol"] = delta_G_kcal
+        result["pKa"] = pka
+
+        if solvent.lower() not in {"water", "h2o"}:
+            warnings.append(
+                f"Absolute pKa uses an aqueous G(H+) reference but solvent is "
+                f"{solvent!r}; predicted pKa is not on the aqueous scale."
+            )
+        if abs(temperature_K - 298.15) > 0.1:
+            warnings.append(
+                f"G(H+,aq) reference {hplus_reference!r} is tabulated at 298.15 K "
+                f"but temperature_K={temperature_K:.2f}; the RT-dependent factors "
+                "are scaled but the H+ reference itself is not. Add your own "
+                "ΔG(H+,aq) temperature correction if you need T ≠ 298 K."
+            )
+        warnings.append(
+            "Absolute pKa is highly sensitive to the G(H+,aq) reference "
+            "(~1.4 unit shift between Tissandier 1998 and Kelly 2006). "
+            "Prefer mode='reference' against a known acid in the same family."
+        )
+
+    else:  # reference mode
+        ref_ha_res = freq_task.run(
+            ref_ha_xyz, charge=ref_ha_charge, multiplicity=ref_ha_multiplicity,
+            cli="(internal pka: ref_HA)", **common_kw,
+        )
+        ref_a_res = freq_task.run(
+            ref_a_minus_xyz, charge=ref_a_minus_charge, multiplicity=ref_a_minus_multiplicity,
+            cli="(internal pka: ref_A-)", **common_kw,
+        )
+        G_ref_HA_kcal = ref_ha_res["gibbs_free_energy_eV"] * EV_TO_KCAL
+        G_ref_A_kcal  = ref_a_res["gibbs_free_energy_eV"]  * EV_TO_KCAL
+
+        # Isodesmic correction: HA + Ref⁻ → A⁻ + HRef
+        # ΔG_iso = G(A⁻) + G(HRef) − G(HA) − G(Ref⁻)
+        # pKa(HA) = pKa(Ref) + ΔG_iso / (RT ln10)
+        # No standard-state correction needed: same number of moles on both sides.
+        dG_iso_kcal = (G_A_kcal + G_ref_HA_kcal) - (G_HA_kcal + G_ref_A_kcal)
+        pka = ref_pka + dG_iso_kcal / rt_ln10
+        result["RT_ln10_kcal_mol"] = rt_ln10
+
+        species_blocks["ref_HA"] = _species_summary(
+            ref_ha_xyz, ref_ha_res, ref_ha_charge, ref_ha_multiplicity,
+        )
+        species_blocks["ref_A_minus"] = _species_summary(
+            ref_a_minus_xyz, ref_a_res, ref_a_minus_charge, ref_a_minus_multiplicity,
+        )
+        result["G_ref_HA_kcal_mol"] = G_ref_HA_kcal
+        result["G_ref_A_minus_kcal_mol"] = G_ref_A_kcal
+        result["reference_pka"] = ref_pka
+        result["delta_G_isodesmic_kcal_mol"] = dG_iso_kcal
+        result["pKa"] = pka
+
+    result["species"] = species_blocks
+
+    # Surface any imaginary modes from the underlying freq runs.
+    for label, blk in species_blocks.items():
+        n_imag = blk.get("n_imaginary_modes") or 0
+        if n_imag > 0:
+            warnings.append(
+                f"{label}: {n_imag} imaginary mode(s) — not a true minimum; "
+                "pKa is approximate."
+            )
+
+    if warnings:
+        result["warnings"] = warnings
+    return result
+
+
+def _species_summary(xyz_path, freq_result, charge, mult) -> Dict[str, Any]:
+    return {
+        "input_file": os.path.abspath(xyz_path),
+        "charge": charge,
+        "multiplicity": mult,
+        "G_kcal_mol": freq_result["gibbs_free_energy_eV"] * EV_TO_KCAL,
+        "H_kcal_mol": (freq_result.get("enthalpy_eV") or 0.0) * EV_TO_KCAL,
+        "E_kcal_mol": (freq_result.get("electronic_energy_eV") or 0.0) * EV_TO_KCAL,
+        "ZPE_kcal_mol": freq_result.get("zpe_kcal_mol"),
+        "n_imaginary_modes": freq_result.get("n_imaginary_modes"),
+        "optimized_xyz": (freq_result.get("preopt") or {}).get("optimized_xyz"),
+    }
+''', False),
+    ('_engine.tasks.freq', False, r'''"""Vibrational frequencies + ideal-gas thermochemistry (ZPE, H, S, G).
+
+Always runs an opt-freq pipeline: the input geometry is first optimized with
+the same method that will compute the Hessian, and the optimized atoms are
+then passed to the frequency step. This eliminates spurious imaginary modes
+from inputs that are near — but not at — a stationary point (the most common
+failure mode on hand-drawn or QM-from-MM geometries).
+
+For xtb (GFN2): ASE's `Vibrations` driver does finite-difference forces; then
+ASE's `IdealGasThermo` produces ZPE/H/S/G. Reliable because xtb-python returns
+clean forces at every displacement.
+
+For mopac (PM7): MOPAC's native FORCE+THERMO keywords do the analytic Hessian
+and ideal-gas thermo in one binary call. The previous ASE-finite-difference
+approach via the MOPAC calculator failed because each displacement spawned a
+fresh MOPAC process and some returned NaN forces, leaving only ~half of 3N-6
+modes — IdealGasThermo then refused to run.
+"""
+from __future__ import annotations
+import os
+import shutil
+import subprocess
+import tempfile
+from typing import Any, Dict, List, Optional
+
+import numpy as np
+
+from _engine.calculators import (
+    build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
+    method_label, program_label, mopac_spin_keyword, register_auto_tempdir,
+)
+from _engine.io import read_geometry
+from _engine.schema import base_result, element_warnings
+from _engine.tasks._mopac_parsers import parse_mopac_extras, parse_mopac_force
+from _engine.tasks import opt as opt_task
+
+
+# 1 cal/mol = 4.184 J/mol; 1 eV = 23.060547830619026 kcal/mol
+KCAL_TO_EV = 1.0 / 23.060547830619026
+CAL_TO_EV = KCAL_TO_EV / 1000.0
+
+
+def run(
+    input_path: str,
+    *,
+    method: str,
+    charge: int = 0,
+    multiplicity: int = 1,
+    solvent: Optional[str] = None,
+    temperature_K: float = 298.15,
+    pressure_Pa: float = 101325.0,
+    geometry: Optional[str] = None,
+    symmetrynumber: Optional[int] = None,
+    preopt: bool = True,
+    preopt_fmax: float = 0.001,
+    preopt_steps: int = 500,
+    auto_confsearch: bool = False,
+    cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Opt-freq pipeline. The frequency calculation is performed on the
+    optimized geometry by default; pass preopt=False to skip the optimization
+    step (useful when the caller is sure the input is already a stationary
+    point and re-optimization would waste cycles).
+
+    auto_confsearch: if True, runs CREST conformer search + PM7 postopt
+    before the freq step and uses the lowest-energy conformer as the input
+    geometry. Useful for flexible molecules where the user-supplied geometry
+    may not be the global minimum (an off-minimum input typically surfaces
+    as spurious imaginary modes from genuine soft-mode saddles). Adds the
+    full confsearch result block to the output under `auto_confsearch`.
+    """
+    method = method.lower()
+
+    confsearch_info: Optional[Dict[str, Any]] = None
+    if auto_confsearch:
+        # Run CREST + PM7 postopt; substitute the lowest-energy minimum as
+        # the input geometry for the subsequent preopt+freq pipeline.
+        from _engine.tasks import confsearch as cs_task
+        cs_result = cs_task.run(
+            input_path,
+            method="xtb",          # CREST is xtb-only; postopt at PM7
+            solvent=solvent,
+            postopt="mopac",
+            charge=charge,
+            multiplicity=multiplicity,
+            cli="(internal auto-confsearch for freq)",
+        )
+        post = cs_result.get("postopt") or {}
+        best_xyz = post.get("best_xyz")
+        if best_xyz and os.path.isfile(best_xyz):
+            # Copy into a stable location next to the original work area so
+            # the user can find it after the freq job exits.
+            # Intentionally NOT auto-cleaned: `best_xyz` below is surfaced in
+            # the result JSON and the user expects to be able to inspect/reuse it.
+            cs_workdir = tempfile.mkdtemp(prefix="chemkit_freqcs_")
+            persistent_best = os.path.join(cs_workdir, "best_conformer.xyz")
+            shutil.copyfile(best_xyz, persistent_best)
+            input_path = persistent_best
+            # The conformer was already PM7-optimized by confsearch's postopt
+            # step — running the freq preopt on top of it usually drifts to a
+            # nearby soft-mode saddle. Skip the redundant preopt unless the
+            # caller explicitly asked for it on a separate basis.
+            preopt = False
+            confsearch_info = {
+                "performed": True,
+                "n_unique_conformers": post.get("n_unique"),
+                "best_xyz": persistent_best,
+                "best_hof_kcal_mol": post.get("lowest_hof_kcal_mol"),
+                "ensemble_xyz": post.get("ensemble_xyz"),
+                "seed_source": post.get("seed_source"),
+                "preopt_skipped": True,
+            }
+        else:
+            # CREST returned nothing usable; fall back to the original input
+            # but record that auto-confsearch was attempted.
+            confsearch_info = {
+                "performed": True,
+                "n_unique_conformers": post.get("n_unique") or 0,
+                "best_xyz": None,
+                "note": "auto_confsearch produced no usable best_xyz; freq run on original input",
+            }
+
+    atoms = read_geometry(input_path)
+    symbols = atoms.get_chemical_symbols()
+
+    preopt_info: Dict[str, Any] = {}
+    freq_input_path = input_path
+
+    if preopt:
+        # Optimize first so the Hessian is taken at a true stationary point.
+        # Use a tighter fmax than `opt` default (0.05) since residual forces
+        # propagate into imaginary modes near 0 cm⁻¹.
+        # Per-method floor: xtb (ASE BFGS) reliably reaches fmax=0.001 eV/Å on
+        # small systems, but MOPAC's EF optimizer hits a practical floor around
+        # GNORM=0.01 kcal/mol/Å (~ fmax=0.0004 eV/Å) and any tighter target
+        # produces non-convergence on flexible organics — clip preopt_fmax so
+        # MOPAC gets a reachable target instead of failing the whole freq job.
+        effective_fmax = preopt_fmax if method != "mopac" else max(preopt_fmax, 0.005)
+
+        # Cheap pre-check: if the input geometry is *already* below the target
+        # fmax, skip the full opt. One force eval costs ~one opt step; a full
+        # opt is typically 10-50 steps, so this short-circuit pays for itself
+        # whenever the user feeds in something that's already converged (the
+        # common case for `chemkit opt` → `chemkit freq` pipelines).
+        probe_fmax = _probe_max_force(
+            atoms, method=method, charge=charge, multiplicity=multiplicity,
+            solvent=solvent, tier=tier, functional=functional, basis=basis,
+        )
+        if probe_fmax is not None and probe_fmax <= effective_fmax:
+            preopt_info = {
+                "performed": False,
+                "skipped_reason": (
+                    f"input already converged: |f|_max = {probe_fmax:.5f} eV/Å "
+                    f"<= preopt_fmax = {effective_fmax:.5f}"
+                ),
+                "probed_fmax_eV_per_A": probe_fmax,
+            }
+        else:
+            opt_work = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_optfreq_"))
+            opt_xyz = os.path.join(opt_work, "preopt.xyz")
+            opt_result = opt_task.run(
+                input_path=input_path,
+                method=method,
+                charge=charge,
+                multiplicity=multiplicity,
+                solvent=solvent,
+                fmax=effective_fmax,
+                steps=preopt_steps,
+                out_xyz=opt_xyz,
+                cli="(internal preopt for freq)",
+                tier=tier,
+                functional=functional,
+                basis=basis,
+            )
+            # Reload atoms from the optimized xyz so the freq step works on the
+            # exact geometry written to disk.
+            atoms = read_geometry(opt_xyz)
+            symbols = atoms.get_chemical_symbols()
+            freq_input_path = opt_xyz
+            preopt_info = {
+                "performed": True,
+                "fmax_target_eV_per_A": effective_fmax,
+                "converged": bool(opt_result.get("converged")),
+                "n_steps": opt_result.get("n_steps"),
+                "optimized_xyz": opt_xyz,
+                "preopt_energy_eV": opt_result.get("total_energy_eV"),
+                "preopt_heat_of_formation_kcal_mol":
+                    opt_result.get("final_heat_of_formation_kcal_mol"),
+                "probed_fmax_eV_per_A": probe_fmax,
+            }
+
+    if method == "mopac":
+        result = _run_mopac(
+            input_path=freq_input_path,
+            atoms=atoms,
+            symbols=symbols,
+            charge=charge,
+            multiplicity=multiplicity,
+            solvent=solvent,
+            temperature_K=temperature_K,
+            pressure_Pa=pressure_Pa,
+            symmetrynumber=symmetrynumber,
+            cli=cli,
+        )
+    else:
+        result = _run_ase(
+            input_path=freq_input_path,
+            atoms=atoms,
+            symbols=symbols,
+            method=method,
+            charge=charge,
+            multiplicity=multiplicity,
+            solvent=solvent,
+            temperature_K=temperature_K,
+            pressure_Pa=pressure_Pa,
+            geometry=geometry,
+            symmetrynumber=symmetrynumber,
+            cli=cli,
+            tier=tier,
+            functional=functional,
+            basis=basis,
+        )
+
+    # Always report the original user-supplied input as `input_file`, even if
+    # the Hessian was actually computed on the optimized geometry. The opt
+    # block records the path to the optimized xyz for transparency.
+    result["input_file"] = os.path.abspath(input_path)
+    if confsearch_info is not None:
+        result["auto_confsearch"] = confsearch_info
+    if preopt_info:
+        result["preopt"] = preopt_info
+        # Surface a warning only if pre-opt actually ran AND didn't converge
+        # AND the Hessian came back with imaginary modes. The skip-because-
+        # already-converged branch leaves no `converged` key and shouldn't
+        # trigger this. If the Hessian is clean (no imag modes), the residual
+        # gradient was small enough that the resulting thermochemistry is
+        # trustworthy regardless of the strict fmax target.
+        if (
+            preopt_info.get("performed")
+            and not preopt_info.get("converged")
+            and (result.get("n_imaginary_modes") or 0) > 0
+        ):
+            warns = result.setdefault("warnings", [])
+            warns.append(
+                "Pre-optimization did NOT converge to fmax="
+                f"{effective_fmax} eV/Å. Frequencies are taken at a non-stationary "
+                "point; imaginary modes may be spurious."
+            )
+    else:
+        result["preopt"] = {"performed": False}
+    return result
+
+
+def _detect_geometry(atoms) -> str:
+    """Return 'monatomic', 'linear', or 'nonlinear' based on atom coordinates.
+    Tolerance for collinearity is 1e-3 Å on the cross-product magnitude — well
+    below any chemically meaningful deviation, above numerical noise."""
+    pos = np.asarray(atoms.get_positions())
+    n = len(pos)
+    if n == 1:
+        return "monatomic"
+    if n == 2:
+        return "linear"
+    # Test collinearity: pick the longest reference bond and check cross products
+    # against it.
+    rel = pos - pos[0]
+    norms = np.linalg.norm(rel[1:], axis=1)
+    i = int(np.argmax(norms)) + 1
+    ref = rel[i] / norms[i - 1]
+    for k in range(1, n):
+        if k == i:
+            continue
+        cross_mag = np.linalg.norm(np.cross(rel[k], ref))
+        if cross_mag > 1e-3:
+            return "nonlinear"
+    return "linear"
+
+
+def _probe_max_force(
+    atoms, *, method, charge, multiplicity, solvent,
+    tier=None, functional=None, basis=None,
+) -> Optional[float]:
+    """One force evaluation on `atoms`; return max |f| in eV/Å, or None if it
+    failed (in which case the caller falls through to the full opt).
+
+    Cheap relative to a full opt (1 step vs 10-50), so this pays for itself
+    the moment the input geometry is already at the target fmax.
+    """
+    try:
+        probe = atoms.copy()
+        calc = build_calculator(
+            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+            tier=tier, functional=functional, basis=basis,
+        )
+        apply_calc_to_atoms(probe, calc)
+        forces = probe.get_forces()
+        return float(np.max(np.linalg.norm(forces, axis=1)))
+    except Exception:
+        return None
+
+
+def _run_ase(
+    *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
+    temperature_K, pressure_Pa, geometry, symmetrynumber, cli,
+    tier=None, functional=None, basis=None,
+) -> Dict[str, Any]:
+    from ase.thermochemistry import IdealGasThermo
+    from ase.vibrations import Vibrations
+
+    geometry_was_default = geometry is None
+    if geometry is None:
+        geometry = _detect_geometry(atoms)
+    symmetry_was_default = symmetrynumber is None
+    if symmetrynumber is None:
+        symmetrynumber = 1
+
+    if geometry == "monatomic":
+        return _run_atomic(
+            input_path=input_path, atoms=atoms, symbols=symbols, method=method,
+            charge=charge, multiplicity=multiplicity, solvent=solvent,
+            temperature_K=temperature_K, pressure_Pa=pressure_Pa, cli=cli,
+            tier=tier, functional=functional, basis=basis,
+        )
+
+    calc = build_calculator(
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis,
+    )
+    apply_calc_to_atoms(atoms, calc)
+
+    workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_freq_"))
+    cache = os.path.join(workdir, "vib")
+
+    energy_eV = atoms.get_potential_energy()
+    # nfree=4 (5-point central difference) + delta=0.005 Å cuts finite-
+    # difference noise in the Hessian by ~10x vs ASE defaults (nfree=2,
+    # delta=0.01).
+    vib = Vibrations(atoms, name=cache, delta=0.005, nfree=4)
+    vib.run()
+    # ASE's default Vibrations diagonalizes the raw 3N x 3N mass-weighted
+    # Hessian, which mixes the 5/6 translational+rotational pseudo-modes
+    # into the vibrational subspace whenever the geometry isn't exactly
+    # at a stationary point. Symptom: small rigid molecules (H2O, NO3-,
+    # H2O2) report a handful of large "imaginary" modes that are really
+    # rot/trans leakage, NOT genuine saddle-point directions.
+    #
+    # Fix: pull the raw 3N x 3N Hessian, project out the trans+rot
+    # subspace (Eckart conditions), then diagonalize only the vibrational
+    # complement — gives exactly 3N-6 (or 3N-5 for linear) genuine modes.
+    energies_eV, frequencies_cm = _project_trans_rot_and_diagonalize(vib, atoms, geometry)
+    vib.clean()
+
+    # ASE Vibrations returns 3N modes — the 6 (or 5, linear) translational/
+    # rotational ones show up as tiny near-zero values (often slightly
+    # imaginary due to finite-difference noise). Filter them out of the
+    # vibrational set so IdealGasThermo only sees genuine (3N-6 or 3N-5)
+    # vibrations — otherwise the harmonic-oscillator entropy diverges on
+    # the near-zero "modes" and G blows up to ±inf (most visible for small
+    # linear diatomics where 5/6 of the modes are leftover rot/trans).
+    # The Eckart-projected diagonalization yields the right number of
+    # vibrational modes (3N-6 or 3N-5) with the projected-out trans/rot
+    # entries padded as zeros at the front of the array. Strip the zero pad,
+    # then raise any remaining tiny soft-modes up to a floor frequency
+    # (Truhlar's quasi-RRHO trick) — keeps the mode count correct and
+    # prevents the harmonic-oscillator entropy from diverging on near-zero
+    # torsions. (Dropping the modes outright crashes ASE's IdealGasThermo
+    # for any flexible organic with a low-frequency conformer mode.)
+    NEAR_ZERO_CM = 50.0
+    EV_PER_CM = 1.239841984e-4
+    FLOOR_eV = NEAR_ZERO_CM * EV_PER_CM
+    real_vib_energies = []
+    for e, f in zip(energies_eV, frequencies_cm):
+        # Skip the projected-out trans/rot padding (energies are exactly 0).
+        if np.isreal(e) and e.real == 0 and np.isreal(f) and f.real == 0:
+            continue
+        # Imaginary modes are not vibrations — counted separately below.
+        if np.iscomplex(f) and f.imag != 0:
+            continue
+        if not np.isreal(e):
+            continue
+        if e.real < FLOOR_eV:
+            real_vib_energies.append(FLOOR_eV)   # raise soft modes to floor
+        else:
+            real_vib_energies.append(e.real)
+    # Count ANY mode with a nonzero imaginary frequency — including soft imag
+    # modes between 0 and 50 cm⁻¹. A real TS often has the reaction-coordinate
+    # mode in the 100–800i cm⁻¹ range, but conformational saddles can have
+    # imag modes as soft as 20i. Dropping them silently turned saddles into
+    # "minima" in the previous version.
+    n_imag = sum(
+        1 for f in frequencies_cm
+        if np.iscomplex(f) and f.imag != 0
+    )
+
+    thermo = IdealGasThermo(
+        vib_energies=real_vib_energies,
+        potentialenergy=energy_eV,
+        atoms=atoms,
+        geometry=geometry,
+        symmetrynumber=symmetrynumber,
+        spin=(multiplicity - 1) / 2.0,
+    )
+    zpe_eV = thermo.get_ZPE_correction()
+    H_eV = thermo.get_enthalpy(temperature_K, verbose=False)
+    S_eV_per_K = thermo.get_entropy(temperature_K, pressure_Pa, verbose=False)
+    G_eV = thermo.get_gibbs_energy(temperature_K, pressure_Pa, verbose=False)
+
+    result = base_result(
+        task="vibrational_thermochemistry",
+        method=method_label(method, calc),
+        program=program_label(method),
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms),
+        atoms=symbols,
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent,
+        cli=cli,
+    )
+    result["electronic_energy_eV"] = energy_eV
+    result["zpe_eV"] = zpe_eV
+    result["zpe_kcal_mol"] = zpe_eV / KCAL_TO_EV
+    result["enthalpy_eV"] = H_eV
+    result["entropy_eV_per_K"] = S_eV_per_K
+    result["gibbs_free_energy_eV"] = G_eV
+    result["temperature_K"] = temperature_K
+    result["pressure_Pa"] = pressure_Pa
+    result["geometry"] = geometry
+    result["symmetry_number"] = symmetrynumber
+    result["n_real_vib_modes"] = len(real_vib_energies)
+    result["n_imaginary_modes"] = n_imag
+    result["vibrational_frequencies_cm-1"] = [
+        (f.real if np.isreal(f) else -abs(f.imag)) for f in frequencies_cm
+    ]
+
+    warns = element_warnings(symbols, method)
+    if n_imag > 0:
+        warns.append(
+            f"{n_imag} imaginary mode(s) detected — geometry is not a true minimum. "
+            "Thermochemistry values are approximate; re-optimize and re-run."
+        )
+    if geometry_was_default:
+        result["geometry_auto_detected"] = True
+    if symmetry_was_default and symmetrynumber == 1:
+        # Rotational entropy is over-estimated by R·ln(σ) when σ_true > 1.
+        # Common cases: H2O σ=2, NH3 σ=3, CH4/benzene σ=12. Surface a warning
+        # rather than silently defaulting; the user must look up σ for their
+        # point group and re-run with --symmetry-number if needed.
+        warns.append(
+            "symmetry_number defaulted to 1; if the molecule has rotational "
+            "symmetry (e.g. H2O σ=2, NH3 σ=3, CH4 σ=12) the entropy and Gibbs "
+            "energy are over-estimated by R·ln(σ). Re-run with --symmetry-number "
+            "set to the correct value for your point group."
+        )
+    if warns:
+        result["warnings"] = warns
+    return result
+
+
+def _run_atomic(
+    *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
+    temperature_K, pressure_Pa, cli,
+    tier=None, functional=None, basis=None,
+) -> Dict[str, Any]:
+    """Thermochemistry for a single atom: no vibrational, no rotational; only
+    electronic + translational contributions. ASE's IdealGasThermo refuses
+    natoms==1 with geometry='nonlinear', so we compute the closed-form values
+    here. ZPE = 0, H = E_elec + (5/2) RT, S = S_trans only (Sackur-Tetrode),
+    G = H − T·S."""
+    from ase.thermochemistry import IdealGasThermo
+
+    calc = build_calculator(
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis,
+    )
+    apply_calc_to_atoms(atoms, calc)
+    energy_eV = atoms.get_potential_energy()
+
+    # IdealGasThermo supports `geometry='monatomic'` with vib_energies=[].
+    thermo = IdealGasThermo(
+        vib_energies=[],
+        potentialenergy=energy_eV,
+        atoms=atoms,
+        geometry="monatomic",
+        symmetrynumber=1,
+        spin=(multiplicity - 1) / 2.0,
+    )
+    zpe_eV = 0.0
+    H_eV = thermo.get_enthalpy(temperature_K, verbose=False)
+    S_eV_per_K = thermo.get_entropy(temperature_K, pressure_Pa, verbose=False)
+    G_eV = thermo.get_gibbs_energy(temperature_K, pressure_Pa, verbose=False)
+
+    result = base_result(
+        task="vibrational_thermochemistry",
+        method=method_label(method, calc),
+        program=program_label(method),
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms),
+        atoms=symbols,
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent,
+        cli=cli,
+    )
+    result["electronic_energy_eV"] = energy_eV
+    result["zpe_eV"] = zpe_eV
+    result["zpe_kcal_mol"] = 0.0
+    result["enthalpy_eV"] = H_eV
+    result["entropy_eV_per_K"] = S_eV_per_K
+    result["gibbs_free_energy_eV"] = G_eV
+    result["temperature_K"] = temperature_K
+    result["pressure_Pa"] = pressure_Pa
+    result["geometry"] = "monatomic"
+    result["symmetry_number"] = 1
+    result["n_real_vib_modes"] = 0
+    result["n_imaginary_modes"] = 0
+    result["vibrational_frequencies_cm-1"] = []
+    result["geometry_auto_detected"] = True
+    warns = element_warnings(symbols, method)
+    if warns:
+        result["warnings"] = warns
+    return result
+
+
+def _run_mopac(
+    *, input_path, atoms, symbols, charge, multiplicity, solvent,
+    temperature_K, pressure_Pa, symmetrynumber, cli,
+) -> Dict[str, Any]:
+    """Drive MOPAC's native FORCE+THERMO calculation."""
+    mopac_exe = shutil.which("mopac")
+    if mopac_exe is None:
+        raise FileNotFoundError("mopac executable not found in PATH.")
+
+    symmetry_was_default = symmetrynumber is None
+    if symmetrynumber is None:
+        symmetrynumber = 1
+
+    workdir = tempfile.mkdtemp(prefix="chemkit_mopac_freq_")
+    mop_path = os.path.join(workdir, "mopac.mop")
+    out_path = os.path.join(workdir, "mopac.out")
+
+    keywords = _mopac_freq_keywords(
+        charge=charge, multiplicity=multiplicity, solvent=solvent,
+        temperature_K=temperature_K, symmetrynumber=symmetrynumber,
+    )
+    _write_mopac_input(mop_path, keywords, symbols, atoms.get_positions())
+
+    proc = subprocess.run(
+        [mopac_exe, "mopac.mop"],
+        cwd=workdir, capture_output=True, text=True, timeout=1800,
+    )
+
+    if not os.path.isfile(out_path):
+        raise RuntimeError(
+            f"mopac did not produce {out_path}.\n"
+            f"stdout: {proc.stdout[-1000:]}\nstderr: {proc.stderr[-1000:]}"
+        )
+
+    force = parse_mopac_force(workdir)
+    # A monatomic species has zero vibrational modes by definition (3N-6 < 0) —
+    # an empty frequency list there is correct, not a parse failure.
+    if not force.get("vibrational_frequencies_cm-1") and len(atoms) > 1:
+        with open(out_path) as f:
+            out_text = f.read()
+        raise RuntimeError(
+            "Failed to parse MOPAC FORCE output — no frequencies found.\n"
+            f"Last 1500 chars of .out:\n{out_text[-1500:]}"
+        )
+
+    # Pull all the other usual MOPAC extras (HOMO/LUMO, dipole, IP, ENPART).
+    extras = parse_mopac_extras(workdir)
+
+    result = base_result(
+        task="vibrational_thermochemistry",
+        method="PM7",
+        program="mopac",
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms),
+        atoms=symbols,
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent,
+        cli=cli,
+    )
+
+    # Heat of formation at the input geometry (no thermal correction).
+    hof_0 = force.get("heat_of_formation_kcal_mol") or extras.get("heat_of_formation_kcal_mol")
+    if hof_0 is not None:
+        result["heat_of_formation_kcal_mol"] = hof_0
+        result["electronic_energy_eV"] = hof_0 * KCAL_TO_EV
+
+    result["zpe_kcal_mol"] = force.get("zpe_kcal_mol")
+    if force.get("zpe_kcal_mol") is not None:
+        result["zpe_eV"] = force["zpe_kcal_mol"] * KCAL_TO_EV
+
+    if "heat_of_formation_T_kcal_mol" in force:
+        # H(T) at the requested temperature — already includes thermal corrections
+        # (translation, rotation, vibration). MOPAC reports it as ΔHf(T).
+        result["heat_of_formation_T_kcal_mol"] = force["heat_of_formation_T_kcal_mol"]
+        result["enthalpy_kcal_mol"] = force["heat_of_formation_T_kcal_mol"]
+        result["enthalpy_eV"] = force["heat_of_formation_T_kcal_mol"] * KCAL_TO_EV
+
+    if "entropy_cal_K_mol" in force:
+        S_cal = force["entropy_cal_K_mol"]
+        result["entropy_cal_K_mol"] = S_cal
+        result["entropy_eV_per_K"] = S_cal * CAL_TO_EV
+
+    if "heat_capacity_cal_K_mol" in force:
+        result["heat_capacity_cal_K_mol"] = force["heat_capacity_cal_K_mol"]
+
+    if "gibbs_free_energy_of_formation_kcal_mol" in force:
+        G_kcal = force["gibbs_free_energy_of_formation_kcal_mol"]
+        result["gibbs_free_energy_kcal_mol"] = G_kcal
+        result["gibbs_free_energy_eV"] = G_kcal * KCAL_TO_EV
+
+    T_used = force.get("temperature_K") or temperature_K
+    result["temperature_K"] = T_used
+    result["pressure_Pa"] = pressure_Pa
+    result["n_real_vib_modes"] = force.get("n_real_vib_modes")
+    result["n_imaginary_modes"] = force.get("n_imaginary_modes")
+    result["vibrational_frequencies_cm-1"] = force["vibrational_frequencies_cm-1"]
+    result["mopac_keywords"] = keywords
+    result["mopac_workdir"] = workdir
+
+    # Code-specific extras (HOMO/LUMO, dipole, etc.)
+    if extras:
+        # Drop fields we already promoted to the top level
+        extras = {k: v for k, v in extras.items()
+                  if k not in {"heat_of_formation_kcal_mol"}}
+        if extras:
+            result["code_specific"] = extras
+
+    result["symmetry_number"] = symmetrynumber
+    warns = element_warnings(symbols, "mopac")
+    n_imag = force.get("n_imaginary_modes") or 0
+    if n_imag > 0:
+        warns.append(
+            f"{n_imag} imaginary mode(s) detected — geometry is not a true minimum. "
+            "Thermochemistry values are approximate; re-optimize and re-run."
+        )
+    if symmetry_was_default and symmetrynumber == 1:
+        warns.append(
+            "symmetry_number defaulted to 1; if the molecule has rotational "
+            "symmetry (H2O σ=2, NH3 σ=3, CH4 σ=12) the entropy and Gibbs "
+            "energy are over-estimated by R·ln(σ). Re-run with --symmetry-number "
+            "set to the correct value for your point group."
+        )
+    if warns:
+        result["warnings"] = warns
+    return result
+
+
+def _mopac_freq_keywords(
+    *, charge, multiplicity, solvent, temperature_K, symmetrynumber,
+) -> List[str]:
+    kw = ["PM7", "FORCE", "THERMO", "AUX", "LET", "GEO-OK"]
+    if charge != 0:
+        kw.append(f"CHARGE={charge}")
+    if multiplicity > 1:
+        kw.append(mopac_spin_keyword(multiplicity))
+        kw.append("UHF")
+    if solvent:
+        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
+        if eps is None:
+            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        kw.append(f"EPS={eps}")
+    # ROT=σ enters S_rot = R(ln(q_rot) - ln σ); σ=1 over-estimates S for any
+    # molecule with rotational symmetry.
+    kw.append(f"ROT={int(symmetrynumber)}")
+    n_threads = int(os.environ.get("CHEMKIT_MOPAC_THREADS") or (os.cpu_count() or 1))
+    kw.append(f"THREADS={n_threads}")
+    return kw
+
+
+def _write_mopac_input(path, keywords, symbols, positions):
+    lines = [" ".join(keywords), "chemkit frequency analysis", ""]
+    for sym, (x, y, z) in zip(symbols, positions):
+        lines.append(f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1")
+    with open(path, "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+# Conversion: sqrt(eV/(amu*A^2)) -> cm^-1   (factor 521.471... for ASE units)
+# energy in eV, distance in A, mass in amu => frequency in sqrt(eV/(amu*A^2));
+# multiply by sqrt(1.602e-19/(1.66e-27 * 1e-20))/(2*pi*c[cm/s]) ~= 521.4708 / (2*pi)
+# ASE uses its own internal conversion (see ase.units), but for clarity we follow
+# the same path as VibrationsData.get_frequencies internally.
+def _project_trans_rot_and_diagonalize(vib, atoms, geometry):
+    """Pull the 3N x 3N Hessian from ASE Vibrations, project out the trans/rot
+    subspace (Eckart conditions at the current geometry), and diagonalize the
+    remaining (3N-6 or 3N-5) vibrational subspace. Returns (energies_eV,
+    frequencies_cm) arrays matching the shape expected by the rest of _run_ase.
+
+    The arrays are padded back up to 3N with zeros at the front (so the calling
+    code's "filter > NEAR_ZERO_CM" check still drops them naturally) — only the
+    last 3N-6 (or 3N-5) entries are real vibrational data.
+    """
+    import numpy as np
+    from ase import units
+
+    vd = vib.get_vibrations()
+    H = np.asarray(vd.get_hessian_2d())  # 3N x 3N, in eV/A^2
+    n_atoms = len(atoms)
+    pos = atoms.get_positions()
+    masses = atoms.get_masses()
+
+    # Mass-weight: H_mw[ia,jb] = H[ia,jb] / sqrt(m_i * m_j)
+    sqm = np.sqrt(np.repeat(masses, 3))
+    Hmw = H / np.outer(sqm, sqm)
+
+    # Build trans/rot basis in mass-weighted Cartesian coords.
+    # Translation: e_x, e_y, e_z replicated, weighted by sqrt(m_i).
+    # Rotation:   r_i x e_alpha, also weighted by sqrt(m_i).
+    N = n_atoms
+    basis = []
+    for alpha in range(3):
+        v = np.zeros(3 * N)
+        v[alpha::3] = np.sqrt(masses)
+        basis.append(v)
+    # Center of mass
+    com = (masses[:, None] * pos).sum(0) / masses.sum()
+    r = pos - com
+    for alpha in range(3):
+        v = np.zeros(3 * N)
+        e = np.zeros(3); e[alpha] = 1.0
+        # cross product r_i x e for each atom
+        cross = np.cross(r, e)
+        v = (np.sqrt(masses)[:, None] * cross).reshape(-1)
+        basis.append(v)
+    B = np.array(basis).T  # (3N, 6)
+
+    # Orthonormalize (drop zero columns for linear molecules => 5 dof, not 6)
+    # via SVD; columns with negligible singular values are degenerate.
+    U, S, _ = np.linalg.svd(B, full_matrices=False)
+    keep = S > 1e-6 * S.max()
+    Q = U[:, keep]  # (3N, n_trans_rot), n_trans_rot is 5 (linear) or 6 (nonlinear)
+
+    # Projector onto vibrational subspace: P = I - Q Q^T
+    P = np.eye(3 * N) - Q @ Q.T
+    Hproj = P @ Hmw @ P
+
+    eigvals, _ = np.linalg.eigh(Hproj)
+    # The (3N - n_tr) largest-magnitude eigenvalues are vibrational; the
+    # remaining n_tr are numerical zeros from the projection.
+    n_tr = Q.shape[1]
+    # Sort eigenvalues ascending. The first n_tr are ~0 (projected-out modes).
+    # The rest are real vibrations (positive for minima, negative for saddles).
+    vib_eigvals = eigvals[n_tr:]
+
+    # Convert eigenvalues -> angular frequency^2 (in units eV / (amu * A^2))
+    # then -> energy (eV) and frequency (cm^-1).
+    # ASE convention: omega [rad/s] = sqrt(eigval [eV/A^2/amu] * units._e / (units._amu * 1e-20))
+    # energy_eV = hbar * omega = sqrt(eigval) * units._hbar * sqrt(units._e/(units._amu*1e-20))
+    # Use the same conversion as ase.vibrations.Vibrations.get_energies:
+    s = units._hbar * 1e10 / np.sqrt(units._e * units._amu)
+    # s has units such that energy_eV = s * sqrt(eigval_in_eV/A^2/amu)
+    def _ev_from_eig(ev):
+        if ev >= 0:
+            return s * np.sqrt(ev)
+        else:
+            return -1j * s * np.sqrt(-ev)
+
+    energies_eV_vib = np.array([_ev_from_eig(ev) for ev in vib_eigvals], dtype=complex)
+    EV_TO_CM = 1.0 / 1.239841984e-4
+    frequencies_cm_vib = np.array(
+        [e.real * EV_TO_CM if e.imag == 0 else 1j * abs(e.imag) * EV_TO_CM
+         for e in energies_eV_vib], dtype=complex
+    )
+
+    # Pad with n_tr zeros at the front so existing downstream code (which
+    # filters > 50 cm^-1) drops them naturally and counts work out.
+    pad_e = np.zeros(n_tr, dtype=complex)
+    pad_f = np.zeros(n_tr, dtype=complex)
+    energies_eV = np.concatenate([pad_e, energies_eV_vib])
+    frequencies_cm = np.concatenate([pad_f, frequencies_cm_vib])
+    return energies_eV, frequencies_cm
+''', False),
+    ('_engine.tasks.opt', False, r'''"""Geometry optimization task.
+
+For xtb (GFN2): ASE's BFGS drives the optimization using xtb-python forces.
+For mopac (PM7): MOPAC's native EF optimizer drives the optimization in a single
+binary invocation. ASE/BFGS is bypassed for MOPAC because line searches starting
+from chemically nonsensical geometries can step into atomic collisions whose
+gradients overflow MOPAC's fixed-width force printout, which then breaks ASE's
+output parser. MOPAC's own optimizer uses internal coordinates and handles such
+inputs gracefully.
+"""
+from __future__ import annotations
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+from typing import Any, Dict, List, Optional, Tuple
+
+from _engine.calculators import MOPAC_SOLVENT_EPS, mopac_spin_keyword
+from _engine.io import read_geometry
+from _engine.schema import (
+    base_result,
+    energy_block_from_eV,
+    element_warnings,
+)
+
+
+KCAL_PER_MOL_TO_EV = 1.0 / 23.060547830619026  # eV per kcal/mol
+
+
+def run(
+    input_path: str,
+    *,
+    method: str,
+    charge: int = 0,
+    multiplicity: int = 1,
+    solvent: Optional[str] = None,
+    fmax: float = 0.05,    # eV/Å
+    steps: int = 500,
+    out_xyz: Optional[str] = None,
+    cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
+) -> Dict[str, Any]:
+    method = method.lower()
+    atoms = read_geometry(input_path)
+    symbols = atoms.get_chemical_symbols()
+
+    if out_xyz is None:
+        stem = os.path.splitext(os.path.basename(input_path))[0]
+        out_xyz = os.path.abspath(f"{stem}_{method}_opt.xyz")
+
+    if method == "mopac":
+        return _run_mopac(
+            input_path=input_path,
+            atoms=atoms,
+            symbols=symbols,
+            charge=charge,
+            multiplicity=multiplicity,
+            solvent=solvent,
+            fmax=fmax,
+            steps=steps,
+            out_xyz=out_xyz,
+            cli=cli,
+        )
+
+    return _run_ase(
+        input_path=input_path,
+        atoms=atoms,
+        symbols=symbols,
+        method=method,
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent,
+        fmax=fmax,
+        steps=steps,
+        out_xyz=out_xyz,
+        cli=cli,
+        tier=tier,
+        functional=functional,
+        basis=basis,
+    )
+
+
+def _run_ase(
+    *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
+    fmax, steps, out_xyz, cli,
+    tier=None, functional=None, basis=None,
+) -> Dict[str, Any]:
+    from ase.io import write as ase_write
+    from ase.optimize import BFGS
+    from _engine.calculators import (
+        build_calculator, apply_calc_to_atoms,
+        method_label, program_label,
+    )
+
+    calc = build_calculator(
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis,
+    )
+    apply_calc_to_atoms(atoms, calc)
+
+    dyn = BFGS(atoms, logfile=None)
+    converged = dyn.run(fmax=fmax, steps=steps)
+    final_energy = atoms.get_potential_energy()
+    ase_write(out_xyz, atoms, format="xyz")
+
+    result = base_result(
+        task="geometry_optimization",
+        method=method_label(method, calc),
+        program=program_label(method),
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms),
+        atoms=symbols,
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent,
+        cli=cli,
+    )
+    result.update(energy_block_from_eV(final_energy))
+    result["converged"] = bool(converged)
+    result["n_steps"] = int(dyn.get_number_of_steps())
+    result["fmax_target_eV_per_A"] = fmax
+    result["optimized_xyz"] = out_xyz
+
+    warns = element_warnings(symbols, method)
+    if not converged:
+        warns.append(f"Optimization did NOT converge within {steps} steps (fmax={fmax}).")
+    if warns:
+        result["warnings"] = warns
+    return result
+
+
+def _run_mopac(
+    *, input_path, atoms, symbols, charge, multiplicity, solvent,
+    fmax, steps, out_xyz, cli,
+) -> Dict[str, Any]:
+    mopac_exe = shutil.which("mopac")
+    if mopac_exe is None:
+        raise FileNotFoundError("mopac executable not found in PATH.")
+
+    workdir = tempfile.mkdtemp(prefix="chemkit_mopac_opt_")
+    mop_path = os.path.join(workdir, "mopac.mop")
+    out_path = os.path.join(workdir, "mopac.out")
+    arc_path = os.path.join(workdir, "mopac.arc")
+
+    keywords = _mopac_opt_keywords(
+        charge=charge, multiplicity=multiplicity, solvent=solvent,
+        fmax=fmax, steps=steps,
+    )
+    _write_mopac_input(mop_path, keywords, symbols, atoms.get_positions())
+
+    proc = subprocess.run(
+        [mopac_exe, "mopac.mop"],
+        cwd=workdir, capture_output=True, text=True, timeout=600,
+    )
+
+    if not os.path.isfile(out_path):
+        raise RuntimeError(
+            f"mopac did not produce {out_path}.\n"
+            f"stdout: {proc.stdout[-1000:]}\nstderr: {proc.stderr[-1000:]}"
+        )
+
+    with open(out_path) as f:
+        out_text = f.read()
+
+    converged, conv_msg = _parse_mopac_convergence(out_text)
+    hof_kcal = _parse_mopac_hof(out_text)
+    grad_norm = _parse_mopac_gradient_norm(out_text)
+    final_symbols, final_positions = _parse_mopac_final_geometry(arc_path, out_text)
+
+    if final_symbols and final_positions:
+        atoms.set_chemical_symbols(final_symbols)
+        atoms.set_positions(final_positions)
+
+    from ase.io import write as ase_write
+    ase_write(out_xyz, atoms, format="xyz")
+
+    energy_eV = (
+        hof_kcal * KCAL_PER_MOL_TO_EV if hof_kcal is not None else float("nan")
+    )
+
+    result = base_result(
+        task="geometry_optimization",
+        method="PM7",
+        program="mopac",
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms),
+        atoms=atoms.get_chemical_symbols(),
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent,
+        cli=cli,
+    )
+    if hof_kcal is not None:
+        result.update(energy_block_from_eV(energy_eV))
+        result["final_heat_of_formation_kcal_mol"] = hof_kcal
+    result["converged"] = bool(converged)
+    result["fmax_target_eV_per_A"] = fmax
+    if grad_norm is not None:
+        result["mopac_gradient_norm_kcal_per_A"] = grad_norm
+    if conv_msg:
+        result["mopac_status"] = conv_msg
+    result["optimized_xyz"] = out_xyz
+    result["mopac_workdir"] = workdir
+    result["mopac_keywords"] = keywords
+
+    warns = element_warnings(symbols, "mopac")
+    if not converged:
+        warns.append(
+            f"MOPAC reported the optimization did NOT converge "
+            f"({conv_msg or 'see mopac.out'}); final geometry returned anyway."
+        )
+    if hof_kcal is not None and abs(hof_kcal) > 10000:
+        warns.append(
+            f"Final heat of formation is extreme ({hof_kcal:.1f} kcal/mol). "
+            "The optimizer may have settled into a non-physical (collapsed/exploded) "
+            "geometry; inspect the optimized xyz before trusting the energy."
+        )
+    if warns:
+        result["warnings"] = warns
+    return result
+
+
+def _mopac_opt_keywords(
+    *, charge: int, multiplicity: int, solvent: Optional[str],
+    fmax: float, steps: int,
+) -> List[str]:
+    # MOPAC default = full geometry optimization with EF. We give it loose
+    # GNORM (gradient norm) target derived from fmax (which is in eV/Å). MOPAC's
+    # GNORM is in kcal/(mol·Å); convert and convert per-atom-component fmax
+    # roughly into a system gradient norm threshold by scaling by sqrt(3N).
+    # 1 eV/Å ≈ 23.06 kcal/(mol·Å)
+    gnorm = max(0.01, fmax * 23.060547830619026)
+    kw = [
+        "PM7",
+        f"GNORM={gnorm:.3f}",
+        "AUX",
+        "GEO-OK",
+    ]
+    if charge != 0:
+        kw.append(f"CHARGE={charge}")
+    if multiplicity > 1:
+        kw.append(mopac_spin_keyword(multiplicity))
+        kw.append("UHF")
+    if solvent:
+        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
+        if eps is None:
+            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        kw.append(f"EPS={eps}")
+    kw.append("THREADS=1")
+    return kw
+
+
+def _write_mopac_input(
+    path: str, keywords: List[str], symbols: List[str], positions,
+) -> None:
+    lines = [" ".join(keywords), "chemkit geometry optimization", ""]
+    for sym, (x, y, z) in zip(symbols, positions):
+        lines.append(
+            f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1"
+        )
+    with open(path, "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+
+_HOF_RE = re.compile(
+    r"FINAL HEAT OF FORMATION\s*=\s*(-?\d+\.\d+)\s*KCAL"
+)
+_GNORM_RE = re.compile(
+    r"GRADIENT NORM\s*=\s*(-?[\d.]+(?:[eE][+-]?\d+)?)"
+)
+
+
+def _parse_mopac_hof(text: str) -> Optional[float]:
+    matches = _HOF_RE.findall(text)
+    return float(matches[-1]) if matches else None
+
+
+def _parse_mopac_gradient_norm(text: str) -> Optional[float]:
+    matches = _GNORM_RE.findall(text)
+    if not matches:
+        return None
+    try:
+        return float(matches[-1])
+    except ValueError:
+        return None
+
+
+def _parse_mopac_convergence(text: str) -> Tuple[bool, Optional[str]]:
+    # Success markers MOPAC prints when EF/BFGS reach the gradient target.
+    if "GRADIENT TEST PASSED" in text:
+        return True, "GRADIENT TEST PASSED"
+    # SCF-only success isn't enough — we want geometry to be converged.
+    if "GEOMETRY OPTIMISED" in text or "GEOMETRY OPTIMIZED" in text:
+        # Check for explicit failure annotations alongside.
+        if "HERBERTS TEST" in text or "TRUST RADIUS NOW LESS" in text:
+            return False, "EF terminated abnormally (trust radius collapsed)."
+        return True, "EF reported geometry optimised."
+    if "EXCESS NUMBER OF OPTIMIZATION CYCLES" in text:
+        return False, "Exceeded CYCLES limit."
+    if "HEAT OF FORMATION IS UNCHANGED" in text:
+        return False, "EF stalled (HoF unchanged for several cycles)."
+    if "GEOMETRY IS NOT CONVERGED" in text:
+        return False, "MOPAC reported geometry not converged."
+    # Fall back: assume not converged if we can't find a positive marker.
+    return False, None
+
+
+def _parse_mopac_final_geometry(
+    arc_path: str, out_text: str,
+) -> Tuple[List[str], List[Tuple[float, float, float]]]:
+    """Prefer the .arc 'FINAL GEOMETRY OBTAINED' block; fall back to .out."""
+    if os.path.isfile(arc_path):
+        with open(arc_path) as f:
+            arc_text = f.read()
+        syms, pos = _extract_arc_geometry(arc_text)
+        if syms:
+            return syms, pos
+    return _extract_out_geometry(out_text)
+
+
+_ARC_ATOM_RE = re.compile(
+    r"^\s*([A-Z][a-z]?)"
+    r"\s+(-?\d+\.\d+)\s*[+\-]?\d?"
+    r"\s+(-?\d+\.\d+)\s*[+\-]?\d?"
+    r"\s+(-?\d+\.\d+)\s*[+\-]?\d?",
+    re.MULTILINE,
+)
+
+
+def _extract_arc_geometry(text: str):
+    marker = "FINAL GEOMETRY OBTAINED"
+    idx = text.find(marker)
+    if idx < 0:
+        return [], []
+    block = text[idx:]
+    syms, pos = [], []
+    for m in _ARC_ATOM_RE.finditer(block):
+        sym = m.group(1)
+        if sym in ("PM", "PM7"):  # skip the keyword line accidentally matched
+            continue
+        syms.append(sym)
+        pos.append((float(m.group(2)), float(m.group(3)), float(m.group(4))))
+    return syms, pos
+
+
+def _extract_out_geometry(text: str):
+    # Find the LAST "CARTESIAN COORDINATES" block in the .out file.
+    blocks = list(re.finditer(r"CARTESIAN COORDINATES", text))
+    if not blocks:
+        return [], []
+    start = blocks[-1].end()
+    tail = text[start:start + 8000]
+    syms, pos = [], []
+    for line in tail.splitlines():
+        m = re.match(
+            r"\s*\d+\s+([A-Z][a-z]?)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)\s+(-?\d+\.\d+)",
+            line,
+        )
+        if m:
+            syms.append(m.group(1))
+            pos.append((float(m.group(2)), float(m.group(3)), float(m.group(4))))
+        elif syms and line.strip() == "":
+            if len(syms) > 0:
+                break
+    return syms, pos
+''', False),
+    ('_engine.tasks.confsearch', False, r'''"""Conformational search via Open Babel (confab diverse generator).
+
+Conformers are sampled with Open Babel's force-field `confab` generator and
+ranked by force-field energy (obenergy, MMFF94 with UFF fallback). Force-field
+sampling smooths over shallow conformers (e.g. n-pentane's gauche minima
+collapse to anti), so we optionally re-optimize the ensemble with a harder
+method (PM7 via MOPAC) — plus explicit ring-pucker and dihedral-grid seeding —
+to recover those minima and re-rank by heat of formation.
+"""
+from __future__ import annotations
+import os
+import re
+import shutil
+import subprocess
+import tempfile
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+from ase.io import read as ase_read, write as ase_write
+
+from _engine.io import read_geometry
+from _engine.schema import base_result
+
+
+def run(
+    input_path: str,
+    *,
+    method: str = "xtb",          # canonical token; sampler is obabel confab
+    solvent: Optional[str] = None,
+    n_max_conformers: int = 20,
+    postopt: str = "none",        # 'none' or 'mopac'
+    postopt_rmsd: float = 0.25,   # Å, dedup threshold after post-optimization
+    postopt_ewin: float = 6.0,    # kcal/mol, keep ≤ this from lowest
+    charge: int = 0,
+    multiplicity: int = 1,
+    cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
+) -> Dict[str, Any]:
+    # tier/functional/basis are accepted for CLI uniformity but ignored:
+    # the obabel sampler is force-field based and the post-opt path is
+    # xtb/mopac-only.
+    del tier, functional, basis
+    if method != "xtb":
+        # 'xtb' is retained as the canonical method token for CLI uniformity,
+        # but the conformer sampler is now Open Babel (force-field confab).
+        raise ValueError(
+            "confsearch only accepts method='xtb' (the default); the sampler "
+            "is Open Babel confab and the optional post-opt is PM7 (MOPAC)."
+        )
+
+    workdir = tempfile.mkdtemp(prefix="chemkit_confsearch_")
+    src_xyz = os.path.join(workdir, "input.xyz")
+    ase_write(src_xyz, read_geometry(input_path))
+
+    preopt_note: Optional[str] = None
+
+    # Sample conformers with Open Babel's confab (diverse FF generator), with
+    # graceful fallback to the genetic search and finally the input geometry.
+    conformer_xyz, conformers = _run_obabel_confab(
+        src_xyz, workdir, n_max=n_max_conformers, rmsd=postopt_rmsd,
+    )
+    if len(conformers) <= 1:
+        preopt_note = (
+            "Open Babel produced a single conformer; proceeding with "
+            "ring-pucker / dihedral-grid seeding for post-opt."
+        )
+
+    # Rank by force-field energy (obenergy MMFF94 -> UFF fallback).
+    energies_kcal = _energies_for_frames(conformers, workdir)
+    order = sorted(
+        range(len(conformers)),
+        key=lambda i: (energies_kcal[i] if energies_kcal[i] is not None
+                       else float("inf")),
+    )
+    conformers = [conformers[i] for i in order]
+    energies_kcal = [energies_kcal[i] for i in order]
+
+    # Persist the ranked ensemble and the lowest-energy conformer.
+    ase_write(conformer_xyz, conformers, format="xyz")
+    best_xyz = os.path.join(workdir, "obabel_best.xyz")
+    ase_write(best_xyz, conformers[0], format="xyz")
+
+    atoms = read_geometry(input_path)
+    result = base_result(
+        task="conformational_search",
+        method="MMFF94 confab (Open Babel)",
+        program="openbabel",
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms),
+        atoms=atoms.get_chemical_symbols(),
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent, cli=cli,
+    )
+    keep = min(len(conformers), n_max_conformers)
+    result["n_conformers_found"] = len(conformers)
+    result["n_conformers_kept"] = keep
+    result["work_directory"] = workdir
+    result["best_conformer_xyz"] = best_xyz
+    result["all_conformers_xyz"] = conformer_xyz
+    if preopt_note:
+        result["preoptimization"] = preopt_note
+    finite = [e for e in energies_kcal[:keep] if e is not None]
+    if finite:
+        e0 = finite[0]
+        result["conformer_relative_energies_kcal_mol"] = [
+            (e - e0) if e is not None else None for e in energies_kcal[:keep]
+        ]
+
+    if postopt == "mopac":
+        rotatable_bonds = _detect_rotatable_bonds(atoms)
+        rings = _detect_rings(atoms)
+        seeds, seed_source = _gather_postopt_seeds(
+            workdir=workdir,
+            base_conformers=conformers,
+            max_seeds=max(n_max_conformers, 81),
+            rotatable_bonds=rotatable_bonds,
+            rings=rings,
+            base_atoms=atoms,
+        )
+        post = _postopt_mopac(
+            conformers=seeds,
+            workdir=workdir,
+            charge=charge,
+            multiplicity=multiplicity,
+            solvent=solvent,
+            rmsd_threshold=postopt_rmsd,
+            ewin_kcal=postopt_ewin,
+            rotatable_bonds=rotatable_bonds,
+        )
+        post["seed_source"] = seed_source
+        result["postopt"] = post
+    elif postopt != "none":
+        raise ValueError(f"Unknown --postopt value: {postopt!r}")
+
+    return result
+
+
+def _require_obabel() -> str:
+    """Return the path to the obabel executable or raise a helpful error."""
+    exe = shutil.which("obabel")
+    if exe is None:
+        raise RuntimeError(
+            "chemkit confsearch requires Open Babel (`obabel`), which was not "
+            "found on PATH. Install with `conda install -c conda-forge openbabel`."
+        )
+    return exe
+
+
+def _run_obabel_confab(
+    src_xyz: str, workdir: str, *, n_max: int, rmsd: float,
+) -> Tuple[str, list]:
+    """Generate a diverse conformer ensemble with Open Babel's confab.
+
+    confab is Open Babel's diverse-conformer generator (force-field based). It
+    will not write a usable multi-conformer .xyz directly (it emits 0 frames to
+    .xyz), so we route through an SDF intermediate and convert to multi-xyz.
+
+    Falls back to the genetic `--conformer` search, and finally to the input
+    geometry as a single seed, so the downstream ring-pucker / dihedral-grid
+    seeding and PM7 post-opt can still run even when sampling is sparse.
+
+    Returns (multi_xyz_path, list_of_Atoms).
+    """
+    obabel = _require_obabel()
+    multi_xyz = os.path.join(workdir, "obabel_conformers.xyz")
+
+    def _convert_sdf_to_xyz(sdf_path: str) -> list:
+        if not (os.path.isfile(sdf_path) and os.path.getsize(sdf_path) > 0):
+            return []
+        subprocess.run(
+            [obabel, sdf_path, "-O", multi_xyz],
+            capture_output=True, text=True, cwd=workdir, timeout=600,
+        )
+        if not (os.path.isfile(multi_xyz) and os.path.getsize(multi_xyz) > 0):
+            return []
+        frames = ase_read(multi_xyz, index=":")
+        return frames if isinstance(frames, list) else [frames]
+
+    # 1. confab diverse search (SDF intermediate).
+    confab_sdf = os.path.join(workdir, "confab.sdf")
+    subprocess.run(
+        [obabel, src_xyz, "-O", confab_sdf, "--confab",
+         "--conf", str(max(n_max * 4, 50)),
+         "--rcutoff", str(rmsd), "--ecutoff", "50"],
+        capture_output=True, text=True, cwd=workdir, timeout=1800,
+    )
+    frames = _convert_sdf_to_xyz(confab_sdf)
+    if len(frames) > 1:
+        return multi_xyz, frames
+
+    # 2. Fallback: genetic --conformer search written straight to xyz.
+    wc_xyz = os.path.join(workdir, "obabel_conformer_ga.xyz")
+    subprocess.run(
+        [obabel, src_xyz, "-O", wc_xyz, "--conformer",
+         "--nconf", str(max(n_max, 30)), "--writeconformers"],
+        capture_output=True, text=True, cwd=workdir, timeout=1800,
+    )
+    if os.path.isfile(wc_xyz) and os.path.getsize(wc_xyz) > 0:
+        ga_frames = ase_read(wc_xyz, index=":")
+        ga_frames = ga_frames if isinstance(ga_frames, list) else [ga_frames]
+        if len(ga_frames) > 1:
+            shutil.copyfile(wc_xyz, multi_xyz)
+            return multi_xyz, ga_frames
+
+    # 3. Last resort: the input geometry as a single seed.
+    atoms = read_geometry(src_xyz)
+    ase_write(multi_xyz, atoms, format="xyz")
+    return multi_xyz, [atoms]
+
+
+def _obenergy(xyz_path: str, ff: str = "MMFF94") -> Optional[float]:
+    """Single-point force-field energy (kcal/mol) via Open Babel's obenergy.
+
+    Tries MMFF94 first, falls back to UFF (covers elements MMFF lacks params
+    for). Returns None if both fail or no energy could be parsed.
+    """
+    exe = shutil.which("obenergy")
+    if exe is None:
+        return None
+    for forcefield in (ff, "UFF"):
+        try:
+            proc = subprocess.run(
+                [exe, "-ff", forcefield, xyz_path],
+                capture_output=True, text=True, timeout=120,
+            )
+        except (OSError, subprocess.SubprocessError):
+            continue
+        m = re.search(
+            r"TOTAL ENERGY\s*=\s*([-+]?\d+\.?\d*(?:[Ee][-+]?\d+)?)",
+            proc.stdout,
+        )
+        if m:
+            try:
+                return float(m.group(1))
+            except ValueError:
+                continue
+    return None
+
+
+def _energies_for_frames(frames: list, workdir: str) -> List[Optional[float]]:
+    """obenergy each conformer frame; returns kcal/mol (None where it failed)."""
+    energies: List[Optional[float]] = []
+    tmp = os.path.join(workdir, "_score.xyz")
+    for atoms in frames:
+        ase_write(tmp, atoms, format="xyz")
+        energies.append(_obenergy(tmp))
+    return energies
+
+
+def _detect_rings(atoms, *, min_size: int = 4, max_size: int = 8) -> List[Dict[str, Any]]:
+    """Find all non-aromatic, all-sp3-ish rings of size [min_size, max_size].
+
+    Pure connectivity-based detection (no RDKit). Returns one dict per ring:
+      {"size": k, "atoms": [ordered indices around the ring]}.
+    Aromatic / sp2-heavy rings are filtered out by checking that every ring
+    carbon has 4 total neighbors (i.e. is sp3). For heteroatoms in the ring
+    (O, N, S) we accept any valence consistent with sp3.
+    """
+    from ase.neighborlist import neighbor_list
+
+    n = len(atoms)
+    symbols = atoms.get_chemical_symbols()
+    # Element-pair cutoffs (covalent bond max distances).  NeighborList's
+    # per-atom natural_cutoffs occasionally overcounts diagonal contacts in
+    # small rings (cyclobutane's 2.1 Å C..C diagonals), so we use explicit
+    # pair thresholds.
+    pair_cut = {
+        ("C", "C"): 1.70, ("C", "N"): 1.65, ("C", "O"): 1.65,
+        ("C", "S"): 1.95, ("C", "P"): 1.95, ("C", "H"): 1.25,
+        ("N", "N"): 1.55, ("N", "O"): 1.55, ("N", "H"): 1.20,
+        ("O", "O"): 1.55, ("O", "H"): 1.20,
+        ("S", "S"): 2.20, ("S", "H"): 1.45,
+        ("P", "P"): 2.30, ("P", "H"): 1.50,
+        ("H", "H"): 0.0,
+    }
+    # symmetric fill
+    pair_cut.update({(b, a): v for (a, b), v in list(pair_cut.items())})
+    pairs_i, pairs_j = neighbor_list("ij", atoms, cutoff=pair_cut)
+    neighbors: List[set] = [set() for _ in range(n)]
+    for a_, b_ in zip(pairs_i.tolist(), pairs_j.tolist()):
+        neighbors[a_].add(b_)
+    neighbors = [sorted(s) for s in neighbors]
+
+    # Atoms that are heavy (non-H) and "puckerable" — sp3-compatible.
+    # Heuristic: carbon with exactly 4 neighbors (sp3); O/N/S in ring; skip
+    # everything sp2-ish (carbonyl carbons typically have 3 neighbors).
+    def is_puckerable(i: int) -> bool:
+        sym = symbols[i]
+        if sym == "H":
+            return False
+        if sym == "C":
+            return len(neighbors[i]) == 4
+        return sym in ("O", "N", "S", "P")
+
+    rings_found: List[Tuple[Tuple[int, ...], List[int]]] = []
+    seen_keys = set()
+
+    def dfs(start: int, current: int, depth: int, path: List[int], visited: set):
+        if depth > max_size:
+            return
+        for nb in neighbors[current]:
+            if symbols[nb] == "H":
+                continue
+            if nb == start and depth >= min_size:
+                key = tuple(sorted(path))
+                if key not in seen_keys:
+                    seen_keys.add(key)
+                    rings_found.append((key, list(path)))
+                continue
+            if nb in visited:
+                continue
+            if depth + 1 > max_size:
+                continue
+            visited.add(nb)
+            path.append(nb)
+            dfs(start, nb, depth + 1, path, visited)
+            path.pop()
+            visited.remove(nb)
+
+    for i in range(n):
+        if symbols[i] == "H":
+            continue
+        visited = {i}
+        dfs(i, i, 1, [i], visited)
+
+    # Filter to "puckerable" rings only.
+    rings: List[Dict[str, Any]] = []
+    for _, path in rings_found:
+        if not all(is_puckerable(k) for k in path):
+            continue
+        rings.append({"size": len(path), "atoms": path})
+
+    # Smallest-set-of-smallest-rings-ish: drop any ring whose atom set is the
+    # symmetric difference of two smaller rings (fused-ring envelope).
+    rings.sort(key=lambda r: r["size"])
+    minimal: List[Dict[str, Any]] = []
+    seen_atom_sets: List[set] = []
+    for r in rings:
+        atoms_set = set(r["atoms"])
+        # Skip if this ring is the union of two already-accepted smaller rings.
+        is_compound = False
+        for i, s1 in enumerate(seen_atom_sets):
+            for s2 in seen_atom_sets[i + 1:]:
+                if s1.union(s2) == atoms_set and s1.intersection(s2):
+                    is_compound = True
+                    break
+            if is_compound:
+                break
+        if is_compound:
+            continue
+        minimal.append(r)
+        seen_atom_sets.append(atoms_set)
+    return minimal
+
+
+def _detect_rotatable_bonds(atoms, include_methyl: bool = False) -> List[Dict[str, Any]]:
+    """Identify rotatable single bonds (non-ring C-C bonds).
+
+    By default methyl-terminated bonds are skipped because their 3-fold
+    symmetric rotation generates no distinct conformers — useful for
+    conformer_search. Pass include_methyl=True (e.g. from `scan`) to keep
+    them, since the rotation barrier itself is a legitimate observable.
+
+    Returns a list of dicts with keys:
+      a, b           — bond endpoint indices (a<b)
+      side_b         — indices to rotate when twisting about (a,b)
+      i, l           — reference atoms for the dihedral i-a-b-l (heavy if possible)
+    """
+    from ase.neighborlist import NeighborList, natural_cutoffs
+
+    n = len(atoms)
+    cutoffs = natural_cutoffs(atoms, mult=1.15)
+    nl = NeighborList(cutoffs, self_interaction=False, bothways=True)
+    nl.update(atoms)
+    neighbors = [set(nl.get_neighbors(i)[0].tolist()) for i in range(n)]
+    symbols = atoms.get_chemical_symbols()
+
+    bonds: List[Dict[str, Any]] = []
+    for a in range(n):
+        for b in neighbors[a]:
+            if b <= a:
+                continue
+            if symbols[a] != "C" or symbols[b] != "C":
+                continue
+            if not include_methyl:
+                if _is_methyl_end(neighbors, symbols, a, b):
+                    continue
+                if _is_methyl_end(neighbors, symbols, b, a):
+                    continue
+            if _bond_in_ring(neighbors, a, b, n):
+                continue
+            side_b = _component_excluding(neighbors, start=b, blocked=a, n=n)
+            if a in side_b or len(side_b) == n:
+                continue
+            # pick reference atoms — prefer heavy neighbors for clean dihedrals
+            def pick(end, exclude):
+                cands = neighbors[end] - {exclude}
+                heavy = [k for k in cands if symbols[k] != "H"]
+                if heavy:
+                    return heavy[0]
+                return next(iter(cands)) if cands else None
+            i_ref = pick(a, b)
+            l_ref = pick(b, a)
+            if i_ref is None or l_ref is None:
+                continue
+            bonds.append({
+                "a": a, "b": b,
+                "side_b": list(side_b),
+                "i": i_ref, "l": l_ref,
+            })
+    return bonds
+
+
+# Cremer-Pople pucker amplitudes (Å) tuned per ring size from known equilibrium
+# values: cyclopentane Q≈0.42, cyclohexane Q≈0.55, cycloheptane Q≈0.65,
+# cyclooctane Q≈0.75. Cyclobutane folds with ~0.14 Å out-of-plane displacement.
+_RING_PUCKER_AMPLITUDE = {
+    4: 0.20,
+    5: 0.42,
+    6: 0.55,
+    7: 0.65,
+    8: 0.75,
+}
+
+
+def _cp_pucker_targets(ring_size: int) -> List[Dict[str, Any]]:
+    """Canonical Cremer-Pople (q_k, phase) targets per ring size.
+
+    Returns a list of {"label": str, "q": [..]} entries where q is the array
+    of pucker amplitudes in the CP basis (length N-3 for an N-membered ring,
+    expressed as (q_2 cos φ_2, q_2 sin φ_2, ..., q_N/2) for even N or as
+    (q_2 cos φ_2, q_2 sin φ_2, ...) for odd N).
+
+    For practical generation we keep this simple: enumerate a small canonical
+    set per ring size matching the well-known minima/saddles.
+    """
+    A = _RING_PUCKER_AMPLITUDE[ring_size]
+    if ring_size == 4:
+        # Planar saddle + puckered up/down butterfly
+        return [
+            {"label": "planar",     "q2": 0.0,  "phi2": 0.0, "q3": 0.0,    "qN2":  0.0},
+            {"label": "pucker_up",  "q2": 0.0,  "phi2": 0.0, "q3": 0.0,    "qN2":  A},
+            {"label": "pucker_dn",  "q2": 0.0,  "phi2": 0.0, "q3": 0.0,    "qN2": -A},
+        ]
+    if ring_size == 5:
+        # Envelope (E1..E5) at 5 phases + twist (T1..T5) at offset phases.
+        # 10 total puckers; subsample to 6 (every other).
+        out = []
+        for k in range(5):
+            phi = 2 * np.pi * k / 5
+            out.append({"label": f"envelope_{k}", "q2": A, "phi2": phi})
+        for k in range(5):
+            phi = 2 * np.pi * k / 5 + np.pi / 5
+            out.append({"label": f"twist_{k}", "q2": A, "phi2": phi})
+        return out
+    if ring_size == 6:
+        # CP for 6-ring: (Q, θ, φ) with θ=0 → chair (north pole),
+        # θ=180 → inverted chair, θ=90 → equator (6 boat/twist-boat positions).
+        out = [
+            {"label": "chair",       "q2": 0.0, "phi2": 0.0,         "qN2":  A},  # θ=0
+            {"label": "inv_chair",   "q2": 0.0, "phi2": 0.0,         "qN2": -A},  # θ=180
+        ]
+        # Equator: 6 twist-boat/boat positions at φ = 0, 30, 60, 90, 120, 150°
+        # (alternating TB and B every 30°). Sample 4 of them.
+        for k, phi_deg in enumerate([30, 90, 150, 210]):
+            phi = np.deg2rad(phi_deg)
+            out.append({
+                "label": f"twist_boat_{k}",
+                "q2": A, "phi2": phi, "qN2": 0.0,
+            })
+        return out
+    if ring_size == 7:
+        # CP for 7-ring: 2 puckering coords (q_2, q_3) each with phase.
+        # Canonical minima: TC (twist-chair, 14 equiv), C (chair),
+        # TB (twist-boat), B (boat). Generate by setting q_2 dominant for
+        # boat/twist-boat and q_3 dominant for chair/twist-chair.
+        out = []
+        for k, phi_deg in enumerate([0, 60, 120, 180]):
+            phi = np.deg2rad(phi_deg)
+            # Chair/twist-chair family (q3 dominant)
+            out.append({
+                "label": f"chair_{k}",
+                "q2": 0.3 * A, "phi2": phi, "q3": 0.9 * A, "phi3": phi,
+            })
+        for k, phi_deg in enumerate([0, 90, 180]):
+            phi = np.deg2rad(phi_deg)
+            # Boat/twist-boat family (q2 dominant)
+            out.append({
+                "label": f"boat_{k}",
+                "q2": 0.9 * A, "phi2": phi, "q3": 0.2 * A, "phi3": phi,
+            })
+        return out
+    if ring_size == 8:
+        # CP for 8-ring: 3 puckering coords (q_2, q_3, q_4 -- last is q_{N/2}).
+        # Known stable: crown (D4d, q_2≈0, q_4≈A), BC (boat-chair, mixed),
+        # TBC, TCC. Use a small canonical set.
+        out = [
+            {"label": "crown",      "q2": 0.0, "phi2": 0.0, "q3": 0.0,    "phi3": 0.0,         "qN2":  A},
+            {"label": "anti_crown", "q2": 0.0, "phi2": 0.0, "q3": 0.0,    "phi3": 0.0,         "qN2": -A},
+            {"label": "BC_1",       "q2": A,   "phi2": 0.0, "q3": 0.5*A,  "phi3": np.pi/4,     "qN2": 0.3*A},
+            {"label": "BC_2",       "q2": A,   "phi2": np.pi/2, "q3": 0.5*A, "phi3": 3*np.pi/4, "qN2": 0.3*A},
+            {"label": "TBC",        "q2": 0.7*A, "phi2": np.pi/4, "q3": 0.7*A, "phi3": np.pi/2, "qN2": 0.0},
+        ]
+        return out
+    return []
+
+
+def _cp_z_displacements(ring_size: int, target: Dict[str, Any]) -> np.ndarray:
+    """Given a CP target dict, compute the out-of-plane z-displacements for
+    each ring atom (length=ring_size), in the local ring frame (z = normal).
+
+    Implements the inverse Cremer-Pople transformation:
+
+        z_j = sqrt(2/N) Σ_{m=2}^{N/2-1} q_m cos[ 2π m (j-1)/N - φ_m ]
+            + (1/sqrt(N)) (-1)^(j-1) q_{N/2}     [only when N is even]
+
+    Indices j run 1..N. We map the target's q_m, phi_m entries to this sum.
+    """
+    N = ring_size
+    z = np.zeros(N)
+    # m = 2 mode (always present)
+    q2 = target.get("q2", 0.0)
+    phi2 = target.get("phi2", 0.0)
+    # m = 3 mode (present for N>=6, odd N includes N/2 mode too)
+    q3 = target.get("q3", 0.0)
+    phi3 = target.get("phi3", 0.0)
+    # N/2 mode for even N
+    qN2 = target.get("qN2", 0.0)
+
+    for j in range(1, N + 1):
+        # m=2 term
+        z[j - 1] += np.sqrt(2.0 / N) * q2 * np.cos(2 * np.pi * 2 * (j - 1) / N - phi2)
+        # m=3 term (only matters for N >= 6)
+        if N >= 6:
+            z[j - 1] += np.sqrt(2.0 / N) * q3 * np.cos(2 * np.pi * 3 * (j - 1) / N - phi3)
+        # m=N/2 term for even N
+        if N % 2 == 0:
+            sign = (-1) ** (j - 1)
+            z[j - 1] += (1.0 / np.sqrt(N)) * sign * qN2
+
+    # Re-center: CP coordinates are defined with Σ z_j = 0
+    z -= z.mean()
+    return z
+
+
+def _xtb_constrained_ring_relax(
+    atoms,
+    ring_atoms: List[int],
+    target_dihedrals_deg: List[float],
+    workdir: str,
+    label: str,
+) -> Optional[Any]:
+    """Constrain ring dihedrals at target values and run a brief xtb opt.
+
+    This is the critical step for ring-pucker seeds: starting CP geometries
+    have the ring carbons in the right z-pattern but substituent H positions
+    are still chair-like, and an unconstrained opt would fall straight back
+    to chair. Holding the ring dihedrals while H's relax produces a seed
+    that lives in the target pucker's basin of attraction.
+
+    Returns the constrained-optimized Atoms object, or None if xtb fails.
+    """
+    xtb_exe = shutil.which("xtb")
+    if xtb_exe is None:
+        return None
+    sub = os.path.join(workdir, f"cpseed_{label}")
+    os.makedirs(sub, exist_ok=True)
+    seed_xyz = os.path.join(sub, "seed.xyz")
+    ase_write(seed_xyz, atoms, format="xyz")
+    xc_inp = os.path.join(sub, "xc.inp")
+    with open(xc_inp, "w") as f:
+        f.write("$constrain\n  force constant=1.0\n")
+        N = len(ring_atoms)
+        for i in range(N):
+            i1 = ring_atoms[i] + 1
+            i2 = ring_atoms[(i + 1) % N] + 1
+            i3 = ring_atoms[(i + 2) % N] + 1
+            i4 = ring_atoms[(i + 3) % N] + 1
+            f.write(f"  dihedral: {i1},{i2},{i3},{i4}, {target_dihedrals_deg[i]:.2f}\n")
+        f.write("$opt\n  maxcycle=80\n$end\n")
+    try:
+        subprocess.run(
+            [xtb_exe, "seed.xyz", "--opt", "--input", "xc.inp", "--gfn", "2"],
+            cwd=sub, capture_output=True, text=True, timeout=120,
+        )
+    except Exception:
+        return None
+    opt_xyz = os.path.join(sub, "xtbopt.xyz")
+    if not os.path.isfile(opt_xyz):
+        return None
+    try:
+        return ase_read(opt_xyz)
+    except Exception:
+        return None
+
+
+def _ring_dihedrals(atoms, ring_atoms: List[int]) -> List[float]:
+    """Measure the ring dihedrals (one per ring atom)."""
+    N = len(ring_atoms)
+    out = []
+    for i in range(N):
+        a0 = ring_atoms[i]
+        a1 = ring_atoms[(i + 1) % N]
+        a2 = ring_atoms[(i + 2) % N]
+        a3 = ring_atoms[(i + 3) % N]
+        try:
+            d = atoms.get_dihedral(a0, a1, a2, a3)
+            if d > 180.0:
+                d -= 360.0
+            out.append(float(d))
+        except Exception:
+            out.append(0.0)
+    return out
+
+
+def _ring_pucker_seeds(
+    atoms,
+    ring: Dict[str, Any],
+    *,
+    max_per_ring: int = 8,
+    workdir: Optional[str] = None,
+) -> List[Tuple[str, Any]]:
+    """Generate puckered conformer seeds for one ring.
+
+    For each canonical CP target:
+      1. Define the local ring frame (origin = ring centroid, z = normal).
+      2. Map current ring atoms to that frame.
+      3. Replace the z-coordinates with the CP target's z-displacements.
+      4. Translate each ring atom by the (new - old) z displacement, in
+         world coordinates. Substituent atoms (bonded to ring atoms) follow
+         their ring atom rigidly (translate, don't rotate) — this preserves
+         local bond lengths well enough that PM7/xtb relaxation recovers a
+         clean minimum.
+    Returns a list of (label, atoms_copy) tuples.
+    """
+    ring_atoms = list(ring["atoms"])
+    N = len(ring_atoms)
+    if N not in _RING_PUCKER_AMPLITUDE:
+        return []
+
+    pos = atoms.get_positions()
+    ring_pos = pos[ring_atoms]
+    centroid = ring_pos.mean(axis=0)
+
+    # Local frame: z = best-fit ring normal via SVD on centered coords
+    centered = ring_pos - centroid
+    _, _, Vt = np.linalg.svd(centered, full_matrices=False)
+    z_axis = Vt[2]
+
+    # Compute current z (in local frame) for each ring atom
+    local_z_current = centered @ z_axis  # length N
+
+    # For each substituent (non-ring neighbor of a ring atom), record its
+    # parent ring atom — we'll translate substituents along with their parent.
+    from ase.neighborlist import NeighborList, natural_cutoffs
+    cutoffs = natural_cutoffs(atoms, mult=1.15)
+    nl = NeighborList(cutoffs, self_interaction=False, bothways=True)
+    nl.update(atoms)
+    ring_set = set(ring_atoms)
+    substituent_parent: Dict[int, int] = {}
+    # Walk outward from each ring atom: every connected non-ring atom inherits
+    # the parent's z-shift.
+    for ra in ring_atoms:
+        stack = [(ra, ra)]
+        seen = set([ra])
+        while stack:
+            parent, current = stack.pop()
+            for nb in nl.get_neighbors(current)[0].tolist():
+                if nb in seen or nb in ring_set:
+                    continue
+                seen.add(nb)
+                substituent_parent[nb] = ra
+                stack.append((ra, nb))
+
+    targets = _cp_pucker_targets(N)[:max_per_ring]
+    seeds: List[Tuple[str, Any]] = []
+    from _engine.calculators import register_auto_tempdir
+    seed_workdir = workdir or register_auto_tempdir(
+        tempfile.mkdtemp(prefix="chemkit_cpseed_"))
+    for target in targets:
+        z_new = _cp_z_displacements(N, target)
+        # Build dz array for each atom
+        dz = np.zeros(len(atoms))
+        for j, ra in enumerate(ring_atoms):
+            dz[ra] = z_new[j] - local_z_current[j]
+        for sub, parent in substituent_parent.items():
+            j = ring_atoms.index(parent)
+            dz[sub] = z_new[j] - local_z_current[j]
+
+        cand = atoms.copy()
+        new_pos = cand.get_positions().copy()
+        for idx in range(len(atoms)):
+            if dz[idx] != 0.0:
+                new_pos[idx] = new_pos[idx] + dz[idx] * z_axis
+        cand.set_positions(new_pos)
+
+        # Critical: constrained-relax the ring at its CP target dihedrals so
+        # substituent H's settle into the pucker before unconstrained optimization
+        # rolls everything back to chair.
+        seed_dihs = _ring_dihedrals(cand, ring_atoms)
+        relaxed = _xtb_constrained_ring_relax(
+            cand, ring_atoms, seed_dihs, seed_workdir, target["label"],
+        )
+        if relaxed is not None:
+            seeds.append((target["label"], relaxed))
+        else:
+            # Fall back to unrelaxed seed if xtb missing; postopt may still recover.
+            seeds.append((target["label"], cand))
+    return seeds
+
+
+def _is_eclipsed_saddle(atoms, rotatable_bonds: List[Dict[str, Any]],
+                        tol_deg: float = 18.0) -> bool:
+    """True if any backbone dihedral is within tol_deg of an eclipsed value
+    (0/120/240 mod 360). MOPAC's EF optimizer occasionally terminates at such
+    saddles when fed symmetric input; reject those.
+    """
+    for bond in rotatable_bonds:
+        try:
+            phi = atoms.get_dihedral(bond["i"], bond["a"], bond["b"], bond["l"])
+        except Exception:
+            continue
+        phi = phi % 360.0
+        # eclipsed centers depend on the substituent count; for an sp3-sp3 bond
+        # with three substituents per end, eclipsed = where syn-substituents
+        # align, i.e. 0/120/240. Staggered minima = 60/180/300.
+        for ecl in (0.0, 120.0, 240.0, 360.0):
+            if abs(phi - ecl) < tol_deg:
+                return True
+    return False
+
+
+def _gather_postopt_seeds(
+    *, workdir: str, base_conformers: list, max_seeds: int,
+    rotatable_bonds: Optional[List[Dict[str, Any]]] = None,
+    rings: Optional[List[Dict[str, Any]]] = None,
+    base_atoms: Optional[Any] = None,
+) -> Tuple[list, str]:
+    """Pick a diverse seed pool for post-optimization.
+
+    Strategy:
+      - Always add ring-pucker seeds (chair/twist-boat/etc.) for any detected
+        ring. Force-field conformer sampling smooths over shallow ring
+        conformers (e.g. cyclohexane's twist-boat at +5.5 kcal/mol); seeding
+        the puckers explicitly is the only way to recover them.
+      - If the sampler returned multiple conformers, use those plus ring seeds.
+      - Otherwise also build seeds by rotating each rotatable single bond
+        through {60°, 180°, 300°}.
+    """
+    parts: List[Any] = []
+    sources: List[str] = []
+
+    # Ring-pucker seeds — always generated when rings are detected.
+    ring_seeds_added = 0
+    if rings and base_atoms is not None:
+        for ring in rings:
+            try:
+                ring_seeds = _ring_pucker_seeds(
+                    base_atoms, ring, max_per_ring=8, workdir=workdir,
+                )
+            except Exception:
+                ring_seeds = []
+            for label, seed_atoms in ring_seeds:
+                if len(parts) >= max_seeds:
+                    break
+                parts.append(seed_atoms)
+                ring_seeds_added += 1
+        if ring_seeds_added:
+            sources.append(f"ring_pucker ({ring_seeds_added})")
+
+    if len(base_conformers) > 1:
+        room = max_seeds - len(parts)
+        parts.extend(list(base_conformers[:room]))
+        sources.insert(0, f"obabel_conformers ({min(len(base_conformers), room)})")
+        return parts[:max_seeds], " + ".join(sources)
+
+    if base_conformers:
+        parts.insert(0, base_conformers[0])
+        sources.insert(0, "obabel_best")
+
+    base = base_conformers[0] if base_conformers else None
+    if base is not None and len(parts) < max_seeds:
+        try:
+            rotated = _dihedral_grid_seeds(
+                base, max_seeds=max_seeds - len(parts),
+                rotatable_bonds=rotatable_bonds,
+            )
+        except Exception:
+            rotated = []
+        if rotated:
+            parts.extend(rotated)
+            sources.append(f"dihedral_grid ({len(rotated)})")
+
+    if not sources:
+        sources.append("obabel_conformers (single)")
+    return parts[:max_seeds], " + ".join(sources)
+
+
+def _dihedral_grid_seeds(
+    atoms, *, max_seeds: int,
+    rotatable_bonds: Optional[List[Dict[str, Any]]] = None,
+) -> List:
+    """Enumerate seeds by rotating each rotatable single bond through
+    {gauche+, anti, gauche-}, with a small asymmetric offset so seeds don't
+    sit exactly on saddle geometries.
+    """
+    bonds = rotatable_bonds if rotatable_bonds is not None else _detect_rotatable_bonds(atoms)
+    if not bonds:
+        return []
+
+    angles_deg = [62.0, 178.0, 298.0]
+    seeds = [atoms.copy()]
+    pass_offset = 0.0
+    for bond in bonds:
+        a, b, side = bond["a"], bond["b"], bond["side_b"]
+        new_seeds = []
+        for s in seeds:
+            for k, ang in enumerate(angles_deg):
+                cand = s.copy()
+                _set_dihedral_about_bond(
+                    cand, a, b, side,
+                    ang + pass_offset + 0.7 * (k - 1),
+                )
+                new_seeds.append(cand)
+                if len(new_seeds) + (len(seeds) - 1) * 3 >= max_seeds * 3:
+                    break
+        seeds = new_seeds
+        pass_offset += 1.3
+        if len(seeds) >= max_seeds:
+            seeds = seeds[:max_seeds]
+            break
+    return seeds[:max_seeds]
+
+
+def _is_methyl_end(neighbors: List[set], symbols: List[str], end: int, other_end: int) -> bool:
+    """True if `end` is a methyl carbon (only H neighbors besides other_end)."""
+    others = neighbors[end] - {other_end}
+    if not others:
+        return True  # bare atom — nothing to rotate, treat as trivial
+    return all(symbols[k] == "H" for k in others)
+
+
+def _bond_in_ring(neighbors: List[set], i: int, j: int, n: int) -> bool:
+    """True if removing edge (i,j) still leaves i and j connected (i.e. ring)."""
+    visited = {i}
+    stack = [i]
+    while stack:
+        u = stack.pop()
+        for v in neighbors[u]:
+            if u == i and v == j:
+                continue
+            if u == j and v == i:
+                continue
+            if v in visited:
+                continue
+            if v == j:
+                return True
+            visited.add(v)
+            stack.append(v)
+    return False
+
+
+def _component_excluding(neighbors: List[set], *, start: int, blocked: int, n: int) -> set:
+    visited = {start}
+    stack = [start]
+    while stack:
+        u = stack.pop()
+        for v in neighbors[u]:
+            if v == blocked and u == start:
+                continue
+            if v in visited:
+                continue
+            visited.add(v)
+            stack.append(v)
+    return visited
+
+
+def _set_dihedral_about_bond(atoms, a: int, b: int, side_indices: List[int], angle_deg: float):
+    """Rotate the side_indices atoms about axis (a -> b) by angle_deg.
+
+    NOTE: this sets the rotation angle relative to the *current* geometry, not
+    to a specific dihedral measurement. That's fine for seed generation —
+    optimization will relax to the nearest minimum regardless of exact phase.
+    """
+    pos = atoms.get_positions()
+    axis = pos[b] - pos[a]
+    axis /= np.linalg.norm(axis) + 1e-12
+    theta = np.deg2rad(angle_deg)
+    c, s = np.cos(theta), np.sin(theta)
+    K = np.array([[0, -axis[2], axis[1]],
+                  [axis[2], 0, -axis[0]],
+                  [-axis[1], axis[0], 0]])
+    R = np.eye(3) + s * K + (1 - c) * (K @ K)
+    origin = pos[a]
+    for idx in side_indices:
+        pos[idx] = origin + R @ (pos[idx] - origin)
+    atoms.set_positions(pos)
+
+
+def _postopt_mopac(
+    *, conformers, workdir, charge, multiplicity, solvent,
+    rmsd_threshold, ewin_kcal,
+    rotatable_bonds: Optional[List[Dict[str, Any]]] = None,
+):
+    """Re-optimize each seed conformer with PM7 (native EF), then dedup."""
+    from _engine.tasks.opt import _run_mopac
+
+    post_dir = os.path.join(workdir, "postopt_mopac")
+    os.makedirs(post_dir, exist_ok=True)
+
+    # Deterministic per-seed Cartesian jitter to break input symmetry so the
+    # EF optimizer doesn't terminate at a saddle. 0.05 Å is well above MOPAC's
+    # convergence noise so saddles get rolled off, but well below typical
+    # basin-of-attraction radii so it doesn't relocate true minima.
+    rng = np.random.default_rng(0xC0FFEE)
+
+    optimized: List[Dict[str, Any]] = []
+    failures = 0
+    saddles_rejected = 0
+    for idx, conf in enumerate(conformers):
+        seed_xyz = os.path.join(post_dir, f"seed_{idx:03d}.xyz")
+        out_xyz = os.path.join(post_dir, f"conf_{idx:03d}_mopac_opt.xyz")
+        jittered = conf.copy()
+        jittered.set_positions(
+            jittered.get_positions()
+            + rng.normal(scale=0.02, size=jittered.get_positions().shape)
+        )
+        ase_write(seed_xyz, jittered, format="xyz")
+        try:
+            res = _run_mopac(
+                input_path=seed_xyz,
+                atoms=jittered,
+                symbols=jittered.get_chemical_symbols(),
+                charge=charge,
+                multiplicity=multiplicity,
+                solvent=solvent,
+                fmax=0.05,
+                steps=500,
+                out_xyz=out_xyz,
+                cli="(internal post-opt)",
+            )
+        except Exception:
+            failures += 1
+            continue
+        hof = res.get("final_heat_of_formation_kcal_mol")
+        if hof is None:
+            failures += 1
+            continue
+        optimized_atoms = ase_read(out_xyz)
+        # Reject geometries stuck at eclipsed saddles — the EF optimizer
+        # sometimes converges there from highly symmetric inputs.
+        if rotatable_bonds and _is_eclipsed_saddle(optimized_atoms, rotatable_bonds):
+            saddles_rejected += 1
+            continue
+        heavy_mask = np.array(
+            [s != "H" for s in optimized_atoms.get_chemical_symbols()],
+            dtype=bool,
+        )
+        optimized.append({
+            "source_index": idx,
+            "hof_kcal_mol": float(hof),
+            "atoms": optimized_atoms,
+            "heavy_positions": optimized_atoms.get_positions()[heavy_mask],
+            "xyz_path": out_xyz,
+            "converged": bool(res.get("converged", False)),
+        })
+
+    if not optimized:
+        return {
+            "method": "PM7 (MOPAC)",
+            "n_input": len(conformers),
+            "n_converged": 0,
+            "n_unique": 0,
+            "n_failed": failures,
+            "conformers": [],
+            "note": "All post-optimizations failed.",
+        }
+
+    # Sort by HoF, dedup by RMSD-after-Kabsch and energy proximity.
+    optimized.sort(key=lambda d: d["hof_kcal_mol"])
+    lowest = optimized[0]["hof_kcal_mol"]
+
+    unique: List[Dict[str, Any]] = []
+    for cand in optimized:
+        if cand["hof_kcal_mol"] - lowest > ewin_kcal:
+            continue
+        is_dup = False
+        for u in unique:
+            if _rmsd_kabsch(cand["heavy_positions"],
+                            u["heavy_positions"]) < rmsd_threshold:
+                u["degeneracy"] += 1
+                is_dup = True
+                break
+        if not is_dup:
+            cand["degeneracy"] = 1
+            unique.append(cand)
+
+    ensemble_xyz = os.path.join(post_dir, "postopt_ensemble.xyz")
+    with open(ensemble_xyz, "w") as f:
+        for u in unique:
+            with open(u["xyz_path"]) as g:
+                content = g.read().rstrip()
+            f.write(content + "\n")
+
+    return {
+        "method": "PM7 (MOPAC)",
+        "n_input": len(conformers),
+        "n_converged": len(optimized),
+        "n_unique": len(unique),
+        "n_failed": failures,
+        "n_saddles_rejected": saddles_rejected,
+        "rmsd_threshold_A": rmsd_threshold,
+        "ewin_kcal_mol": ewin_kcal,
+        "lowest_hof_kcal_mol": lowest,
+        "ensemble_xyz": ensemble_xyz,
+        "best_xyz": unique[0]["xyz_path"] if unique else None,
+        "conformers": [
+            {
+                "source_index": u["source_index"],
+                "hof_kcal_mol": u["hof_kcal_mol"],
+                "rel_hof_kcal_mol": u["hof_kcal_mol"] - lowest,
+                "degeneracy": u["degeneracy"],
+                "xyz_path": u["xyz_path"],
+                "converged": u["converged"],
+            }
+            for u in unique
+        ],
+    }
+
+
+def _rmsd_kabsch(A: np.ndarray, B: np.ndarray) -> float:
+    """Heavy-atom-agnostic RMSD after centroid alignment + Kabsch rotation."""
+    A = np.asarray(A, dtype=float)
+    B = np.asarray(B, dtype=float)
+    if A.shape != B.shape:
+        return float("inf")
+    A_c = A - A.mean(axis=0)
+    B_c = B - B.mean(axis=0)
+    H = A_c.T @ B_c
+    U, _, Vt = np.linalg.svd(H)
+    d = np.sign(np.linalg.det(Vt.T @ U.T))
+    D = np.diag([1.0, 1.0, d])
+    R = Vt.T @ D @ U.T
+    A_rot = A_c @ R.T
+    return float(np.sqrt(np.mean(np.sum((A_rot - B_c) ** 2, axis=1))))
+''', False),
+    ('_engine.backends', True, r'''"""Backend dispatch layer for chemkit.
+
+xtb and MOPAC live in `chemkit.calculators` (single-method ASE calculators).
+PySCF hosts many methods (HF, DFT, MP2, CCSD(T), CASSCF, TDDFT) and gets its
+own subpackage here.
+"""
+''', False),
+    ('_engine.backends.pyscf', True, r'''"""PySCF backend — multi-method (HF, DFT, ...) ab initio entry points.
+
+Public surface:
+    PySCFCalculator              # ASE Calculator for use by every chemkit task
+    run_sp_dft, run_sp_hf        # standalone single-point helpers
+    resolve_dft_tier, DFT_TIERS  # tier presets used by chemkit.calculators
+"""
+from .calculator import PySCFCalculator
+from .dft import (
+    run_sp as run_sp_dft,
+    resolve_tier as resolve_dft_tier,
+    TIERS as DFT_TIERS,
+    DEFAULT_TIER as DFT_DEFAULT_TIER,
+)
+from .hf import (
+    run_sp as run_sp_hf,
+    DEFAULT_BASIS as HF_DEFAULT_BASIS,
+)
+
+__all__ = [
+    "PySCFCalculator",
+    "run_sp_dft",
+    "run_sp_hf",
+    "resolve_dft_tier",
+    "DFT_TIERS",
+    "DFT_DEFAULT_TIER",
+    "HF_DEFAULT_BASIS",
+]
+''', False),
+    ('_engine.backends.pyscf.calculator', False, r'''"""ASE-compatible Calculator backed by PySCF.
+
+Lets every chemkit task that already speaks ASE (opt, freq, binding, scan,
+electrostatics, ...) pick up DFT and HF without per-task plumbing. The
+calculator caches its converged SCF object on the most recent geometry, so
+chained property requests (energy then forces; energy then dipole) avoid
+re-running the SCF.
+
+Warm-start: the converged density matrix from the most recent geometry is
+cached and passed as `dm0` to the next `kernel()` call. ASE driver loops
+(BFGS opt, Vibrations finite-difference Hessian) feed back small-displacement
+geometries, so the prior DM is an excellent initial guess and typically cuts
+the iteration count by 2-3×. If the warm-start fails to converge (rare; can
+happen at large displacements that drag the molecule through a near-
+degeneracy), we automatically fall back to a cold SCF.
+"""
+from __future__ import annotations
+from typing import Optional
+
+import numpy as np
+from ase.calculators.calculator import Calculator, all_changes
+
+from .molecule import build_mol, promote_basis_for_anion
+from .scf import build_mean_field
+
+
+HARTREE_TO_EV = 27.211386245988
+HARTREE_PER_BOHR_TO_EV_PER_ANG = 27.211386245988 / 0.529177210903
+
+
+class PySCFCalculator(Calculator):
+    """ASE Calculator delegating to PySCF for DFT (RKS/UKS) or HF (RHF/UHF).
+
+    Parameters mirror the chemkit CLI knobs. `method` selects the theory layer
+    ('dft' or 'hf'); `xc` is required when `method == 'dft'`.
+    """
+
+    implemented_properties = ["energy", "forces", "dipole"]
+    name = "pyscf"
+
+    def __init__(
+        self,
+        *,
+        method: str = "dft",
+        xc: Optional[str] = None,
+        basis: str = "def2-tzvp",
+        charge: int = 0,
+        multiplicity: int = 1,
+        solvent: Optional[str] = None,
+        grid_level: int = 4,
+        scf_tol: float = 1e-8,
+        max_cycle: Optional[int] = None,
+        density_fit: bool = True,
+        auxbasis: str = "def2-universal-jfit",
+        max_memory_mb: int = 8000,
+        verbose: int = 0,
+    ):
+        super().__init__()
+        method = method.lower()
+        if method not in ("dft", "hf"):
+            raise ValueError(f"PySCFCalculator: unknown method {method!r}")
+        if method == "dft" and not xc:
+            raise ValueError("PySCFCalculator: DFT requires an xc functional.")
+        self._method = method
+        self._xc = xc
+        self._basis = basis
+        self._charge = int(charge)
+        self._multiplicity = int(multiplicity)
+        self._solvent = solvent
+        self._grid_level = int(grid_level)
+        self._scf_tol = float(scf_tol)
+        self._max_cycle = max_cycle if max_cycle is None else int(max_cycle)
+        self._density_fit = bool(density_fit)
+        self._auxbasis = auxbasis
+        self._max_memory_mb = int(max_memory_mb)
+        self._verbose = int(verbose)
+
+        # Auto-promote diffuse basis for anions; record what we actually used.
+        self._basis, self._basis_promoted = promote_basis_for_anion(self._basis, self._charge)
+
+        # Cached converged mean-field; invalidated by ASE when atoms change.
+        self._mol = None
+        self._mf = None
+        self._cached_positions = None
+
+        # Warm-start density matrix from the previous converged SCF.
+        # Keyed on the full (symbols, charge, mult, basis, xc, method, solvent)
+        # tuple: any change invalidates the cached DM. The symbols guard catches
+        # different fragments (shape mismatch); the rest catch the case where
+        # something mutates the calculator's parameters between calls (current
+        # chemkit code doesn't, but the guard is cheap insurance against a
+        # silently-stale DM leaking through if that invariant ever breaks).
+        self._cached_dm = None
+        self._cached_dm_key: Optional[tuple] = None
+
+    # ---- chemkit-side accessors (used by sp.py / electrostatics / frontier) --
+
+    @property
+    def method(self) -> str:
+        return self._method
+
+    @property
+    def functional(self) -> Optional[str]:
+        return self._xc
+
+    @property
+    def basis(self) -> str:
+        return self._basis
+
+    @property
+    def basis_promoted(self) -> bool:
+        return self._basis_promoted
+
+    @property
+    def mean_field(self):
+        """Last converged SCF object (or None if no calculation yet)."""
+        return self._mf
+
+    # ---- ASE plumbing ------------------------------------------------------
+
+    def calculate(self, atoms=None, properties=("energy",), system_changes=all_changes):
+        super().calculate(atoms, properties, system_changes)
+
+        positions = np.asarray(self.atoms.get_positions(), dtype=float)
+        need_scf = (
+            self._mf is None
+            or self._cached_positions is None
+            or not np.array_equal(positions, self._cached_positions)
+        )
+        if need_scf:
+            self._mol = build_mol(
+                self.atoms,
+                basis=self._basis,
+                charge=self._charge,
+                multiplicity=self._multiplicity,
+                max_memory_mb=self._max_memory_mb,
+                verbose=self._verbose,
+            )
+            self._mf = build_mean_field(
+                self._mol,
+                method=self._method,
+                xc=self._xc,
+                grid_level=self._grid_level,
+                scf_tol=self._scf_tol,
+                max_cycle=self._max_cycle,
+                density_fit=self._density_fit,
+                auxbasis=self._auxbasis,
+                solvent=self._solvent,
+            )
+
+            # Warm-start: pass the previous converged density as initial guess
+            # iff every cache-key field matches. Symbols guard against shape
+            # mismatch; the rest guard against a stale DM if any calculator
+            # parameter mutated since the cache was written.
+            current_key = (
+                tuple(self.atoms.get_chemical_symbols()),
+                self._charge,
+                self._multiplicity,
+                self._basis,
+                self._xc,
+                self._method,
+                self._solvent,
+            )
+            dm0 = self._cached_dm if self._cached_dm_key == current_key else None
+
+            energy_hartree = _run_scf_with_warm_start(self._mf, dm0)
+
+            self._cached_energy_eV = energy_hartree * HARTREE_TO_EV
+            self._cached_positions = positions.copy()
+            self._cached_forces = None
+            self._cached_dipole = None
+
+            # Cache the converged density for the next geometry's warm start.
+            # Only when convergence succeeded — a non-converged DM would
+            # poison the next step.
+            if getattr(self._mf, "converged", False):
+                try:
+                    self._cached_dm = self._mf.make_rdm1()
+                    self._cached_dm_key = current_key
+                except Exception:
+                    self._cached_dm = None
+                    self._cached_dm_key = None
+            else:
+                self._cached_dm = None
+                self._cached_dm_key = None
+
+        self.results["energy"] = self._cached_energy_eV
+
+        if "forces" in properties:
+            if self._cached_forces is None:
+                grad = self._mf.nuc_grad_method().kernel()  # Hartree / Bohr
+                self._cached_forces = -np.asarray(grad) * HARTREE_PER_BOHR_TO_EV_PER_ANG
+            self.results["forces"] = self._cached_forces
+
+        if "dipole" in properties:
+            if self._cached_dipole is None:
+                try:
+                    self._cached_dipole = np.asarray(
+                        self._mf.dip_moment(unit="Debye", verbose=0), dtype=float
+                    )
+                except Exception:
+                    self._cached_dipole = np.zeros(3)
+            self.results["dipole"] = self._cached_dipole
+
+
+def _run_scf_with_warm_start(mf, dm0):
+    """Run mf.kernel() with the previous converged DM as initial guess; if it
+    fails to converge (or raises), fall back to a cold SCF.
+
+    Two failure modes are handled:
+      1. dm0 has wrong shape (e.g. spin-restricted vs unrestricted mismatch
+         after a cached-from-different-method run leaked through). kernel()
+         raises ValueError on shape mismatch — caught, retried cold.
+      2. dm0 leads to non-convergence (rare; usually only at large
+         displacements through near-degeneracies). `mf.converged` is False;
+         we redo from atomic guess. Net cost: the wasted partial SCF.
+    """
+    if dm0 is None:
+        return float(mf.kernel())
+    try:
+        energy = float(mf.kernel(dm0=dm0))
+    except Exception:
+        # Shape mismatch or some other dm0-induced failure — drop it and
+        # let PySCF build the default atomic-density guess.
+        return float(mf.kernel())
+    if getattr(mf, "converged", False):
+        return energy
+    # Warm start converged to non-convergence; retry cold.
+    return float(mf.kernel())
+''', False),
+    ('_engine.backends.pyscf.dft', False, r'''"""DFT entry point for the PySCF backend.
+
+Exposes `run_sp(atoms, ...)` returning a chemkit-shape result dict.
+"""
+from __future__ import annotations
+from typing import Any, Dict, Optional
+
+from .molecule import build_mol, promote_basis_for_anion
+from .scf import build_mean_field, pack_scf_result
+
+
+# Tier table: (xc, basis, grid_level, auxbasis).
+# Functional strings use libxc names (PySCF accepts both libxc and its own
+# aliases — libxc is the safer bet for portability).
+# wB97X-V / wB97M-V use VV10 nonlocal correlation, native in PySCF — no add-on.
+# wB97X-D3BJ would be a hair better at the standard tier but requires
+# pyscf-dispersion, which currently fails to load on Python 3.13.
+TIERS = {
+    "fast":     {"xc": "r2scan",  "basis": "def2-svp",   "grid": 3, "aux": "def2-universal-jfit",
+                 "scf_tol": 1e-7,  "max_cycle": 80},
+    "standard": {"xc": "wb97x_v", "basis": "def2-tzvp",  "grid": 4, "aux": "def2-universal-jfit",
+                 "scf_tol": 1e-8,  "max_cycle": 150},
+    "accurate": {"xc": "wb97m_v", "basis": "def2-qzvpp", "grid": 5, "aux": "def2-universal-jfit",
+                 "scf_tol": 1e-10, "max_cycle": 300},
+}
+DEFAULT_TIER = "standard"
+
+
+def resolve_tier(
+    tier: Optional[str],
+    xc: Optional[str],
+    basis: Optional[str],
+) -> Dict[str, Any]:
+    """Merge a tier preset with explicit overrides. Overrides win."""
+    tier_name = (tier or DEFAULT_TIER).lower()
+    if tier_name not in TIERS:
+        raise ValueError(f"Unknown DFT tier {tier!r}. Choose from {sorted(TIERS)}.")
+    cfg = dict(TIERS[tier_name])
+    cfg["tier"] = tier_name
+    if xc:
+        cfg["xc"] = xc
+    if basis:
+        cfg["basis"] = basis
+    return cfg
+
+
+def run_sp(
+    atoms,
+    *,
+    tier: Optional[str] = None,
+    xc: Optional[str] = None,
+    basis: Optional[str] = None,
+    charge: int = 0,
+    multiplicity: int = 1,
+    solvent: Optional[str] = None,
+    max_memory_mb: int = 8000,
+) -> Dict[str, Any]:
+    """Run a DFT single-point and return the per-method `code_specific` block
+    plus the converged total energy in Hartree.
+
+    The task layer (chemkit.tasks.sp) wraps this into the shared chemkit
+    result schema; this function stays backend-shaped so it can be reused by
+    `opt`, `freq`, `binding`, etc. without round-tripping JSON.
+    """
+    cfg = resolve_tier(tier, xc, basis)
+    used_basis, promoted = promote_basis_for_anion(cfg["basis"], charge)
+    cfg["basis"] = used_basis
+
+    mol = build_mol(
+        atoms,
+        basis=cfg["basis"],
+        charge=charge,
+        multiplicity=multiplicity,
+        max_memory_mb=max_memory_mb,
+    )
+
+    mf = build_mean_field(
+        mol,
+        method="dft",
+        xc=cfg["xc"],
+        grid_level=cfg["grid"],
+        scf_tol=cfg["scf_tol"],
+        max_cycle=cfg["max_cycle"],
+        auxbasis=cfg["aux"],
+        solvent=solvent,
+    )
+
+    energy_hartree = float(mf.kernel())
+
+    extras = pack_scf_result(mf)
+    extras.update({
+        "tier": cfg["tier"],
+        "functional": cfg["xc"],
+        "basis": cfg["basis"],
+        "grid_level": cfg["grid"],
+        "auxbasis": cfg["aux"],
+        "scf_tol": cfg["scf_tol"],
+        "scf_max_cycle": cfg["max_cycle"],
+        "density_fit": True,
+        "solvent_model": ("ddCOSMO" if solvent else None),
+    })
+
+    warnings = []
+    if promoted:
+        warnings.append(
+            f"Anion detected (charge={charge}); basis promoted to {used_basis} "
+            f"to add diffuse functions."
+        )
+    if not extras.get("scf_converged", False):
+        warnings.append("DFT SCF did not converge — energy is from the last iteration.")
+
+    return {
+        "energy_hartree": energy_hartree,
+        "extras": extras,
+        "warnings": warnings,
+    }
+''', False),
+    ('_engine.backends.pyscf.hf', False, r'''"""Hartree-Fock entry point for the PySCF backend.
+
+HF has no functional or tier — just a basis. Shape mirrors `dft.run_sp` so the
+task layer can dispatch uniformly.
+"""
+from __future__ import annotations
+from typing import Any, Dict, Optional
+
+from .molecule import build_mol, promote_basis_for_anion
+from .scf import build_mean_field, pack_scf_result
+
+
+DEFAULT_BASIS = "def2-tzvp"
+
+# HF has no functional, but convergence still varies with how tight you want
+# the answer. Same scf_tol/max_cycle ladder as DFT so chemkit's --tier flag
+# means the same thing across methods.
+HF_TIERS = {
+    "fast":     {"scf_tol": 1e-7,  "max_cycle": 80},
+    "standard": {"scf_tol": 1e-8,  "max_cycle": 150},
+    "accurate": {"scf_tol": 1e-10, "max_cycle": 300},
+}
+DEFAULT_TIER = "standard"
+
+
+def run_sp(
+    atoms,
+    *,
+    tier: Optional[str] = None,
+    basis: Optional[str] = None,
+    charge: int = 0,
+    multiplicity: int = 1,
+    solvent: Optional[str] = None,
+    max_memory_mb: int = 8000,
+) -> Dict[str, Any]:
+    """Run an HF single-point and return {energy_hartree, extras, warnings}."""
+    chosen_basis = basis or DEFAULT_BASIS
+    used_basis, promoted = promote_basis_for_anion(chosen_basis, charge)
+    tier_name = (tier or DEFAULT_TIER).lower()
+    if tier_name not in HF_TIERS:
+        raise ValueError(f"Unknown HF tier {tier!r}. Choose from {sorted(HF_TIERS)}.")
+    tcfg = HF_TIERS[tier_name]
+
+    mol = build_mol(
+        atoms,
+        basis=used_basis,
+        charge=charge,
+        multiplicity=multiplicity,
+        max_memory_mb=max_memory_mb,
+    )
+
+    mf = build_mean_field(
+        mol,
+        method="hf",
+        scf_tol=tcfg["scf_tol"],
+        max_cycle=tcfg["max_cycle"],
+        solvent=solvent,
+    )
+
+    energy_hartree = float(mf.kernel())
+
+    extras = pack_scf_result(mf)
+    extras.update({
+        "tier": tier_name,
+        "basis": used_basis,
+        "scf_tol": tcfg["scf_tol"],
+        "scf_max_cycle": tcfg["max_cycle"],
+        "density_fit": True,
+        "solvent_model": ("ddCOSMO" if solvent else None),
+    })
+
+    warnings = []
+    if promoted:
+        warnings.append(
+            f"Anion detected (charge={charge}); basis promoted to {used_basis} "
+            f"to add diffuse functions."
+        )
+    if not extras.get("scf_converged", False):
+        warnings.append("HF SCF did not converge — energy is from the last iteration.")
+
+    return {
+        "energy_hartree": energy_hartree,
+        "extras": extras,
+        "warnings": warnings,
+    }
+''', False),
+    ('_engine.backends.pyscf.molecule', False, r'''"""ASE Atoms -> pyscf.gto.Mole construction with chemkit defaults.
+
+Responsibilities:
+- Convert ASE Atoms into a pyscf.gto.Mole
+- Handle charge / spin (PySCF wants nelec_alpha - nelec_beta, not multiplicity)
+- Auto-promote basis sets for anions (diffuse functions matter a lot)
+- Centralize the "pyscf not installed" error
+"""
+from __future__ import annotations
+from typing import Tuple
+
+
+# Basis sets that should be promoted to their diffuse variant for anions.
+# Keep the mapping small and explicit; users can override with --basis.
+_DIFFUSE_PROMOTION = {
+    "def2-svp": "def2-svpd",
+    "def2-tzvp": "def2-tzvpd",
+    "def2-tzvpp": "def2-tzvppd",
+    "def2-qzvp": "def2-qzvpd",
+    "def2-qzvpp": "def2-qzvppd",
+    "cc-pvdz": "aug-cc-pvdz",
+    "cc-pvtz": "aug-cc-pvtz",
+    "cc-pvqz": "aug-cc-pvqz",
+}
+
+
+def _require_pyscf():
+    try:
+        import pyscf  # noqa: F401
+        from pyscf import gto  # noqa: F401
+        return gto
+    except ImportError as e:
+        raise ImportError(
+            "PySCF is not installed. Install it with:\n"
+            "    pip install pyscf\n"
+            "Optional dispersion add-on:\n"
+            "    pip install pyscf-dispersion"
+        ) from e
+
+
+def promote_basis_for_anion(basis: str, charge: int) -> Tuple[str, bool]:
+    """If `charge < 0`, swap to a diffuse-augmented basis when one is known.
+
+    Returns (resolved_basis, was_promoted).
+    """
+    if charge >= 0:
+        return basis, False
+    promoted = _DIFFUSE_PROMOTION.get(basis.lower())
+    if promoted is None:
+        return basis, False
+    return promoted, True
+
+
+def build_mol(
+    atoms,
+    *,
+    basis: str,
+    charge: int = 0,
+    multiplicity: int = 1,
+    max_memory_mb: int = 8000,
+    verbose: int = 0,
+):
+    """Build a pyscf.gto.Mole from an ASE Atoms object.
+
+    PySCF uses `spin = 2S = (n_alpha - n_beta)`, not the chemistry-conventional
+    multiplicity (2S+1). We translate here so the rest of chemkit stays
+    consistent with xtb/MOPAC's `--mult` semantics.
+    """
+    gto = _require_pyscf()
+
+    if multiplicity < 1:
+        raise ValueError(f"multiplicity must be >= 1, got {multiplicity}")
+    spin = multiplicity - 1  # PySCF convention
+
+    atom_spec = [
+        (sym, tuple(pos))
+        for sym, pos in zip(atoms.get_chemical_symbols(), atoms.get_positions())
+    ]
+
+    mol = gto.M(
+        atom=atom_spec,
+        basis=basis,
+        charge=int(charge),
+        spin=int(spin),
+        unit="Angstrom",
+        max_memory=int(max_memory_mb),
+        verbose=int(verbose),
+    )
+    return mol
+''', False),
+    ('_engine.backends.pyscf.scf', False, r'''"""Mean-field machinery shared by every PySCF method.
+
+- Pick RKS/UKS (or RHF/UHF) based on multiplicity
+- Attach an implicit solvent model (ddCOSMO by default)
+- Enable density fitting (RI-J) with a matching auxiliary basis
+- Pack a converged SCF object into the chemkit JSON schema
+"""
+from __future__ import annotations
+from typing import Any, Dict, Optional
+
+
+# Maps chemkit's friendly solvent names to PySCF's solvent presets.
+# PySCF's pcm/ddCOSMO module knows these directly via `.eps = ...`; we keep
+# a dielectric table here so the interface mirrors the xtb/MOPAC backends.
+PYSCF_SOLVENT_EPS = {
+    "water": 78.3553, "h2o": 78.3553,
+    "methanol": 32.613, "meoh": 32.613,
+    "ethanol": 24.852, "etoh": 24.852,
+    "acetone": 20.493,
+    "acetonitrile": 35.688, "mecn": 35.688,
+    "dmso": 46.826,
+    "thf": 7.4257,
+    "dcm": 8.93, "ch2cl2": 8.93,
+    "chloroform": 4.7113, "chcl3": 4.7113,
+    "toluene": 2.3741,
+    "benzene": 2.2706,
+    "hexane": 1.8819,
+    "ether": 4.2400,
+    "octanol": 9.8629, "1-octanol": 9.8629,
+}
+
+
+def build_mean_field(
+    mol,
+    *,
+    method: str = "dft",
+    xc: Optional[str] = None,
+    grid_level: int = 3,
+    scf_tol: float = 1e-8,
+    max_cycle: Optional[int] = None,
+    density_fit: bool = True,
+    auxbasis: str = "def2-universal-jfit",
+    solvent: Optional[str] = None,
+):
+    """Construct a converged-or-ready-to-converge SCF/KS object.
+
+    method: 'dft' or 'hf'
+    xc: libxc functional string when method == 'dft' (e.g. 'wb97x_d3bj')
+    """
+    method = method.lower()
+    is_open_shell = mol.spin != 0
+
+    if method == "dft":
+        from pyscf import dft as dft_mod
+        if xc is None:
+            raise ValueError("DFT requires an xc functional.")
+        mf = dft_mod.UKS(mol) if is_open_shell else dft_mod.RKS(mol)
+        mf.xc = xc
+        mf.grids.level = int(grid_level)
+    elif method == "hf":
+        from pyscf import scf as scf_mod
+        mf = scf_mod.UHF(mol) if is_open_shell else scf_mod.RHF(mol)
+    else:
+        raise ValueError(f"Unknown PySCF method {method!r}")
+
+    if density_fit:
+        mf = mf.density_fit(auxbasis=auxbasis)
+
+    if solvent:
+        mf = attach_solvent(mf, solvent)
+
+    mf.conv_tol = float(scf_tol)
+    if max_cycle is not None:
+        mf.max_cycle = int(max_cycle)
+    return mf
+
+
+def attach_solvent(mf, solvent_name: str, model: str = "ddcosmo"):
+    """Wrap an SCF object with an implicit solvent model.
+
+    Defaults to ddCOSMO — fastest of PySCF's PCM family and well-tested.
+    SMD (free-energy-of-solvation parameterization) is available via PySCF's
+    smd module; expose it later if/when a `--solvent-model` flag is added.
+    """
+    eps = PYSCF_SOLVENT_EPS.get(solvent_name.lower())
+    if eps is None:
+        raise ValueError(
+            f"PySCF backend: unknown solvent {solvent_name!r}. "
+            f"Known: {sorted(PYSCF_SOLVENT_EPS)}"
+        )
+
+    if model.lower() == "ddcosmo":
+        from pyscf import solvent as solv_mod
+        mf = solv_mod.ddCOSMO(mf)
+        mf.with_solvent.eps = eps
+    elif model.lower() == "smd":
+        from pyscf.solvent import smd as smd_mod
+        mf = smd_mod.SMD(mf)
+        mf.with_solvent.solvent = solvent_name.lower()
+    else:
+        raise ValueError(f"Unknown solvent model {model!r} (use ddcosmo or smd)")
+    return mf
+
+
+def pack_scf_result(mf) -> Dict[str, Any]:
+    """Extract the standard chemkit per-method block from a converged SCF.
+
+    Returns the contents that go under `code_specific` — HOMO/LUMO, dipole,
+    SCF iteration count, dispersion contribution (if applicable). The caller
+    wraps this in `base_result` + `energy_block_from_eV`.
+    """
+    import numpy as np
+
+    HARTREE_TO_EV = 27.211386245988
+
+    out: Dict[str, Any] = {
+        "scf_converged": bool(getattr(mf, "converged", False)),
+        "scf_cycles": int(getattr(mf, "cycles", 0) or 0),
+    }
+
+    # Orbital eigenvalues. For UKS/UHF, mo_energy is a (2, n_mo) array or a
+    # 2-tuple — α and β channels. The reported HOMO is the highest occupied
+    # across BOTH channels, and LUMO is the lowest unoccupied across both;
+    # the gap is the difference. (Previously the α channel was reported
+    # alone, which is wrong whenever β HOMO sits above α HOMO — common in
+    # high-spin systems with significant exchange splitting.)
+    try:
+        mo_energy = mf.mo_energy
+        mo_occ = mf.mo_occ
+        is_uks = isinstance(mo_energy, (list, tuple)) or (
+            hasattr(mo_energy, "ndim") and mo_energy.ndim == 2
+        )
+        out["spin_unrestricted"] = bool(is_uks)
+
+        if is_uks:
+            e_a = np.asarray(mo_energy[0])
+            e_b = np.asarray(mo_energy[1])
+            occ_a = np.asarray(mo_occ[0])
+            occ_b = np.asarray(mo_occ[1])
+            # Per-channel arrays for the frontier task; consumers that need
+            # spin-resolved gaps can use these directly.
+            out["orbital_energies_eV"] = {
+                "alpha": (e_a * HARTREE_TO_EV).tolist(),
+                "beta": (e_b * HARTREE_TO_EV).tolist(),
+            }
+            out["orbital_occupations"] = {
+                "alpha": occ_a.tolist(),
+                "beta": occ_b.tolist(),
+            }
+            # Merge channels with occupation 1.0 per electron and find HOMO/LUMO
+            # in the merged set. For UHF, occupied means occ > 0.5 (each channel
+            # contributes 0 or 1).
+            occ_thresh = 0.5
+            homo_candidates = []
+            lumo_candidates = []
+            for e, occ in ((e_a, occ_a), (e_b, occ_b)):
+                occ_idx = np.where(occ > occ_thresh)[0]
+                vir_idx = np.where(occ < occ_thresh)[0]
+                if occ_idx.size:
+                    homo_candidates.append(float(e[occ_idx[-1]]) * HARTREE_TO_EV)
+                if vir_idx.size:
+                    lumo_candidates.append(float(e[vir_idx[0]]) * HARTREE_TO_EV)
+            if homo_candidates and lumo_candidates:
+                homo = max(homo_candidates)
+                lumo = min(lumo_candidates)
+                out["homo_eV"] = homo
+                out["lumo_eV"] = lumo
+                out["homo_lumo_gap_eV"] = lumo - homo
+        else:
+            e_a = np.asarray(mo_energy)
+            occ_a = np.asarray(mo_occ)
+            out["orbital_energies_eV"] = (e_a * HARTREE_TO_EV).tolist()
+            out["orbital_occupations"] = occ_a.tolist()
+            occ_idx = np.where(occ_a > 1e-6)[0]
+            vir_idx = np.where(occ_a < 1e-6)[0]
+            if occ_idx.size and vir_idx.size:
+                homo = float(e_a[occ_idx[-1]]) * HARTREE_TO_EV
+                lumo = float(e_a[vir_idx[0]]) * HARTREE_TO_EV
+                out["homo_eV"] = homo
+                out["lumo_eV"] = lumo
+                out["homo_lumo_gap_eV"] = lumo - homo
+    except Exception:
+        pass
+
+    # Dipole moment (Debye); cheap, always available post-SCF.
+    # Convention matches chemkit's xtb/mopac extras: `dipole_debye` is the
+    # scalar magnitude (consumed by tasks like electrostatics), the vector
+    # lives at `dipole_vector_debye`.
+    try:
+        d = mf.dip_moment(unit="Debye", verbose=0)
+        out["dipole_vector_debye"] = [float(x) for x in d]
+        out["dipole_debye"] = float(np.linalg.norm(d))
+    except Exception:
+        pass
+
+    # Mulliken partial charges — needed by the electrostatics/fukui tasks.
+    try:
+        # mulliken_pop returns (pop, charges); charges length = n_atoms.
+        _, q_mulliken = mf.mulliken_pop(verbose=0)
+        out["partial_charges"] = [float(x) for x in q_mulliken]
+        out["partial_charges_scheme"] = "Mulliken (PySCF)"
+    except Exception:
+        pass
+
+    return out
+''', False),
+]
+
+_register_embedded(_EMBEDDED)
+
+
+# --- launcher ---------------------------------------------------------------
+from _engine.cli import main as _main  # noqa: E402
+
+if __name__ == "__main__":
+    _sys.exit(_main(["pka", *_sys.argv[1:]]))

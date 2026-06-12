@@ -1,50 +1,50 @@
 #!/usr/bin/env python3
-"""Generate self-contained skill folders (Layout B) from src/chemkit.
+"""Generate self-contained, SINGLE-FILE skill scripts.
 
-Each skill becomes skills/<name>/ containing:
-  SKILL.md            - the doc (from skills/<name>.md) + a "Running this skill" section
-  <name>.py           - standalone entry point: calls _engine.cli.main(["<task>", ...])
+Each skill becomes skills/<name>/ containing exactly:
+  SKILL.md            - the doc + a "Running this skill" section
+  <name>.py           - ONE self-contained script: a bootstrap that registers the
+                        bundled engine modules into sys.modules under their real
+                        names, the embedded module sources, and a launcher that
+                        calls the chemkit CLI pinned to this skill's subcommand.
   requirements.txt    - pip deps for this skill + external-binary notes
-  _engine/            - folder-local copy of ONLY the code this skill needs,
-                        with all package-relative imports rewritten to `_engine.*`
 
-The engine is bundled per-skill so the folder runs with nothing outside it
-(no src/chemkit on the path). The per-skill <name>.py reuses the existing CLI
-`main()` pinned to one subcommand, so the argument contract is preserved
-verbatim rather than re-implemented.
+There is NO _engine/ directory: the engine is inlined into <name>.py. Module
+identity is preserved (each engine module keeps its own namespace via a lazy
+in-memory import loader), so tasks that share top-level names (every task has
+run(); several share _run_mopac, etc.) do NOT collide — `opt.run` and
+`freq.run` stay distinct.
+
+Source of truth: a chemkit source tree. Resolution order:
+  1. $CHEMKIT_SRC (a path to a src/chemkit tree), if set;
+  2. ./src/chemkit in the repo, if present;
+  3. otherwise restored from git ($CHEMKIT_SRC_REF, default HEAD) into a temp
+     dir — src/chemkit was removed from the working tree once skills became
+     self-contained, so this is the normal path.
+Package-relative imports are rewritten to folder-local `_engine.*` names and the
+modules are embedded (readable raw blocks; per-module base64 only if a source
+contains both triple-quote styles).
 
 Run from the repo root:  python tools/build_skill_folders.py
 """
 from __future__ import annotations
 
+import base64
 import os
 import re
 import shutil
+import subprocess
 import sys
+import tempfile
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(REPO, "src", "chemkit")
 SKILLS = os.path.join(REPO, "skills")
 
-# --- shared infra always bundled (relative to src/chemkit) ------------------
-SHARED_ALWAYS = [
-    "__init__.py",
-    "io.py",
-    "schema.py",
-    "calculators.py",
-    "cli.py",
-    "tasks/__init__.py",
-    "tasks/_mopac_parsers.py",
-]
-BACKENDS_FILES = [
-    "backends/__init__.py",
-    "backends/pyscf/__init__.py",
-    "backends/pyscf/calculator.py",
-    "backends/pyscf/dft.py",
-    "backends/pyscf/hf.py",
-    "backends/pyscf/molecule.py",
-    "backends/pyscf/scf.py",
-]
+# The engine source of truth. src/chemkit was removed from the working tree once
+# the skills became self-contained, so by default we restore it from git into a
+# temp dir. Override with CHEMKIT_SRC=/path/to/src/chemkit to use a live tree.
+SRC_ENV = os.environ.get("CHEMKIT_SRC")
+SRC_GIT_REF = os.environ.get("CHEMKIT_SRC_REF", "HEAD")
 
 # --- per-skill manifest -----------------------------------------------------
 # name: (task subcommand, [task modules in transitive closure],
@@ -72,94 +72,229 @@ SKILLS_MANIFEST = {
     "conformational_analysis": ("scan",          ["scan", "confsearch", "opt"],                   True,  False, True),
 }
 
-# --- import rewriting -------------------------------------------------------
-# Order matters: most specific patterns first.
-REWRITES = [
-    # tasks importing sibling tasks: `from .opt import X`, `from ._mopac_parsers import X`,
-    # `from .confsearch import X`  ->  `from _engine.tasks.opt import X`
+BACKENDS_RELPATHS = [
+    "backends/__init__.py",
+    "backends/pyscf/__init__.py",
+    "backends/pyscf/calculator.py",
+    "backends/pyscf/dft.py",
+    "backends/pyscf/hf.py",
+    "backends/pyscf/molecule.py",
+    "backends/pyscf/scf.py",
+]
+# Engine root files (always bundled).
+ROOT_RELPATHS = ["__init__.py", "io.py", "schema.py", "calculators.py", "cli.py"]
+TASKS_ALWAYS = ["tasks/__init__.py", "tasks/_mopac_parsers.py"]
+
+SENTINEL = "###@@@CHEMKIT_MODULE_BOUNDARY@@@###"
+
+
+# ---------------------------------------------------------------------------
+# Import rewriting: package-relative imports -> folder-local `_engine.*`.
+# (Same scheme used by the earlier _engine bundling; the embedded modules are
+# registered under exactly these `_engine.*` names by the bootstrap.)
+# ---------------------------------------------------------------------------
+TASK_REWRITES = [
     (re.compile(r"\bfrom \.([a-z_][a-z0-9_]*) import"), r"from _engine.tasks.\1 import"),
-    # `from . import opt`  ->  `from _engine.tasks import opt`
     (re.compile(r"\bfrom \. import\b"), "from _engine.tasks import"),
-    # two-dot infra: `from ..calculators import` -> `from _engine.calculators import`
-    #                `from ..backends.pyscf...`   -> `from _engine.backends.pyscf...`
     (re.compile(r"\bfrom \.\.([a-z_][a-z0-9_.]*)"), r"from _engine.\1"),
 ]
-# Root-level modules (cli.py, calculators.py, __init__.py, resolve.py) live at
-# _engine/ root, so their relative imports are single-dot and root-relative:
-#   `from . import __version__`        -> `from _engine import __version__`
-#   `from .io import ...`              -> `from _engine.io import ...`
-#   `from .tasks import opt`           -> `from _engine.tasks import opt`
-#   `from .tasks.sp import _x`         -> `from _engine.tasks.sp import _x`
-#   `from .backends.pyscf import ...`  -> `from _engine.backends.pyscf import ...`
 ROOT_REWRITES = [
-    # `from .<dotted.path> import ...`  (covers .io, .tasks.sp, .backends.pyscf, ...)
     (re.compile(r"\bfrom \.([A-Za-z_][\w.]*) import"), r"from _engine.\1 import"),
-    # `from . import name`
     (re.compile(r"\bfrom \. import\b"), "from _engine import"),
 ]
+ROOT_FILES = {"__init__.py", "io.py", "schema.py", "calculators.py", "cli.py",
+              "resolve.py"}
 
 
-def _rewrite(text: str, *, is_root: bool) -> str:
-    """Rewrite package-relative imports to folder-local _engine.* imports.
-
-    `is_root` selects the ruleset for files that sit at _engine/ root
-    (currently only cli.py and __init__.py); everything under tasks/ uses the
-    task ruleset.
-    """
-    rules = ROOT_REWRITES if is_root else REWRITES
+def _rewrite(text: str, *, rules) -> str:
     out = []
     for line in text.splitlines(keepends=True):
-        stripped = line.lstrip()
-        # never touch __future__ / stdlib / third-party imports
-        if stripped.startswith("from __future__"):
+        if line.lstrip().startswith("from __future__"):
             out.append(line)
             continue
-        new = line
         for pat, repl in rules:
-            new = pat.sub(repl, new)
-        out.append(new)
+            line = pat.sub(repl, line)
+        out.append(line)
     return "".join(out)
 
 
-def _copy_engine_file(rel_src: str, engine_dir: str, *, is_root: bool,
-                      no_rewrite: bool = False):
-    src_path = os.path.join(SRC, rel_src)
-    dst_path = os.path.join(engine_dir, rel_src)
-    os.makedirs(os.path.dirname(dst_path), exist_ok=True)
-    with open(src_path) as f:
-        text = f.read()
-    # Files under backends/ keep their original SAME-PACKAGE relative imports
-    # (`from .calculator import ...`) — they are siblings inside
-    # _engine/backends/pyscf/, so those imports are already correct and must
-    # NOT be rewritten to _engine.*.
-    if not no_rewrite:
-        text = _rewrite(text, is_root=is_root)
-    with open(dst_path, "w") as f:
-        f.write(text)
+def _engine_src_dir() -> str:
+    """Return a path to a chemkit source tree, restoring from git if needed."""
+    if SRC_ENV and os.path.isdir(SRC_ENV):
+        return SRC_ENV
+    live = os.path.join(REPO, "src", "chemkit")
+    if os.path.isdir(live):
+        return live
+    # Restore from git (src/chemkit was deleted once skills went self-contained).
+    tmp = tempfile.mkdtemp(prefix="chemkit_src_")
+    subprocess.run(
+        "git archive %s src/chemkit | tar -x -C %s" % (SRC_GIT_REF, tmp),
+        shell=True, cwd=REPO, check=True,
+    )
+    restored = os.path.join(tmp, "src", "chemkit")
+    if not os.path.isdir(restored):
+        sys.exit(
+            "Could not restore src/chemkit from git ref %r. Set CHEMKIT_SRC to a "
+            "chemkit source tree, or CHEMKIT_SRC_REF to a ref that contains it."
+            % SRC_GIT_REF
+        )
+    return restored
 
 
-def _entry_script(name: str, task: str) -> str:
-    return f'''#!/usr/bin/env python3
-"""Standalone entry point for the `{name}` skill.
+# relpath (e.g. "tasks/opt.py") -> source text (rewritten to _engine.*)
+def collect_module_sources() -> dict:
+    src_dir = _engine_src_dir()
+    sources: dict[str, str] = {}
+    for root, _dirs, files in os.walk(src_dir):
+        for fn in files:
+            if not fn.endswith(".py"):
+                continue
+            abspath = os.path.join(root, fn)
+            rel = os.path.relpath(abspath, src_dir)
+            with open(abspath) as f:
+                text = f.read()
+            # backends/* keep their same-package `from .x` imports (siblings
+            # inside _engine.backends.pyscf) — do NOT rewrite them.
+            if rel.startswith("backends" + os.sep) or rel.startswith("backends/"):
+                pass
+            elif rel.startswith("tasks" + os.sep) or rel.startswith("tasks/"):
+                text = _rewrite(text, rules=TASK_REWRITES)
+            elif os.path.basename(rel) in ROOT_FILES:
+                text = _rewrite(text, rules=ROOT_REWRITES)
+            sources[rel.replace(os.sep, "/")] = text
+    return sources
 
-Self-contained: imports only the bundled `_engine` package in this folder, so
-this folder runs with nothing else on the path. Delegates to the chemkit CLI
-pinned to the `{task}` subcommand, preserving the full argument contract.
 
-Usage:  python {name}.py [args...]      (see --help)
+def _relpath_to_modname(rel: str) -> str:
+    """tasks/opt.py -> _engine.tasks.opt ; __init__.py -> _engine ;
+    backends/pyscf/__init__.py -> _engine.backends.pyscf"""
+    no_ext = rel[:-3] if rel.endswith(".py") else rel
+    parts = no_ext.split("/")
+    if parts[-1] == "__init__":
+        parts = parts[:-1]
+    return ".".join(["_engine", *parts]) if parts else "_engine"
+
+
+def _is_package(rel: str) -> bool:
+    return os.path.basename(rel) == "__init__.py"
+
+
+# ---------------------------------------------------------------------------
+# Single-file emission
+# ---------------------------------------------------------------------------
+BOOTSTRAP = '''#!/usr/bin/env python3
+"""Self-contained `{name}` skill — chemistry engine inlined.
+
+This single file bundles everything the `{name}` skill needs. It registers the
+embedded engine modules into sys.modules under their real names (preserving each
+module's namespace, so tasks that share function names like run()/_run_mopac do
+NOT collide), then runs the chemkit CLI pinned to the `{task}` subcommand.
+
+Run standalone:  python {name}.py --help
 """
-import os
-import sys
+import base64 as _b64
+import importlib.abc as _iabc
+import importlib.machinery as _imach
+import sys as _sys
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Lazy in-memory loader: the embedded module sources are exec'd by Python's
+# normal import machinery ON FIRST IMPORT, so dependency order is driven by the
+# actual `import` statements (not by us). Each module keeps its own namespace,
+# so tasks that share top-level names (run(), _run_mopac, ...) never collide.
+class _EmbeddedFinder(_iabc.MetaPathFinder, _iabc.Loader):
+    def __init__(self, modules):
+        # name -> (is_package, source_text)
+        self._mods = {{}}
+        for modname, is_pkg, payload, is_b64 in modules:
+            src = _b64.b64decode(payload).decode("utf-8") if is_b64 else payload
+            self._mods[modname] = (is_pkg, src)
 
-from _engine.cli import main  # noqa: E402
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname not in self._mods:
+            return None
+        is_pkg, _src = self._mods[fullname]
+        return _imach.ModuleSpec(fullname, self, is_package=is_pkg)
+
+    def create_module(self, spec):
+        return None  # default module creation
+
+    def exec_module(self, module):
+        is_pkg, src = self._mods[module.__name__]
+        if is_pkg:
+            # Mark as a package so submodule + relative imports resolve.
+            module.__path__ = []
+        exec(compile(src, "<embedded:%s>" % module.__name__, "exec"),
+             module.__dict__)
+
+
+def _register_embedded(_MODULES):
+    _sys.meta_path.insert(0, _EmbeddedFinder(_MODULES))
+
+
+'''
+
+LAUNCHER = '''
+
+# --- launcher ---------------------------------------------------------------
+from _engine.cli import main as _main  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(main(["{task}", *sys.argv[1:]]))
+    _sys.exit(_main(["{task}", *_sys.argv[1:]]))
 '''
 
 
+def _module_entry(modname: str, is_pkg: bool, src: str) -> str:
+    # Emit an embedded-source entry, preferring a READABLE raw triple-quoted
+    # block. Pick whichever triple-quote delimiter the source does NOT contain
+    # (triple-double vs triple-single); fall back to base64 only in the rare
+    # case the source contains BOTH, or ends in a backslash (raw strings can't).
+    # Engine modules use docstrings but never both quote styles, so the readable
+    # path is taken for every module in practice.
+    can_dq = '"""' not in src
+    can_sq = "'''" not in src
+    trailing_backslash = src.endswith("\\")
+    if trailing_backslash or (not can_dq and not can_sq):
+        payload = repr(base64.b64encode(src.encode()).decode())
+        return f"    ({modname!r}, {is_pkg!r}, {payload}, True),\n"
+    delim = '"""' if can_dq else "'''"
+    return f'    ({modname!r}, {is_pkg!r}, r{delim}{src}{delim}, False),\n'
+
+
+def _emit_single_file(name: str, task: str, relpaths: list, sources: dict) -> str:
+    parts = [BOOTSTRAP.format(name=name, task=task)]
+    parts.append("_EMBEDDED = [\n")
+    n = 0
+    for rel in relpaths:
+        src = sources[rel]
+        modname = _relpath_to_modname(rel)
+        parts.append(_module_entry(modname, _is_package(rel), src))
+        n += 1
+    parts.append("]\n\n_register_embedded(_EMBEDDED)\n")
+    parts.append(LAUNCHER.format(task=task))
+    return "".join(parts), n
+
+
+def _ordered_relpaths(closure, needs_backends, needs_resolve) -> list:
+    rels = list(ROOT_RELPATHS)
+    if needs_resolve:
+        rels.append("resolve.py")
+    rels += list(TASKS_ALWAYS)
+    for t in closure:
+        rels.append(f"tasks/{t}.py")
+    if needs_backends:
+        rels += list(BACKENDS_RELPATHS)
+    # de-dup preserving order
+    seen, out = set(), []
+    for r in rels:
+        if r not in seen:
+            seen.add(r)
+            out.append(r)
+    return out
+
+
+# ---------------------------------------------------------------------------
+# requirements.txt + SKILL.md (unchanged behavior, minor wording)
+# ---------------------------------------------------------------------------
 def _requirements(needs_backends: bool, needs_resolve: bool, needs_mpl: bool) -> str:
     lines = [
         "# Python dependencies for this skill (pip install -r requirements.txt).",
@@ -175,91 +310,76 @@ def _requirements(needs_backends: bool, needs_resolve: bool, needs_mpl: bool) ->
         "# External binaries (NOT pip-installable — install separately, e.g. via conda):",
         "#   xtb      conda install -c conda-forge xtb       (--method xtb)",
         "#   mopac    conda install -c conda-forge mopac     (--method mopac / PM7 postopt)",
+        "#   openbabel  conda install -c conda-forge openbabel  (obabel/obenergy: SMILES->3D, name lookup, confab)",
     ]
-    if needs_resolve:
-        lines += [
-            "#   openbabel  conda install -c conda-forge openbabel  (obabel: SMILES->3D, name lookup)",
-        ]
-    if not needs_resolve:
-        # confsearch (and any skill that may build/score with obabel) still notes it
-        lines += [
-            "#   openbabel  conda install -c conda-forge openbabel  (obabel/obenergy, if used)",
-        ]
     return "\n".join(lines) + "\n"
 
 
 RUNNING_SECTION = """
 ## Running this skill
 
-This skill folder is self-contained. From inside the folder:
+This skill is a single self-contained script. From inside the folder:
 
 ```bash
 pip install -r requirements.txt        # Python deps (see file for external binaries)
 python {script} --help                 # full argument list
 ```
 
-The script bundles everything it needs under `_engine/`; no external package
-is required on the path.
+The chemistry engine is inlined into `{script}`; no other files are required.
 """
 
 
-def build_skill(name: str):
+def build_skill(name: str, sources: dict):
     task, closure, needs_backends, needs_resolve, needs_mpl = SKILLS_MANIFEST[name]
     folder = os.path.join(SKILLS, name)
-    engine = os.path.join(folder, "_engine")
-    # clean any prior generated engine
-    if os.path.isdir(engine):
-        shutil.rmtree(engine)
-    os.makedirs(engine, exist_ok=True)
+    os.makedirs(folder, exist_ok=True)
 
-    # 1. shared infra. Files that sit at _engine/ root use ROOT rules
-    #    (single-dot, root-relative imports); files under tasks/ use task rules.
-    for rel in SHARED_ALWAYS:
-        is_root = rel in ("__init__.py", "cli.py", "calculators.py")
-        _copy_engine_file(rel, engine, is_root=is_root)
-    # 2. closure task modules
-    for t in closure:
-        _copy_engine_file(f"tasks/{t}.py", engine, is_root=False)
-    # 3. optional infra
-    if needs_resolve:
-        _copy_engine_file("resolve.py", engine, is_root=True)
-    if needs_backends:
-        for rel in BACKENDS_FILES:
-            _copy_engine_file(rel, engine, is_root=False, no_rewrite=True)
+    relpaths = _ordered_relpaths(closure, needs_backends, needs_resolve)
+    missing = [r for r in relpaths if r not in sources]
+    if missing:
+        raise SystemExit(f"{name}: missing engine sources: {missing}")
 
-    # 4. entry script
+    script, n_modules = _emit_single_file(name, task, relpaths, sources)
     script_name = f"{name}.py"
     with open(os.path.join(folder, script_name), "w") as f:
-        f.write(_entry_script(name, task))
+        f.write(script)
 
-    # 5. requirements.txt
     with open(os.path.join(folder, "requirements.txt"), "w") as f:
         f.write(_requirements(needs_backends, needs_resolve, needs_mpl))
 
-    # 6. SKILL.md from the existing skills/<name>.md
-    md_src = os.path.join(SKILLS, f"{name}.md")
+    # SKILL.md: keep existing if present; refresh the Running section wording.
     skill_md = os.path.join(folder, "SKILL.md")
     body = ""
-    if os.path.isfile(md_src):
-        with open(md_src) as f:
+    if os.path.isfile(skill_md):
+        with open(skill_md) as f:
             body = f.read()
-    if "## Running this skill" not in body:
-        body = body.rstrip() + "\n" + RUNNING_SECTION.format(script=script_name)
+    if "## Running this skill" in body:
+        body = body.split("## Running this skill")[0].rstrip() + "\n"
+    body = body.rstrip() + "\n" + RUNNING_SECTION.format(script=script_name)
     with open(skill_md, "w") as f:
         f.write(body)
 
-    return folder, len(closure)
+    # Remove the obsolete _engine/ tree.
+    engine = os.path.join(folder, "_engine")
+    if os.path.isdir(engine):
+        shutil.rmtree(engine)
+
+    return n_modules
 
 
 def main():
-    if not os.path.isdir(SRC):
-        sys.exit(f"src/chemkit not found at {SRC} (needed as the bundling source).")
-    built = []
+    sources = collect_module_sources()
+    if not sources:
+        sys.exit(
+            "No engine sources found. Set CHEMKIT_SRC to a chemkit source tree "
+            "or ensure git ref %r contains src/chemkit." % SRC_GIT_REF
+        )
+    total = 0
     for name in SKILLS_MANIFEST:
-        folder, ntasks = build_skill(name)
-        built.append((name, ntasks))
-        print(f"  built {name}/  (engine: {ntasks} task module(s))")
-    print(f"\nGenerated {len(built)} skill folders under {SKILLS}/")
+        n = build_skill(name, sources)
+        total += 1
+        print(f"  built {name}/{name}.py  ({n} embedded module(s))")
+    print(f"\nGenerated {total} single-file skill scripts under {SKILLS}/")
 
 
 if __name__ == "__main__":

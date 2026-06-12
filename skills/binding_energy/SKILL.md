@@ -35,12 +35,11 @@ Run `/geometry_optimize` on the complex and each monomer separately before calli
 
 ## Running this skill
 
-This skill folder is self-contained. From inside the folder:
+This skill is a single self-contained script. From inside the folder:
 
 ```bash
 pip install -r requirements.txt        # Python deps (see file for external binaries)
 python binding_energy.py --help                 # full argument list
 ```
 
-The script bundles everything it needs under `_engine/`; no external package
-is required on the path.
+The chemistry engine is inlined into `binding_energy.py`; no other files are required.

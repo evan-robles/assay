@@ -45,12 +45,11 @@ Kohn-Sham eigenvalues), HF (PySCF). Geometry is taken as-is — no optimization.
 
 ## Running this skill
 
-This skill folder is self-contained. From inside the folder:
+This skill is a single self-contained script. From inside the folder:
 
 ```bash
 pip install -r requirements.txt        # Python deps (see file for external binaries)
 python frontier_orbitals.py --help                 # full argument list
 ```
 
-The script bundles everything it needs under `_engine/`; no external package
-is required on the path.
+The chemistry engine is inlined into `frontier_orbitals.py`; no other files are required.

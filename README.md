@@ -5,29 +5,28 @@ ASE-based computational chemistry suite — xtb (GFN2) and MOPAC (PM7), with opt
 ## Layout
 
 Each skill is a **self-contained folder** under `skills/`, named after the skill.
-A folder carries everything it needs to run on its own — no shared package:
+A folder is just three files — the chemistry engine is **inlined into the single
+`<name>.py` script**, so there is no shared package and no `_engine/` directory:
 
 ```
 ~/chem-skills/
 ├── skills/
 │   ├── single_point_energy/
 │   │   ├── SKILL.md                 # the skill doc (frontmatter + usage)
-│   │   ├── single_point_energy.py   # standalone entry point
-│   │   ├── requirements.txt         # pip deps + external-binary notes
-│   │   └── _engine/                 # folder-local bundled code (io, schema,
-│   │       ├── cli.py               #   calculators, the needed task modules,
-│   │       ├── calculators.py       #   and the pyscf backend where applicable)
-│   │       ├── io.py  schema.py
-│   │       ├── tasks/sp.py ...
-│   │       └── backends/pyscf/...
+│   │   ├── single_point_energy.py   # ONE self-contained script (engine inlined)
+│   │   └── requirements.txt         # pip deps + external-binary notes
 │   ├── geometry_optimize/  ...
 │   └── (18 skill folders total)
-├── tools/build_skill_folders.py     # generator (regenerates folders from a source tree)
+├── tools/build_skill_folders.py     # generator (regenerates the scripts from a source tree)
 └── tests/                           # regression suite (drives the skill scripts)
 ```
 
-Because each folder is standalone, you can copy a single skill folder elsewhere
-and run it with nothing else present.
+Each `<name>.py` embeds exactly the engine modules that skill needs (shared
+infra + its task closure + the PySCF backend where applicable) as readable
+source, registered under their real module names by a small bootstrap at the top
+of the file so each module keeps its own namespace. Because the engine is inside
+the script, you can copy a single skill's `.py` elsewhere and run it with nothing
+else present.
 
 ## Install & run a skill
 
@@ -102,15 +101,17 @@ Each skill follows the same pipeline:
    conformer after post-opt is the converged answer, not a bug).
 
 This keeps the heavy lifting (geometry I/O, calculator setup, parsing program
-output into a stable schema) inside each skill's bundled `_engine/`, while the
-`SKILL.md` encodes the *judgment calls* — when to ask the user for
+output into a stable schema) inlined in each skill's single `<name>.py`, while
+the `SKILL.md` encodes the *judgment calls* — when to ask the user for
 clarification, what's worth flagging as a caveat, and how to translate raw JSON
 into something a chemist would actually want to read.
 
-> Regenerating folders: `tools/build_skill_folders.py` bundles each skill folder
-> from a chemkit source tree (rewriting imports to be folder-local). The folders
-> are the source of truth now; the generator is kept for reproducibility and
-> requires a `src/chemkit` tree (recoverable from git history) to re-run.
+> Regenerating the scripts: `tools/build_skill_folders.py` inlines each skill's
+> engine into its `<name>.py` from a chemkit source tree (rewriting imports to
+> folder-local `_engine.*` names embedded in the file). The scripts are the
+> source of truth now; the generator is kept for reproducibility and restores
+> `src/chemkit` from git history automatically (override with `CHEMKIT_SRC=` or
+> `CHEMKIT_SRC_REF=`).
 
 ## Notes / caveats
 
