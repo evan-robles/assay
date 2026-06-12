@@ -49,11 +49,13 @@ Compute the total electronic energy of a molecule with one of four backends:
 
 ## Running this skill
 
-This skill is a single self-contained script. From inside the folder:
+The chemistry engine runs in the **chemkit MCP server**; this skill is a thin
+client. Install the server once, then run the skill (it connects automatically):
 
 ```bash
-pip install -r requirements.txt        # Python deps (see file for external binaries)
-python single_point_energy.py --help                 # full argument list
+pip install -r ../../mcp_server/requirements.txt   # one-time: the engine + server
+python single_point_energy.py --help                            # full argument list
 ```
 
-The chemistry engine is inlined into `single_point_energy.py`; no other files are required.
+Or expose the server to any MCP-capable client — see `mcp_server/README.md`.
+Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to pin a specific server.

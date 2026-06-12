@@ -1,0 +1,16 @@
+# chemkit MCP server dependencies.
+#
+# The server hosts the one unified chemistry engine (mcp_server/_engine/) and
+# exposes every skill as an MCP tool. Install these once; the skills themselves
+# are thin clients that only need the `mcp` SDK.
+
+mcp                  # MCP server/client SDK (FastMCP)
+ase>=3.22            # geometry I/O + optimizers
+numpy
+pyscf                # required for --method dft / --method hf
+matplotlib           # plots for fukui / scan / reaction_profile
+
+# External binaries (NOT pip-installable — install separately, e.g. via conda):
+#   xtb        conda install -c conda-forge xtb        (--method xtb)
+#   mopac      conda install -c conda-forge mopac      (--method mopac / PM7)
+#   openbabel  conda install -c conda-forge openbabel  (obabel/obenergy: SMILES->3D, names, confab)

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Thin client for the `electrostatics` chemkit skill.
+"""Thin client for the `visualize_orbitals` chemkit skill.
 
 The chemistry engine runs in the chemkit MCP server (mcp_server/server.py); this
-script just forwards its arguments to the `electrostatics` MCP tool and prints the JSON
+script just forwards its arguments to the `visualize_orbitals` MCP tool and prints the JSON
 result. Set CHEMKIT_MCP to point at a specific server.py to use a custom server.
 
-Usage:  python electrostatics.py [chemkit args...]      (try --help)
+Usage:  python visualize_orbitals.py [chemkit args...]      (try --help)
 """
 import os
 import sys
@@ -15,4 +15,4 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from _mcp_client import run_skill  # noqa: E402
 
 if __name__ == "__main__":
-    sys.exit(run_skill("electrostatics", sys.argv[1:]))
+    sys.exit(run_skill("visualize_orbitals", sys.argv[1:]))

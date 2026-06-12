@@ -69,6 +69,7 @@ _SUBCMD_TO_SKILL = {
     "irc": "irc",
     "rxn-energy": "reaction_energy",
     "scan": "conformational_analysis",
+    "orbitals": "visualize_orbitals",
 }
 
 
@@ -1096,3 +1097,100 @@ def test_profile_dft_skips_irc(tmp_run):
     irc = d.get("irc", {})
     assert irc.get("performed") is False
     assert "not implemented" in (irc.get("reason") or "").lower()
+
+
+# ---------------------------------------------------------------------------
+# visualize_orbitals
+# ---------------------------------------------------------------------------
+
+@pytest.mark.parametrize("method", METHODS, ids=lambda m: f"method-{m}")
+def test_orbitals_writes_molden(tmp_run, method):
+    """FEATURE: visualize_orbitals always writes a .molden for H2O across
+    every backend. The xtb path uses `xtb --molden`, MOPAC synthesizes from
+    .mgf, PySCF dumps via `molden.from_scf`. Catches regressions in any of
+    the three molden-emit paths."""
+    _skip_if_unavailable(method)
+    out = tmp_run / f"h2o_orb_{method}.json"
+    rc, _, err = _run_chemkit(
+        ["orbitals", *_method_args(method),
+         "h2o.xyz", "--out", str(out)],
+        cwd=str(tmp_run), timeout=600,
+    )
+    assert rc == 0, f"{method} orbitals failed: {err[-500:]}"
+    d = _load(out)
+    molden_path = d["molden_path"]
+    assert os.path.isfile(molden_path), f"molden missing for {method}"
+    assert os.path.getsize(molden_path) > 200
+    with open(molden_path) as f:
+        head = f.read(2000)
+    assert "[Molden Format]" in head, f"{method}: molden header missing"
+    assert "[Atoms]" in head and "[MO]" in head, f"{method}: required sections missing"
+    # Empty by default — no cubes requested.
+    assert d["cube_paths"] == {}
+    # mo_summary should report a sensible HOMO/LUMO for water.
+    summary = d["mo_summary"]
+    if summary.get("unrestricted"):
+        pytest.fail(f"{method}: H2O singlet should be restricted, got {summary}")
+    assert summary["homo_energy_eV"] < 0, f"{method}: HOMO must be bound"
+    assert summary["lumo_energy_eV"] > summary["homo_energy_eV"]
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("method", METHODS, ids=lambda m: f"method-{m}")
+def test_orbitals_writes_cube_homo_lumo(tmp_run, method):
+    """FEATURE: --cubes homo,lumo produces two valid Gaussian-cube files
+    of nonzero amplitude for every backend (xtb, MOPAC, dft, hf). Cubes
+    are evaluated via pyscf.cubegen.orbital for all four — the MOPAC
+    path goes through our synthesized molden, so this also covers the
+    mgf→molden converter end-to-end."""
+    _skip_if_unavailable(method)
+    out = tmp_run / f"h2o_orb_cube_{method}.json"
+    rc, _, err = _run_chemkit(
+        ["orbitals", *_method_args(method),
+         "h2o.xyz", "--cubes", "homo,lumo", "--grid", "30",
+         "--out", str(out)],
+        cwd=str(tmp_run), timeout=900,
+    )
+    assert rc == 0, f"{method} orbitals --cubes failed: {err[-500:]}"
+    d = _load(out)
+    assert set(d["cube_paths"]) == {"homo", "lumo"}
+    for label, cube_path in d["cube_paths"].items():
+        assert os.path.isfile(cube_path), f"{method} {label}: cube missing"
+        with open(cube_path) as f:
+            cube_head = [next(f) for _ in range(3)]
+        # Gaussian-cube convention: line 3 begins with the atom count.
+        third = cube_head[2].split()
+        assert int(third[0]) == 3, f"{method} {label}: cube atom count != 3"
+        # Read the actual grid data and confirm there's nonzero amplitude.
+        with open(cube_path) as f:
+            text = f.read()
+        # Skip header (6 + natom lines) — just check the file contains
+        # at least one value with |psi| > 0.01 anywhere on the grid.
+        import re as _re
+        nums = [float(t) for t in _re.findall(r"-?\d+\.\d+E[+-]\d+", text)]
+        assert any(abs(v) > 0.01 for v in nums), (
+            f"{method} {label}: cube has no significant amplitude on grid"
+        )
+
+
+def test_orbitals_open_shell_o2_triplet_hf(tmp_run):
+    """FEATURE: open-shell O2 triplet via HF — molden must contain both
+    Alpha and Beta MO blocks AND mo_summary must mark unrestricted=True.
+    HF is the cleanest path for this (PySCF writes both spin blocks
+    unconditionally for UHF). xtb is silent about beta in its molden
+    output even with --uhf, so it's not the right backend to test this."""
+    _skip_if_unavailable("hf")
+    out = tmp_run / "o2_orb_hf.json"
+    rc, _, err = _run_chemkit(
+        ["orbitals", "--method", "hf", "--mult", "3",
+         "o2.xyz", "--out", str(out)],
+        cwd=str(tmp_run), timeout=900,
+    )
+    assert rc == 0, f"hf open-shell O2 orbitals failed: {err[-500:]}"
+    d = _load(out)
+    assert d["mo_summary"]["unrestricted"] is True
+    assert "alpha" in d["mo_summary"] and "beta" in d["mo_summary"]
+    with open(d["molden_path"]) as f:
+        text = f.read()
+    assert "Spin= Alpha" in text, "molden missing alpha-spin block"
+    assert "Spin= Beta" in text, "molden missing beta-spin block"

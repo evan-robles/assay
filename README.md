@@ -4,51 +4,55 @@ ASE-based computational chemistry suite — xtb (GFN2) and MOPAC (PM7), with opt
 
 ## Layout
 
-Each skill is a **self-contained folder** under `skills/`, named after the skill.
-A folder is just three files — the chemistry engine is **inlined into the single
-`<name>.py` script**, so there is no shared package and no `_engine/` directory:
+One unified chemistry engine lives behind an **MCP server**; each skill is a
+thin client that calls it over the open Model Context Protocol. The engine is
+*not* duplicated into the skills — they're ~18-line wrappers.
 
 ```
 ~/chem-skills/
+├── mcp_server/
+│   ├── server.py          # MCP server (FastMCP, stdio) — exposes 19 tools
+│   ├── _engine/           # the ONE chemistry engine (calculators, tasks, backends)
+│   ├── requirements.txt   # engine + server deps
+│   └── README.md          # how to wire the server into any MCP client
 ├── skills/
+│   ├── _mcp_client.py             # shared thin MCP client
 │   ├── single_point_energy/
-│   │   ├── SKILL.md                 # the skill doc (frontmatter + usage)
-│   │   ├── single_point_energy.py   # ONE self-contained script (engine inlined)
-│   │   └── requirements.txt         # pip deps + external-binary notes
-│   ├── geometry_optimize/  ...
-│   └── (18 skill folders total)
-├── tools/build_skill_folders.py     # generator (regenerates the scripts from a source tree)
-└── tests/                           # regression suite (drives the skill scripts)
+│   │   ├── SKILL.md               # the skill doc (frontmatter + usage)
+│   │   ├── single_point_energy.py # ~18-line thin client -> calls the MCP tool
+│   │   └── requirements.txt       # just the `mcp` client SDK
+│   └── (19 skill folders total)
+├── tools/build_skill_folders.py   # regenerates the thin clients
+└── tests/                         # regression suite (drives the thin clients)
 ```
 
-Each `<name>.py` embeds exactly the engine modules that skill needs (shared
-infra + its task closure + the PySCF backend where applicable) as readable
-source, registered under their real module names by a small bootstrap at the top
-of the file so each module keeps its own namespace. Because the engine is inside
-the script, you can copy a single skill's `.py` elsewhere and run it with nothing
-else present.
+The MCP server speaks the open protocol, so **any** MCP-capable client can drive
+it (not just one vendor). See `mcp_server/README.md` for a generic client config.
 
-## Install & run a skill
+## Install & run
 
 ```bash
-# Per skill — install its Python deps (external binaries listed in the file)
-cd skills/single_point_energy
-pip install -r requirements.txt
+# 1. Install the server (the engine) once:
+pip install -r mcp_server/requirements.txt
+conda install -c conda-forge xtb mopac openbabel ase    # external binaries
 
-# Run it (each skill script mirrors the chemist arguments for that task)
-python single_point_energy.py --method xtb --solvent water mol.xyz
-python single_point_energy.py --help
+# 2a. Run a skill from the shell (the thin client spawns/uses the server):
+python skills/single_point_energy/single_point_energy.py --method xtb --solvent water mol.xyz
+python skills/single_point_energy/single_point_energy.py --help
+
+# 2b. Or run the MCP server directly and connect any MCP client:
+python mcp_server/server.py
 ```
 
-External binaries are NOT pip-installable — install separately, e.g.:
-```bash
-conda install -c conda-forge xtb mopac openbabel ase
-```
-(`xtb` for `--method xtb`; `mopac` for `--method mopac` / PM7 post-opt;
+External binaries are NOT pip-installable — install separately (above):
+`xtb` for `--method xtb`; `mopac` for `--method mopac` / PM7 post-opt;
 `openbabel` provides `obabel`/`obenergy` for SMILES→3D, name lookup, and
-conformer search.) Install `pyscf` (in the skill's requirements where relevant)
-for `--method dft`/`--method hf`, and `sella` for transition-state searches on
-the xtb/dft/hf backends (MOPAC has a native TS optimizer).
+conformer search. `pyscf` (in the server requirements) enables
+`--method dft`/`--method hf`; `sella` enables transition-state searches on the
+xtb/dft/hf backends (MOPAC has a native TS optimizer).
+
+Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to point the thin clients at
+a specific server.
 
 ## Quick examples
 
@@ -101,17 +105,14 @@ Each skill follows the same pipeline:
    conformer after post-opt is the converged answer, not a bug).
 
 This keeps the heavy lifting (geometry I/O, calculator setup, parsing program
-output into a stable schema) inlined in each skill's single `<name>.py`, while
-the `SKILL.md` encodes the *judgment calls* — when to ask the user for
+output into a stable schema) in the one engine behind the MCP server, while the
+`SKILL.md` encodes the *judgment calls* — when to ask the user for
 clarification, what's worth flagging as a caveat, and how to translate raw JSON
 into something a chemist would actually want to read.
 
-> Regenerating the scripts: `tools/build_skill_folders.py` inlines each skill's
-> engine into its `<name>.py` from a chemkit source tree (rewriting imports to
-> folder-local `_engine.*` names embedded in the file). The scripts are the
-> source of truth now; the generator is kept for reproducibility and restores
-> `src/chemkit` from git history automatically (override with `CHEMKIT_SRC=` or
-> `CHEMKIT_SRC_REF=`).
+> Regenerating the thin clients: `tools/build_skill_folders.py` rewrites each
+> `skills/<name>/<name>.py` as the standard ~18-line MCP client (and refreshes
+> `requirements.txt`). The engine and tool list live in `mcp_server/`.
 
 ## Notes / caveats
 

@@ -1,10 +1,7 @@
-# Python dependencies for this skill (pip install -r requirements.txt).
-ase>=3.22
-numpy
-pyscf            # required for --method dft / --method hf
-matplotlib       # required for the PNG plot output
+# This skill is a thin client for the chemkit MCP server; it carries no
+# chemistry engine. It needs only the MCP client SDK:
+mcp
 
-# External binaries (NOT pip-installable — install separately, e.g. via conda):
-#   xtb      conda install -c conda-forge xtb       (--method xtb)
-#   mopac    conda install -c conda-forge mopac     (--method mopac / PM7 postopt)
-#   openbabel  conda install -c conda-forge openbabel  (obabel/obenergy: SMILES->3D, name lookup, confab)
+# The actual computation runs in the chemkit MCP server. Install the server's
+# dependencies once (see mcp_server/requirements.txt): ase, numpy, pyscf,
+# matplotlib, plus the external binaries xtb / mopac / openbabel.

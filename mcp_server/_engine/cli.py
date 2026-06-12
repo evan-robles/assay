@@ -388,6 +388,25 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="Max optimizer iterations per scan point (default 200).",
     )
 
+    p_orb = sub.add_parser(
+        "orbitals",
+        help="Visualize molecular orbitals: write .molden + optional .cube files "
+             "(no PNG — open the files in Avogadro/Jmol/IboView/VMD/Multiwfn).",
+    )
+    _add_common(p_orb)
+    p_orb.add_argument(
+        "--cubes", default="",
+        help="Comma-separated orbital labels to render as .cube files: "
+             "'homo,lumo,homo-1,lumo+2', a 1-based MO index, optionally with "
+             "':alpha' or ':beta' suffix for open-shell. Default empty "
+             "(molden only — fast; cubes evaluate the wavefunction on a 3D grid).",
+    )
+    p_orb.add_argument(
+        "--grid", type=int, default=80,
+        help="Cube grid resolution (default 80; 50 is fine for quick previews, "
+             "120 for publication). Ignored when no --cubes are requested.",
+    )
+
     args = parser.parse_args(argv)
     cli = cli_invocation()
 
@@ -559,6 +578,17 @@ def main(argv: Optional[List[str]] = None) -> int:
             tier=args.tier, functional=args.functional, basis=args.basis,
             cli=cli,
         )
+    elif args.task == "orbitals":
+        from .tasks import orbitals
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        cubes_list = [c.strip() for c in (args.cubes or "").split(",") if c.strip()]
+        result = orbitals.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            cubes=cubes_list, grid=args.grid,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
     elif args.task == "scan":
         from .tasks import scan
         dihedral_tuple = None
@@ -638,6 +668,13 @@ def main(argv: Optional[List[str]] = None) -> int:
                     print(f"# {k}: {d[k]}", file=sys.stderr)
     if args.task == "fukui" and result.get("plot_png"):
         print(f"# plot_png: {result['plot_png']}", file=sys.stderr)
+    if args.task == "orbitals":
+        if result.get("molden_path"):
+            print(f"# molden: {result['molden_path']}", file=sys.stderr)
+        if result.get("mgf_path"):
+            print(f"# mgf:    {result['mgf_path']}", file=sys.stderr)
+        for label, path in (result.get("cube_paths") or {}).items():
+            print(f"# cube  {label}: {path}", file=sys.stderr)
     return 0
 
 
