@@ -247,7 +247,7 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     p_build = sub.add_parser(
         "build",
-        help="Build a 3D xyz from a SMILES string (RDKit ETKDG + MMFF/UFF cleanup, "
+        help="Build a 3D xyz from a SMILES string (Open Babel --gen3d, "
              "optional QM refinement).",
     )
     p_build.add_argument("smiles", help="SMILES string of the target molecule.")
@@ -257,25 +257,14 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     p_build.add_argument(
         "--name", default=None,
-        help="Title comment for the xyz (default: canonical SMILES).",
-    )
-    p_build.add_argument(
-        "--n-confs", type=int, default=5,
-        help="ETKDG conformers to embed; lowest FF energy is selected (default 5).",
-    )
-    p_build.add_argument(
-        "--forcefield", choices=["mmff", "uff"], default="mmff",
-        help="Force field for the RDKit cleanup (default mmff).",
-    )
-    p_build.add_argument(
-        "--seed", type=int, default=0xC0FFEE,
-        help="ETKDG random seed (default 0xC0FFEE = 12648430).",
+        help="Title comment for the xyz (default: the SMILES string).",
     )
     p_build.add_argument(
         "--opt", dest="opt_method", choices=["xtb", "mopac", "dft", "hf"],
         default=None,
-        help="Optional QM refinement step after FF cleanup. Calls `chemkit opt` "
-             "internally; the QM-relaxed xyz becomes the canonical output.",
+        help="Optional QM refinement step after the obabel build. Calls "
+             "`chemkit opt` internally; the QM-relaxed xyz becomes the canonical "
+             "output.",
     )
     p_build.add_argument(
         "--solvent", default=None,
@@ -283,11 +272,11 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     p_build.add_argument(
         "--charge", type=int, default=None,
-        help="Override the charge inferred from SMILES. Forwarded to the QM step.",
+        help="Net charge forwarded to the QM step (default 0).",
     )
     p_build.add_argument(
         "--mult", "--multiplicity", dest="multiplicity", type=int, default=None,
-        help="Override the multiplicity inferred from SMILES.",
+        help="Spin multiplicity forwarded to the QM step (default 1).",
     )
     p_build.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
     p_build.add_argument("--functional", default=None)
@@ -560,7 +549,6 @@ def main(argv: Optional[List[str]] = None) -> int:
             out_xyz = os.path.abspath(f"{safe}.xyz")
         result = build_task.run(
             smiles=args.smiles, out_xyz=out_xyz, name=args.name,
-            n_confs=args.n_confs, forcefield=args.forcefield, seed=args.seed,
             opt_method=args.opt_method, opt_solvent=args.solvent,
             opt_charge=args.charge, opt_multiplicity=args.multiplicity,
             tier=args.tier, functional=args.functional, basis=args.basis,

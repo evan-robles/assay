@@ -761,20 +761,20 @@ def test_rxn_energy_spec_parsing(tmp_run):
 # build_from_smiles
 # ===========================================================================
 
-def _have_rdkit() -> bool:
-    if not hasattr(_have_rdkit, "_cached"):
+def _have_obabel() -> bool:
+    if not hasattr(_have_obabel, "_cached"):
         probe = subprocess.run(
-            [CHEMKIT, "build", "C", "--out-xyz", "/tmp/_chemkit_rdkit_probe.xyz"],
+            [CHEMKIT, "build", "C", "--out-xyz", "/tmp/_chemkit_obabel_probe.xyz"],
             capture_output=True, text=True, timeout=60,
         )
-        _have_rdkit._cached = (probe.returncode == 0)
-    return _have_rdkit._cached
+        _have_obabel._cached = (probe.returncode == 0)
+    return _have_obabel._cached
 
 
 def test_build_simple_smiles(tmp_run):
-    """SMILES 'CCO' (ethanol) → 3D xyz with the right atom count and formula."""
-    if not _have_rdkit():
-        pytest.skip("rdkit not available")
+    """SMILES 'CCO' (ethanol) → 3D xyz with the right atom count."""
+    if not _have_obabel():
+        pytest.skip("obabel not available")
     xyz = tmp_run / "ethanol.xyz"
     out = tmp_run / "ethanol_build.json"
     rc, _, err = _run_chemkit(
@@ -784,19 +784,22 @@ def test_build_simple_smiles(tmp_run):
     assert rc == 0, err
     d = _load(out)
     assert d["smiles_input"] == "CCO"
-    assert d["molecular_formula"] == "C2H6O"
+    assert d["program"] == "openbabel"
     assert d["n_atoms"] == 9  # 2 C + 6 H + 1 O
-    assert d["inferred_charge"] == 0
-    assert d["inferred_multiplicity"] == 1
     # First line of xyz = atom count
     n = int(open(xyz).read().splitlines()[0])
     assert n == 9
+    # No leftover temp .smi files in the working dir.
+    assert not list(tmp_run.glob("*.smi"))
 
 
-def test_build_anion_charge_inference(tmp_run):
-    """Acetate SMILES '[O-]C(=O)C' must infer charge = -1 (formal-charge sum)."""
-    if not _have_rdkit():
-        pytest.skip("rdkit not available")
+def test_build_anion_smiles(tmp_run):
+    """Acetate SMILES '[O-]C(=O)C' builds a 3D xyz with the right atom count.
+
+    obabel does not infer charge into the JSON; charge is supplied explicitly
+    when needed (e.g. for the QM step), so we only check the geometry here."""
+    if not _have_obabel():
+        pytest.skip("obabel not available")
     xyz = tmp_run / "acetate.xyz"
     out = tmp_run / "acetate_build.json"
     rc, _, err = _run_chemkit(
@@ -804,14 +807,17 @@ def test_build_anion_charge_inference(tmp_run):
         cwd=str(tmp_run), timeout=120,
     )
     assert rc == 0, err
-    assert _load(out)["inferred_charge"] == -1
+    d = _load(out)
+    assert d["n_atoms"] == 7  # 2 C + 3 H + 2 O
+    n = int(open(xyz).read().splitlines()[0])
+    assert n == 7
 
 
 def test_build_with_qm_opt(tmp_run):
     """--opt xtb chains the build pipeline into chemkit opt, returning a
     QM-optimized xyz and a convergence flag."""
-    if not _have_rdkit() or not _have("xtb"):
-        pytest.skip("rdkit + xtb required")
+    if not _have_obabel() or not _have("xtb"):
+        pytest.skip("obabel + xtb required")
     xyz = tmp_run / "water_built.xyz"
     out = tmp_run / "water_built.json"
     rc, _, err = _run_chemkit(
