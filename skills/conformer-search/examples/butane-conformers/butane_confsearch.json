@@ -1,0 +1,38 @@
+{
+  "task": "conformational_search",
+  "method": "MMFF94 confab (Open Babel)",
+  "program": "openbabel",
+  "input_file": "/private/tmp/exwork/butane.xyz",
+  "n_atoms": 14,
+  "atoms": [
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py confsearch --method xtb --postopt none butane.xyz --out conf_butane.json",
+  "n_conformers_found": 3,
+  "n_conformers_kept": 3,
+  "work_directory": "/tmp/chemkit_confsearch_pjobh6va",
+  "best_conformer_xyz": "/tmp/chemkit_confsearch_pjobh6va/obabel_best.xyz",
+  "all_conformers_xyz": "/tmp/chemkit_confsearch_pjobh6va/obabel_conformers.xyz",
+  "conformer_relative_energies_kcal_mol": [
+    0.0,
+    2.13725,
+    2.13922
+  ],
+  "conformers_xyz": "/private/tmp/exwork/conf_butane_conformers.xyz"
+}

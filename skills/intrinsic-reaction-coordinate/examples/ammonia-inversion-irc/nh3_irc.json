@@ -1,0 +1,29 @@
+{
+  "task": "intrinsic_reaction_coordinate",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/private/tmp/exwork/ts_for_irc.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "N",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py irc --method mopac ts_for_irc.xyz --out irc_nh3.json",
+  "forward_endpoint_energy_eV": -0.02081477003606445,
+  "forward_n_points": 40,
+  "reverse_endpoint_energy_eV": -0.02077140593182265,
+  "reverse_n_points": 40,
+  "ts_energy_eV": -0.02016430847243744,
+  "forward_drop_kcal_mol": -0.01499999999999993,
+  "reverse_drop_kcal_mol": -0.013999999999999957,
+  "forward_status": "JOB ENDED NORMALLY",
+  "reverse_status": "JOB ENDED NORMALLY",
+  "distinct_endpoints": false,
+  "forward_trajectory_xyz": "/private/tmp/exwork/irc_nh3_forward.xyz",
+  "reverse_trajectory_xyz": "/private/tmp/exwork/irc_nh3_reverse.xyz"
+}

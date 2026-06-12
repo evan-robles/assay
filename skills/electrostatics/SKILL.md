@@ -1,51 +1,54 @@
 ---
-description: Molecular Electrostatics (dipole + partial charges) — When the user wants the dipole moment, atomic partial charges (Mulliken), or general electrostatic-character information about a molecule (e.g. "dipole", "dipole moment", "partial charges", "Mulliken charges", "atomic charges", "electrostatic potential", "is this molecule polar"). Single-point — does NOT optimize the geometry first. Run /geometry_optimize beforehand if the geometry needs relaxation.
+name: electrostatics
+description: Computes a molecule's dipole moment and atomic partial charges at a fixed geometry.
+category: chemistry
 ---
 
-# Molecular Electrostatics
+# Electrostatics
 
-Compute dipole moment (magnitude + vector) and atomic partial charges (Mulliken
-for every backend) on the supplied geometry, with optional implicit solvent.
-No geometry optimization — pass an already-optimized xyz.
+## Goal
+Compute the dipole moment (magnitude and Cartesian vector, in Debye) and atomic partial charges (Mulliken for every backend) on the supplied geometry, with optional implicit solvent. No geometry optimization is performed.
 
-## Arguments
-`$ARGUMENTS` should include:
-- An `.xyz` path (required)
-- `--method {xtb,mopac,dft,hf}` (required — if missing, use **AskUserQuestion**)
-- Optional: `--solvent <name>` (water, methanol, dmso, mecn, dcm, ...),
-  `--charge N`, `--mult N`
-- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
-- HF-only: `--basis <name>`
-
-## Steps
-1. Parse `$ARGUMENTS`. If `.xyz` missing → stop and ask. If method missing → AskUserQuestion (header "Method", options `xtb` / `mopac` / `dft` / `hf`).
-2. Run `chemkit electrostatics --method <METHOD> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge <Q>] [--mult <M>] <XYZ>`.
-3. Read the printed JSON. Copy to `<basename>_electrostatics_<method>.json` in the cwd.
-4. Report:
-   - **Dipole moment** in Debye (magnitude + Cartesian vector)
-   - **Atomic partial charges** as a table: atom index (1-based), element symbol, charge
-   - **Sum of charges** (sanity check — should match the total molecular charge)
-   - Method, solvent (or "gas phase"), molecular charge/multiplicity
-   - Mention the partitioning scheme used (Mulliken for every backend)
-   - Note: Mulliken charges are basis-set-dependent and not a physical observable; for transferable charges use ESP-fit methods (not available in this build).
-
-## Reporting policy
-- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
-
-## Errors
-- xtb-python missing → install via `conda install -c conda-forge xtb-python` or `pip install xtb`.
-- mopac not in PATH → install via `conda install -c conda-forge mopac`.
-- pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).
-
-## Running this skill
-
-The chemistry engine runs in the **chemkit MCP server**; this skill is a thin
-client. Install the server once, then run the skill (it connects automatically):
+## Instructions
+1. Parse arguments. If the `.xyz` path is missing, stop and ask. If `--method` is missing, use **AskUserQuestion** (header "Method", options `xtb` / `mopac` / `dft` / `hf`).
+2. Run the engine.
 
 ```bash
-pip install -r ../../mcp_server/requirements.txt   # one-time: the engine + server
-python electrostatics.py --help                            # full argument list
+# Env: anl_env
+python skills/electrostatics/scripts/electrostatics.py --method <xtb|mopac|dft|hf> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge N] [--mult N] input.xyz
 ```
 
-Or expose the server to any MCP-capable client — see `mcp_server/README.md`.
-Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to pin a specific server.
+Arguments:
+- `input.xyz` — molecular geometry (required).
+- `--method {xtb,mopac,dft,hf}` — **required**.
+- `--solvent <name>` — implicit solvent (water, methanol, dmso, mecn, dcm, …).
+- `--charge N`, `--mult N` — molecular charge and spin multiplicity.
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
+- HF-only: `--basis <name>`.
+
+Read the printed JSON and copy it to `<basename>_electrostatics_<method>.json` in the cwd. Report: the dipole moment in Debye (magnitude + Cartesian vector); atomic partial charges as a table (1-based atom index, element symbol, charge); the sum of charges as a sanity check (should match the total molecular charge); method, solvent (or "gas phase"), and molecular charge/multiplicity; and the partitioning scheme (Mulliken for every backend). Note that Mulliken charges are basis-set-dependent and not a physical observable — for transferable charges, ESP-fit methods would be needed (not available in this build). This is a single point; relax the geometry first with [geometry-optimize](../geometry-optimize/SKILL.md) if needed.
+
+## Examples
+```bash
+# Env: anl_env
+python skills/electrostatics/scripts/electrostatics.py --method xtb --solvent water mol.xyz
+```
+See [`examples/`](examples/) for a validated example with literature comparison.
+
+## Constraints
+- **Environment**: `# Env: anl_env` required for all calls.
+- **Fixed geometry**: no optimization is performed; pass an already-relaxed structure.
+- **Method required**: `--method` must be supplied (ask the user if absent).
+- **Charge scheme**: Mulliken only; basis-set-dependent and not a physical observable. ESP-fit charges are not available in this build.
+- **Reporting policy**: Never automatically provide experimental or literature data for comparison. Report only the values this calculation produced; compare to experiment only if the user explicitly asks.
+- **Availability**: xtb-python via `conda install -c conda-forge xtb-python` or `pip install xtb`; mopac via `conda install -c conda-forge mopac`; pyscf via `pip install pyscf` (required for `--method dft` or `--method hf`).
+
+## References
+- Bannwarth, Ehlert, Grimme. "GFN2-xTB." *J. Chem. Theory Comput.* 2019, 15, 1652-1671. https://doi.org/10.1021/acs.jctc.8b01176
+- Stewart. "Optimization of parameters for semiempirical methods VI: PM7." *J. Mol. Model.* 2013, 19, 1-32. https://doi.org/10.1007/s00894-012-1667-x
+- Sun et al. "Recent developments in the PySCF program package." *J. Chem. Phys.* 2020, 153, 024109. https://doi.org/10.1063/5.0006074
+
+---
+
+**Author:** Evan Robles
+**Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

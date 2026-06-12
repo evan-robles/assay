@@ -1,0 +1,59 @@
+{
+  "task": "pka",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/acetic_acid.xyz",
+  "n_atoms": 8,
+  "atoms": [
+    "C",
+    "C",
+    "O",
+    "O",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py pka --ha acetic_acid.xyz --a-minus acetate.xyz --method xtb --ha-charge 0 --out pka_acetic.json",
+  "mode": "absolute",
+  "temperature_K": 298.15,
+  "pressure_Pa": 101325.0,
+  "G_HA_kcal_mol": -9055.483998405203,
+  "G_A_minus_kcal_mol": -8943.586245080347,
+  "hplus_reference": "tissandier_1998",
+  "G_Hplus_aq_kcal_mol": -270.28,
+  "standard_state_correction_kcal_mol": 1.8943284009764536,
+  "RT_ln10_kcal_mol": 1.3642470125942985,
+  "delta_G_dissociation_kcal_mol": -156.48791827416795,
+  "pKa": -114.70644013109123,
+  "species": {
+    "HA": {
+      "input_file": "/private/tmp/exwork/acetic_acid.xyz",
+      "charge": 0,
+      "multiplicity": 1,
+      "G_kcal_mol": -9055.483998405203,
+      "H_kcal_mol": -9035.01001748825,
+      "E_kcal_mol": -9075.516614351567,
+      "ZPE_kcal_mol": 37.003651985958456,
+      "n_imaginary_modes": 0,
+      "optimized_xyz": "/tmp/chemkit_optfreq_m1iqqnl3/preopt.xyz"
+    },
+    "A_minus": {
+      "input_file": "/private/tmp/exwork/acetate.xyz",
+      "charge": -1,
+      "multiplicity": 1,
+      "G_kcal_mol": -8943.586245080347,
+      "H_kcal_mol": -8923.061111143288,
+      "E_kcal_mol": -8956.348985944473,
+      "ZPE_kcal_mol": 29.91671065203036,
+      "n_imaginary_modes": 0,
+      "optimized_xyz": "/tmp/chemkit_optfreq_53qoi4hs/preopt.xyz"
+    }
+  },
+  "warnings": [
+    "Absolute pKa is highly sensitive to the G(H+,aq) reference (~1.4 unit shift between Tissandier 1998 and Kelly 2006). Prefer mode='reference' against a known acid in the same family."
+  ]
+}

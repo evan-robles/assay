@@ -1,0 +1,57 @@
+---
+name: binding-energy
+description: Computes the binding or interaction energy between a molecular complex and its constituent fragments.
+category: chemistry
+---
+
+# Binding Energy
+
+## Goal
+Compute the binding (interaction) energy of a molecular complex relative to its separated fragments, $\Delta E_\text{bind} = E_\text{complex} - \sum_i E_{\text{monomer},i}$, where a negative value indicates a stable complex. Applicable to host-guest, ligand, dimerization, and other non-covalent or covalent association problems.
+
+## Instructions
+The user invokes this skill through a thin MCP-client script that dispatches to the `binding` subcommand of the chemistry engine.
+
+```bash
+# Env: anl_env
+python skills/binding-energy/scripts/binding-energy.py --method <xtb|mopac|dft|hf> --monomer m1.xyz --monomer m2.xyz [other args] complex.xyz
+```
+
+1. **Provide the inputs.** The complex `.xyz` path is required, plus one or more `--monomer <path.xyz>` arguments (≥2 required). If the complex or monomer paths are missing, stop and ask.
+2. **Choose a method** (required — if missing, ask the user): `xtb`, `mopac`, `dft`, or `hf`.
+3. **Optional arguments:** `--solvent`, `--charge`, `--mult` (apply to the complex); `--monomer-charge N` / `--monomer-mult N` (repeat once per monomer). **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
+4. **Pick a method that captures dispersion for non-covalent complexes** (H-bonds, π-stacking, host-guest). `--method dft --tier standard` (ωB97X-V) and `--tier accurate` (ωB97M-V) both include VV10 nonlocal correlation. Bare HF does not, so HF binding energies for non-covalent systems are systematically too repulsive.
+5. **Pre-optimize first.** Run [geometry-optimize](../geometry-optimize/SKILL.md) on the complex and on each monomer separately before calling this skill — otherwise the binding energy is contaminated by fragment deformation energy.
+6. **Read the returned JSON** and report:
+   - **Binding energy** in eV, kcal/mol, and Hartree (negative = stable complex).
+   - E(complex), E(monomer1), E(monomer2), ...
+   - Warning: no BSSE correction; geometries are used as-supplied.
+   - Path to the saved JSON.
+
+## Examples
+```bash
+# Env: anl_env
+python skills/binding-energy/scripts/binding-energy.py --method dft --tier standard --monomer water.xyz --monomer water.xyz water_dimer.xyz
+```
+
+See [`examples/`](examples/) for a validated example with literature comparison.
+
+## Constraints
+- **Environment**: `# Env: anl_env` is required for all script calls.
+- `xtb` (GFN2-xTB) and `mopac` (PM7) are semi-empirical; `dft` and `hf` run via PySCF.
+- No BSSE (basis set superposition error) correction is applied; geometries are used as-supplied — pre-optimize fragments to avoid deformation contamination.
+- HF lacks dispersion and over-repels non-covalent complexes; use DFT tiers with VV10 for those.
+- Solvent treatment is implicit only. All fragment energies must be computed with the same method for the difference to be meaningful.
+- **Reporting policy**: Never automatically provide experimental or literature data for comparison. Report only the values this calculation produced; do not volunteer accepted/measured/reference values or editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
+- Errors: `xtb`/`mopac` not installed → `conda install -c conda-forge xtb mopac`; `pyscf` not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).
+
+## References
+- Bannwarth, C.; Ehlert, S.; Grimme, S. "GFN2-xTB", *J. Chem. Theory Comput.* **2019**, 15 (3), 1652-1671. https://doi.org/10.1021/acs.jctc.8b01176
+- Stewart, J. J. P. "Optimization of parameters for semiempirical methods VI (PM7)", *J. Mol. Model.* **2013**, 19 (1), 1-32. https://doi.org/10.1007/s00894-012-1667-x
+- Sun, Q.; et al. "Recent developments in the PySCF program package", *J. Chem. Phys.* **2020**, 153, 024109. https://doi.org/10.1063/5.0006074
+- Mardirossian, N.; Head-Gordon, M. "ωB97X-V", *Phys. Chem. Chem. Phys.* **2014**, 16, 9904-9924. https://doi.org/10.1039/C3CP54374A
+
+---
+
+**Author:** Evan Robles
+**Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

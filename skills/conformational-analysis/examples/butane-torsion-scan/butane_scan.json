@@ -1,0 +1,148 @@
+{
+  "task": "conformational_analysis",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/butane.xyz",
+  "n_atoms": 14,
+  "atoms": [
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py scan --method xtb --dihedral 1,2,3,4 --steps 12 butane.xyz --out scan_butane.json",
+  "scan_type": "relaxed_dihedral",
+  "constraint": "exact (ASE FixInternals)",
+  "steps_per_scan": 12,
+  "n_dihedrals_scanned": 1,
+  "dihedrals": [
+    {
+      "atoms_1based": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "n_points": 12,
+      "n_converged": 12,
+      "min_angle_deg": 180.0,
+      "min_energy_kcal_mol": -8574.969252957577,
+      "max_angle_deg": 359.99999999999994,
+      "max_energy_kcal_mol": -8570.042307496899,
+      "barrier_kcal_mol": 4.926945460678326,
+      "trajectory_xyz": "scan_butane_dih1_2_3_4.xyz",
+      "plot_png": "scan_butane_dih1_2_3_4.png",
+      "points": [
+        {
+          "step": 0,
+          "target_deg": 0.0,
+          "measured_deg": 359.99999999999994,
+          "energy_kcal_mol": -8570.042307496899,
+          "converged": true,
+          "delta_E_kcal_mol": 4.926945460678326
+        },
+        {
+          "step": 1,
+          "target_deg": 30.0,
+          "measured_deg": 30.000000000000018,
+          "energy_kcal_mol": -8572.070752792813,
+          "converged": true,
+          "delta_E_kcal_mol": 2.898500164763391
+        },
+        {
+          "step": 2,
+          "target_deg": 60.0,
+          "measured_deg": 60.00000000000005,
+          "energy_kcal_mol": -8574.191420987101,
+          "converged": true,
+          "delta_E_kcal_mol": 0.777831970475745
+        },
+        {
+          "step": 3,
+          "target_deg": 90.0,
+          "measured_deg": 90.00000000000001,
+          "energy_kcal_mol": -8573.642078332274,
+          "converged": true,
+          "delta_E_kcal_mol": 1.327174625303087
+        },
+        {
+          "step": 4,
+          "target_deg": 120.0,
+          "measured_deg": 120.00000000000001,
+          "energy_kcal_mol": -8572.397652033409,
+          "converged": true,
+          "delta_E_kcal_mol": 2.5716009241677966
+        },
+        {
+          "step": 5,
+          "target_deg": 150.0,
+          "measured_deg": 150.0,
+          "energy_kcal_mol": -8573.710246149894,
+          "converged": true,
+          "delta_E_kcal_mol": 1.2590068076824537
+        },
+        {
+          "step": 6,
+          "target_deg": 180.0,
+          "measured_deg": 180.0,
+          "energy_kcal_mol": -8574.969252957577,
+          "converged": true,
+          "delta_E_kcal_mol": 0.0
+        },
+        {
+          "step": 7,
+          "target_deg": 210.0,
+          "measured_deg": 210.0,
+          "energy_kcal_mol": -8573.68034011153,
+          "converged": true,
+          "delta_E_kcal_mol": 1.2889128460465145
+        },
+        {
+          "step": 8,
+          "target_deg": 240.0,
+          "measured_deg": 239.99999999999997,
+          "energy_kcal_mol": -8572.407911425506,
+          "converged": true,
+          "delta_E_kcal_mol": 2.56134153207131
+        },
+        {
+          "step": 9,
+          "target_deg": 270.0,
+          "measured_deg": 270.0,
+          "energy_kcal_mol": -8573.689965728174,
+          "converged": true,
+          "delta_E_kcal_mol": 1.279287229403053
+        },
+        {
+          "step": 10,
+          "target_deg": 300.0,
+          "measured_deg": 300.0,
+          "energy_kcal_mol": -8574.196285365631,
+          "converged": true,
+          "delta_E_kcal_mol": 0.7729675919454166
+        },
+        {
+          "step": 11,
+          "target_deg": 330.0,
+          "measured_deg": 329.99999999999994,
+          "energy_kcal_mol": -8572.081740585427,
+          "converged": true,
+          "delta_E_kcal_mol": 2.887512372150013
+        }
+      ]
+    }
+  ]
+}

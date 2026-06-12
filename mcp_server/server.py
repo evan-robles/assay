@@ -30,27 +30,28 @@ ENGINE_DIR = HERE / "_engine"
 SKILLS_DIR = HERE.parent / "skills"
 
 # tool name -> (engine subcommand, skill folder for its SKILL.md description)
-# Mirrors the chemkit CLI subcommands; one entry per skill.
+# Tool names == skill folder names (kebab-case). Mirrors the chemkit CLI
+# subcommands; one entry per skill.
 TOOLS = {
-    "single_point_energy":     ("sp",             "single_point_energy"),
-    "geometry_optimize":       ("opt",            "geometry_optimize"),
-    "vibrational_analysis":    ("freq",           "vibrational_analysis"),
-    "binding_energy":          ("binding",        "binding_energy"),
-    "redox_potential":         ("redox",          "redox_potential"),
-    "conformer_search":        ("confsearch",     "conformer_search"),
-    "frontier_orbitals":       ("frontier",       "frontier_orbitals"),
+    "single-point-energy":     ("sp",             "single-point-energy"),
+    "geometry-optimize":       ("opt",            "geometry-optimize"),
+    "vibrational-analysis":    ("freq",           "vibrational-analysis"),
+    "binding-energy":          ("binding",        "binding-energy"),
+    "redox-potential":         ("redox",          "redox-potential"),
+    "conformer-search":        ("confsearch",     "conformer-search"),
+    "frontier-orbitals":       ("frontier",       "frontier-orbitals"),
     "electrostatics":          ("electrostatics", "electrostatics"),
     "solvation":               ("solvation",      "solvation"),
-    "logp":                    ("logp",           "logp"),
-    "reaction_profile":        ("profile",        "reaction_profile"),
-    "pka":                     ("pka",            "pka"),
-    "build_from_smiles":       ("build",          "build_from_smiles"),
-    "fukui":                   ("fukui",          "fukui"),
-    "transition_state":        ("ts",             "transition_state"),
-    "irc":                     ("irc",            "irc"),
-    "reaction_energy":         ("rxn-energy",     "reaction_energy"),
-    "conformational_analysis": ("scan",           "conformational_analysis"),
-    "visualize_orbitals":      ("orbitals",       "visualize_orbitals"),
+    "logp-partition":          ("logp",           "logp-partition"),
+    "reaction-profile":        ("profile",        "reaction-profile"),
+    "pka-acidity":             ("pka",            "pka-acidity"),
+    "build-from-smiles":       ("build",          "build-from-smiles"),
+    "fukui-reactivity":        ("fukui",          "fukui-reactivity"),
+    "transition-state":        ("ts",             "transition-state"),
+    "intrinsic-reaction-coordinate": ("irc",      "intrinsic-reaction-coordinate"),
+    "reaction-energy":         ("rxn-energy",     "reaction-energy"),
+    "conformational-analysis": ("scan",           "conformational-analysis"),
+    "visualize-orbitals":      ("orbitals",       "visualize-orbitals"),
 }
 
 mcp = FastMCP("chemkit")

@@ -1,0 +1,77 @@
+{
+  "task": "reaction_profile",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/private/tmp/exwork/ammonia.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "N",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py profile --reactant ammonia.xyz --product ammonia_inv.xyz --ts-guess nh3_planar_ts.xyz --method mopac --out profile_nh3.json",
+  "temperature_K": 298.15,
+  "pressure_Pa": 101325.0,
+  "delta_E_activation_kcal_mol": 3.794196000000272,
+  "delta_E_reaction_kcal_mol": -2.000000000016733e-05,
+  "delta_H_activation_kcal_mol": 3.790000000000272,
+  "delta_H_reaction_kcal_mol": 0.0,
+  "delta_G_activation_kcal_mol": 4.216736000000306,
+  "delta_G_reaction_kcal_mol": 0.0,
+  "delta_G_activation_reverse_kcal_mol": 4.216736000000306,
+  "stationary_points": {
+    "reactant": {
+      "input_file": "/private/tmp/exwork/ammonia.xyz",
+      "optimized_xyz": "/private/tmp/exwork/profile_nh3_reactant_opt.xyz",
+      "opt_converged": true,
+      "G_eV": -0.7770986245264304,
+      "H_eV": -0.184731084070072,
+      "E_eV": -0.18470853473586626,
+      "n_imaginary_modes": 0
+    },
+    "transition_state": {
+      "input_file": "/private/tmp/exwork/nh3_planar_ts.xyz",
+      "optimized_xyz": "/private/tmp/exwork/profile_nh3_ts_opt.xyz",
+      "ts_converged": true,
+      "G_eV": -0.5942436450622756,
+      "H_eV": -0.02038112899364644,
+      "E_eV": -0.02017662387804211,
+      "n_imaginary_modes": 1
+    },
+    "product": {
+      "input_file": "/private/tmp/exwork/ammonia_inv.xyz",
+      "optimized_xyz": "/private/tmp/exwork/profile_nh3_product_opt.xyz",
+      "opt_converged": true,
+      "G_eV": -0.7770986245264304,
+      "H_eV": -0.184731084070072,
+      "E_eV": -0.1847094020179511,
+      "n_imaginary_modes": 0
+    }
+  },
+  "irc": {
+    "performed": true,
+    "method": "mopac",
+    "forward_trajectory_xyz": "/tmp/chemkit_profile_yaiie0hf/irc_forward.xyz",
+    "reverse_trajectory_xyz": "/tmp/chemkit_profile_yaiie0hf/irc_reverse.xyz",
+    "rmsd_fwd_vs_R_A": 0.00207918069239627,
+    "rmsd_fwd_vs_P_A": 0.2797124297525835,
+    "rmsd_rev_vs_R_A": 0.27970826716050307,
+    "rmsd_rev_vs_P_A": 0.002339226112447141,
+    "rmsd_tolerance_A": 0.5,
+    "connects_R_and_P": true,
+    "forward_lands_on": "R"
+  },
+  "diagram_png": "/private/tmp/exwork/profile_nh3_diagram.png",
+  "is_fully_characterized": true,
+  "verdict": {
+    "reactant_is_minimum": true,
+    "product_is_minimum": true,
+    "ts_is_first_order_saddle": true,
+    "irc_connects_R_and_P": true
+  },
+  "workdir": "/tmp/chemkit_profile_yaiie0hf"
+}

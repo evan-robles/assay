@@ -1,0 +1,25 @@
+{
+  "task": "single_point",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/water.xyz",
+  "n_atoms": 3,
+  "atoms": [
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py sp --method xtb water.xyz --out sp_water.json",
+  "total_energy_eV": -137.96738451827179,
+  "total_energy_hartree": -5.070207863394445,
+  "total_energy_kcal_mol": -3181.603469749242,
+  "energy_zero": "isolated atoms at infinity (xtb)",
+  "code_specific": {
+    "homo_eV": -12.16592870713891,
+    "lumo_eV": 1.993694266095115,
+    "homo_lumo_gap_eV": 14.159622973234026
+  }
+}

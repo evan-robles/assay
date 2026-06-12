@@ -1,0 +1,76 @@
+{
+  "task": "fukui",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/formaldehyde.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "C",
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py fukui --method xtb --no-plot formaldehyde.xyz --out fukui_form.json",
+  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
+  "charges_neutral": [
+    0.17359574503711023,
+    -0.2780206302267224,
+    0.052212796821251684,
+    0.05221208836836027
+  ],
+  "charges_cation": [
+    0.19332951405045362,
+    0.14294187877337866,
+    0.33186394759696203,
+    0.33186465957920264
+  ],
+  "charges_anion": [
+    0.03829858539641269,
+    -0.6768256741331907,
+    -0.18073556607684463,
+    -0.1807373451863756
+  ],
+  "cation_charge": 1,
+  "cation_multiplicity": 2,
+  "anion_charge": -1,
+  "anion_multiplicity": 2,
+  "fukui_plus": [
+    0.13529715964069755,
+    0.3988050439064683,
+    0.2329483628980963,
+    0.23294943355473588
+  ],
+  "fukui_minus": [
+    0.019733769013343394,
+    0.42096250900010107,
+    0.27965115077571034,
+    0.27965257121084236
+  ],
+  "fukui_zero": [
+    0.07751546432702047,
+    0.40988377645328467,
+    0.2562997568369033,
+    0.25630100238278913
+  ],
+  "dual_descriptor": [
+    0.11556339062735416,
+    -0.022157465093632756,
+    -0.04670278787761403,
+    -0.04670313765610648
+  ],
+  "most_electrophilic": {
+    "atom_index_0based": 1,
+    "atom_label_1based": 2,
+    "symbol": "O",
+    "f_plus": 0.3988050439064683
+  },
+  "most_nucleophilic": {
+    "atom_index_0based": 1,
+    "atom_label_1based": 2,
+    "symbol": "O",
+    "f_minus": 0.42096250900010107
+  }
+}

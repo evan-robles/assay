@@ -1,0 +1,31 @@
+{
+  "task": "visualize_orbitals",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/skills/visualize-orbitals/examples/water-homo-lumo/water.xyz",
+  "n_atoms": 3,
+  "atoms": [
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py orbitals --method xtb --cubes homo,lumo --grid 50 water.xyz --out water_orbitals.json",
+  "molden_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/skills/visualize-orbitals/examples/water-homo-lumo/water_orbitals.molden",
+  "cube_paths": {
+    "homo": "/Users/evane/Desktop/Research/Argonne/chem-skills/skills/visualize-orbitals/examples/water-homo-lumo/water_orbitals_homo.cube",
+    "lumo": "/Users/evane/Desktop/Research/Argonne/chem-skills/skills/visualize-orbitals/examples/water-homo-lumo/water_orbitals_lumo.cube"
+  },
+  "n_orbitals": 6,
+  "grid_resolution": 50,
+  "mo_summary": {
+    "unrestricted": false,
+    "homo_idx_1based": 4,
+    "homo_energy_eV": -12.165928707738377,
+    "lumo_idx_1based": 5,
+    "lumo_energy_eV": 1.9936942841295666
+  },
+  "xtb_workdir": "/tmp/chemkit_orb_xtb_tkj5r_rr"
+}

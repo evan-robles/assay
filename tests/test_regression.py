@@ -51,31 +51,31 @@ SKILLS_DIR = Path(__file__).parent.parent / "skills"
 # token the tests pass to _run_chemkit, so we dispatch on it here and the test
 # bodies stay unchanged.
 _SUBCMD_TO_SKILL = {
-    "sp": "single_point_energy",
-    "opt": "geometry_optimize",
-    "freq": "vibrational_analysis",
-    "binding": "binding_energy",
-    "redox": "redox_potential",
-    "confsearch": "conformer_search",
-    "frontier": "frontier_orbitals",
+    "sp": "single-point-energy",
+    "opt": "geometry-optimize",
+    "freq": "vibrational-analysis",
+    "binding": "binding-energy",
+    "redox": "redox-potential",
+    "confsearch": "conformer-search",
+    "frontier": "frontier-orbitals",
     "electrostatics": "electrostatics",
     "solvation": "solvation",
-    "logp": "logp",
-    "profile": "reaction_profile",
-    "pka": "pka",
-    "build": "build_from_smiles",
-    "fukui": "fukui",
-    "ts": "transition_state",
-    "irc": "irc",
-    "rxn-energy": "reaction_energy",
-    "scan": "conformational_analysis",
-    "orbitals": "visualize_orbitals",
+    "logp": "logp-partition",
+    "profile": "reaction-profile",
+    "pka": "pka-acidity",
+    "build": "build-from-smiles",
+    "fukui": "fukui-reactivity",
+    "ts": "transition-state",
+    "irc": "intrinsic-reaction-coordinate",
+    "rxn-energy": "reaction-energy",
+    "scan": "conformational-analysis",
+    "orbitals": "visualize-orbitals",
 }
 
 
 def _skill_script(subcmd: str) -> str:
     name = _SUBCMD_TO_SKILL[subcmd]
-    return str(SKILLS_DIR / name / f"{name}.py")
+    return str(SKILLS_DIR / name / "scripts" / f"{name}.py")
 
 
 # ---------------------------------------------------------------------------

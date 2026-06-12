@@ -1,0 +1,78 @@
+{
+  "task": "pka",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/acetic_acid.xyz",
+  "n_atoms": 8,
+  "atoms": [
+    "C",
+    "C",
+    "O",
+    "O",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py pka --ha acetic_acid.xyz --a-minus acetate.xyz --method xtb --ha-charge 0 --mode reference --ref-ha formic.xyz --ref-a-minus formate.xyz --pka-ref 3.75 --out pka_ref.json",
+  "mode": "reference",
+  "temperature_K": 298.15,
+  "pressure_Pa": 101325.0,
+  "G_HA_kcal_mol": -9055.48399840522,
+  "G_A_minus_kcal_mol": -8943.586245080342,
+  "RT_ln10_kcal_mol": 1.3642470125942985,
+  "G_ref_HA_kcal_mol": -7075.226821113954,
+  "G_ref_A_minus_kcal_mol": -6972.647629932058,
+  "reference_pka": 3.75,
+  "delta_G_isodesmic_kcal_mol": 9.318562142982046,
+  "pKa": 10.580553453264706,
+  "species": {
+    "HA": {
+      "input_file": "/private/tmp/exwork/acetic_acid.xyz",
+      "charge": 0,
+      "multiplicity": 1,
+      "G_kcal_mol": -9055.48399840522,
+      "H_kcal_mol": -9035.010017488257,
+      "E_kcal_mol": -9075.516614351576,
+      "ZPE_kcal_mol": 37.0036519859561,
+      "n_imaginary_modes": 0,
+      "optimized_xyz": "/tmp/chemkit_optfreq_dnteomon/preopt.xyz"
+    },
+    "A_minus": {
+      "input_file": "/private/tmp/exwork/acetate.xyz",
+      "charge": -1,
+      "multiplicity": 1,
+      "G_kcal_mol": -8943.586245080342,
+      "H_kcal_mol": -8923.061111143283,
+      "E_kcal_mol": -8956.348985944467,
+      "ZPE_kcal_mol": 29.916710652030098,
+      "n_imaginary_modes": 0,
+      "optimized_xyz": "/tmp/chemkit_optfreq_o4w7dhvp/preopt.xyz"
+    },
+    "ref_HA": {
+      "input_file": "/private/tmp/exwork/formic.xyz",
+      "charge": 0,
+      "multiplicity": 1,
+      "G_kcal_mol": -7075.226821113954,
+      "H_kcal_mol": -7057.463690453019,
+      "E_kcal_mol": -7079.6814778786365,
+      "ZPE_kcal_mol": 19.56012193048064,
+      "n_imaginary_modes": 0,
+      "optimized_xyz": "/tmp/chemkit_optfreq_uxns2v9_/preopt.xyz"
+    },
+    "ref_A_minus": {
+      "input_file": "/private/tmp/exwork/formate.xyz",
+      "charge": -1,
+      "multiplicity": 1,
+      "G_kcal_mol": -6972.647629932058,
+      "H_kcal_mol": -6955.239284033205,
+      "E_kcal_mol": -6969.3356793088815,
+      "ZPE_kcal_mol": 11.612087321160237,
+      "n_imaginary_modes": 0,
+      "optimized_xyz": "/tmp/chemkit_optfreq_d9s9o3j3/preopt.xyz"
+    }
+  }
+}

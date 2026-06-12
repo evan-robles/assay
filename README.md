@@ -10,24 +10,31 @@ thin client that calls it over the open Model Context Protocol. The engine is
 
 ```
 ~/chem-skills/
+├── rules/
+│   └── skill-standards.md         # the skill authoring standard (follow it!)
 ├── mcp_server/
 │   ├── server.py          # MCP server (FastMCP, stdio) — exposes 19 tools
 │   ├── _engine/           # the ONE chemistry engine (calculators, tasks, backends)
 │   ├── requirements.txt   # engine + server deps
 │   └── README.md          # how to wire the server into any MCP client
 ├── skills/
-│   ├── _mcp_client.py             # shared thin MCP client
-│   ├── single_point_energy/
-│   │   ├── SKILL.md               # the skill doc (frontmatter + usage)
-│   │   ├── single_point_energy.py # ~18-line thin client -> calls the MCP tool
-│   │   └── requirements.txt       # just the `mcp` client SDK
+│   ├── _mcp_client.py                         # shared thin MCP client
+│   ├── single-point-energy/                   # kebab-case skill name
+│   │   ├── SKILL.md                           # the skill doc (frontmatter + sections)
+│   │   ├── scripts/single-point-energy.py     # ~18-line thin client -> MCP tool
+│   │   ├── requirements.txt                   # just the `mcp` client SDK
+│   │   └── examples/<calc-name>/              # README.md + generated .json/.xyz/.png
 │   └── (19 skill folders total)
 ├── tools/build_skill_folders.py   # regenerates the thin clients
 └── tests/                         # regression suite (drives the thin clients)
 ```
 
-The MCP server speaks the open protocol, so **any** MCP-capable client can drive
-it (not just one vendor). See `mcp_server/README.md` for a generic client config.
+Skill folders are **kebab-case** and conform to `rules/skill-standards.md`
+(frontmatter with `name`/`description`/`category`, Goal/Instructions/Examples/
+Constraints/References sections, a `scripts/` client, and a validated `examples/`
+folder). The MCP server speaks the open protocol, so **any** MCP-capable client
+can drive it (not just one vendor). See `mcp_server/README.md` for a generic
+client config.
 
 ## Install & run
 
@@ -37,8 +44,8 @@ pip install -r mcp_server/requirements.txt
 conda install -c conda-forge xtb mopac openbabel ase    # external binaries
 
 # 2a. Run a skill from the shell (the thin client spawns/uses the server):
-python skills/single_point_energy/single_point_energy.py --method xtb --solvent water mol.xyz
-python skills/single_point_energy/single_point_energy.py --help
+python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water mol.xyz
+python skills/single-point-energy/scripts/single-point-energy.py --help
 
 # 2b. Or run the MCP server directly and connect any MCP client:
 python mcp_server/server.py
@@ -57,13 +64,13 @@ a specific server.
 ## Quick examples
 
 ```bash
-python skills/single_point_energy/single_point_energy.py --method xtb --solvent water mol.xyz
-python skills/geometry_optimize/geometry_optimize.py     --method mopac --charge 0 mol.xyz
-python skills/vibrational_analysis/vibrational_analysis.py --method xtb --symmetry 2 mol_opt.xyz
-python skills/binding_energy/binding_energy.py --method xtb --monomer A.xyz --monomer B.xyz complex.xyz
-python skills/redox_potential/redox_potential.py --method xtb --ox-charge 0 --red-charge -1 --solvent water mol.xyz
-python skills/conformer_search/conformer_search.py --method xtb mol.xyz
-python skills/build_from_smiles/build_from_smiles.py ethanol   # name or SMILES → 3D xyz
+python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water mol.xyz
+python skills/geometry-optimize/scripts/geometry-optimize.py     --method mopac --charge 0 mol.xyz
+python skills/vibrational-analysis/scripts/vibrational-analysis.py --method xtb --symmetry 2 mol_opt.xyz
+python skills/binding-energy/scripts/binding-energy.py --method xtb --monomer A.xyz --monomer B.xyz complex.xyz
+python skills/redox-potential/scripts/redox-potential.py --method xtb --ox-charge 0 --red-charge -1 --solvent water mol.xyz
+python skills/conformer-search/scripts/conformer-search.py --method xtb mol.xyz
+python skills/build-from-smiles/scripts/build-from-smiles.py ethanol   # name or SMILES → 3D xyz
 ```
 
 All tasks write a single JSON file with a common header:
@@ -74,23 +81,22 @@ All tasks write a single JSON file with a common header:
 Each skill folder pairs a runnable Python script with a `SKILL.md` that turns it
 into something an agent can drive directly. The `SKILL.md` is a Markdown skill
 file with YAML frontmatter so it shows up as a slash command
-(`/single_point_energy`, `/geometry_optimize`, `/vibrational_analysis`,
-`/binding_energy`, `/redox_potential`, `/conformer_search`,
-`/conformational_analysis`, ...).
+(`/single-point-energy`, `/geometry-optimize`, `/vibrational-analysis`,
+`/binding-energy`, `/redox-potential`, `/conformer-search`,
+`/conformational-analysis`, ...).
 
 Each skill follows the same pipeline:
 
 1. **Trigger** — the frontmatter `description:` is what the agent matches against
    the user's request (e.g. "binding energy", "what's the energy of this
    structure"); it also states what the skill should *not* be used for, to
-   disambiguate from neighboring skills (e.g. `single_point_energy` vs.
-   `geometry_optimize`).
+   disambiguate from neighboring skills (e.g. `single-point-energy` vs. `geometry-optimize`).
 2. **Parse arguments** — the skill spells out which flags `$ARGUMENTS` should
    contain (an `.xyz` path is always required) and which are optional
    (`--method`, `--solvent`, `--charge`, `--mult`, task-specific flags like
    `--postopt` for conformer search). If something required is missing, the
    skill tells the agent to stop and either ask directly or use
-   **AskUserQuestion** (e.g. method selection for `single_point_energy`).
+   **AskUserQuestion** (e.g. method selection for `single-point-energy`).
 3. **Invoke the script** — the skill gives the literal
    `python <skill>.py ...` invocation to run as a subprocess.
 4. **Read the JSON** — every skill prints one JSON result with the
@@ -111,7 +117,7 @@ clarification, what's worth flagging as a caveat, and how to translate raw JSON
 into something a chemist would actually want to read.
 
 > Regenerating the thin clients: `tools/build_skill_folders.py` rewrites each
-> `skills/<name>/<name>.py` as the standard ~18-line MCP client (and refreshes
+> `skills/<name>/scripts/<name>.py` as the standard ~18-line MCP client (and refreshes
 > `requirements.txt`). The engine and tool list live in `mcp_server/`.
 
 ## Notes / caveats

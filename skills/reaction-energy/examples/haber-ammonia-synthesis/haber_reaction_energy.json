@@ -1,0 +1,91 @@
+{
+  "task": "reaction_energy",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/n2.xyz",
+  "n_atoms": 16,
+  "atoms": [],
+  "charge": null,
+  "multiplicity": null,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py rxn-energy --method xtb --mode freq --reactant n2.xyz --reactant 3*h2.xyz --product 2*ammonia.xyz --out rxn_haber_freq.json",
+  "mode": "freq",
+  "temperature_K": 298.15,
+  "pressure_Pa": 101325.0,
+  "delta_E_eV": -3.8230399620073,
+  "delta_E_hartree": -0.1404941272542101,
+  "delta_E_kcal_mol": -88.16139590224361,
+  "delta_H_eV": -2.9991672798080913,
+  "delta_H_kcal_mol": -69.16244050804701,
+  "delta_G_eV": -2.3661549697029614,
+  "delta_G_kcal_mol": -54.56482985349597,
+  "reactants": [
+    {
+      "spec": "n2.xyz",
+      "path": "/private/tmp/exwork/n2.xyz",
+      "coef": 1.0,
+      "charge": 0,
+      "multiplicity": 1,
+      "energy_eV": -156.84467173145555,
+      "enthalpy_eV": -156.6036354135137,
+      "entropy_eV_per_K": 0.0020441222975828535,
+      "gibbs_free_energy_eV": -157.21309047653804,
+      "zpe_eV": 0.15110996784413538,
+      "n_imaginary_modes": 0,
+      "freq": {
+        "preopt_converged": true,
+        "optimized_xyz": "/tmp/chemkit_optfreq_hshsfdna/preopt.xyz"
+      }
+    },
+    {
+      "spec": "3*h2.xyz",
+      "path": "/private/tmp/exwork/h2.xyz",
+      "coef": 3.0,
+      "charge": 0,
+      "multiplicity": 1,
+      "energy_eV": -26.74025284473488,
+      "enthalpy_eV": -26.41763543158836,
+      "entropy_eV_per_K": 0.0014174809310972655,
+      "gibbs_free_energy_eV": -26.84025737119501,
+      "zpe_eV": 0.2326934104188309,
+      "n_imaginary_modes": 0,
+      "freq": {
+        "preopt_converged": true,
+        "optimized_xyz": "/tmp/chemkit_optfreq_vqxh2nbe/preopt.xyz"
+      }
+    }
+  ],
+  "products": [
+    {
+      "spec": "2*ammonia.xyz",
+      "path": "/private/tmp/exwork/ammonia.xyz",
+      "coef": 2.0,
+      "charge": 0,
+      "multiplicity": 1,
+      "energy_eV": -120.44423511383374,
+      "enthalpy_eV": -119.42785449404343,
+      "entropy_eV_per_K": 0.0020867156997135096,
+      "gibbs_free_energy_eV": -120.05000877991301,
+      "zpe_eV": 0.9128956132938696,
+      "n_imaginary_modes": 0,
+      "freq": {
+        "preopt_converged": true,
+        "optimized_xyz": "/tmp/chemkit_optfreq_rri79l9s/preopt.xyz"
+      }
+    }
+  ],
+  "balance": {
+    "reactant_total_charge": 0.0,
+    "product_total_charge": 0.0,
+    "charge_balanced": true,
+    "reactant_atom_counts": {
+      "N": 2.0,
+      "H": 6.0
+    },
+    "product_atom_counts": {
+      "N": 2.0,
+      "H": 6.0
+    },
+    "atom_balanced": true
+  }
+}

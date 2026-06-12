@@ -1,0 +1,22 @@
+{
+  "task": "build_from_smiles",
+  "program": "openbabel",
+  "input": "acetone",
+  "smiles_input": "CC(=O)C",
+  "n_atoms": 10,
+  "build": {
+    "method": "obabel --gen3d",
+    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_lnpnn92a.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/skills/build-from-smiles/examples/acetone-from-name/acetone.xyz --title chemkit build: acetone"
+  },
+  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/skills/build-from-smiles/examples/acetone-from-name/acetone.xyz",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py build acetone --out-xyz acetone.xyz --out acetone_build.json",
+  "smiles_source": {
+    "smiles": "CC(=O)C",
+    "name_input": "acetone",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 180, Acetone. https://pubchem.ncbi.nlm.nih.gov/compound/180 (accessed 2026-06-12).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/180",
+    "identifier": "CID 180"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "task": "transition_state",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/private/tmp/exwork/nh3_planar_ts.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "N",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py ts --method mopac nh3_planar_ts.xyz --out ts_nh3_mopac.json",
+  "total_energy_eV": -0.02017662387804211,
+  "total_energy_hartree": -0.0007414772513111828,
+  "total_energy_kcal_mol": -0.4652840000000334,
+  "final_heat_of_formation_kcal_mol": -0.465284,
+  "converged": true,
+  "mopac_status": "EIGENVECTOR FOLLOWING reported geometry optimised (saddle character must be verified by freq).",
+  "mopac_workdir": "/tmp/chemkit_ts_mopac_qrmyjiaw",
+  "mopac_keywords": [
+    "PM7",
+    "TS",
+    "AUX",
+    "GEO-OK",
+    "CYCLES=500",
+    "THREADS=1"
+  ],
+  "ionization_potential_eV": 9.27844,
+  "ts_xyz": "/private/tmp/exwork/ts_nh3_mopac.xyz",
+  "verify_freq": {
+    "n_imaginary_modes": 1,
+    "is_valid_ts": true,
+    "imaginary_frequencies_cm-1": [
+      -854.71
+    ],
+    "gibbs_free_energy_eV": -0.5942436450622756
+  }
+}

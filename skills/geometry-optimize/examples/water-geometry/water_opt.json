@@ -1,0 +1,23 @@
+{
+  "task": "geometry_optimization",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/water.xyz",
+  "n_atoms": 3,
+  "atoms": [
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py opt --method xtb water.xyz --xyz-out water_xtbopt.xyz --out opt_water.json",
+  "total_energy_eV": -137.97654217478126,
+  "total_energy_hartree": -5.070544401063885,
+  "total_energy_kcal_mol": -3181.814650325195,
+  "converged": true,
+  "n_steps": 3,
+  "fmax_target_eV_per_A": 0.05,
+  "optimized_xyz": "water_xtbopt.xyz"
+}

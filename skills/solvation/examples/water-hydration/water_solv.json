@@ -1,0 +1,26 @@
+{
+  "task": "solvation",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/water.xyz",
+  "n_atoms": 3,
+  "atoms": [
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py solvation --method xtb --solvent water water.xyz --out solv_water.json",
+  "delta_G_solv_eV": -0.26299268133175246,
+  "delta_G_solv_hartree": -0.009664802776099938,
+  "delta_G_solv_kcal_mol": -6.06475530695406,
+  "energy_gas_eV": -137.96738451827179,
+  "energy_solv_eV": -138.23037719960354,
+  "geometry_note": "single-point on the supplied geometry; no separate gas/solvent opt",
+  "warnings": [
+    "Electronic \u0394G_solv only \u2014 no cavitation, dispersion-repulsion, or thermal correction.",
+    "Semi-empirical implicit solvation is screening-grade; \u00b12\u20133 kcal/mol typical."
+  ]
+}

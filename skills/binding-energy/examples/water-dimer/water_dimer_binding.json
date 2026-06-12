@@ -1,0 +1,37 @@
+{
+  "task": "binding_energy",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/wdim.xyz",
+  "n_atoms": 6,
+  "atoms": [
+    "O",
+    "O",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py binding --method xtb --monomer wmono.xyz --monomer wmono.xyz wdim.xyz --out bind_dimer.json",
+  "binding_energy_eV": -0.19043737821266404,
+  "binding_energy_hartree": -0.006998444566224252,
+  "binding_energy_kcal_mol": -4.39159026901114,
+  "complex_total_energy_eV": -276.1435217277683,
+  "sum_of_monomer_energies_eV": -275.95308434955564,
+  "monomers": [
+    {
+      "input_file": "/private/tmp/exwork/wmono.xyz",
+      "total_energy_eV": -137.97654217477782
+    },
+    {
+      "input_file": "/private/tmp/exwork/wmono.xyz",
+      "total_energy_eV": -137.97654217477782
+    }
+  ],
+  "warnings": [
+    "Binding energy uses single-point energies on the provided geometries. For thermodynamically meaningful values, optimize complex and monomers separately first, and consider counterpoise correction for basis-set superposition error (DFT only)."
+  ]
+}

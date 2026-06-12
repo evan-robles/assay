@@ -1,0 +1,32 @@
+{
+  "task": "electrostatics",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/water.xyz",
+  "n_atoms": 3,
+  "atoms": [
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py electrostatics --method xtb water.xyz --out elst_water.json",
+  "total_energy_eV": -137.96738569406872,
+  "total_energy_hartree": -5.070207906604185,
+  "total_energy_kcal_mol": -3181.603496863763,
+  "dipole_debye": 2.2870837501498786,
+  "dipole_vector_debye": [
+    1.320445036905946,
+    1.8549407200358599,
+    0.2153413798203507
+  ],
+  "partial_charges": [
+    -0.5609528571298337,
+    0.2804763654346774,
+    0.28047649169515376
+  ],
+  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
+  "sum_of_charges": -2.4980018054066022e-15
+}

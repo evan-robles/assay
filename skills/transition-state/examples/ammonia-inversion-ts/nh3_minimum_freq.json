@@ -1,0 +1,67 @@
+{
+  "task": "vibrational_thermochemistry",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/private/tmp/exwork/ammonia.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "N",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py freq --method mopac --symmetry 3 ammonia.xyz --out nh3min_mopac.json",
+  "heat_of_formation_kcal_mol": -4.26063,
+  "electronic_energy_eV": -0.18475840345574435,
+  "zpe_kcal_mol": 18.463281,
+  "zpe_eV": 0.8006436419296626,
+  "heat_of_formation_T_kcal_mol": -4.26,
+  "enthalpy_kcal_mol": -4.26,
+  "enthalpy_eV": -0.184731084070072,
+  "entropy_cal_K_mol": 45.842,
+  "entropy_eV_per_K": 0.0019878972666526385,
+  "heat_capacity_cal_K_mol": 8.326,
+  "gibbs_free_energy_kcal_mol": -17.920916,
+  "gibbs_free_energy_eV": -0.7771244695325583,
+  "temperature_K": 298.0,
+  "pressure_Pa": 101325.0,
+  "n_real_vib_modes": 6,
+  "n_imaginary_modes": 0,
+  "vibrational_frequencies_cm-1": [
+    1081.96,
+    1672.58,
+    1672.58,
+    2805.66,
+    2805.66,
+    2876.82
+  ],
+  "mopac_keywords": [
+    "PM7",
+    "FORCE",
+    "THERMO",
+    "AUX",
+    "LET",
+    "GEO-OK",
+    "ROT=3",
+    "THREADS=10"
+  ],
+  "mopac_workdir": "/tmp/chemkit_mopac_freq_8_rapuwi",
+  "code_specific": {
+    "ionization_potential_eV": 10.1506,
+    "dipole_debye": 2.18427
+  },
+  "symmetry_number": 3,
+  "preopt": {
+    "performed": true,
+    "fmax_target_eV_per_A": 0.005,
+    "converged": true,
+    "n_steps": null,
+    "optimized_xyz": "/tmp/chemkit_optfreq_mz2l35gt/preopt.xyz",
+    "preopt_energy_eV": -0.18475840345574435,
+    "preopt_heat_of_formation_kcal_mol": -4.26063,
+    "probed_fmax_eV_per_A": 0.024208125192525774
+  }
+}

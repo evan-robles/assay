@@ -1,0 +1,50 @@
+{
+  "task": "vibrational_thermochemistry",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/water.xyz",
+  "n_atoms": 3,
+  "atoms": [
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py freq --method xtb --symmetry 2 water.xyz --out vib_water.json",
+  "electronic_energy_eV": -137.97654232344462,
+  "zpe_eV": 0.5476039516138425,
+  "zpe_kcal_mol": 12.628047118427,
+  "enthalpy_eV": -137.32605469124732,
+  "entropy_eV_per_K": 0.001953716042939863,
+  "gibbs_free_energy_eV": -137.90855512944984,
+  "temperature_K": 298.15,
+  "pressure_Pa": 101325.0,
+  "geometry": "nonlinear",
+  "symmetry_number": 2,
+  "n_real_vib_modes": 3,
+  "n_imaginary_modes": 0,
+  "vibrational_frequencies_cm-1": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1539.5217971026157,
+    3642.8017593832756,
+    3651.123909894507
+  ],
+  "geometry_auto_detected": true,
+  "preopt": {
+    "performed": true,
+    "fmax_target_eV_per_A": 0.001,
+    "converged": true,
+    "n_steps": 4,
+    "optimized_xyz": "/tmp/chemkit_optfreq_dsbksi87/preopt.xyz",
+    "preopt_energy_eV": -137.9765423234144,
+    "preopt_heat_of_formation_kcal_mol": null,
+    "probed_fmax_eV_per_A": 0.7731008713223078
+  }
+}

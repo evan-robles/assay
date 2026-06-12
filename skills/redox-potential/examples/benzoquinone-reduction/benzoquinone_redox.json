@@ -1,0 +1,42 @@
+{
+  "task": "redox_potential",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/private/tmp/exwork/quinone.xyz",
+  "n_atoms": 12,
+  "atoms": [
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "O",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/_engine/cli.py redox --method xtb --solvent water --ox-charge 0 --red-charge -1 --ox-mult 1 --red-mult 2 --ref SHE quinone.xyz --out redox_bq.json",
+  "redox_potential_V_vs_SHE": 4.675540584460868,
+  "delta_E_redox_eV": -8.956540584460868,
+  "delta_E_redox_kcal_mol": -206.54273254485514,
+  "n_electrons": 1,
+  "oxidized_state": {
+    "charge": 0,
+    "multiplicity": 1,
+    "energy_eV": -624.4374183914905
+  },
+  "reduced_state": {
+    "charge": -1,
+    "multiplicity": 2,
+    "energy_eV": -633.3939589759514
+  },
+  "warnings": [
+    "Redox potential computed from single-point energies on the SAME geometry \u2014 does not include reorganization or solvation free energy contributions properly. Accuracy with semi-empirical methods is \u00b10.3\u20130.5 V at best. For publishable values: optimize each oxidation state, run freq for \u0394G, include explicit solvation cycle."
+  ]
+}

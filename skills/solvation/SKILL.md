@@ -1,53 +1,56 @@
 ---
-description: Solvation Free Energy (ΔG_solv) — When the user wants the electronic solvation free energy of a molecule in a given solvent (e.g. "ΔG_solv", "solvation energy", "free energy of solvation", "solvation free energy in water/DMSO", "hydration free energy"). Single-point — does NOT optimize. Run /geometry_optimize first if the geometry needs relaxation. For octanol/water partition specifically, use /logp instead.
+name: solvation
+description: Estimates the electronic solvation free energy of a molecule in a given implicit solvent.
+category: chemistry
 ---
 
-# Solvation Free Energy (ΔG_solv)
+# Solvation
 
-Estimate ΔG_solv = E(solvated) − E(gas) using implicit solvation on the supplied geometry. Electronic only — no cavitation, dispersion-repulsion, or thermal corrections. Screening-grade at semi-empirical accuracy (±2–3 kcal/mol typical).
+## Goal
+Estimate the solvation free energy $\Delta G_\text{solv} = E_\text{solvated} - E_\text{gas}$ using implicit solvation on the supplied geometry. Electronic only — no cavitation, dispersion-repulsion, or thermal corrections. Screening-grade at semi-empirical accuracy (±2–3 kcal/mol typical). For octanol/water partition specifically, use [logp-partition](../logp-partition/SKILL.md) instead.
 
-## Arguments
-`$ARGUMENTS` should include:
-- An `.xyz` path (required)
-- `--method {xtb,mopac,dft,hf}` (required — if missing, **AskUserQuestion**)
-- A `--solvent <name>` (required — water, methanol, ethanol, acetone, mecn, dmso, thf, dcm, chloroform, toluene, benzene, hexane, ether, octanol)
-- Optional: `--charge N`, `--mult N`
-- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`
-- HF-only: `--basis <name>`
-
-DFT with `--tier standard` and an implicit solvent gives meaningfully better ΔG_solv than semi-empirical (~±1 kcal/mol vs ±2–3 for xtb/mopac) at much higher cost. The DFT path uses ddCOSMO; for true "research-grade" SMD parameterization you'd need PySCF's `pyscf.solvent.smd` directly.
-
-## Steps
-1. Parse `$ARGUMENTS`. If `.xyz` missing → stop and ask. If method missing → AskUserQuestion. If solvent missing → stop and ask.
-2. Run `chemkit solvation --method <M> --solvent <S> [--charge <Q>] [--mult <M>] <XYZ>`.
-3. Read the JSON. Copy to `<basename>_solvation_<solvent>_<method>.json` in the cwd.
-4. Report:
-   - **ΔG_solv** in kcal/mol (primary) and eV
-   - E(gas) and E(solvated) for context
-   - Method, solvent, charge/multiplicity
-   - Caveats: electronic-only; ±2–3 kcal/mol at semi-empirical; no cavity term.
-   - Flag any warnings in the JSON (especially the |ΔG_solv| ≈ 0 silent-drop warning).
-
-## Recommendation
-For tighter numbers, run `/geometry_optimize` separately in gas phase and in solvent and compute ΔG_solv from those (chemkit uses ONE geometry for both — quick but ignores geometry relaxation in solvent). For research-grade values, use DFT with a continuum model that includes non-electrostatic terms (e.g. SMD).
-
-## Reporting policy
-- **Never automatically provide experimental or literature data for comparison.** Report only the values this calculation produced. Do not volunteer "accepted", measured, or reference values, and do not editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
-
-## Errors
-- xtb-python / MOPAC missing → install via `conda install -c conda-forge xtb-python mopac`.
-- pyscf not installed → `pip install pyscf` (required for `--method dft` or `--method hf`).
-- Unknown solvent → check the list above; `--solvent` is matched case-insensitively.
-
-## Running this skill
-
-The chemistry engine runs in the **chemkit MCP server**; this skill is a thin
-client. Install the server once, then run the skill (it connects automatically):
+## Instructions
+1. Parse arguments. If the `.xyz` path is missing, stop and ask. If `--method` is missing, use **AskUserQuestion**. If `--solvent` is missing, stop and ask.
+2. Run the engine.
 
 ```bash
-pip install -r ../../mcp_server/requirements.txt   # one-time: the engine + server
-python solvation.py --help                            # full argument list
+# Env: anl_env
+python skills/solvation/scripts/solvation.py --method <xtb|mopac|dft|hf> --solvent <S> [--charge N] [--mult N] [--tier <T>] [--functional <F>] [--basis <B>] input.xyz
 ```
 
-Or expose the server to any MCP-capable client — see `mcp_server/README.md`.
-Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to pin a specific server.
+Arguments:
+- `input.xyz` — molecular geometry (required).
+- `--method {xtb,mopac,dft,hf}` — **required**.
+- `--solvent <name>` — **required**; one of water, methanol, ethanol, acetone, mecn, dmso, thf, dcm, chloroform, toluene, benzene, hexane, ether, octanol (matched case-insensitively).
+- `--charge N`, `--mult N` — molecular charge and spin multiplicity.
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
+- HF-only: `--basis <name>`.
+
+DFT with `--tier standard` and an implicit solvent gives meaningfully better $\Delta G_\text{solv}$ than semi-empirical (~±1 kcal/mol vs ±2–3 for xtb/mopac) at much higher cost. The DFT path uses ddCOSMO; true research-grade SMD parameterization would require PySCF's `pyscf.solvent.smd` directly.
+
+Read the JSON and copy it to `<basename>_solvation_<solvent>_<method>.json` in the cwd. Report: $\Delta G_\text{solv}$ in kcal/mol (primary) and eV; $E_\text{gas}$ and $E_\text{solvated}$ for context; method, solvent, charge/multiplicity; and the caveats (electronic-only; ±2–3 kcal/mol at semi-empirical; no cavity term). Flag any warnings in the JSON, especially the $|\Delta G_\text{solv}| \approx 0$ silent-drop warning. For tighter numbers, run [geometry-optimize](../geometry-optimize/SKILL.md) separately in gas phase and in solvent and compute $\Delta G_\text{solv}$ from those (this skill uses ONE geometry for both); for research-grade values use DFT with a continuum model including non-electrostatic terms (e.g. SMD).
+
+## Examples
+```bash
+# Env: anl_env
+python skills/solvation/scripts/solvation.py --method xtb --solvent water mol.xyz
+```
+See [`examples/`](examples/) for a validated example with literature comparison.
+
+## Constraints
+- **Environment**: `# Env: anl_env` required for all calls.
+- **Fixed geometry**: no optimization; one geometry is used for both gas and solvated points, ignoring relaxation in solvent.
+- **Method and solvent required**: both `--method` and `--solvent` must be supplied.
+- **Electronic only**: no cavitation, dispersion-repulsion, or thermal corrections; screening-grade. DFT uses ddCOSMO (no SMD).
+- **Reporting policy**: Never automatically provide experimental or literature data for comparison. Report only the values this calculation produced; compare to experiment only if the user explicitly asks.
+- **Availability**: xtb-python / MOPAC via `conda install -c conda-forge xtb-python mopac`; pyscf via `pip install pyscf` (required for `--method dft` or `--method hf`). For an unknown solvent, check the list above.
+
+## References
+- Bannwarth, Ehlert, Grimme. "GFN2-xTB." *J. Chem. Theory Comput.* 2019, 15, 1652-1671. https://doi.org/10.1021/acs.jctc.8b01176
+- Stewart. "Optimization of parameters for semiempirical methods VI: PM7." *J. Mol. Model.* 2013, 19, 1-32. https://doi.org/10.1007/s00894-012-1667-x
+- Sun et al. "Recent developments in the PySCF program package." *J. Chem. Phys.* 2020, 153, 024109. https://doi.org/10.1063/5.0006074
+
+---
+
+**Author:** Evan Robles
+**Contact:** [GitHub @evan-robles](https://github.com/evan-robles)
