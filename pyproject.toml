@@ -1,19 +1,18 @@
-[build-system]
-requires = ["setuptools>=61"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "chemkit"
+name = "chem-skills"
 version = "1.0.0"
-description = "ASE-based computational chemistry suite (xtb, MOPAC, COSMO)"
+description = "Self-contained computational-chemistry skills (xtb, MOPAC, PySCF, Open Babel)"
 requires-python = ">=3.9"
-dependencies = ["ase>=3.22", "numpy"]
 
-[project.optional-dependencies]
-xtb_python = ["xtb"]
+# This project is no longer a single installable package. Each skill under
+# skills/<name>/ is self-contained and run directly:
+#     python skills/<name>/<name>.py --help
+# Install a skill's Python dependencies from its own requirements.txt:
+#     pip install -r skills/<name>/requirements.txt
+# External binaries (xtb, mopac, openbabel) are installed separately, e.g.:
+#     conda install -c conda-forge xtb mopac openbabel ase
 
-[project.scripts]
-chemkit = "chemkit.cli:main"
-
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.pytest.ini_options]
+markers = [
+    "slow: tests that take >30 s (organics, multi-step pipelines)",
+]

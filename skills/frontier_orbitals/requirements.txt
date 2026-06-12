@@ -1,0 +1,9 @@
+# Python dependencies for this skill (pip install -r requirements.txt).
+ase>=3.22
+numpy
+pyscf            # required for --method dft / --method hf
+
+# External binaries (NOT pip-installable — install separately, e.g. via conda):
+#   xtb      conda install -c conda-forge xtb       (--method xtb)
+#   mopac    conda install -c conda-forge mopac     (--method mopac / PM7 postopt)
+#   openbabel  conda install -c conda-forge openbabel  (obabel/obenergy, if used)

@@ -37,12 +37,44 @@ import math
 import os
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
 FIXTURES = Path(__file__).parent / "fixtures"
-CHEMKIT = str(Path(__file__).parent.parent / "bin" / "chemkit")
+SKILLS_DIR = Path(__file__).parent.parent / "skills"
+
+# Map each CLI subcommand to its self-contained skill folder/script. After the
+# Layout-B restructure there is no unified `chemkit` CLI; each skill is invoked
+# as `python skills/<name>/<name>.py <args>`. The subcommand is always the first
+# token the tests pass to _run_chemkit, so we dispatch on it here and the test
+# bodies stay unchanged.
+_SUBCMD_TO_SKILL = {
+    "sp": "single_point_energy",
+    "opt": "geometry_optimize",
+    "freq": "vibrational_analysis",
+    "binding": "binding_energy",
+    "redox": "redox_potential",
+    "confsearch": "conformer_search",
+    "frontier": "frontier_orbitals",
+    "electrostatics": "electrostatics",
+    "solvation": "solvation",
+    "logp": "logp",
+    "profile": "reaction_profile",
+    "pka": "pka",
+    "build": "build_from_smiles",
+    "fukui": "fukui",
+    "ts": "transition_state",
+    "irc": "irc",
+    "rxn-energy": "reaction_energy",
+    "scan": "conformational_analysis",
+}
+
+
+def _skill_script(subcmd: str) -> str:
+    name = _SUBCMD_TO_SKILL[subcmd]
+    return str(SKILLS_DIR / name / f"{name}.py")
 
 
 # ---------------------------------------------------------------------------
@@ -76,7 +108,7 @@ def _have_pyscf() -> bool:
     """
     if not hasattr(_have_pyscf, "_cached"):
         probe = subprocess.run(
-            [CHEMKIT, "sp", "--method", "hf", "/dev/null"],
+            [sys.executable, _skill_script("sp"), "--method", "hf", "/dev/null"],
             capture_output=True, text=True, timeout=30,
         )
         stderr = (probe.stderr or "").lower()
@@ -105,9 +137,16 @@ def _method_args(method: str) -> list[str]:
 # ---------------------------------------------------------------------------
 
 def _run_chemkit(args: list[str], cwd: str, timeout: float = 600.0) -> tuple[int, str, str]:
-    """Run chemkit and return (exit_code, stdout, stderr)."""
+    """Run a skill script and return (exit_code, stdout, stderr).
+
+    args[0] is the old chemkit subcommand; we dispatch it to the matching
+    standalone skill script and pass the remaining args through unchanged.
+    """
+    subcmd, rest = args[0], args[1:]
+    script = _skill_script(subcmd)
     proc = subprocess.run(
-        [CHEMKIT, *args], cwd=cwd, capture_output=True, text=True, timeout=timeout,
+        [sys.executable, script, *rest],
+        cwd=cwd, capture_output=True, text=True, timeout=timeout,
     )
     return proc.returncode, proc.stdout, proc.stderr
 
@@ -795,7 +834,8 @@ def test_rxn_energy_spec_parsing(tmp_run):
 def _have_obabel() -> bool:
     if not hasattr(_have_obabel, "_cached"):
         probe = subprocess.run(
-            [CHEMKIT, "build", "C", "--out-xyz", "/tmp/_chemkit_obabel_probe.xyz"],
+            [sys.executable, _skill_script("build"), "C",
+             "--out-xyz", "/tmp/_chemkit_obabel_probe.xyz"],
             capture_output=True, text=True, timeout=60,
         )
         _have_obabel._cached = (probe.returncode == 0)

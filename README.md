@@ -4,53 +4,63 @@ ASE-based computational chemistry suite — xtb (GFN2) and MOPAC (PM7), with opt
 
 ## Layout
 
+Each skill is a **self-contained folder** under `skills/`, named after the skill.
+A folder carries everything it needs to run on its own — no shared package:
+
 ```
 ~/chem-skills/
-├── src/chemkit/          # the Python package
-│   ├── calculators.py    # ASE calculator factory (xtb-python or CLI; MOPAC)
-│   ├── io.py             # geometry I/O + result writer
-│   ├── schema.py         # shared JSON schema
-│   ├── cli.py            # `chemkit` command-line entry
-│   └── tasks/
-│       ├── sp.py         # single-point
-│       ├── opt.py        # geometry optimization (BFGS)
-│       ├── freq.py       # vibrations + IdealGasThermo
-│       ├── binding.py    # ΔE_bind = E(complex) - Σ E(monomers)
-│       ├── redox.py      # E° via charge-state Δ on same geometry
-│       └── confsearch.py # CREST wrapper
-├── bin/chemkit           # bash shim (works without pip install)
-├── skills/               # slash-command skill wrappers (symlinked into ~/.claude/commands/)
-└── tests/
+├── skills/
+│   ├── single_point_energy/
+│   │   ├── SKILL.md                 # the skill doc (frontmatter + usage)
+│   │   ├── single_point_energy.py   # standalone entry point
+│   │   ├── requirements.txt         # pip deps + external-binary notes
+│   │   └── _engine/                 # folder-local bundled code (io, schema,
+│   │       ├── cli.py               #   calculators, the needed task modules,
+│   │       ├── calculators.py       #   and the pyscf backend where applicable)
+│   │       ├── io.py  schema.py
+│   │       ├── tasks/sp.py ...
+│   │       └── backends/pyscf/...
+│   ├── geometry_optimize/  ...
+│   └── (18 skill folders total)
+├── tools/build_skill_folders.py     # generator (regenerates folders from a source tree)
+└── tests/                           # regression suite (drives the skill scripts)
 ```
 
-## Install
+Because each folder is standalone, you can copy a single skill folder elsewhere
+and run it with nothing else present.
+
+## Install & run a skill
 
 ```bash
-# 1. Make sure xtb / MOPAC are installed
-conda install -c conda-forge xtb mopac ase
-pip install xtb  # optional: faster xtb-python bindings
+# Per skill — install its Python deps (external binaries listed in the file)
+cd skills/single_point_energy
+pip install -r requirements.txt
 
-# 2. Optional: install Sella for transition-state searches with the
-#    xtb / dft / hf backends. MOPAC has a native TS optimizer and does
-#    NOT need Sella; every other backend does.
-pip install sella
-
-# 3. Either pip install the package
-pip install -e ~/chem-skills
-
-# OR use the bash shim
-export PATH="$HOME/chem-skills/bin:$PATH"
+# Run it (each skill script mirrors the chemist arguments for that task)
+python single_point_energy.py --method xtb --solvent water mol.xyz
+python single_point_energy.py --help
 ```
+
+External binaries are NOT pip-installable — install separately, e.g.:
+```bash
+conda install -c conda-forge xtb mopac openbabel ase
+```
+(`xtb` for `--method xtb`; `mopac` for `--method mopac` / PM7 post-opt;
+`openbabel` provides `obabel`/`obenergy` for SMILES→3D, name lookup, and
+conformer search.) Install `pyscf` (in the skill's requirements where relevant)
+for `--method dft`/`--method hf`, and `sella` for transition-state searches on
+the xtb/dft/hf backends (MOPAC has a native TS optimizer).
 
 ## Quick examples
 
 ```bash
-chemkit sp     --method xtb   --solvent water  mol.xyz
-chemkit opt    --method mopac --charge 0       mol.xyz
-chemkit freq   --method xtb   --symmetry 2     mol_opt.xyz
-chemkit binding --method xtb --monomer A.xyz --monomer B.xyz complex.xyz
-chemkit redox  --method xtb   --ox-charge 0 --red-charge -1 --solvent water mol.xyz
-chemkit confsearch --method xtb mol.xyz
+python skills/single_point_energy/single_point_energy.py --method xtb --solvent water mol.xyz
+python skills/geometry_optimize/geometry_optimize.py     --method mopac --charge 0 mol.xyz
+python skills/vibrational_analysis/vibrational_analysis.py --method xtb --symmetry 2 mol_opt.xyz
+python skills/binding_energy/binding_energy.py --method xtb --monomer A.xyz --monomer B.xyz complex.xyz
+python skills/redox_potential/redox_potential.py --method xtb --ox-charge 0 --red-charge -1 --solvent water mol.xyz
+python skills/conformer_search/conformer_search.py --method xtb mol.xyz
+python skills/build_from_smiles/build_from_smiles.py ethanol   # name or SMILES → 3D xyz
 ```
 
 All tasks write a single JSON file with a common header:
@@ -58,12 +68,12 @@ All tasks write a single JSON file with a common header:
 
 ## How the agentic skills work
 
-`chemkit` itself is just a CLI — the `skills/*.md` files are what turn it into
-something an agent can drive directly. Each one is a Markdown skill file
-with YAML frontmatter, symlinked into `~/.claude/commands/` so it shows up as
-a slash command (`/single_point_energy`, `/geometry_optimize`,
-`/vibrational_analysis`, `/binding_energy`, `/redox_potential`,
-`/conformer_search`, `/conformational_analysis`).
+Each skill folder pairs a runnable Python script with a `SKILL.md` that turns it
+into something an agent can drive directly. The `SKILL.md` is a Markdown skill
+file with YAML frontmatter so it shows up as a slash command
+(`/single_point_energy`, `/geometry_optimize`, `/vibrational_analysis`,
+`/binding_energy`, `/redox_potential`, `/conformer_search`,
+`/conformational_analysis`, ...).
 
 Each skill follows the same pipeline:
 
@@ -78,9 +88,9 @@ Each skill follows the same pipeline:
    `--postopt` for conformer search). If something required is missing, the
    skill tells the agent to stop and either ask directly or use
    **AskUserQuestion** (e.g. method selection for `single_point_energy`).
-3. **Invoke the CLI** — the skill gives the literal `chemkit <task> ...`
-   invocation to run as a subprocess.
-4. **Read the JSON** — every `chemkit` task prints one JSON result with the
+3. **Invoke the script** — the skill gives the literal
+   `python <skill>.py ...` invocation to run as a subprocess.
+4. **Read the JSON** — every skill prints one JSON result with the
    common header described above plus task-specific fields. The skill tells
    the agent to copy this to `<basename>_<task>_<method>.json` next to the
    user's input (and, for tasks that produce structures, to copy the
@@ -91,11 +101,16 @@ Each skill follows the same pipeline:
    xtb/MOPAC energy zeros aren't comparable, or that a single surviving
    conformer after post-opt is the converged answer, not a bug).
 
-This keeps the heavy lifting (geometry I/O, calculator setup, parsing
-program output into a stable schema) inside `chemkit`, while the skill files
-encode the *judgment calls* — when to ask the user for clarification, what's
-worth flagging as a caveat, and how to translate raw JSON into something a
-chemist would actually want to read.
+This keeps the heavy lifting (geometry I/O, calculator setup, parsing program
+output into a stable schema) inside each skill's bundled `_engine/`, while the
+`SKILL.md` encodes the *judgment calls* — when to ask the user for
+clarification, what's worth flagging as a caveat, and how to translate raw JSON
+into something a chemist would actually want to read.
+
+> Regenerating folders: `tools/build_skill_folders.py` bundles each skill folder
+> from a chemkit source tree (rewriting imports to be folder-local). The folders
+> are the source of truth now; the generator is kept for reproducibility and
+> requires a `src/chemkit` tree (recoverable from git history) to re-run.
 
 ## Notes / caveats
 
