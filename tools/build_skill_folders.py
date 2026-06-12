@@ -328,6 +328,26 @@ python {script} --help                 # full argument list
 The chemistry engine is inlined into `{script}`; no other files are required.
 """
 
+# Skills whose result is a single viewable geometry — they auto-open it in the
+# in-terminal asciimol viewer (interactive TTY only). Mirrors _VIEW_KEYS in the
+# CLI. Keyed by skill folder name.
+VIEWER_SKILLS = {
+    "build_from_smiles", "geometry_optimize", "vibrational_analysis",
+    "transition_state", "conformer_search", "reaction_profile",
+}
+VIEWER_NOTE = """
+### In-terminal 3D view (asciimol)
+
+When run on an interactive terminal with `asciimol` installed, this skill opens
+the resulting geometry in an ASCII 3D viewer automatically (press `q` to quit).
+Pass `--no-view` to disable it. The viewer never launches in non-interactive
+runs (pipes, tests, agent automation), so it is safe to script.
+
+```bash
+pip install asciimol     # one-time: enables the in-terminal viewer
+```
+"""
+
 
 def build_skill(name: str, sources: dict):
     task, closure, needs_backends, needs_resolve, needs_mpl = SKILLS_MANIFEST[name]
@@ -356,6 +376,8 @@ def build_skill(name: str, sources: dict):
     if "## Running this skill" in body:
         body = body.split("## Running this skill")[0].rstrip() + "\n"
     body = body.rstrip() + "\n" + RUNNING_SECTION.format(script=script_name)
+    if name in VIEWER_SKILLS:
+        body = body.rstrip() + "\n" + VIEWER_NOTE
     with open(skill_md, "w") as f:
         f.write(body)
 

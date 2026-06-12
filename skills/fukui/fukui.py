@@ -652,6 +652,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 from typing import List, Optional
 
@@ -683,6 +684,19 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
                         "Ignored unless --method dft or --method hf.")
     p.add_argument("--out", default=None,
                    help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
+    _add_view_option(p)
+
+
+def _add_view_option(p):
+    """Add the --no-view flag. By default, geometry-producing tasks open the
+    resulting structure in an in-terminal asciimol viewer when run interactively
+    (a TTY) and asciimol is installed; --no-view suppresses that."""
+    p.add_argument(
+        "--no-view", dest="view", action="store_false", default=True,
+        help="Do not open the resulting geometry in the in-terminal asciimol "
+             "viewer (the viewer otherwise launches automatically on an "
+             "interactive terminal when asciimol is installed).",
+    )
 
 
 def _add_common(p):
@@ -693,6 +707,54 @@ def _add_common(p):
 def _default_out(input_path: str, task: str, method: str) -> str:
     stem = os.path.splitext(os.path.basename(input_path))[0]
     return os.path.abspath(f"{stem}_{task}_{method}.json")
+
+
+# Tasks that produce a single viewable geometry, and the result-dict keys (in
+# priority order) that hold its .xyz path.
+_VIEW_KEYS = {
+    "build":      ["xyz_path"],
+    "opt":        ["optimized_xyz"],
+    "ts":         ["ts_xyz"],
+    "confsearch": ["best_conformer_xyz", "conformers_xyz", "all_conformers_xyz"],
+    "profile":    ["ts_xyz"],
+}
+
+
+def _maybe_view(result: dict, task: str, view: bool) -> None:
+    """Open the resulting geometry in the in-terminal asciimol viewer.
+
+    Only fires when ALL of these hold, so it never hangs tests, pipelines, or
+    agent/automation runs:
+      * the user did not pass --no-view (view=True),
+      * stdout AND stdin are real interactive terminals (a human is present),
+      * asciimol is installed,
+      * the task produced a viewable .xyz that exists on disk.
+
+    Note: internal sub-task calls (freq->opt, build->opt, ...) go through
+    task.run() directly, never cli.main(), so this only runs for the top-level
+    user invocation — exactly once, on the final geometry.
+    """
+    import shutil as _shutil
+    if not view:
+        return
+    if not (sys.stdout.isatty() and sys.stdin.isatty()):
+        return
+    if _shutil.which("asciimol") is None:
+        return
+    xyz = None
+    for key in _VIEW_KEYS.get(task, []):
+        cand = result.get(key)
+        if cand and os.path.isfile(cand):
+            xyz = cand
+            break
+    if not xyz:
+        return
+    print(f"\n# opening {os.path.basename(xyz)} in asciimol "
+          f"(press q to quit)…", file=sys.stderr)
+    try:
+        subprocess.run(["asciimol", xyz])
+    except (OSError, KeyboardInterrupt):
+        pass
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -846,6 +908,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_prof.add_argument("--functional", default=None)
     p_prof.add_argument("--basis", default=None)
     p_prof.add_argument("--out", default=None)
+    _add_view_option(p_prof)
 
     p_pka = sub.add_parser(
         "pka",
@@ -936,6 +999,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_build.add_argument("--functional", default=None)
     p_build.add_argument("--basis", default=None)
     p_build.add_argument("--out", default=None, help="Result JSON path.")
+    _add_view_option(p_build)
 
     p_fukui = sub.add_parser(
         "fukui",
@@ -1287,6 +1351,9 @@ def main(argv: Optional[List[str]] = None) -> int:
                     print(f"# {k}: {d[k]}", file=sys.stderr)
     if args.task == "fukui" and result.get("plot_png"):
         print(f"# plot_png: {result['plot_png']}", file=sys.stderr)
+
+    # Visualize the resulting geometry in-terminal (interactive TTY only).
+    _maybe_view(result, args.task, getattr(args, "view", False))
     return 0
 
 

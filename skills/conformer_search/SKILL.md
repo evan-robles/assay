@@ -103,3 +103,14 @@ python conformer_search.py --help                 # full argument list
 ```
 
 The chemistry engine is inlined into `conformer_search.py`; no other files are required.
+
+### In-terminal 3D view (asciimol)
+
+When run on an interactive terminal with `asciimol` installed, this skill opens
+the resulting geometry in an ASCII 3D viewer automatically (press `q` to quit).
+Pass `--no-view` to disable it. The viewer never launches in non-interactive
+runs (pipes, tests, agent automation), so it is safe to script.
+
+```bash
+pip install asciimol     # one-time: enables the in-terminal viewer
+```
