@@ -1,6 +1,8 @@
 """Build 3D molecular geometry from a SMILES string via Open Babel.
 
 Pipeline:
+  0. If the input is a plain molecule *name* (not a SMILES), resolve it to a
+     SMILES online — PubChem -> OPSIN -> NIST WebBook — recording the source.
   1. Write the SMILES to a temporary ``.smi`` file.
   2. Run ``obabel <tmp>.smi --gen3d -O <out>.xyz`` to generate 3D coordinates.
   3. Delete the temporary ``.smi`` file.
@@ -8,12 +10,13 @@ Pipeline:
      so the user gets a QM-quality geometry in one command.
 
 The headline output is an .xyz file. JSON records the atom count, the obabel
-invocation, and (if requested) the QM-opt convergence + energy.
+invocation, the SMILES source (when resolved from a name, with an ACS-format
+citation), and (if requested) the QM-opt convergence + energy.
 
 Why this skill exists: every other chemkit skill takes an .xyz as input.
-For users who only have a SMILES (the most common starting point in drug
-design / cheminformatics), `chemkit build` closes the on-ramp without
-requiring them to fire up Avogadro or paste into PubChem.
+For users who only have a SMILES — or even just a molecule name — `chemkit
+build` closes the on-ramp without requiring them to fire up Avogadro or paste
+into PubChem.
 """
 from __future__ import annotations
 import os
@@ -37,6 +40,30 @@ def _require_obabel() -> str:
             "your platform package manager."
         )
     return exe
+
+
+def _looks_like_smiles(text: str) -> bool:
+    """Return True if Open Babel can parse `text` as a SMILES string.
+
+    Used to distinguish a SMILES (e.g. 'CCO') from a plain molecule name
+    (e.g. 'ethanol'), which obabel rejects with '0 molecules converted'.
+    Short strings like 'C' (methane) are valid SMILES and resolve as such —
+    the right default when someone types into a structure builder.
+    """
+    text = text.strip()
+    if not text:
+        return False
+    obabel = _require_obabel()
+    try:
+        proc = subprocess.run(
+            [obabel, f"-:{text}", "-osmi"],
+            capture_output=True, text=True, timeout=30,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return False
+    # obabel reports "N molecule(s) converted" on stderr; a 0 means it could
+    # not parse the input as a SMILES.
+    return proc.returncode == 0 and "0 molecules converted" not in proc.stderr
 
 
 def _gen3d_from_smiles(smiles: str, out_xyz: str, *, title: Optional[str]) -> str:
@@ -104,7 +131,7 @@ def _xyz_atom_count(xyz_path: str) -> int:
 # ---------------------------------------------------------------------------
 
 def run(
-    smiles: str,
+    molecule: str,
     *,
     out_xyz: str,
     name: Optional[str] = None,
@@ -117,12 +144,15 @@ def run(
     basis: Optional[str] = None,
     cli: str = "",
 ) -> Dict[str, Any]:
-    """Build a 3D xyz from SMILES using Open Babel.
+    """Build a 3D xyz from a SMILES string *or* a molecule name, using Open Babel.
 
     Args:
-      smiles: SMILES string (canonical or not — obabel parses both).
+      molecule: either a SMILES string (e.g. 'CCO') or a plain molecule name
+        (e.g. 'ethanol'). If it does not parse as SMILES, it is resolved to a
+        SMILES online via PubChem -> OPSIN -> NIST WebBook, and the source is
+        recorded in the result with an ACS-format citation.
       out_xyz: destination .xyz path. Will be overwritten if it exists.
-      name: optional title comment for the xyz (defaults to the SMILES).
+      name: optional title comment for the xyz (defaults to the input/SMILES).
       opt_method: if set, hand off to chemkit.tasks.opt for a QM refinement
         after the obabel build. One of 'xtb' / 'mopac' / 'dft' / 'hf'.
       opt_solvent: implicit solvent forwarded to opt.
@@ -133,13 +163,27 @@ def run(
 
     Returns a result dict; also writes `out_xyz` to disk.
     """
-    comment = name or f"chemkit build: {smiles}"
+    molecule = molecule.strip()
+
+    # Decide whether the input is already a SMILES or a name to look up.
+    smiles_source: Optional[Dict[str, Any]] = None
+    if _looks_like_smiles(molecule):
+        smiles = molecule
+    else:
+        # Treat as a molecule name: resolve to SMILES from a reliable source.
+        from ..resolve import resolve_name_to_smiles
+        resolution = resolve_name_to_smiles(molecule)
+        smiles = resolution.smiles
+        smiles_source = resolution.as_dict()
+
+    comment = name or f"chemkit build: {molecule}"
     obabel_cmd = _gen3d_from_smiles(smiles, out_xyz, title=comment)
     out_xyz = os.path.abspath(out_xyz)
 
     result: Dict[str, Any] = {
         "task": "build_from_smiles",
         "program": "openbabel",
+        "input": molecule,
         "smiles_input": smiles,
         "n_atoms": _xyz_atom_count(out_xyz),
         "build": {
@@ -150,6 +194,9 @@ def run(
         "cli_invocation": cli,
         "warnings": [],
     }
+    if smiles_source is not None:
+        # The input was a name; record where the SMILES came from.
+        result["smiles_source"] = smiles_source
 
     # Optional QM refinement step
     if opt_method:

@@ -247,13 +247,18 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     p_build = sub.add_parser(
         "build",
-        help="Build a 3D xyz from a SMILES string (Open Babel --gen3d, "
-             "optional QM refinement).",
+        help="Build a 3D xyz from a SMILES string OR a molecule name (Open Babel "
+             "--gen3d; names are resolved online via PubChem/OPSIN/NIST).",
     )
-    p_build.add_argument("smiles", help="SMILES string of the target molecule.")
+    p_build.add_argument(
+        "smiles",
+        help="SMILES string (e.g. 'CCO') or a plain molecule name (e.g. "
+             "'ethanol'). A name is resolved to SMILES online and the source "
+             "is reported.",
+    )
     p_build.add_argument(
         "--out-xyz", default=None,
-        help="Destination .xyz path. Default: <smiles-sanitized>.xyz in cwd.",
+        help="Destination .xyz path. Default: <input-sanitized>.xyz in cwd.",
     )
     p_build.add_argument(
         "--name", default=None,
@@ -548,7 +553,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             safe = re.sub(r"[^A-Za-z0-9_-]", "_", args.smiles)[:60] or "molecule"
             out_xyz = os.path.abspath(f"{safe}.xyz")
         result = build_task.run(
-            smiles=args.smiles, out_xyz=out_xyz, name=args.name,
+            molecule=args.smiles, out_xyz=out_xyz, name=args.name,
             opt_method=args.opt_method, opt_solvent=args.solvent,
             opt_charge=args.charge, opt_multiplicity=args.multiplicity,
             tier=args.tier, functional=args.functional, basis=args.basis,
