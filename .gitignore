@@ -25,3 +25,8 @@ __pycache__/
 
 # Safety net: keep committed example deliverables tracked.
 !skills/**/examples/**
+
+# ...but never track macOS cruft, even under examples/ (the un-ignore above
+# would otherwise re-include it).
+.DS_Store
+**/.DS_Store
