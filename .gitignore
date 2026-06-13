@@ -2,3 +2,26 @@
 __pycache__/
 *.pyc
 *.swp
+
+# ---------------------------------------------------------------------------
+# Runtime calculation artifacts dropped into the caller's cwd by a skill run.
+# These are scratch outputs (live logs + result files) and must not be
+# committed. Anchored to the repo ROOT (leading "/") and to mcp_server/ so they
+# never affect the committed example artifacts under skills/**/examples/.
+# (Patterns must be on their own lines — git does NOT strip trailing comments.)
+# ---------------------------------------------------------------------------
+/*.out
+/*.json
+/*.xyz
+/*.cube
+/*.molden
+/*.png
+/mcp_server/*.out
+/mcp_server/*.json
+/mcp_server/*.xyz
+/mcp_server/*.cube
+/mcp_server/*.molden
+/mcp_server/*.png
+
+# Safety net: keep committed example deliverables tracked.
+!skills/**/examples/**
