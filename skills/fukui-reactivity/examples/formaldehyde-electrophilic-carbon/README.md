@@ -34,8 +34,8 @@ Generated files: [`formaldehyde_fukui.json`](formaldehyde_fukui.json), [`formald
 | Most electrophilic site (most positive dual descriptor) | Carbonyl carbon C (+0.116) | Correctly identifies the carbonyl carbon as the most electrophilic site — consistent with the textbook fact that nucleophiles attack the carbonyl carbon of formaldehyde (H2C=O). This is a qualitative correctness check against established organic chemistry, not a numerical literature comparison. |
 
 ## References
-- R. K. Roy, S. Pal, K. Hirao. "On non-negativity of Fukui function indices." *J. Chem. Phys.* **1999**, *110*, 8236 (Fukui/dual-descriptor methodology). *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
-- C. Morell, A. Grand, A. Toro-Labbé. "New dual descriptor for chemical reactivity." *J. Phys. Chem. A* **2005**, *109*, 205. https://doi.org/10.1021/jp046577a *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- R. K. Roy, S. Pal, K. Hirao. "On non-negativity of Fukui function indices." *J. Chem. Phys.* **1999**, *110*, 8236. https://doi.org/10.1063/1.478792 (Fukui-dual-descriptor methodology).
+- C. Morell, A. Grand, A. Toro-Labbé. "New dual descriptor for chemical reactivity." *J. Phys. Chem. A* **2005**, *109*, 205. https://doi.org/10.1021/jp046577a
 
 ## 3D Structures
 - [formaldehyde.xyz](formaldehyde.xyz)
