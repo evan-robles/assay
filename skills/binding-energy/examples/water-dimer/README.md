@@ -47,5 +47,5 @@ The CCSD(T)/CBS value is a high-level **computational** benchmark, not an experi
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

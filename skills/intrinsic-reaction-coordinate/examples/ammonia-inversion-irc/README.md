@@ -41,5 +41,5 @@ NH₃ inversion connects two equivalent pyramidal minima that are mirror images,
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

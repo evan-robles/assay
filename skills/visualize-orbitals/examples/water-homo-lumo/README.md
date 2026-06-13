@@ -38,5 +38,5 @@ This skill produces viewable wavefunction files, not a measured property — so 
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

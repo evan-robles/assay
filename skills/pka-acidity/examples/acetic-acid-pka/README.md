@@ -45,5 +45,5 @@ Absolute mode gives a physically meaningless value (−114.7) — expected, sinc
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

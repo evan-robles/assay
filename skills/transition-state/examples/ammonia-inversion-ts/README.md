@@ -46,5 +46,5 @@ The TS is correctly located and validated (single imaginary mode = the inversion
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

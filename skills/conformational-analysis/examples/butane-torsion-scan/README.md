@@ -68,5 +68,5 @@ a strong validation of the relaxed-scan workflow on the textbook case.
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

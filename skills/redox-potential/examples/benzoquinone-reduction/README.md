@@ -41,5 +41,5 @@ Generated files: [benzoquinone.xyz](benzoquinone.xyz), [benzoquinone_redox.json]
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

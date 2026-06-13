@@ -37,5 +37,5 @@ Generated files: [`water_electrostatics.json`](water_electrostatics.json), [`wat
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

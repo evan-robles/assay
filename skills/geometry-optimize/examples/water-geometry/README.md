@@ -59,5 +59,5 @@ honest to report as a method limitation rather than an error in the run.
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

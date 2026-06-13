@@ -42,5 +42,5 @@ Generated files: [`formaldehyde_fukui.json`](formaldehyde_fukui.json), [`formald
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

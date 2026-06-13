@@ -40,5 +40,5 @@ Generated files: [`benzene_frontier.json`](benzene_frontier.json), [`benzene.xyz
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

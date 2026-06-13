@@ -44,5 +44,5 @@ Generated files: [butane.xyz](butane.xyz), [butane_confsearch.json](butane_confs
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

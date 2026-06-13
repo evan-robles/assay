@@ -45,5 +45,5 @@ The skill machinery works end-to-end (dE, dH, dG all produced; note dE alone, âˆ
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

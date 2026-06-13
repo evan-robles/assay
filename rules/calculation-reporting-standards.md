@@ -31,7 +31,7 @@ It is the *output-facing* counterpart to the rest of the rules set:
 
 ---
 
-## 0. The seven non-negotiables
+## 0. The eight non-negotiables
 
 1. **Never report a bare number.** Every reported quantity carries its level of
    theory, basis (or semi-empirical Hamiltonian), geometry source, and units.
@@ -54,6 +54,15 @@ It is the *output-facing* counterpart to the rest of the rules set:
 7. **Always make it reproducible.** The exact command (or the JSON's
    `cli_invocation`) and the output file paths must be reportable on request,
    and the headline method line must be enough to re-run.
+8. **Never generate a structure by hand — always use the relevant skill.**
+   Whenever a molecular structure is created (an `.xyz` geometry, a structure
+   built from a SMILES string or a name, a conformer, a scan frame, etc.),
+   produce it by **activating the appropriate chemkit skill** (e.g.
+   `build-from-smiles` for SMILES/name → `.xyz`, `conformer-search` for
+   conformers, `geometry-optimize` for relaxed structures) — never by
+   hand-writing coordinates or fabricating a geometry. This guarantees the
+   structure's provenance (resolving database + citation, force-field/QM build
+   method, exact command) is captured and reportable per §3.
 
 ---
 
@@ -345,5 +354,5 @@ literature-sourced values or citations, `research-standards.md` governs.*
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

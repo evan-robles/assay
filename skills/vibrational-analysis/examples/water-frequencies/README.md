@@ -58,5 +58,5 @@ systematic offset is expected and should not be read as error in the run.
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

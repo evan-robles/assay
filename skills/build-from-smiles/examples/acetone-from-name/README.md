@@ -45,5 +45,5 @@ This skill produces a starting geometry, not a measured property, so there is no
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)

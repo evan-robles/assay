@@ -43,5 +43,5 @@ Generated files: [ethanol.xyz](ethanol.xyz), [ethanol_logp.json](ethanol_logp.js
 
 ---
 
-**Author:** Evan Robles
+**Author:** Evan S. Robles
 **Contact:** [GitHub @evan-robles](https://github.com/evan-robles)
