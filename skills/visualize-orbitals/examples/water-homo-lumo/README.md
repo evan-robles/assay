@@ -31,7 +31,7 @@ Wrote `water_orbitals.molden` (full SCF) plus `water_orbitals_homo.cube` and `wa
 This skill produces viewable wavefunction files, not a measured property — so there is no experimental number to validate against. Validate instead by IDENTITY/sanity: water has 8 electrons -> 4 doubly-occupied MOs, so HOMO = MO 4, which matches. The HOMO of water is the oxygen lone-pair (b1) orbital; open `water_orbitals_homo.cube` in Avogadro/VMD to confirm the lone-pair shape. Note that no rendering is performed by the skill itself.
 
 ## References
-- G. Schaftenaar, J. H. Noordik. "Molden: a pre- and post-processing program." J. Comput.-Aided Mol. Des. 2000, 14, 123. https://doi.org/10.1023/A:1008193805436 (molden format). *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- G. Schaftenaar, J. H. Noordik. "Molden: a pre- and post-processing program." J. Comput.-Aided Mol. Des. 2000, 14, 123. https://doi.org/10.1023/A:1008193805436 (molden format).
 
 ## 3D Structures
 - [water.xyz](water.xyz)
