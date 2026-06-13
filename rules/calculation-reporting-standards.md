@@ -274,6 +274,14 @@ Every report must be able to point at:
 - the **output file paths** (optimized `.xyz`, `.molden`/`.cube`, result
   `.json`) — and note **where they were written** (the engine writes relative to
   its run directory, which may not be the user's cwd);
+- the **live `.out` log** — every skill run streams the engine's stdout/stderr
+  (PySCF at `--verbose 4` by default) to a `<subcommand>_<timestamp>.out` file in
+  the caller's cwd, written line-by-line so the user can `tail -f` it *while the
+  calculation runs*. It carries a header block (subcommand, args, exact command,
+  cwd) and ends with the result JSON under a banner, so it is self-contained.
+  Surface its path when reporting a result, and treat it as the primary live
+  progress and post-mortem artifact (SCF cycles, optimizer steps, warnings,
+  backend banners);
 - enough of the **method block** (§1) to re-run without reading the transcript.
 
 Offer to move or clean up generated artifacts rather than leaving them

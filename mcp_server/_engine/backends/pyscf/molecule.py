@@ -7,6 +7,7 @@ Responsibilities:
 - Centralize the "pyscf not installed" error
 """
 from __future__ import annotations
+import sys
 from typing import Tuple
 
 
@@ -77,13 +78,22 @@ def build_mol(
         for sym, pos in zip(atoms.get_chemical_symbols(), atoms.get_positions())
     ]
 
-    mol = gto.M(
-        atom=atom_spec,
-        basis=basis,
-        charge=int(charge),
-        spin=int(spin),
-        unit="Angstrom",
-        max_memory=int(max_memory_mb),
-        verbose=int(verbose),
-    )
+    # CRITICAL: PySCF's Mole.stdout defaults to sys.stdout, and at verbose >= 4
+    # gto.M() dumps a banner (including the entire input/source file) to that
+    # stream DURING build(). chemkit reserves stdout for the result JSON (cli.py
+    # prints it there; the MCP server parses it), so that banner would corrupt
+    # the JSON. We therefore construct the Mole WITHOUT auto-building, point its
+    # log stream at stderr, and only then build() — so every line of PySCF log
+    # (banner + SCF/optimizer detail) goes to stderr, where the live .out log
+    # captures it, and stdout stays clean JSON.
+    mol = gto.Mole()
+    mol.atom = atom_spec
+    mol.basis = basis
+    mol.charge = int(charge)
+    mol.spin = int(spin)
+    mol.unit = "Angstrom"
+    mol.max_memory = int(max_memory_mb)
+    mol.verbose = int(verbose)
+    mol.stdout = sys.stderr
+    mol.build()
     return mol

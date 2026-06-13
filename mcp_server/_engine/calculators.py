@@ -170,6 +170,15 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             "Install pyscf to use --method dft or --method hf."
         )
 
+    # PySCF log verbosity. Set once per process from the CLI (--verbose ->
+    # CHEMKIT_PYSCF_VERBOSE) so every build_calculator call picks it up without
+    # threading `verbose` through every task signature. Defaults to 4 (rich
+    # SCF/optimizer detail) so the live .out log is useful out of the box.
+    try:
+        pyscf_verbose = int(os.environ.get("CHEMKIT_PYSCF_VERBOSE", "4"))
+    except ValueError:
+        pyscf_verbose = 4
+
     if method == "dft":
         cfg = resolve_dft_tier(tier, functional, basis)
         calc = PySCFCalculator(
@@ -183,6 +192,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,
+            verbose=pyscf_verbose,
         )
         calc._chemkit_tier = cfg["tier"]
         calc._chemkit_functional = cfg["xc"]
@@ -204,6 +214,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,
+            verbose=pyscf_verbose,
         )
         calc._chemkit_tier = hf_tier
         calc._chemkit_functional = None

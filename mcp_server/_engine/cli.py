@@ -34,6 +34,10 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
                         "Ignored unless --method dft or --method hf.")
     p.add_argument("--out", default=None,
                    help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
+    p.add_argument("--verbose", type=int, default=4,
+                   help="PySCF log verbosity (0=silent .. 4=default rich SCF/opt "
+                        "detail .. 5=debug). Streamed to the live .out log; "
+                        "ignored for xtb/mopac.")
 
 
 def _add_common(p):
@@ -412,7 +416,23 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     # PySCF-only knobs threaded into every task.run(...) call below.
     # Tasks that don't use them ignore them; tasks that use dft/hf consume them.
+    # PySCF log verbosity is delivered to the calculator factory via an env var
+    # (read in calculators._build_pyscf) rather than threaded through every
+    # task.run() signature. This keeps `pyscf_kwargs` to the knobs the tasks
+    # actually accept (tier/functional/basis).
+    os.environ["CHEMKIT_PYSCF_VERBOSE"] = str(getattr(args, "verbose", 4))
     pyscf_kwargs = dict(tier=args.tier, functional=args.functional, basis=args.basis)
+
+    # stdout is reserved for the final result JSON only (the MCP server parses
+    # it). Some backends and child binaries write stray text to file descriptor
+    # 1 directly — notably the MOPAC binary's 'MOPAC Job ... ended normally'
+    # banner, and PySCF banners — which would corrupt that JSON. Redirect fd 1
+    # to fd 2 (stderr) for the whole calculation so every stray write lands on
+    # stderr (captured by the live .out log), then restore the real stdout just
+    # before printing the JSON. fd-level dup2 (not just reassigning sys.stdout)
+    # is required because child processes inherit fd 1, not Python's object.
+    _real_stdout_fd = os.dup(1)
+    os.dup2(2, 1)
 
     if args.task == "sp":
         from .tasks import sp
@@ -656,6 +676,13 @@ def main(argv: Optional[List[str]] = None) -> int:
             result["conformers_xyz"] = os.path.abspath(ensemble_dst)
             # Rewrite the JSON so it records the persistent xyz path.
             write_result(result, out_path)
+
+    # Restore the real stdout (fd 1) so the result JSON — and ONLY the result
+    # JSON — reaches the parser. Flush any buffered Python stdout writes to the
+    # redirected (stderr) target first so they don't bleed onto stdout.
+    sys.stdout.flush()
+    os.dup2(_real_stdout_fd, 1)
+    os.close(_real_stdout_fd)
 
     print(json.dumps(result, indent=2, default=str))
     print(f"\n# result written to: {out_path}", file=sys.stderr)

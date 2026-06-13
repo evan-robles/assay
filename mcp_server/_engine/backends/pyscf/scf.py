@@ -6,6 +6,7 @@
 - Pack a converged SCF object into the chemkit JSON schema
 """
 from __future__ import annotations
+import sys
 from typing import Any, Dict, Optional
 
 
@@ -72,6 +73,10 @@ def build_mean_field(
     mf.conv_tol = float(scf_tol)
     if max_cycle is not None:
         mf.max_cycle = int(max_cycle)
+    # Keep PySCF's SCF log off stdout (reserved for the result JSON) and on
+    # stderr, where the live .out log captures it. The density_fit/solvent
+    # wrappers above can create fresh objects, so set this on the final mf.
+    mf.stdout = sys.stderr
     return mf
 
 

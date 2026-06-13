@@ -259,7 +259,12 @@ def test_pyscf_dft_anion_basis_promotion(tmp_run):
 @pytest.mark.parametrize("method", METHODS, ids=lambda m: f"method-{m}")
 def test_sp_emits_only_json(tmp_run, method):
     """REGRESSION (48fb9c1): sp emits exactly one JSON file alongside the
-    input xyz — no _summary.txt sidecar leakage."""
+    input xyz — no _summary.txt sidecar leakage.
+
+    A live `<subcommand>_<timestamp>.out` log is an intended artifact (the MCP
+    server tees engine stdout/stderr there so the user can tail it mid-run), so
+    exactly one `.out` is permitted; anything else is leakage.
+    """
     _skip_if_unavailable(method)
     work = tmp_run / f"sp_only_{method}"
     work.mkdir()
@@ -269,8 +274,14 @@ def test_sp_emits_only_json(tmp_run, method):
     )
     assert rc == 0, err
     files = sorted(p.name for p in work.iterdir())
-    assert files == sorted(["h2o.xyz", f"h2o_sp_{method}.json"]), (
-        f"{method} sp emitted unexpected files: {files}"
+    # Separate the intended live-log artifact from everything else.
+    out_logs = [f for f in files if f.startswith("sp_") and f.endswith(".out")]
+    non_logs = [f for f in files if f not in out_logs]
+    assert len(out_logs) == 1, (
+        f"{method} sp expected exactly one live .out log, got: {out_logs}"
+    )
+    assert non_logs == sorted(["h2o.xyz", f"h2o_sp_{method}.json"]), (
+        f"{method} sp emitted unexpected files: {non_logs}"
     )
 
 
