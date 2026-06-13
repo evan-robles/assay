@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from .molecule import build_mol, promote_basis_for_anion
-from .scf import build_mean_field, pack_scf_result
+from .scf import build_mean_field, pack_scf_result, _report_auxbasis
 
 
 DEFAULT_BASIS = "def2-tzvp"
@@ -65,7 +65,9 @@ def run_sp(
         "basis": used_basis,
         "scf_tol": tcfg["scf_tol"],
         "scf_max_cycle": tcfg["max_cycle"],
-        "density_fit": True,
+        "density_fit": False,
+        "auxbasis": _report_auxbasis(mf),
+        "integral_treatment": "exact (no density fitting)",
         "solvent_model": ("ddCOSMO" if solvent else None),
     })
 

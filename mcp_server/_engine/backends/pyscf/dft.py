@@ -6,21 +6,27 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from .molecule import build_mol, promote_basis_for_anion
-from .scf import build_mean_field, pack_scf_result
+from .scf import build_mean_field, pack_scf_result, _report_auxbasis
 
 
-# Tier table: (xc, basis, grid_level, auxbasis).
+# Tier table: (xc, basis, grid_level, scf_tol, max_cycle).
 # Functional strings use libxc names (PySCF accepts both libxc and its own
 # aliases — libxc is the safer bet for portability).
 # wB97X-V / wB97M-V use VV10 nonlocal correlation, native in PySCF — no add-on.
 # wB97X-D3BJ would be a hair better at the standard tier but requires
 # pyscf-dispersion, which currently fails to load on Python 3.13.
+#
+# NOTE on density fitting: the auxiliary basis is NOT pinned here. It is chosen
+# in build_mean_field() to match the functional — a JK-fit auxbasis for hybrids
+# (standard/accurate use wB97X-V / wB97M-V, which carry exact exchange) and a
+# J-only auxbasis for pure functionals (fast = r2scan). Hard-coding a J-only
+# auxbasis previously mis-fit the exchange (K) matrix of the hybrid tiers.
 TIERS = {
-    "fast":     {"xc": "r2scan",  "basis": "def2-svp",   "grid": 3, "aux": "def2-universal-jfit",
+    "fast":     {"xc": "r2scan",  "basis": "def2-svp",   "grid": 3,
                  "scf_tol": 1e-7,  "max_cycle": 80},
-    "standard": {"xc": "wb97x_v", "basis": "def2-tzvp",  "grid": 4, "aux": "def2-universal-jfit",
+    "standard": {"xc": "wb97x_v", "basis": "def2-tzvp",  "grid": 4,
                  "scf_tol": 1e-8,  "max_cycle": 150},
-    "accurate": {"xc": "wb97m_v", "basis": "def2-qzvpp", "grid": 5, "aux": "def2-universal-jfit",
+    "accurate": {"xc": "wb97m_v", "basis": "def2-qzvpp", "grid": 5,
                  "scf_tol": 1e-10, "max_cycle": 300},
 }
 DEFAULT_TIER = "standard"
@@ -81,8 +87,7 @@ def run_sp(
         grid_level=cfg["grid"],
         scf_tol=cfg["scf_tol"],
         max_cycle=cfg["max_cycle"],
-        auxbasis=cfg["aux"],
-        solvent=solvent,
+        solvent=solvent,  # exact integrals (no density fitting) by default
     )
 
     energy_hartree = float(mf.kernel())
@@ -93,10 +98,11 @@ def run_sp(
         "functional": cfg["xc"],
         "basis": cfg["basis"],
         "grid_level": cfg["grid"],
-        "auxbasis": cfg["aux"],
         "scf_tol": cfg["scf_tol"],
         "scf_max_cycle": cfg["max_cycle"],
-        "density_fit": True,
+        "density_fit": False,
+        "auxbasis": _report_auxbasis(mf),
+        "integral_treatment": "exact (no density fitting)",
         "solvent_model": ("ddCOSMO" if solvent else None),
     })
 

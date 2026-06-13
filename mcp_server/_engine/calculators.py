@@ -155,9 +155,10 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
     ASE-compatible Calculator class. We import lazily so users without
     PySCF installed can still use xtb/mopac.
 
-    DFT tier presets bundle (xc, basis, grid_level, auxbasis); explicit
+    DFT tier presets bundle (xc, basis, grid_level); explicit
     `--functional`/`--basis` override the tier defaults. HF takes only a
-    `--basis` (default def2-tzvp).
+    `--basis` (default def2-tzvp). All PySCF runs use exact integrals
+    (no density fitting) — true RKS/UKS and RHF/UHF.
     """
     try:
         from .backends.pyscf import (
@@ -188,7 +189,9 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             grid_level=cfg["grid"],
             scf_tol=cfg["scf_tol"],
             max_cycle=cfg["max_cycle"],
-            auxbasis=cfg["aux"],
+            # auxbasis left as None: the density-fitting auxiliary basis is
+            # chosen in build_mean_field() to match the functional (JK-fit for
+            # hybrids, J-fit for pure functionals).
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,
@@ -301,8 +304,19 @@ def collect_calc_extras(method: str, atoms, calc) -> dict:
         mf = getattr(calc, "mean_field", None)
         if mf is not None:
             try:
-                from .backends.pyscf.scf import pack_scf_result
+                from .backends.pyscf.scf import pack_scf_result, _report_auxbasis
                 extras.update(pack_scf_result(mf))
+                # Report the integral treatment honestly, read off the actual
+                # mean-field object. chemkit runs EXACT RKS/UKS / RHF/UHF (no
+                # density fitting) by default; `_report_auxbasis` returns None
+                # when no DF is attached.
+                aux = _report_auxbasis(mf)
+                extras["density_fit"] = aux is not None
+                extras["auxbasis"] = aux
+                extras["integral_treatment"] = (
+                    f"density fitting (RI, auxbasis={aux})" if aux is not None
+                    else "exact (no density fitting)"
+                )
             except Exception:
                 pass
         functional = getattr(calc, "_chemkit_functional", None)

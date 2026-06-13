@@ -31,6 +31,29 @@ PYSCF_SOLVENT_EPS = {
 }
 
 
+def _functional_needs_exact_exchange(xc: str) -> bool:
+    """True if `xc` includes any exact (HF) exchange — i.e. is a (range-separated)
+    hybrid. Such functionals build a K matrix, which density fitting must fit
+    with a JK auxiliary basis, NOT a Coulomb-only (J) one."""
+    try:
+        from pyscf import dft as dft_mod
+        omega, alpha, hyb = dft_mod.numint.NumInt().rsh_and_hybrid_coeff(xc, spin=0)
+        return (abs(hyb) > 1e-10) or (abs(alpha) > 1e-10) or (abs(omega) > 1e-10)
+    except Exception:
+        # If we can't tell, assume it might need K and use the safe JK auxbasis.
+        return True
+
+
+# Auxiliary-basis choices for density fitting.
+#   - J only  (Coulomb)            -> a "jfit"  basis is correct and cheaper
+#   - J and K (Coulomb + exchange) -> a "jkfit" basis is REQUIRED; using a
+#     jfit basis to fit the exchange (K) matrix introduces a systematic error
+#     (~0.1-0.8 mEh here), which is wrong for every hybrid functional and for HF.
+# def2-universal-* covers the whole def2 orbital-basis family (svp/tzvp/qzvpp).
+AUXBASIS_J = "def2-universal-jfit"
+AUXBASIS_JK = "def2-universal-jkfit"
+
+
 def build_mean_field(
     mol,
     *,
@@ -39,14 +62,25 @@ def build_mean_field(
     grid_level: int = 3,
     scf_tol: float = 1e-8,
     max_cycle: Optional[int] = None,
-    density_fit: bool = True,
-    auxbasis: str = "def2-universal-jfit",
+    density_fit: bool = False,
+    auxbasis: Optional[str] = None,
     solvent: Optional[str] = None,
 ):
     """Construct a converged-or-ready-to-converge SCF/KS object.
 
     method: 'dft' or 'hf'
     xc: libxc functional string when method == 'dft' (e.g. 'wb97x_d3bj')
+
+    By default this runs EXACT (analytic four-center integral) Kohn-Sham
+    (RKS/UKS) or Hartree-Fock (RHF/UHF) with NO density fitting — the most
+    accurate option and the chemkit default.
+
+    Density fitting (the resolution-of-identity / RI approximation to the
+    two-electron integrals) is OFF by default. If a caller explicitly sets
+    `density_fit=True`, the auxiliary basis is chosen to match the integrals
+    the method actually builds: a JK-fit auxbasis when exact exchange is
+    present (HF, or hybrid/RSH functionals), a Coulomb-only J-fit auxbasis for
+    pure functionals. An explicit `auxbasis` overrides that choice.
     """
     method = method.lower()
     is_open_shell = mol.spin != 0
@@ -58,14 +92,21 @@ def build_mean_field(
         mf = dft_mod.UKS(mol) if is_open_shell else dft_mod.RKS(mol)
         mf.xc = xc
         mf.grids.level = int(grid_level)
+        needs_k = _functional_needs_exact_exchange(xc)
     elif method == "hf":
         from pyscf import scf as scf_mod
         mf = scf_mod.UHF(mol) if is_open_shell else scf_mod.RHF(mol)
+        needs_k = True  # Hartree-Fock is 100% exact exchange.
     else:
         raise ValueError(f"Unknown PySCF method {method!r}")
 
     if density_fit:
-        mf = mf.density_fit(auxbasis=auxbasis)
+        # Correct auxbasis for what's being fit: JK whenever exact exchange is
+        # present, J-only for pure functionals. Caller override wins.
+        aux = auxbasis if auxbasis is not None else (
+            AUXBASIS_JK if needs_k else AUXBASIS_J
+        )
+        mf = mf.density_fit(auxbasis=aux)
 
     if solvent:
         mf = attach_solvent(mf, solvent)
@@ -78,6 +119,17 @@ def build_mean_field(
     # wrappers above can create fresh objects, so set this on the final mf.
     mf.stdout = sys.stderr
     return mf
+
+
+def _report_auxbasis(mf):
+    """Return the density-fitting auxiliary basis actually attached to `mf`
+    (for honest reporting in the result JSON), or None if DF isn't in use.
+    Handles solvent-wrapped objects whose `.with_df` lives on the inner mf."""
+    obj = getattr(mf, "_scf", mf)  # unwrap solvent/other decorators if present
+    with_df = getattr(obj, "with_df", None) or getattr(mf, "with_df", None)
+    if with_df is None:
+        return None
+    return getattr(with_df, "auxbasis", None)
 
 
 def attach_solvent(mf, solvent_name: str, model: str = "ddcosmo"):

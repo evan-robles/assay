@@ -50,8 +50,8 @@ class PySCFCalculator(Calculator):
         grid_level: int = 4,
         scf_tol: float = 1e-8,
         max_cycle: Optional[int] = None,
-        density_fit: bool = True,
-        auxbasis: str = "def2-universal-jfit",
+        density_fit: bool = False,
+        auxbasis: Optional[str] = None,
         max_memory_mb: int = 8000,
         verbose: int = 0,
     ):
