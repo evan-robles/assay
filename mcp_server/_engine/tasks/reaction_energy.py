@@ -118,6 +118,7 @@ def _evaluate_species(
         multiplicity=species["multiplicity"], solvent=solvent,
         tier=tier, functional=functional, basis=basis,
         cli=f"(internal reaction_energy: {species['spec']})",
+        gate_integrity=False,  # sub-call: stamp only; rxn-energy gates the result
     )
 
     block: Dict[str, Any] = {
@@ -129,16 +130,23 @@ def _evaluate_species(
     if mode == "sp":
         r = sp_task.run(path, **common)
         block["energy_eV"] = r["total_energy_eV"]
+        block["method"] = r.get("method")
         block["sp"] = {"converged": True}
     elif mode == "opt":
         r_opt = opt_task.run(path, **common)
         block["energy_eV"] = r_opt["total_energy_eV"]
+        block["method"] = r_opt.get("method")
+        _n_atoms = r_opt.get("n_atoms")
         block["opt"] = {
             "converged": bool(r_opt.get("converged")),
             "optimized_xyz": r_opt.get("optimized_xyz"),
             "n_steps": r_opt.get("n_steps"),
+            "n_atoms": _n_atoms,
         }
-        if not r_opt.get("converged"):
+        # A single-atom species (e.g. atomic H in H2 -> 2 H) has no geometry to
+        # relax; converged=False is vacuous, not a real failure (mirrors the
+        # opt task's own zero-DOF carve-out). Don't warn for that case.
+        if not r_opt.get("converged") and (_n_atoms or 0) > 1:
             block["warning"] = "opt did not converge"
     elif mode == "freq":
         # freq does its own preopt by default. Use the freq result's
@@ -149,14 +157,17 @@ def _evaluate_species(
         )
         E = r_freq.get("electronic_energy_eV") or r_freq.get("total_energy_eV")
         block["energy_eV"] = E
+        block["method"] = r_freq.get("method")
         block["enthalpy_eV"] = r_freq.get("enthalpy_eV")
         block["entropy_eV_per_K"] = r_freq.get("entropy_eV_per_K")
         block["gibbs_free_energy_eV"] = r_freq.get("gibbs_free_energy_eV")
         block["zpe_eV"] = r_freq.get("zpe_eV")
         block["n_imaginary_modes"] = r_freq.get("n_imaginary_modes")
+        block["n_atoms"] = r_freq.get("n_atoms")
         block["freq"] = {
             "preopt_converged": (r_freq.get("preopt") or {}).get("converged"),
             "optimized_xyz": (r_freq.get("preopt") or {}).get("optimized_xyz"),
+            "n_atoms": r_freq.get("n_atoms"),
         }
         if (r_freq.get("n_imaginary_modes") or 0) > 0:
             block["warning"] = (
@@ -185,6 +196,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Compute ΔE (and ΔH, ΔG if mode='freq') for reactants → products.
 
@@ -347,4 +360,7 @@ def run(
             warns.append(f"[{b['spec']}] {b['warning']}")
     if warns:
         result["warnings"] = warns
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)

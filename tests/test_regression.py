@@ -87,12 +87,16 @@ def _skill_script(subcmd: str) -> str:
 METHODS = ["xtb", "mopac", "dft", "hf"]
 
 # Extra args to make DFT/HF small and quick for these regression tests.
-# r²SCAN/def2-SVP for DFT (fast tier); HF defaults to def2-tzvp.
+# r²SCAN/def2-SVP for DFT (fast tier); HF with an explicit small basis.
+# NB: DFT/HF level-of-theory knobs must be explicit — the engine now REFUSES a
+# DFT/HF run that omits --tier/--functional/--basis unless --accept-defaults is
+# passed (calculation-reporting-standards non-negotiable #10). Passing them here
+# keeps these runs both fast AND policy-compliant.
 _METHOD_EXTRA: dict[str, list[str]] = {
     "xtb":   [],
     "mopac": [],
     "dft":   ["--tier", "fast"],
-    "hf":    [],
+    "hf":    ["--basis", "def2-svp"],
 }
 
 
@@ -108,8 +112,11 @@ def _have_pyscf() -> bool:
     pyscf import gate. Cached so the probe runs at most once per session.
     """
     if not hasattr(_have_pyscf, "_cached"):
+        # --basis is required so the level-of-theory guard (non-negotiable #10)
+        # doesn't reject this probe before it reaches the pyscf import gate.
         probe = subprocess.run(
-            [sys.executable, _skill_script("sp"), "--method", "hf", "/dev/null"],
+            [sys.executable, _skill_script("sp"), "--method", "hf",
+             "--basis", "def2-svp", "/dev/null"],
             capture_output=True, text=True, timeout=30,
         )
         stderr = (probe.stderr or "").lower()
@@ -222,9 +229,11 @@ def test_pyscf_sp_h2_reference_energies(tmp_run):
     are deliberately loose (5 mHa)."""
     if not _have_pyscf():
         pytest.skip("pyscf not available")
+    # HF basis made explicit (was the old silent def2-tzvp default) so the run
+    # passes the level-of-theory guard; the reference energy is unchanged.
     for method, extra, expected_eh in [
-        ("hf",  [],                  -1.1326),
-        ("dft", ["--tier", "fast"],  -1.1662),
+        ("hf",  ["--basis", "def2-tzvp"], -1.1326),
+        ("dft", ["--tier", "fast"],       -1.1662),
     ]:
         out = tmp_run / f"h2_sp_{method}_ref.json"
         rc, _, err = _run_chemkit(
@@ -629,8 +638,10 @@ def test_irc_rejects_dft(tmp_run):
     (the IRC descent algorithm is xtb/mopac-only today)."""
     if not _have_pyscf():
         pytest.skip("pyscf not available")
+    # --tier so the run clears the level-of-theory guard and actually reaches
+    # the IRC dispatch layer this test is exercising.
     rc, _, err = _run_chemkit(
-        ["irc", "--method", "dft", "h2.xyz"],
+        ["irc", "--method", "dft", "--tier", "fast", "h2.xyz"],
         cwd=str(tmp_run), timeout=60,
     )
     assert rc != 0
@@ -643,7 +654,7 @@ def test_irc_rejects_hf(tmp_run):
     if not _have_pyscf():
         pytest.skip("pyscf not available")
     rc, _, err = _run_chemkit(
-        ["irc", "--method", "hf", "h2.xyz"],
+        ["irc", "--method", "hf", "--basis", "def2-svp", "h2.xyz"],
         cwd=str(tmp_run), timeout=60,
     )
     assert rc != 0
@@ -748,8 +759,11 @@ def test_freq_auto_confsearch_wires_through(tmp_run):
             pytest.skip(f"{tool} not on PATH")
     out = tmp_run / "hq_auto.json"
     rc, _, err = _run_chemkit(
+        # --allow-unconverged: hydroquinone's OH-torsion sampling can land on a
+        # soft-mode saddle (n_imag>0), which the integrity gate would otherwise
+        # hard-abort. We only test the wiring here, so bypass the gate.
         ["freq", "--method", "mopac", "--charge", "0", "--mult", "1",
-         "--solvent", "water", "--auto-confsearch",
+         "--solvent", "water", "--auto-confsearch", "--allow-unconverged",
          "hydroquinone.xyz", "--out", str(out)],
         cwd=str(tmp_run), timeout=1800,
     )
@@ -1016,9 +1030,13 @@ def test_pka_absolute_runs(tmp_run):
     )
     out = tmp_run / "h3op_pka.json"
     rc, _, err = _run_chemkit(
+        # --allow-unconverged: small protonated species can show a soft imaginary
+        # mode after the freq step; the integrity gate would hard-abort on that.
+        # This test checks plumbing, not the value, so bypass the gate.
         ["pka", "--method", "xtb", "--solvent", "water",
          "--ha", str(h3op), "--a-minus", str(h2o),
          "--ha-charge", "1",  # H3O+ is +1; A- (H2O) is 0
+         "--allow-unconverged",
          "--out", str(out)],
         cwd=str(tmp_run), timeout=900,
     )
@@ -1094,10 +1112,13 @@ def test_profile_dft_skips_irc(tmp_run):
     ts = tmp_run / "fhts.xyz"; ts.write_text("2\nTS\nH 0 0 0.46\nF 0 0 0.46\n")
     out = tmp_run / "skip_irc.json"
     # We don't care if convergence is sketchy — just want the IRC-skip branch.
+    # --allow-unconverged: the contrived collapsed TS guess will fail the
+    # integrity gate (not a first-order saddle); bypass it so we reach the
+    # IRC-skip assertion instead of hard-aborting.
     rc, _, err = _run_chemkit(
         ["profile", "--method", "dft", "--tier", "fast",
          "--reactant", str(r), "--product", str(p),
-         "--ts-guess", str(ts), "--out", str(out)],
+         "--ts-guess", str(ts), "--allow-unconverged", "--out", str(out)],
         cwd=str(tmp_run), timeout=1200,
     )
     if rc != 0:
@@ -1193,7 +1214,7 @@ def test_orbitals_open_shell_o2_triplet_hf(tmp_run):
     _skip_if_unavailable("hf")
     out = tmp_run / "o2_orb_hf.json"
     rc, _, err = _run_chemkit(
-        ["orbitals", "--method", "hf", "--mult", "3",
+        ["orbitals", "--method", "hf", "--basis", "def2-svp", "--mult", "3",
          "o2.xyz", "--out", str(out)],
         cwd=str(tmp_run), timeout=900,
     )
@@ -1205,3 +1226,218 @@ def test_orbitals_open_shell_o2_triplet_hf(tmp_run):
         text = f.read()
     assert "Spin= Alpha" in text, "molden missing alpha-spin block"
     assert "Spin= Beta" in text, "molden missing beta-spin block"
+
+
+# ===========================================================================
+# Computation-side integrity layer (convergence gate + physical sanity)
+#
+# Two groups:
+#  1) Module unit tests — import _engine.integrity directly, no QM backend
+#     needed, so they ALWAYS run (full check-matrix coverage independent of
+#     which of xtb/mopac/pyscf are installed).
+#  2) End-to-end gate tests — drive the CLI and assert BOTH the nonzero exit
+#     AND that the partial result + geometry are preserved on disk.
+# ===========================================================================
+
+import importlib  # noqa: E402
+
+_MCP = str(Path(__file__).parent.parent / "mcp_server")
+if _MCP not in sys.path:
+    sys.path.insert(0, _MCP)
+
+
+def _integrity():
+    return importlib.import_module("_engine.integrity")
+
+
+# ---- 1) module unit tests (no QM) ----------------------------------------
+
+def test_integrity_rollup_status():
+    I = _integrity()
+    C = I.IntegrityCheck
+    assert I.rollup_status([]) == "ok"
+    assert I.rollup_status([C("a", True, "error", "")]) == "ok"
+    assert I.rollup_status([C("a", False, "warning", "")]) == "warning"
+    assert I.rollup_status([C("a", False, "error", "")]) == "failed"
+    # worst-severity wins
+    assert I.rollup_status([C("a", False, "warning", ""), C("b", False, "error", "")]) == "failed"
+
+
+def test_integrity_finite_helper():
+    I = _integrity()
+    assert I._finite(1.5) and I._finite(-3)
+    assert not I._finite(None)
+    assert not I._finite(float("nan")) and not I._finite(float("inf"))
+    assert not I._finite(True)  # bool excluded — never a numeric result value
+
+
+def test_integrity_sp_scf_gates():
+    I = _integrity()
+    ok = {"task": "single_point", "total_energy_eV": -100.0,
+          "code_specific": {"scf_converged": True}}
+    assert all(c.ok for c in I.validate(ok, "single_point"))
+    bad = {"task": "single_point", "total_energy_eV": -100.0,
+           "code_specific": {"scf_converged": False}}
+    checks = I.validate(bad, "single_point")
+    assert any(c.name == "scf_converged" and not c.ok for c in checks)
+    assert I.rollup_status(checks) == "failed"
+    # xtb/mopac have no SCF flag — only the finite-energy check applies
+    xtb = {"task": "single_point", "total_energy_eV": -50.0}
+    assert all(c.ok for c in I.validate(xtb, "single_point"))
+
+
+def test_integrity_opt_zero_dof_vacuous():
+    I = _integrity()
+    # A single atom can't relax — converged=False must pass vacuously.
+    mono = {"task": "geometry_optimization", "n_atoms": 1,
+            "converged": False, "total_energy_eV": -13.6}
+    assert all(c.ok for c in I.validate(mono, "geometry_optimization"))
+    # A polyatomic that didn't converge must fail.
+    poly = {"task": "geometry_optimization", "n_atoms": 3,
+            "converged": False, "total_energy_eV": -100.0}
+    assert any(c.name == "opt_converged" and not c.ok
+               for c in I.validate(poly, "geometry_optimization"))
+
+
+def test_integrity_freq_minimum_vs_imaginary():
+    I = _integrity()
+    good = {"task": "vibrational_thermochemistry", "n_imaginary_modes": 0,
+            "gibbs_free_energy_eV": -1.0}
+    assert all(c.ok for c in I.validate(good, "vibrational_thermochemistry"))
+    saddle = {"task": "vibrational_thermochemistry", "n_imaginary_modes": 1,
+              "gibbs_free_energy_eV": -1.0}
+    assert any(c.name == "n_imag_minimum" and not c.ok
+               for c in I.validate(saddle, "vibrational_thermochemistry"))
+
+
+def test_integrity_ts_magnitude_band():
+    I = _integrity()
+    good = {"task": "transition_state", "converged": True,
+            "verify_freq": {"n_imaginary_modes": 1,
+                            "imaginary_mode_magnitude_cm-1": 1200.0}}
+    assert all(c.ok for c in I.validate(good, "transition_state"))
+    soft = {"task": "transition_state", "converged": True,
+            "verify_freq": {"n_imaginary_modes": 1,
+                            "imaginary_mode_magnitude_cm-1": 30.0}}
+    assert any(c.name == "ts_one_imag_in_band" and not c.ok
+               for c in I.validate(soft, "transition_state"))
+    twomodes = {"task": "transition_state", "converged": True,
+                "verify_freq": {"n_imaginary_modes": 2,
+                                "imaginary_mode_magnitude_cm-1": 1200.0}}
+    assert any(c.name == "ts_one_imag_in_band" and not c.ok
+               for c in I.validate(twomodes, "transition_state"))
+
+
+def test_integrity_electrostatics_charge_consistency():
+    I = _integrity()
+    ok = {"task": "electrostatics", "sum_of_charges": -0.999, "charge": -1}
+    assert all(c.ok for c in I.validate(ok, "electrostatics"))
+    bad = {"task": "electrostatics", "sum_of_charges": 0.3, "charge": -1}
+    assert any(not c.ok for c in I.validate(bad, "electrostatics"))
+
+
+def test_integrity_gate_raises_and_carries_result():
+    I = _integrity()
+    bad = {"task": "geometry_optimization", "n_atoms": 3,
+           "converged": False, "total_energy_eV": -100.0}
+    try:
+        I.gate(dict(bad), "geometry_optimization", allow_unconverged=False)
+        assert False, "gate should have raised IntegrityError"
+    except I.IntegrityError as e:
+        assert e.result["integrity"]["status"] == "failed"
+        assert e.result["integrity"]["trustworthy"] is False
+        assert any(c.name == "opt_converged" for c in e.failed)
+
+
+def test_integrity_gate_downgrade_with_allow_unconverged():
+    I = _integrity()
+    bad = {"task": "geometry_optimization", "n_atoms": 3,
+           "converged": False, "total_energy_eV": -100.0}
+    out = I.gate(dict(bad), "geometry_optimization", allow_unconverged=True)
+    assert out["integrity"]["status"] == "warning"
+    assert out["integrity"]["trustworthy"] is False
+    assert out["integrity"]["gate_bypassed"] is True
+
+
+def test_integrity_ungated_tasks_pass_vacuously():
+    I = _integrity()
+    # scan/frontier/confsearch/orbitals/build have no registered error checks.
+    for task in ("scan", "frontier_orbitals", "conformer_search",
+                 "orbital_visualization", "build_from_smiles"):
+        assert I.validate({"task": task}, task) == []
+    # finalize still stamps an integrity block (status ok) for uniformity.
+    r = {"task": "scan"}
+    I.finalize(r, gate_integrity=True)
+    assert r["integrity"]["status"] == "ok"
+    assert r["integrity"]["trustworthy"] is True
+
+
+# ---- 2) end-to-end gate tests (drive the CLI) -----------------------------
+
+def test_gate_opt_nonconverged_hard_aborts(tmp_run):
+    """A non-converged optimization hard-aborts (nonzero exit) but STILL writes
+    the partial result and the .xyz so the failed geometry can be inspected."""
+    _skip_if_unavailable("xtb")
+    out = tmp_run / "h2o_opt_fail.json"
+    rc, _, err = _run_chemkit(
+        ["opt", "--method", "xtb", "--steps", "1",
+         "h2o.xyz", "--out", str(out)],
+        cwd=str(tmp_run), timeout=300,
+    )
+    assert rc != 0, "non-converged opt must hard-abort with nonzero exit"
+    d = _load(out)  # evidence: JSON must exist
+    assert d["integrity"]["status"] == "failed"
+    assert d["integrity"]["trustworthy"] is False
+    assert any(c["name"] == "opt_converged" and not c["ok"]
+               for c in d["integrity"]["checks"])
+    assert d.get("optimized_xyz") and os.path.isfile(d["optimized_xyz"]), \
+        "the partial geometry must be preserved on disk"
+
+
+def test_gate_allow_unconverged_downgrades(tmp_run):
+    """Same non-converged opt with --allow-unconverged exits 0 and stamps the
+    result status=warning, trustworthy=false, gate_bypassed=true."""
+    _skip_if_unavailable("xtb")
+    out = tmp_run / "h2o_opt_bypass.json"
+    rc, _, err = _run_chemkit(
+        ["opt", "--method", "xtb", "--steps", "1", "--allow-unconverged",
+         "h2o.xyz", "--out", str(out)],
+        cwd=str(tmp_run), timeout=300,
+    )
+    assert rc == 0, f"--allow-unconverged must exit 0: {err[-300:]}"
+    d = _load(out)
+    assert d["integrity"]["status"] == "warning"
+    assert d["integrity"]["trustworthy"] is False
+    assert d["integrity"].get("gate_bypassed") is True
+
+
+def test_gate_passing_run_is_trustworthy(tmp_run):
+    """A clean single point passes the gate: exit 0, status ok, trustworthy."""
+    _skip_if_unavailable("xtb")
+    out = tmp_run / "h2o_sp_ok.json"
+    rc, _, err = _run_chemkit(
+        ["sp", "--method", "xtb", "h2o.xyz", "--out", str(out)],
+        cwd=str(tmp_run), timeout=300,
+    )
+    assert rc == 0, err
+    d = _load(out)
+    assert d["integrity"]["status"] == "ok"
+    assert d["integrity"]["trustworthy"] is True
+
+
+def test_gate_binding_charge_mismatch_aborts(tmp_run):
+    """A charge-mismatched binding fragmentation fails (pre-check ValueError →
+    nonzero exit). Confirms charge conservation is enforced, not just reported."""
+    _skip_if_unavailable("xtb")
+    out = tmp_run / "bind_badcharge.json"
+    rc, _, err = _run_chemkit(
+        ["binding", "--method", "xtb", "h2.xyz",
+         "--monomer", "h_atom.xyz", "--monomer", "h_atom.xyz",
+         "--charge", "0",
+         "--monomer-charge", "1", "--monomer-charge", "1",  # sum=2 != 0
+         "--monomer-mult", "1", "--monomer-mult", "1",
+         "--out", str(out)],
+        cwd=str(tmp_run), timeout=300,
+    )
+    assert rc != 0, "charge-mismatched binding must fail"
+    assert "charge" in err.lower()

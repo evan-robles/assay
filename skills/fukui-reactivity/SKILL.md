@@ -6,6 +6,17 @@ category: chemistry
 
 # Fukui Reactivity (Atom-Level)
 
+> [!IMPORTANT]
+> **Before running — confirm the level of theory; never guess.** If the user did
+> not specify `--method` (xtb | mopac | dft | hf) — and, where relevant,
+> `--functional`/`--basis`/`--tier`, `--solvent` (or explicit gas phase),
+> `--charge`, `--mult` — **stop and ask the user** (do not silently default or
+> carry over the previous run's choice). The engine refuses a DFT/HF run that
+> omits the consequential knobs unless you pass `--accept-defaults`.
+> **At launch, immediately give the user the live `.out` log path and offer
+> `tail -f`** — do not wait for the run to finish. (calculation-reporting-standards
+> non-negotiables #10 and #9.)
+
 ## Goal
 Compute atom-resolved reactivity from three finite-difference partial-charge calculations on the **same** geometry — neutral (N), cation (N−1), anion (N+1) — yielding the condensed Fukui functions $f^+$ (electrophilic site), $f^-$ (nucleophilic site), $f^0$ (radical site), and the Morell dual descriptor $f^+ - f^-$. This identifies which atom is most reactive; for a global molecule-level picture ($\eta$, $\omega$, $\chi$) use [frontier-orbitals](../frontier-orbitals/SKILL.md) instead.
 

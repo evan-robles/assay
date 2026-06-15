@@ -3,6 +3,10 @@ __pycache__/
 *.pyc
 *.swp
 
+# Per-session state written by the chemkit method-gate PreToolUse hook
+# (acknowledgement markers keyed by session id). Runtime state, never committed.
+/.claude/.chemkit-gate/
+
 # ---------------------------------------------------------------------------
 # Runtime calculation artifacts dropped into the caller's cwd by a skill run.
 # These are scratch outputs (live logs + result files) and must not be

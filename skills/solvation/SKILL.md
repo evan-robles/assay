@@ -6,6 +6,17 @@ category: chemistry
 
 # Solvation
 
+> [!IMPORTANT]
+> **Before running — confirm the level of theory; never guess.** If the user did
+> not specify `--method` (xtb | mopac | dft | hf) — and, where relevant,
+> `--functional`/`--basis`/`--tier`, `--solvent` (or explicit gas phase),
+> `--charge`, `--mult` — **stop and ask the user** (do not silently default or
+> carry over the previous run's choice). The engine refuses a DFT/HF run that
+> omits the consequential knobs unless you pass `--accept-defaults`.
+> **At launch, immediately give the user the live `.out` log path and offer
+> `tail -f`** — do not wait for the run to finish. (calculation-reporting-standards
+> non-negotiables #10 and #9.)
+
 ## Goal
 Estimate the solvation free energy $\Delta G_\text{solv} = E_\text{solvated} - E_\text{gas}$ using implicit solvation on the supplied geometry. Electronic only — no cavitation, dispersion-repulsion, or thermal corrections. Screening-grade at semi-empirical accuracy (±2–3 kcal/mol typical). For octanol/water partition specifically, use [logp-partition](../logp-partition/SKILL.md) instead.
 

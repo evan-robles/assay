@@ -53,6 +53,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Electrostatics single-point on the supplied geometry."""
     method = method.lower()
@@ -100,7 +102,10 @@ def run(
     if warns:
         existing = result.get("warnings") or []
         result["warnings"] = existing + warns
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 # ---------------------------------------------------------------------------

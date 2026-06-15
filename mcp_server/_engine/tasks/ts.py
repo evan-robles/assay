@@ -48,6 +48,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     method = method.lower()
     atoms = read_geometry(input_path)
@@ -114,6 +116,9 @@ def run(
                 tier=tier,
                 functional=functional,
                 basis=basis,
+                # A TS legitimately has 1 imaginary mode — freq's minimum gate
+                # would always fail here. Stamp only; ts.run gates its own result.
+                gate_integrity=False,
             )
             n_imag = freq_result.get("n_imaginary_modes") or 0
             freqs = freq_result.get("vibrational_frequencies_cm-1") or []
@@ -176,7 +181,10 @@ def run(
     el_warns = element_warnings(symbols, method)
     if el_warns:
         result.setdefault("warnings", []).extend(el_warns)
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 # ---------------------------------------------------------------------------

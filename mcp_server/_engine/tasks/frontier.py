@@ -45,6 +45,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Single-point frontier orbital analysis on the supplied geometry."""
     atoms = read_geometry(input_path)
@@ -97,7 +99,10 @@ def run(
         warns.append(solvent_drop)
     if warns:
         result["warnings"] = warns
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _run_generic(atoms, *, calc, method, nfrontier) -> Dict[str, Any]:

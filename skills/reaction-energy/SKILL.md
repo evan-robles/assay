@@ -6,6 +6,17 @@ category: chemistry
 
 # Reaction Energy
 
+> [!IMPORTANT]
+> **Before running — confirm the level of theory; never guess.** If the user did
+> not specify `--method` (xtb | mopac | dft | hf) — and, where relevant,
+> `--functional`/`--basis`/`--tier`, `--solvent` (or explicit gas phase),
+> `--charge`, `--mult` — **stop and ask the user** (do not silently default or
+> carry over the previous run's choice). The engine refuses a DFT/HF run that
+> omits the consequential knobs unless you pass `--accept-defaults`.
+> **At launch, immediately give the user the live `.out` log path and offer
+> `tail -f`** — do not wait for the run to finish. (calculation-reporting-standards
+> non-negotiables #10 and #9.)
+
 ## Goal
 Compute $\Delta E_\text{rxn}$, $\Delta H_\text{rxn}$, and $\Delta G_\text{rxn}$ for a stoichiometrically balanced reaction by evaluating each species at the **same** level of theory and subtracting reactants from products. Negative $\Delta G_\text{rxn}$ → spontaneous; negative $\Delta H_\text{rxn}$ → exothermic.
 

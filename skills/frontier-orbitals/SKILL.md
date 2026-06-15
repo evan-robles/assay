@@ -6,6 +6,17 @@ category: chemistry
 
 # Frontier Orbitals
 
+> [!IMPORTANT]
+> **Before running — confirm the level of theory; never guess.** If the user did
+> not specify `--method` (xtb | mopac | dft | hf) — and, where relevant,
+> `--functional`/`--basis`/`--tier`, `--solvent` (or explicit gas phase),
+> `--charge`, `--mult` — **stop and ask the user** (do not silently default or
+> carry over the previous run's choice). The engine refuses a DFT/HF run that
+> omits the consequential knobs unless you pass `--accept-defaults`.
+> **At launch, immediately give the user the live `.out` log path and offer
+> `tail -f`** — do not wait for the run to finish. (calculation-reporting-standards
+> non-negotiables #10 and #9.)
+
 ## Goal
 Compute the HOMO and LUMO energies, the HOMO–LUMO gap, the $K$ neighbouring frontier orbitals on each side (HOMO−$K$..HOMO and LUMO..LUMO+$K$), and the standard Koopmans-based global reactivity descriptors (vertical IP, vertical EA, electronegativity $\chi$, hardness $\eta$, softness $S$, electrophilicity index $\omega$). Geometry is used as-is — no optimization.
 

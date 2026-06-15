@@ -6,6 +6,17 @@ category: chemistry
 
 # Visualize Molecular Orbitals
 
+> [!IMPORTANT]
+> **Before running — confirm the level of theory; never guess.** If the user did
+> not specify `--method` (xtb | mopac | dft | hf) — and, where relevant,
+> `--functional`/`--basis`/`--tier`, `--solvent` (or explicit gas phase),
+> `--charge`, `--mult` — **stop and ask the user** (do not silently default or
+> carry over the previous run's choice). The engine refuses a DFT/HF run that
+> omits the consequential knobs unless you pass `--accept-defaults`.
+> **At launch, immediately give the user the live `.out` log path and offer
+> `tail -f`** — do not wait for the run to finish. (calculation-reporting-standards
+> non-negotiables #10 and #9.)
+
 ## Goal
 Dump the SCF wavefunction in formats every modern viewer reads so the user can inspect orbital isosurfaces (HOMO, LUMO, or any specific MO). A `.molden` file is always written; `.cube` files for selected orbitals are evaluated on a 3D grid on request. The skill writes files only — it performs **no rendering**.
 

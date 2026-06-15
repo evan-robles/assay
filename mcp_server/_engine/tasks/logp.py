@@ -40,6 +40,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """logP from ΔG_solv(water) − ΔG_solv(octanol). Pinned to 298.15 K.
 
@@ -55,13 +57,16 @@ def run(
 
     gas = sp_task.run(input_path, method=method, charge=charge,
                       multiplicity=multiplicity, solvent=None, cli=cli,
-                      tier=tier, functional=functional, basis=basis)
+                      tier=tier, functional=functional, basis=basis,
+                      gate_integrity=False)
     water = sp_task.run(input_path, method=method, charge=charge,
                         multiplicity=multiplicity, solvent="water", cli=cli,
-                        tier=tier, functional=functional, basis=basis)
+                        tier=tier, functional=functional, basis=basis,
+                        gate_integrity=False)
     octanol = sp_task.run(input_path, method=method, charge=charge,
                           multiplicity=multiplicity, solvent="octanol", cli=cli,
-                          tier=tier, functional=functional, basis=basis)
+                          tier=tier, functional=functional, basis=basis,
+                          gate_integrity=False)
 
     dG_w_kcal = (water["total_energy_eV"]   - gas["total_energy_eV"]) * EV_TO_KCAL
     dG_o_kcal = (octanol["total_energy_eV"] - gas["total_energy_eV"]) * EV_TO_KCAL
@@ -110,4 +115,7 @@ def run(
     ]
     warns += element_warnings(symbols, method)
     result["warnings"] = warns
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)

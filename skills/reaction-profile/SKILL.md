@@ -6,6 +6,17 @@ category: chemistry
 
 # Reaction Profile
 
+> [!IMPORTANT]
+> **Before running — confirm the level of theory; never guess.** If the user did
+> not specify `--method` (xtb | mopac | dft | hf) — and, where relevant,
+> `--functional`/`--basis`/`--tier`, `--solvent` (or explicit gas phase),
+> `--charge`, `--mult` — **stop and ask the user** (do not silently default or
+> carry over the previous run's choice). The engine refuses a DFT/HF run that
+> omits the consequential knobs unless you pass `--accept-defaults`.
+> **At launch, immediately give the user the live `.out` log path and offer
+> `tail -f`** — do not wait for the run to finish. (calculation-reporting-standards
+> non-negotiables #10 and #9.)
+
 ## Goal
 Run the full reactant → TS → product pipeline in one command and report $\Delta G^\ddagger$ (activation free energy) and $\Delta G_\mathrm{rxn}$ (reaction free energy), an IRC connectivity verdict confirming the transition state actually connects the supplied stationary points, and a publication-style three-level energy diagram. The single method/basis/solvent is enforced across every species so reactants and products are never scored inconsistently.
 

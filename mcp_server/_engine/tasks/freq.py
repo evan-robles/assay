@@ -86,6 +86,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Opt-freq pipeline. The frequency calculation is performed on the
     optimized geometry by default; pass preopt=False to skip the optimization
@@ -114,6 +116,7 @@ def run(
             charge=charge,
             multiplicity=multiplicity,
             cli="(internal auto-confsearch for freq)",
+            gate_integrity=False,  # sub-call: stamp only, freq gates the whole result
         )
         post = cs_result.get("postopt") or {}
         best_xyz = post.get("best_xyz")
@@ -201,6 +204,7 @@ def run(
                 tier=tier,
                 functional=functional,
                 basis=basis,
+                gate_integrity=False,  # preopt sub-call: stamp only; freq gates the result
             )
             # Reload atoms from the optimized xyz so the freq step works on the
             # exact geometry written to disk.
@@ -278,7 +282,10 @@ def run(
             )
     else:
         result["preopt"] = {"performed": False}
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _detect_geometry(atoms) -> str:

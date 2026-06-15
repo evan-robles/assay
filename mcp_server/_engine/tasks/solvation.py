@@ -52,6 +52,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Solvation free energy ΔG_solv = E(solvated) − E(gas) on the same geometry."""
     if not solvent:
@@ -59,10 +61,12 @@ def run(
 
     gas = sp_task.run(input_path, method=method, charge=charge,
                       multiplicity=multiplicity, solvent=None, cli=cli,
-                      tier=tier, functional=functional, basis=basis)
+                      tier=tier, functional=functional, basis=basis,
+                      gate_integrity=False)
     solv = sp_task.run(input_path, method=method, charge=charge,
                        multiplicity=multiplicity, solvent=solvent, cli=cli,
-                       tier=tier, functional=functional, basis=basis)
+                       tier=tier, functional=functional, basis=basis,
+                       gate_integrity=False)
 
     delta_eV = solv["total_energy_eV"] - gas["total_energy_eV"]
     atoms = read_geometry(input_path)
@@ -95,4 +99,7 @@ def run(
     warns.append(SINGLE_CONFORMER_WARNING)
     warns += element_warnings(symbols, method)
     result["warnings"] = warns
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)

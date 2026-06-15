@@ -19,9 +19,16 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import sys
 from pathlib import Path
+
+# Keep the MCP SDK's own INFO chatter (e.g. "Processing request of type
+# CallToolRequest") off our stderr, so the live-log line and any real
+# diagnostics are the first things the caller sees rather than being buried
+# behind transport logging.
+logging.getLogger("mcp").setLevel(logging.WARNING)
 
 # Repo layout: skills/_mcp_client.py  and  mcp_server/server.py
 _REPO = Path(__file__).resolve().parent.parent
@@ -81,6 +88,22 @@ def run_skill(tool_name: str, argv: list[str] | None = None) -> int:
         parsed = json.loads(out)
     except ValueError:
         parsed = None
+
+    # Surface the live `.out` log path as the FIRST stderr line so it lands at
+    # the top of the agent's Bash tool result on EVERY run, regardless of the
+    # --stdout mode. The server injects `out_log` into the returned JSON; stderr
+    # is part of the Bash result, so this makes the live-log path
+    # model-independent — the agent no longer has to choose to fetch it.
+    # calculation-reporting-standards non-negotiable #9.
+    if isinstance(parsed, dict):
+        out_log = parsed.get("out_log")
+        if out_log:
+            sys.stderr.write(
+                f"chemkit: live log (watch now): tail -f {out_log}\n"
+                "# Tell the user this path immediately, while the run is going "
+                "(non-negotiable #9).\n"
+            )
+
     if isinstance(parsed, dict) and "error" in parsed:
         engine_stderr = parsed.get("stderr") or ""
         if engine_stderr:

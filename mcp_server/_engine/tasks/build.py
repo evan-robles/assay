@@ -143,6 +143,8 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     cli: str = "",
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Build a 3D xyz from a SMILES string *or* a molecule name, using Open Babel.
 
@@ -217,6 +219,7 @@ def run(
             out_xyz=qm_xyz,
             cli=f"(internal build_from_smiles QM refinement: {opt_method})",
             tier=tier, functional=functional, basis=basis,
+            gate_integrity=False,  # surface opt convergence in the build block, don't abort the build
         )
         result["qm_optimization"] = {
             "method": opt_res["method"],
@@ -243,4 +246,7 @@ def run(
 
     if not result["warnings"]:
         del result["warnings"]
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)

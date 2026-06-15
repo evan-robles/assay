@@ -42,6 +42,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Three partial-charge SPs (N, N+1, N-1) → condensed Fukui + dual descriptor."""
     atoms = read_geometry(input_path)
@@ -73,7 +75,10 @@ def run(
             "Spin parity must flip; use multiplicity ± 1."
         )
 
-    es_kwargs = dict(tier=tier, functional=functional, basis=basis)
+    # Sub-calls stamp their own integrity but never raise; fukui gates its own
+    # result (the Σf± charge-conservation check proxies for a failed N±1 state).
+    es_kwargs = dict(tier=tier, functional=functional, basis=basis,
+                     gate_integrity=False)
     neutral = electrostatics.run(
         input_path, method=method, charge=charge,
         multiplicity=multiplicity, solvent=solvent, cli=cli, **es_kwargs,
@@ -160,7 +165,10 @@ def run(
                     method=neutral["method"], input_path=input_path)
         if os.path.isfile(png_path):
             result["plot_png"] = os.path.abspath(png_path)
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _validate(f_plus: List[float], f_minus: List[float],

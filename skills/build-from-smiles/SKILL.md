@@ -6,6 +6,12 @@ category: chemistry
 
 # Build 3D Molecule from SMILES or Name
 
+> [!IMPORTANT]
+> **At launch, immediately give the user the live `.out` log path and offer
+> `tail -f`** — do not wait for the run to finish. If a QM refinement (`--opt`)
+> is requested, confirm that method with the user rather than guessing.
+> (calculation-reporting-standards non-negotiables #9 and #10.)
+
 ## Goal
 Convert a SMILES string into a 3D `.xyz` geometry via Open Babel's `--gen3d` coordinate generator, optionally refining with xtb / MOPAC / DFT / HF. A bare molecule name is resolved to a SMILES online before building, with the answering source and an ACS-format citation reported. This is the on-ramp for every other chemkit skill — it produces the `.xyz` that single-point, optimization, and frequency skills require.
 

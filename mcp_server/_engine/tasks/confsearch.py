@@ -37,6 +37,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     # tier/functional/basis are accepted for CLI uniformity but ignored:
     # the obabel sampler is force-field based and the post-opt path is
@@ -135,7 +137,9 @@ def run(
     elif postopt != "none":
         raise ValueError(f"Unknown --postopt value: {postopt!r}")
 
-    return result
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _require_obabel() -> str:

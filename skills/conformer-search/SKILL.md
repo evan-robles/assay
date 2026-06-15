@@ -6,6 +6,17 @@ category: chemistry
 
 # Conformer Search
 
+> [!IMPORTANT]
+> **Before running — confirm the level of theory; never guess.** If the user did
+> not specify `--method` (xtb | mopac | dft | hf) — and, where relevant,
+> `--functional`/`--basis`/`--tier`, `--solvent` (or explicit gas phase),
+> `--charge`, `--mult` — **stop and ask the user** (do not silently default or
+> carry over the previous run's choice). The engine refuses a DFT/HF run that
+> omits the consequential knobs unless you pass `--accept-defaults`.
+> **At launch, immediately give the user the live `.out` log path and offer
+> `tail -f`** — do not wait for the run to finish. (calculation-reporting-standards
+> non-negotiables #10 and #9.)
+
 ## Goal
 Find the low-energy conformers of a flexible molecule using Open Babel's `confab` diverse-conformer generator (force-field sampling), rank them by force-field energy (`obenergy`, MMFF94 with UFF fallback), and optionally re-rank at PM7 (MOPAC) to resolve minima that force-field sampling smooths over. Use this for a conformational ensemble, not for a deterministic torsional scan around one bond.
 

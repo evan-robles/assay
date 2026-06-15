@@ -108,6 +108,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     reference_potentials = _reference_potentials(e_abs_she)
     if reference not in reference_potentials:
@@ -254,7 +256,10 @@ def run(
         + [mode_warn, common_warn] + ref_warns + [SINGLE_CONFORMER_WARNING]
         + ox_warns + red_warns
     )
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _state_energy_eV(
@@ -274,6 +279,7 @@ def _state_energy_eV(
         st = sp_task.run(
             input_path, method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, cli=cli, tier=tier, functional=functional, basis=basis,
+            gate_integrity=False,
         )
         for w in st.get("warnings", []) or []:
             warns.append(f"[{label}] {w}")
@@ -281,6 +287,7 @@ def _state_energy_eV(
             "method": st.get("method", method),
             "energy_eV": st["total_energy_eV"],
             "geometry_source": "input geometry (no relaxation)",
+            "n_atoms": st.get("n_atoms"),
         }
         return st["total_energy_eV"], "ΔE (vertical, same geometry)", block, warns
 
@@ -289,10 +296,15 @@ def _state_energy_eV(
             input_path, method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, fmax=fmax, cli=cli,
             tier=tier, functional=functional, basis=basis,
+            gate_integrity=False,
         )
         for w in st.get("warnings", []) or []:
             warns.append(f"[{label}] {w}")
-        if not st.get("converged", False):
+        # A single-atom state (e.g. H / H⁺) has no geometry to relax — MOPAC/ASE
+        # report converged=False vacuously. Don't raise a misleading
+        # "did NOT converge / unreliable" alarm for that zero-DOF case.
+        _zero_dof = (st.get("n_atoms") or 0) <= 1
+        if not st.get("converged", False) and not _zero_dof:
             warns.append(
                 f"[{label}] geometry optimization did NOT converge; the relaxed "
                 "energy (and hence the redox potential) is unreliable."
@@ -303,6 +315,7 @@ def _state_energy_eV(
             "geometry_source": "relaxed at this method",
             "optimized_xyz": st.get("optimized_xyz"),
             "converged": st.get("converged"),
+            "n_atoms": st.get("n_atoms"),
         }
         return st["total_energy_eV"], "ΔE (relaxed/adiabatic)", block, warns
 
@@ -312,6 +325,7 @@ def _state_energy_eV(
         solvent=solvent, temperature_K=temperature_K, pressure_Pa=pressure_Pa,
         preopt=True, preopt_fmax=fmax, cli=cli,
         tier=tier, functional=functional, basis=basis,
+        gate_integrity=False,
     )
     for w in st.get("warnings", []) or []:
         warns.append(f"[{label}] {w}")
@@ -328,5 +342,6 @@ def _state_energy_eV(
         "zpe_eV": st.get("zpe_eV"),
         "geometry_source": "relaxed at this method (opt+freq)",
         "n_imaginary_modes": st.get("n_imaginary_modes"),
+        "n_atoms": st.get("n_atoms"),
     }
     return g_eV, "ΔG (opt+freq)", block, warns

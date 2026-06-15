@@ -54,6 +54,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     method = method.lower()
     if method in ("dft", "hf"):
@@ -108,7 +110,10 @@ def run(
     el_warns = element_warnings(symbols, method)
     if el_warns:
         result.setdefault("warnings", []).extend(el_warns)
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _write_trajectory(path: str, traj: List[Tuple[List[str], np.ndarray, float]]):

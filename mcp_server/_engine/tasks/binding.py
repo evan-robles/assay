@@ -25,6 +25,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     if len(monomer_paths) < 2:
         raise ValueError("Need at least two monomer geometries.")
@@ -57,17 +59,21 @@ def run(
             "complex charge."
         )
 
+    # Sub-calls stamp their own integrity but never raise mid-composite; the
+    # binding result is gated as a whole at the end.
     complex_sp = sp_task.run(
         complex_path, method=method, charge=charge,
         multiplicity=multiplicity, solvent=solvent, cli=cli,
         tier=tier, functional=functional, basis=basis,
+        gate_integrity=False,
     )
     monomer_results = []
     monomer_sum_eV = 0.0
     for path, q, m in zip(monomer_paths, monomer_charges, monomer_multiplicities):
         r = sp_task.run(path, method=method, charge=q, multiplicity=m,
                         solvent=solvent, cli=cli,
-                        tier=tier, functional=functional, basis=basis)
+                        tier=tier, functional=functional, basis=basis,
+                        gate_integrity=False)
         monomer_results.append(r)
         monomer_sum_eV += r["total_energy_eV"]
 
@@ -113,4 +119,7 @@ def run(
         "a counterpoise (BSSE) correction.",
         SINGLE_CONFORMER_WARNING,
     ]
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)

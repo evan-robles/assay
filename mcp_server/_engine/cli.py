@@ -34,11 +34,41 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
                         "Ignored unless --method dft or --method hf.")
     p.add_argument("--out", default=None,
                    help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
+    p.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
+                   help="Explicitly consent to chemkit's silent defaults for "
+                        "consequential knobs the user did not set (DFT "
+                        "tier=standard -> wB97X-V/def2-TZVP; HF basis=def2-tzvp; "
+                        "gas phase when no --solvent). Without this flag, a DFT/HF "
+                        "run that omits those knobs is REFUSED so the level of "
+                        "theory is never chosen silently "
+                        "(calculation-reporting-standards non-negotiable #10).")
     _add_stdout_option(p)
+    _add_gate_option(p)
     p.add_argument("--verbose", type=int, default=4,
                    help="PySCF log verbosity (0=silent .. 4=default rich SCF/opt "
                         "detail .. 5=debug). Streamed to the live .out log; "
                         "ignored for xtb/mopac.")
+
+
+def _add_gate_option(p):
+    """Add the integrity-gate escape hatch to a subparser.
+
+    By default a result that fails its computation-side integrity checks
+    (non-converged SCF/opt, wrong imaginary-mode count, charge mismatch, …)
+    hard-aborts: the partial result is still written to --out (evidence
+    preserved) but the CLI exits nonzero and the headline number is marked
+    untrustworthy. --allow-unconverged downgrades that abort to a stamped
+    warning and exits 0, for the legitimate 'inspect the failed geometry'
+    workflow. The number is still flagged trustworthy=false."""
+    p.add_argument(
+        "--allow-unconverged", "--no-gate", dest="allow_unconverged",
+        action="store_true", default=False,
+        help="Downgrade the integrity hard-abort to a stamped warning and exit "
+             "0 (result marked status=warning, trustworthy=false, "
+             "gate_bypassed=true). Use ONLY to inspect a failed geometry "
+             "(collapsed TS, non-converged opt) — the headline number is NOT "
+             "trustworthy.",
+    )
 
 
 def _add_stdout_option(p):
@@ -73,6 +103,14 @@ def _compact_pointer(result: dict, out_path: str) -> str:
     else stays in the on-disk JSON.
     """
     summary: dict = {"out": out_path}
+    # Integrity verdict first — the headline "is this number safe to quote" bit.
+    integ = result.get("integrity")
+    if isinstance(integ, dict):
+        summary["status"] = integ.get("status")
+        summary["trustworthy"] = integ.get("trustworthy")
+        failed = [c.get("name") for c in integ.get("checks", []) if not c.get("ok")]
+        if failed:
+            summary["failed_checks"] = failed
     # Convergence may live under different keys depending on the task.
     for key in ("converged", "scf_converged"):
         if key in result:
@@ -102,6 +140,247 @@ def _add_common(p):
 def _default_out(input_path: str, task: str, method: str) -> str:
     stem = os.path.splitext(os.path.basename(input_path))[0]
     return os.path.abspath(f"{stem}_{task}_{method}.json")
+
+
+def _resolve_out_path(args, result: dict) -> str:
+    """Compute the result JSON path for any task from `args` (plus, for build,
+    the result's xyz_path). Works whether the result came back normally OR was
+    carried out of an IntegrityError — so a failed run still lands on disk with
+    a deterministic name. Mirrors the per-task naming the success path used."""
+    if args.out:
+        return args.out
+    if args.task == "rxn-energy":
+        from .tasks.reaction_energy import _parse_species_spec
+        first_path, _, _, _ = _parse_species_spec(args.reactant[0])
+        return _default_out(first_path, args.task, args.method)
+    if args.task == "pka":
+        return _default_out(args.ha, args.task, args.method)
+    if args.task == "profile":
+        return _default_out(args.reactant, args.task, args.method)
+    if args.task == "build":
+        xyz = (result or {}).get("xyz_path")
+        if xyz:
+            return os.path.abspath(f"{os.path.splitext(xyz)[0]}_build.json")
+        # Failure before the xyz was produced — fall back to a name from input.
+        return os.path.abspath(f"{str(getattr(args, 'molecule', 'build'))}_build.json")
+    return _default_out(args.input, args.task, args.method)
+
+
+def _dispatch(args, parser, cli: str, pyscf_kwargs: dict):
+    """Run the task selected by args.task and return its result dict.
+
+    Extracted from main() so the dispatch can be wrapped in a single
+    try/except IntegrityError without re-indenting the whole if/elif chain.
+    May raise integrity.IntegrityError (the gate) — main() catches it and still
+    writes the carried partial result before exiting nonzero.
+    """
+    if args.task == "sp":
+        from .tasks import sp
+        return sp.run(args.input, method=args.method, charge=args.charge,
+                      multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+                      **pyscf_kwargs)
+    elif args.task == "opt":
+        from .tasks import opt
+        return opt.run(args.input, method=args.method, charge=args.charge,
+                       multiplicity=args.multiplicity, solvent=args.solvent,
+                       fmax=args.fmax, steps=args.steps, out_xyz=args.xyz_out,
+                       cli=cli, **pyscf_kwargs)
+    elif args.task == "freq":
+        from .tasks import freq
+        return freq.run(args.input, method=args.method, charge=args.charge,
+                        multiplicity=args.multiplicity, solvent=args.solvent,
+                        temperature_K=args.temperature, pressure_Pa=args.pressure,
+                        geometry=args.geometry, symmetrynumber=args.symmetry,
+                        preopt=args.preopt, preopt_fmax=args.preopt_fmax,
+                        auto_confsearch=args.auto_confsearch,
+                        cli=cli, **pyscf_kwargs)
+    elif args.task == "binding":
+        from .tasks import binding
+        return binding.run(args.input, args.monomer, method=args.method,
+                           charge=args.charge, multiplicity=args.multiplicity,
+                           solvent=args.solvent,
+                           monomer_charges=args.monomer_charge,
+                           monomer_multiplicities=args.monomer_mult, cli=cli,
+                           **pyscf_kwargs)
+    elif args.task == "redox":
+        from .tasks import redox
+        return redox.run(args.input, method=args.method,
+                         oxidized_charge=args.ox_charge,
+                         reduced_charge=args.red_charge,
+                         oxidized_multiplicity=args.ox_mult,
+                         reduced_multiplicity=args.red_mult,
+                         solvent=args.solvent, reference=args.ref,
+                         n_electrons=args.n_electrons,
+                         mode=args.mode, fmax=args.fmax,
+                         temperature_K=args.temperature,
+                         pressure_Pa=args.pressure, cli=cli,
+                         **({"e_abs_she": args.e_abs_she}
+                            if args.e_abs_she is not None else {}),
+                         **pyscf_kwargs)
+    elif args.task == "confsearch":
+        from .tasks import confsearch
+        return confsearch.run(
+            args.input, method=args.method, solvent=args.solvent,
+            n_max_conformers=args.max_conformers,
+            postopt=args.postopt,
+            postopt_rmsd=args.postopt_rmsd,
+            postopt_ewin=args.postopt_ewin,
+            charge=args.charge, multiplicity=args.multiplicity,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "frontier":
+        from .tasks import frontier
+        return frontier.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            nfrontier=args.nfrontier, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "electrostatics":
+        from .tasks import electrostatics
+        return electrostatics.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+            **pyscf_kwargs,
+        )
+    elif args.task == "solvation":
+        if not args.solvent:
+            parser.error("solvation requires --solvent (e.g. --solvent water)")
+        from .tasks import solvation
+        return solvation.run(
+            args.input, method=args.method, solvent=args.solvent,
+            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
+            **pyscf_kwargs,
+        )
+    elif args.task == "logp":
+        from .tasks import logp
+        return logp.run(
+            args.input, method=args.method,
+            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
+            **pyscf_kwargs,
+        )
+    elif args.task == "fukui":
+        from .tasks import fukui
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return fukui.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            cation_mult=args.cation_mult, anion_mult=args.anion_mult,
+            plot=args.plot, out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "ts":
+        from .tasks import ts
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return ts.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            steps=args.steps, verify_freq=args.verify_freq,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "irc":
+        from .tasks import irc
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return irc.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            max_points=args.max_points, step=args.step,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "rxn-energy":
+        from .tasks import reaction_energy
+        return reaction_energy.run(
+            reactants=args.reactant, products=args.product,
+            method=args.method, mode=args.mode, solvent=args.solvent,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "profile":
+        from .tasks import reaction_profile as profile_task
+        out_path_pre = (
+            args.out
+            or _default_out(args.reactant, args.task, args.method)
+        )
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return profile_task.run(
+            reactant_xyz=args.reactant, product_xyz=args.product,
+            ts_guess_xyz=args.ts_guess, method=args.method,
+            charge=args.charge, multiplicity=args.multiplicity,
+            solvent=args.solvent,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            rmsd_tol=args.rmsd_tol, skip_irc=args.skip_irc,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "pka":
+        from .tasks import pka as pka_task
+        return pka_task.run(
+            ha_xyz=args.ha, a_minus_xyz=args.a_minus,
+            method=args.method, mode=args.mode, solvent=args.solvent,
+            ha_charge=args.ha_charge, ha_multiplicity=args.ha_mult,
+            a_minus_multiplicity=args.a_minus_mult,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            hplus_reference=args.hplus_reference,
+            ref_ha_xyz=args.ref_ha, ref_a_minus_xyz=args.ref_a_minus,
+            ref_pka=args.pka_ref,
+            ref_ha_charge=args.ref_ha_charge,
+            ref_ha_multiplicity=args.ref_ha_mult,
+            ref_a_minus_multiplicity=args.ref_a_minus_mult,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "build":
+        import re
+        from .tasks import build as build_task
+        if args.out_xyz:
+            out_xyz = args.out_xyz
+        else:
+            safe = re.sub(r"[^A-Za-z0-9_-]", "_", args.smiles)[:60] or "molecule"
+            out_xyz = os.path.abspath(f"{safe}.xyz")
+        return build_task.run(
+            molecule=args.smiles, out_xyz=out_xyz, name=args.name,
+            opt_method=args.opt_method, opt_solvent=args.solvent,
+            opt_charge=args.charge, opt_multiplicity=args.multiplicity,
+            tier=args.tier, functional=args.functional, basis=args.basis,
+            cli=cli,
+            allow_unconverged=pyscf_kwargs.get("allow_unconverged", False),
+        )
+    elif args.task == "orbitals":
+        from .tasks import orbitals
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        cubes_list = [c.strip() for c in (args.cubes or "").split(",") if c.strip()]
+        return orbitals.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            cubes=cubes_list, grid=args.grid,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "scan":
+        from .tasks import scan
+        dihedral_tuple = None
+        if args.dihedral:
+            parts = [p.strip() for p in args.dihedral.split(",")]
+            if len(parts) != 4:
+                parser.error("--dihedral must be 4 comma-separated atom indices")
+            try:
+                one_based = tuple(int(p) for p in parts)
+            except ValueError:
+                parser.error("--dihedral atom indices must be integers")
+            if any(k < 1 for k in one_based):
+                parser.error("--dihedral atom indices are 1-based (must be >= 1)")
+            dihedral_tuple = tuple(k - 1 for k in one_based)
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return scan.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            dihedral=dihedral_tuple, n_steps=args.steps,
+            fmax=args.fmax, opt_steps=args.opt_steps,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    else:
+        parser.error(f"Unknown task {args.task!r}")
+        return None
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -281,7 +560,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_prof.add_argument("--functional", default=None)
     p_prof.add_argument("--basis", default=None)
     p_prof.add_argument("--out", default=None)
+    p_prof.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
+                        help="Consent to silent defaults (DFT tier=standard; HF "
+                             "basis=def2-tzvp; gas phase if no --solvent). Without "
+                             "it a DFT/HF run omitting those knobs is refused.")
     _add_stdout_option(p_prof)
+    _add_gate_option(p_prof)
 
     p_pka = sub.add_parser(
         "pka",
@@ -329,7 +613,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_pka.add_argument("--functional", default=None)
     p_pka.add_argument("--basis", default=None)
     p_pka.add_argument("--out", default=None)
+    p_pka.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
+                       help="Consent to silent DFT/HF defaults (tier=standard / "
+                            "basis=def2-tzvp). Without it a DFT/HF run omitting "
+                            "tier/functional/basis is refused. (pKa already pins "
+                            "solvent=water.)")
     _add_stdout_option(p_pka)
+    _add_gate_option(p_pka)
 
     p_build = sub.add_parser(
         "build",
@@ -374,6 +664,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_build.add_argument("--basis", default=None)
     p_build.add_argument("--out", default=None, help="Result JSON path.")
     _add_stdout_option(p_build)
+    _add_gate_option(p_build)
 
     p_fukui = sub.add_parser(
         "fukui",
@@ -495,6 +786,42 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
 
     args = parser.parse_args(argv)
+
+    # ------------------------------------------------------------------
+    # Vendor-/harness-proof guard: never let the level of theory be chosen
+    # SILENTLY. This lives in the engine (the Python every calc must pass
+    # through), so it protects calculations under ANY model or harness — not just
+    # those running behind the Claude Code PreToolUse hook. When --method dft/hf
+    # is requested without the consequential knobs, refuse unless the caller has
+    # explicitly consented with --accept-defaults.
+    # (calculation-reporting-standards non-negotiable #10.)
+    # ------------------------------------------------------------------
+    _method = getattr(args, "method", None)
+    _accepted = getattr(args, "accept_defaults", False)
+    if _method in ("dft", "hf") and not _accepted:
+        _has_tier = getattr(args, "tier", None) is not None
+        _has_func = getattr(args, "functional", None) is not None
+        _has_basis = getattr(args, "basis", None) is not None
+        if _method == "dft" and not (_has_tier or _has_func or _has_basis):
+            parser.error(
+                "--method dft was given without --tier/--functional/--basis. "
+                "chemkit would SILENTLY default to tier=standard "
+                "(wB97X-V/def2-TZVP, density-fit) — do not choose the level of "
+                "theory silently. Either pass an explicit --tier/--functional/"
+                "--basis, or, only after confirming with the user, pass "
+                "--accept-defaults to consciously accept tier=standard. "
+                "(calculation-reporting-standards non-negotiable #10)"
+            )
+        if _method == "hf" and not _has_basis:
+            parser.error(
+                "--method hf was given without --basis. chemkit would SILENTLY "
+                "default to basis=def2-tzvp — do not choose the level of theory "
+                "silently. Either pass an explicit --basis, or, only after "
+                "confirming with the user, pass --accept-defaults to consciously "
+                "accept def2-tzvp. (calculation-reporting-standards "
+                "non-negotiable #10)"
+            )
+
     cli = cli_invocation()
 
     # PySCF-only knobs threaded into every task.run(...) call below.
@@ -505,6 +832,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     # actually accept (tier/functional/basis).
     os.environ["CHEMKIT_PYSCF_VERBOSE"] = str(getattr(args, "verbose", 4))
     pyscf_kwargs = dict(tier=args.tier, functional=args.functional, basis=args.basis)
+    # The integrity gate runs inside every task.run(); thread the escape-hatch
+    # flag through the same shared kwargs so all tasks receive it uniformly. (The
+    # gate itself defaults on; --allow-unconverged downgrades a failure.)
+    pyscf_kwargs["allow_unconverged"] = getattr(args, "allow_unconverged", False)
 
     # stdout is reserved for the final result JSON only (the MCP server parses
     # it). Some backends and child binaries write stray text to file descriptor
@@ -517,235 +848,22 @@ def main(argv: Optional[List[str]] = None) -> int:
     _real_stdout_fd = os.dup(1)
     os.dup2(2, 1)
 
-    if args.task == "sp":
-        from .tasks import sp
-        result = sp.run(args.input, method=args.method, charge=args.charge,
-                        multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
-                        **pyscf_kwargs)
-    elif args.task == "opt":
-        from .tasks import opt
-        result = opt.run(args.input, method=args.method, charge=args.charge,
-                         multiplicity=args.multiplicity, solvent=args.solvent,
-                         fmax=args.fmax, steps=args.steps, out_xyz=args.xyz_out,
-                         cli=cli, **pyscf_kwargs)
-    elif args.task == "freq":
-        from .tasks import freq
-        result = freq.run(args.input, method=args.method, charge=args.charge,
-                          multiplicity=args.multiplicity, solvent=args.solvent,
-                          temperature_K=args.temperature, pressure_Pa=args.pressure,
-                          geometry=args.geometry, symmetrynumber=args.symmetry,
-                          preopt=args.preopt, preopt_fmax=args.preopt_fmax,
-                          auto_confsearch=args.auto_confsearch,
-                          cli=cli, **pyscf_kwargs)
-    elif args.task == "binding":
-        from .tasks import binding
-        result = binding.run(args.input, args.monomer, method=args.method,
-                             charge=args.charge, multiplicity=args.multiplicity,
-                             solvent=args.solvent,
-                             monomer_charges=args.monomer_charge,
-                             monomer_multiplicities=args.monomer_mult, cli=cli,
-                             **pyscf_kwargs)
-    elif args.task == "redox":
-        from .tasks import redox
-        result = redox.run(args.input, method=args.method,
-                           oxidized_charge=args.ox_charge,
-                           reduced_charge=args.red_charge,
-                           oxidized_multiplicity=args.ox_mult,
-                           reduced_multiplicity=args.red_mult,
-                           solvent=args.solvent, reference=args.ref,
-                           n_electrons=args.n_electrons,
-                           mode=args.mode, fmax=args.fmax,
-                           temperature_K=args.temperature,
-                           pressure_Pa=args.pressure, cli=cli,
-                           **({"e_abs_she": args.e_abs_she}
-                              if args.e_abs_she is not None else {}),
-                           **pyscf_kwargs)
-    elif args.task == "confsearch":
-        from .tasks import confsearch
-        result = confsearch.run(
-            args.input, method=args.method, solvent=args.solvent,
-            n_max_conformers=args.max_conformers,
-            postopt=args.postopt,
-            postopt_rmsd=args.postopt_rmsd,
-            postopt_ewin=args.postopt_ewin,
-            charge=args.charge, multiplicity=args.multiplicity,
-            cli=cli, **pyscf_kwargs,
-        )
-    elif args.task == "frontier":
-        from .tasks import frontier
-        result = frontier.run(
-            args.input, method=args.method, charge=args.charge,
-            multiplicity=args.multiplicity, solvent=args.solvent,
-            nfrontier=args.nfrontier, cli=cli, **pyscf_kwargs,
-        )
-    elif args.task == "electrostatics":
-        from .tasks import electrostatics
-        result = electrostatics.run(
-            args.input, method=args.method, charge=args.charge,
-            multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
-            **pyscf_kwargs,
-        )
-    elif args.task == "solvation":
-        if not args.solvent:
-            parser.error("solvation requires --solvent (e.g. --solvent water)")
-        from .tasks import solvation
-        result = solvation.run(
-            args.input, method=args.method, solvent=args.solvent,
-            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
-            **pyscf_kwargs,
-        )
-    elif args.task == "logp":
-        from .tasks import logp
-        result = logp.run(
-            args.input, method=args.method,
-            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
-            **pyscf_kwargs,
-        )
-    elif args.task == "fukui":
-        from .tasks import fukui
-        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
-        out_stem = os.path.splitext(out_path_pre)[0]
-        result = fukui.run(
-            args.input, method=args.method, charge=args.charge,
-            multiplicity=args.multiplicity, solvent=args.solvent,
-            cation_mult=args.cation_mult, anion_mult=args.anion_mult,
-            plot=args.plot, out_stem=out_stem, cli=cli, **pyscf_kwargs,
-        )
-    elif args.task == "ts":
-        from .tasks import ts
-        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
-        out_stem = os.path.splitext(out_path_pre)[0]
-        result = ts.run(
-            args.input, method=args.method, charge=args.charge,
-            multiplicity=args.multiplicity, solvent=args.solvent,
-            steps=args.steps, verify_freq=args.verify_freq,
-            out_stem=out_stem, cli=cli, **pyscf_kwargs,
-        )
-    elif args.task == "irc":
-        from .tasks import irc
-        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
-        out_stem = os.path.splitext(out_path_pre)[0]
-        result = irc.run(
-            args.input, method=args.method, charge=args.charge,
-            multiplicity=args.multiplicity, solvent=args.solvent,
-            max_points=args.max_points, step=args.step,
-            out_stem=out_stem, cli=cli, **pyscf_kwargs,
-        )
-    elif args.task == "rxn-energy":
-        from .tasks import reaction_energy
-        result = reaction_energy.run(
-            reactants=args.reactant, products=args.product,
-            method=args.method, mode=args.mode, solvent=args.solvent,
-            temperature_K=args.temperature, pressure_Pa=args.pressure,
-            cli=cli, **pyscf_kwargs,
-        )
-    elif args.task == "profile":
-        from .tasks import reaction_profile as profile_task
-        out_path_pre = (
-            args.out
-            or _default_out(args.reactant, args.task, args.method)
-        )
-        out_stem = os.path.splitext(out_path_pre)[0]
-        result = profile_task.run(
-            reactant_xyz=args.reactant, product_xyz=args.product,
-            ts_guess_xyz=args.ts_guess, method=args.method,
-            charge=args.charge, multiplicity=args.multiplicity,
-            solvent=args.solvent,
-            temperature_K=args.temperature, pressure_Pa=args.pressure,
-            rmsd_tol=args.rmsd_tol, skip_irc=args.skip_irc,
-            out_stem=out_stem, cli=cli, **pyscf_kwargs,
-        )
-    elif args.task == "pka":
-        from .tasks import pka as pka_task
-        result = pka_task.run(
-            ha_xyz=args.ha, a_minus_xyz=args.a_minus,
-            method=args.method, mode=args.mode, solvent=args.solvent,
-            ha_charge=args.ha_charge, ha_multiplicity=args.ha_mult,
-            a_minus_multiplicity=args.a_minus_mult,
-            temperature_K=args.temperature, pressure_Pa=args.pressure,
-            hplus_reference=args.hplus_reference,
-            ref_ha_xyz=args.ref_ha, ref_a_minus_xyz=args.ref_a_minus,
-            ref_pka=args.pka_ref,
-            ref_ha_charge=args.ref_ha_charge,
-            ref_ha_multiplicity=args.ref_ha_mult,
-            ref_a_minus_multiplicity=args.ref_a_minus_mult,
-            cli=cli, **pyscf_kwargs,
-        )
-    elif args.task == "build":
-        import re
-        from .tasks import build as build_task
-        if args.out_xyz:
-            out_xyz = args.out_xyz
-        else:
-            safe = re.sub(r"[^A-Za-z0-9_-]", "_", args.smiles)[:60] or "molecule"
-            out_xyz = os.path.abspath(f"{safe}.xyz")
-        result = build_task.run(
-            molecule=args.smiles, out_xyz=out_xyz, name=args.name,
-            opt_method=args.opt_method, opt_solvent=args.solvent,
-            opt_charge=args.charge, opt_multiplicity=args.multiplicity,
-            tier=args.tier, functional=args.functional, basis=args.basis,
-            cli=cli,
-        )
-    elif args.task == "orbitals":
-        from .tasks import orbitals
-        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
-        out_stem = os.path.splitext(out_path_pre)[0]
-        cubes_list = [c.strip() for c in (args.cubes or "").split(",") if c.strip()]
-        result = orbitals.run(
-            args.input, method=args.method, charge=args.charge,
-            multiplicity=args.multiplicity, solvent=args.solvent,
-            cubes=cubes_list, grid=args.grid,
-            out_stem=out_stem, cli=cli, **pyscf_kwargs,
-        )
-    elif args.task == "scan":
-        from .tasks import scan
-        dihedral_tuple = None
-        if args.dihedral:
-            parts = [p.strip() for p in args.dihedral.split(",")]
-            if len(parts) != 4:
-                parser.error("--dihedral must be 4 comma-separated atom indices")
-            try:
-                one_based = tuple(int(p) for p in parts)
-            except ValueError:
-                parser.error("--dihedral atom indices must be integers")
-            if any(k < 1 for k in one_based):
-                parser.error("--dihedral atom indices are 1-based (must be >= 1)")
-            dihedral_tuple = tuple(k - 1 for k in one_based)
-        # Compute the JSON path early so scan.run can place its auxiliary
-        # files (xyz / png / out) with a matching stem.
-        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
-        out_stem = os.path.splitext(out_path_pre)[0]
-        result = scan.run(
-            args.input, method=args.method, charge=args.charge,
-            multiplicity=args.multiplicity, solvent=args.solvent,
-            dihedral=dihedral_tuple, n_steps=args.steps,
-            fmax=args.fmax, opt_steps=args.opt_steps,
-            out_stem=out_stem, cli=cli, **pyscf_kwargs,
-        )
-    else:
-        parser.error(f"Unknown task {args.task!r}")
-        return 2
-
-    # Tasks without a single `input` xyz need bespoke default-output paths.
-    if args.task == "rxn-energy":
-        from .tasks.reaction_energy import _parse_species_spec
-        first_path, _, _, _ = _parse_species_spec(args.reactant[0])
-        out_path = args.out or _default_out(first_path, args.task, args.method)
-    elif args.task == "pka":
-        out_path = args.out or _default_out(args.ha, args.task, args.method)
-    elif args.task == "profile":
-        out_path = args.out or _default_out(args.reactant, args.task, args.method)
-    elif args.task == "build":
-        # build's input is a SMILES string and its --opt is optional, so the
-        # naming convention is simpler: drop next to the xyz it wrote.
-        if args.out:
-            out_path = args.out
-        else:
-            stem = os.path.splitext(result["xyz_path"])[0]
-            out_path = os.path.abspath(f"{stem}_build.json")
-    else:
-        out_path = args.out or _default_out(args.input, args.task, args.method)
-    write_result(result, out_path)
+    # Run the task. The integrity gate (inside task.run) raises IntegrityError on
+    # a failed result by default; catch it so the carried partial result is still
+    # written to --out (evidence preserved) before we exit nonzero.
+    from .integrity import IntegrityError
+    integrity_failed = False
+    try:
+        result = _dispatch(args, parser, cli, pyscf_kwargs)
+        if result is None:   # parser.error path (unknown task) already exited
+            return 2
+        out_path = _resolve_out_path(args, result)
+        write_result(result, out_path)
+    except IntegrityError as e:
+        result = e.result                       # the stamped partial result
+        out_path = _resolve_out_path(args, result)
+        write_result(result, out_path)          # EVIDENCE PRESERVED on disk
+        integrity_failed = True
 
     # For confsearch, also write the full conformer ensemble as an XYZ next
     # to the JSON so downstream tools have it without digging into tmp.
@@ -798,7 +916,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             print(f"# mgf:    {result['mgf_path']}", file=sys.stderr)
         for label, path in (result.get("cube_paths") or {}).items():
             print(f"# cube  {label}: {path}", file=sys.stderr)
-    return 0
+    # Nonzero exit when the integrity gate hard-aborted (result still written).
+    return 1 if integrity_failed else 0
 
 
 if __name__ == "__main__":

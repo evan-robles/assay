@@ -67,6 +67,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Write a molden file (always) and optional cubes for the requested MOs."""
     atoms = read_geometry(input_path)
@@ -121,7 +123,10 @@ def run(
     warns = element_warnings(symbols, method)
     if warns:
         result.setdefault("warnings", []).extend(warns)
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 # ---------------------------------------------------------------------------

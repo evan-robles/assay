@@ -25,6 +25,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
@@ -73,7 +75,10 @@ def run(
     warns += scf_convergence_warnings(method, extras)
     if warns:
         result["warnings"] = warns
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _xtb_homo_lumo(atoms, calc) -> Dict[str, Any]:

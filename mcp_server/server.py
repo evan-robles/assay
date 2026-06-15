@@ -56,7 +56,11 @@ TOOLS = {
     "visualize-orbitals":      ("orbitals",       "visualize-orbitals"),
 }
 
-mcp = FastMCP("chemkit")
+# log_level="WARNING" keeps the SDK's per-request INFO chatter (e.g.
+# "Processing request of type CallToolRequest") off the server's stderr, which a
+# stdio caller inherits — so the caller's stderr leads with the live-log path and
+# real diagnostics, not transport noise.
+mcp = FastMCP("chemkit", log_level="WARNING")
 
 
 def _description(skill_folder: str, subcommand: str) -> str:
@@ -193,11 +197,33 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
                            "out_log": out_path})
 
     returncode = proc.returncode if log_fh is not None else returncode
-    # Note the live-log path on our own stderr (human notes only; never stdout).
-    if log_fh is not None:
-        sys.stderr.write(f"# chemkit live log: {out_path}\n")
+    # (The live-log path is announced once at launch on line ~153 and is also
+    # returned to the caller under `out_log`; no end-of-run duplicate needed.)
 
     if returncode != 0:
+        # An integrity hard-abort exits nonzero but STILL prints the full
+        # structured result (with an `integrity` block) to stdout. Preserve that
+        # structured result — augmented with an `error` key so the caller still
+        # treats it as a failure — instead of throwing it away for a truncated
+        # stdout stub. This keeps the integrity verdict, warnings, and out-path
+        # reachable by the agent while signalling that the number is untrustworthy.
+        parsed = None
+        try:
+            parsed = json.loads(stdout_data.strip())
+        except ValueError:
+            parsed = None
+        # Recognize either the full result JSON (has an `integrity` block, from
+        # --stdout json) or the compact pointer (has `status`/`trustworthy`, from
+        # --stdout path). Either way the structured verdict is worth preserving.
+        is_integrity_result = isinstance(parsed, dict) and (
+            isinstance(parsed.get("integrity"), dict)
+            or ("trustworthy" in parsed and "status" in parsed)
+        )
+        if is_integrity_result:
+            parsed["error"] = "integrity gate failed (result is not trustworthy)"
+            parsed["returncode"] = returncode
+            parsed.setdefault("out_log", out_path)
+            return json.dumps(parsed)
         return json.dumps({
             "error": "chemkit engine exited non-zero",
             "returncode": returncode,
@@ -205,14 +231,23 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
             "stderr": stderr_data.strip()[-4000:],
             "stdout": stdout_data.strip()[-2000:],
         })
-    # On success the JSON result is on stdout; pass it through verbatim if it
-    # parses, else wrap it.
+    # On success the JSON result is on stdout. Inject the live-log path under
+    # `out_log` so the caller (and ultimately the agent) learns where to
+    # `tail -f` it — calculation-reporting-standards non-negotiable #9. The
+    # server's own stderr writes (above) do NOT reach a stdio MCP caller, so the
+    # returned JSON is the only channel that crosses back to the Bash tool.
     out = stdout_data.strip()
     try:
-        json.loads(out)
+        parsed = json.loads(out)
+        if log_fh is not None and isinstance(parsed, dict) and "out_log" not in parsed:
+            parsed["out_log"] = out_path
+            return json.dumps(parsed)
         return out
     except ValueError:
-        return json.dumps({"raw_stdout": out, "stderr": stderr_data.strip()})
+        wrapped = {"raw_stdout": out, "stderr": stderr_data.strip()}
+        if log_fh is not None:
+            wrapped["out_log"] = out_path
+        return json.dumps(wrapped)
 
 
 def _make_tool(tool_name: str, subcommand: str, skill_folder: str):

@@ -161,6 +161,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Run the full opt(R) + opt(P) + ts(guess) + freq×3 + IRC pipeline.
 
@@ -172,6 +174,10 @@ def run(
     common_kw = dict(
         method=method, charge=charge, multiplicity=multiplicity, solvent=solvent,
         tier=tier, functional=functional, basis=basis,
+        # Every R/P/TS opt+freq is a sub-call: stamp its own integrity but never
+        # raise mid-profile (the TS freq legitimately has 1 imaginary mode). The
+        # profile gates its own aggregated verdict at the end.
+        gate_integrity=False,
     )
 
     workdir = tempfile.mkdtemp(prefix="chemkit_profile_")
@@ -431,12 +437,20 @@ def run(
     if warnings:
         result["warnings"] = warnings
     result["workdir"] = workdir
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _relax_endpoint(coords, *, atoms_template, label, workdir,
                     method, charge, multiplicity, solvent,
-                    tier=None, functional=None, basis=None):
+                    tier=None, functional=None, basis=None,
+                    gate_integrity=False, allow_unconverged=False):
+    # gate_integrity/allow_unconverged accepted (they ride in via **common_kw)
+    # but are intentionally ignored here — the internal opt always runs ungated
+    # (gate_integrity=False) since a non-converged IRC endpoint must not abort
+    # the whole profile.
     """Write `coords` (with atom symbols pulled from `atoms_template`) to xyz
     and run a quick opt — returns the relaxed positions or None on failure.
 
@@ -462,6 +476,7 @@ def _relax_endpoint(coords, *, atoms_template, label, workdir,
             method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, tier=tier, functional=functional, basis=basis,
             cli=f"(internal reaction_profile: relax IRC {label} endpoint)",
+            gate_integrity=False,
         )
         return read_geometry(out_xyz).get_positions()
     except Exception:

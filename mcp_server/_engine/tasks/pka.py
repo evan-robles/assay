@@ -125,6 +125,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     """Compute pKa from a thermodynamic cycle.
 
@@ -161,6 +163,7 @@ def run(
         method=method, solvent=solvent,
         temperature_K=temperature_K, pressure_Pa=pressure_Pa,
         tier=tier, functional=functional, basis=basis,
+        gate_integrity=False,  # sub-calls stamp only; pka gates the whole result
     )
 
     ha_res = freq_task.run(
@@ -289,7 +292,10 @@ def run(
 
     if warnings:
         result["warnings"] = warnings
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _species_summary(xyz_path, freq_result, charge, mult) -> Dict[str, Any]:

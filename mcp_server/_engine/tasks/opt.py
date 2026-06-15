@@ -42,6 +42,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     method = method.lower()
     atoms = read_geometry(input_path)
@@ -52,7 +54,7 @@ def run(
         out_xyz = os.path.abspath(f"{stem}_{method}_opt.xyz")
 
     if method == "mopac":
-        return _run_mopac(
+        result = _run_mopac(
             input_path=input_path,
             atoms=atoms,
             symbols=symbols,
@@ -64,23 +66,29 @@ def run(
             out_xyz=out_xyz,
             cli=cli,
         )
+    else:
+        result = _run_ase(
+            input_path=input_path,
+            atoms=atoms,
+            symbols=symbols,
+            method=method,
+            charge=charge,
+            multiplicity=multiplicity,
+            solvent=solvent,
+            fmax=fmax,
+            steps=steps,
+            out_xyz=out_xyz,
+            cli=cli,
+            tier=tier,
+            functional=functional,
+            basis=basis,
+        )
 
-    return _run_ase(
-        input_path=input_path,
-        atoms=atoms,
-        symbols=symbols,
-        method=method,
-        charge=charge,
-        multiplicity=multiplicity,
-        solvent=solvent,
-        fmax=fmax,
-        steps=steps,
-        out_xyz=out_xyz,
-        cli=cli,
-        tier=tier,
-        functional=functional,
-        basis=basis,
-    )
+    # The .xyz was already written inside the sub-path, so evidence is on disk
+    # before the gate can raise.
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _run_ase(
@@ -126,7 +134,13 @@ def _run_ase(
 
     warns = element_warnings(symbols, method)
     if not converged:
-        warns.append(f"Optimization did NOT converge within {steps} steps (fmax={fmax}).")
+        if len(symbols) <= 1:
+            warns.append(
+                "Single-atom (zero-DOF) system: no geometry to relax, so the "
+                "optimizer reports converged=False vacuously; the energy is valid."
+            )
+        else:
+            warns.append(f"Optimization did NOT converge within {steps} steps (fmax={fmax}).")
     if warns:
         result["warnings"] = warns
     return result
@@ -208,10 +222,16 @@ def _run_mopac(
 
     warns = element_warnings(symbols, "mopac")
     if not converged:
-        warns.append(
-            f"MOPAC reported the optimization did NOT converge "
-            f"({conv_msg or 'see mopac.out'}); final geometry returned anyway."
-        )
+        if len(symbols) <= 1:
+            warns.append(
+                "Single-atom (zero-DOF) system: no geometry to relax, so MOPAC "
+                "reports non-convergence vacuously; the energy is valid."
+            )
+        else:
+            warns.append(
+                f"MOPAC reported the optimization did NOT converge "
+                f"({conv_msg or 'see mopac.out'}); final geometry returned anyway."
+            )
     if hof_kcal is not None and abs(hof_kcal) > 10000:
         warns.append(
             f"Final heat of formation is extreme ({hof_kcal:.1f} kcal/mol). "

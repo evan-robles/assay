@@ -257,6 +257,8 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
     method = method.lower()
     if method not in {"xtb", "mopac", "dft", "hf"}:
@@ -312,7 +314,9 @@ def run(
         result["dihedrals"] = []
         if warns:
             result["warnings"] = warns
-        return result
+        from ..integrity import finalize
+        return finalize(result, gate_integrity=gate_integrity,
+                        allow_unconverged=allow_unconverged)
 
     dihedral_records: List[Dict[str, Any]] = []
     for bond in bonds:
@@ -411,7 +415,10 @@ def run(
     result["dihedrals"] = dihedral_records
     if warns:
         result["warnings"] = warns
-    return result
+
+    from ..integrity import finalize
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
 
 
 def _interpolated_barrier(angles_deg, energies_kcal):
