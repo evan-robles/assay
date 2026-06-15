@@ -32,6 +32,10 @@ from ..io import read_geometry
 from ..schema import base_result, element_warnings
 from ._mopac_parsers import _find_with_ext
 
+# eV -> kcal/mol = (e·N_A/1000)/4.184. CODATA 2022 (exact): e = 1.602 176 634e-19 C,
+# N_A = 6.022 140 76e23 /mol; 1 cal = 4.184 J exactly. Value unchanged from prior.
+# Ref: Mohr, Tiesinga, Newell, Taylor, CODATA 2022, NIST,
+# https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
 EV_TO_KCAL = 23.060547830619026
 
 

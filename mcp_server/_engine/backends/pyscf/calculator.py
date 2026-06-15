@@ -24,8 +24,16 @@ from .molecule import build_mol, promote_basis_for_anion
 from .scf import build_mean_field
 
 
-HARTREE_TO_EV = 27.211386245988
-HARTREE_PER_BOHR_TO_EV_PER_ANG = 27.211386245988 / 0.529177210903
+# Physical constants — CODATA 2022 recommended values.
+# Hartree energy in eV: 27.211 386 245 981(30) eV.
+# Bohr radius a0: 0.529 177 210 544(82) Å (= 5.291 772 105 44e-11 m).
+# Ref: Mohr, P. J.; Tiesinga, E.; Newell, D. B.; Taylor, B. N. CODATA Recommended
+#   Values of the Fundamental Physical Constants: 2022. National Institute of
+#   Standards and Technology. https://physics.nist.gov/cuu/Constants/
+#   (accessed 2026-06-15). [verified: NIST allascii.txt 200 via curl, values read]
+HARTREE_TO_EV = 27.211386245981
+BOHR_RADIUS_ANG = 0.529177210544
+HARTREE_PER_BOHR_TO_EV_PER_ANG = HARTREE_TO_EV / BOHR_RADIUS_ANG
 
 
 class PySCFCalculator(Calculator):

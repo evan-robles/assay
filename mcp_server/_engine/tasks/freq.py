@@ -369,6 +369,10 @@ def _run_ase(
     # torsions. (Dropping the modes outright crashes ASE's IdealGasThermo
     # for any flexible organic with a low-frequency conformer mode.)
     NEAR_ZERO_CM = 50.0
+    # eV per cm^-1. CODATA 2022 (exact): inverse meter-electron volt relationship
+    # = 1.239 841 984e-6 eV/m^-1; ×100 m^-1/cm^-1 = 1.239 841 984e-4 eV/cm^-1.
+    # Ref: Mohr, Tiesinga, Newell, Taylor, CODATA 2022, NIST,
+    # https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
     EV_PER_CM = 1.239841984e-4
     FLOOR_eV = NEAR_ZERO_CM * EV_PER_CM
     real_vib_energies = []

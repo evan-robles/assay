@@ -48,6 +48,10 @@ import math
 
 # Gas constant in kcal/(mol·K) — used to scale RT ln 10 and the 1 atm → 1 M
 # correction at user-supplied temperatures.
+# CODATA 2022 (exact): R = 8.314 462 618 J/(mol·K); /4184 = 1.987 204 258e-3
+# kcal/(mol·K). Value unchanged (R is an exact SI-defined constant).
+# Ref: Mohr, Tiesinga, Newell, Taylor, CODATA 2022, NIST,
+# https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
 R_KCAL_MOL_K = 1.987204258e-3
 # Molar volume of an ideal gas at 1 atm, in L/mol per K: V_m = (R/P)*T.
 # Using R = 0.08205736 L·atm/(mol·K) so V_m(T) [L/mol] = R_LATM * T.

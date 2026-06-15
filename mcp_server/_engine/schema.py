@@ -3,8 +3,16 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 
-HARTREE_TO_EV = 27.211386245988
-HARTREE_TO_KCAL = 627.5094740631
+# Physical-constant conversions — CODATA 2022 recommended values.
+#   Hartree energy in eV       : 27.211 386 245 981(30) eV
+#   Hartree energy in kJ/mol   : 2625.499 639 5(40) kJ/mol  -> /4.184 = kcal/mol
+# Ref: Mohr, P. J.; Tiesinga, E.; Newell, D. B.; Taylor, B. N. CODATA Recommended
+#   Values of the Fundamental Physical Constants: 2022. National Institute of
+#   Standards and Technology. https://physics.nist.gov/cuu/Constants/
+#   (accessed 2026-06-15). [verified: NIST allascii.txt 200 via curl, values read]
+# (1 thermochemical calorie = 4.184 J exactly, by definition.)
+HARTREE_TO_EV = 27.211386245981
+HARTREE_TO_KCAL = 627.5094740629
 EV_TO_HARTREE = 1.0 / HARTREE_TO_EV
 EV_TO_KCAL = HARTREE_TO_KCAL / HARTREE_TO_EV
 

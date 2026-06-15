@@ -63,6 +63,7 @@ See [`examples/`](examples/) for a validated example with literature comparison.
 - Stewart. *J. Mol. Model.* **2013**, 19, 1. https://doi.org/10.1007/s00894-012-1667-x
 - Sun et al. *J. Chem. Phys.* **2020**, 153, 024109. https://doi.org/10.1063/5.0006074
 - Larsen et al. *J. Phys.: Condens. Matter* **2017**, 29, 273002. https://doi.org/10.1088/1361-648X/aa680e
+- National Institute of Standards and Technology. *CODATA Internationally Recommended 2022 Values of the Fundamental Physical Constants*; NIST. https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15). Source of the energy-unit conversions (Hartree↔eV, 1 Eh = 27.211386245981 eV; eV→kcal/mol, 23.060547830619) and the gas constant R = 8.314462618 J/(mol·K) used in the thermodynamic cycle.
 
 ---
 

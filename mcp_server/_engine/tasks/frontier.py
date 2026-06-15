@@ -20,8 +20,12 @@ from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
 from ._mopac_parsers import parse_mopac_extras
 
-HARTREE_TO_EV = 27.211386245988
-ANGSTROM_TO_BOHR = 1.8897261254535
+# CODATA 2022: Hartree energy = 27.211 386 245 981(30) eV; Bohr radius =
+# 0.529 177 210 544(82) Å, so ANGSTROM_TO_BOHR = 1/0.529177210544.
+# Ref: Mohr, Tiesinga, Newell, Taylor, CODATA 2022, NIST,
+# https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
+HARTREE_TO_EV = 27.211386245981
+ANGSTROM_TO_BOHR = 1.8897261259078
 
 NUM = r"[-+]?\d+\.\d+(?:[DdEe][-+]?\d+)?"
 

@@ -31,8 +31,12 @@ from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
 from ._mopac_parsers import parse_mopac_extras, _parse_aux_array, _find_with_ext
 
-# 1 ea0 = 2.541746... Debye
-AU_TO_DEBYE = 2.541746229
+# Atomic unit of electric dipole moment (ea0) -> Debye.
+# CODATA 2022: ea0 = 8.478 353 6198(13)e-30 C·m; 1 D = 1e-21/c C·m
+# (c = 299 792 458 m/s exact) -> ea0/D = 2.541 746 471.
+# Ref: Mohr, Tiesinga, Newell, Taylor, CODATA 2022, NIST,
+# https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
+AU_TO_DEBYE = 2.541746471
 
 
 def run(
@@ -154,7 +158,9 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
             pass
 
     res = calc.singlepoint()
-    energy_eV = res.get_energy() * 27.211386245988
+    # Hartree -> eV, CODATA 2022 (27.211386245981 eV). NIST,
+    # https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
+    energy_eV = res.get_energy() * 27.211386245981
     charges = res.get_charges().tolist()
     dipole_au = res.get_dipole()
     dipole_debye_vec = (dipole_au * AU_TO_DEBYE).tolist()

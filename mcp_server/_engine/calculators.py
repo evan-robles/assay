@@ -451,7 +451,9 @@ class _XtbCliCalculator:
         if not m:
             raise RuntimeError("xtb CLI: could not parse total energy.\n" + res.stdout[-2000:])
         # Convert Hartree -> eV to match ASE convention.
-        energy_eV = float(m.group(1)) * 27.211386245988
+        # CODATA 2022: 27.211386245981 eV. NIST,
+        # https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
+        energy_eV = float(m.group(1)) * 27.211386245981
         self.results["energy"] = energy_eV
         return energy_eV
 
