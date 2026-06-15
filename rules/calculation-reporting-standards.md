@@ -300,6 +300,32 @@ Every report must be able to point at:
 Offer to move or clean up generated artifacts rather than leaving them
 scattered, and never claim a file exists without it actually being on disk.
 
+### 9.1 Token-efficient result reading (required default)
+
+How a result is read back into context is itself a cost. Every skill prints the
+full result JSON to stdout **and** (when `--out <path>` is given) writes it to a
+file — capturing both, or `cat`-ing the whole JSON, pulls the same large blob in
+twice and wastes tokens. Default to this pattern for every calculation run:
+
+1. **Write to a file and suppress stdout** so the JSON is not echoed into
+   context: `... --method xtb --out <path>.json input.xyz >/dev/null 2>>run.err`
+   (pick ONE channel — the `--out` file — not both).
+2. **Never `cat` the full result JSON.** Read back only the fields actually
+   reported, with `jq`, e.g.
+   `jq '{converged, n_steps, total_energy_eV, homo_eV, lumo_eV, warnings}' <path>.json`
+   — select the keys relevant to the skill (energies, pKa, dipole, etc.).
+3. **Always include `warnings` and the convergence flag in the `jq` selection**
+   so a non-convergence or engine warning (§7) is never silently dropped by the
+   filter.
+
+> [!IMPORTANT]
+> This optimization changes only **how the result is read**, never **what is
+> reported**. It does NOT relax any other rule: the live `.out` path is still
+> surfaced mid-run (non-negotiable #9), structures are still built via the
+> relevant skill (#8), the full method-provenance block (§1) is still reported,
+> and every warning is still echoed verbatim (§7). Saving tokens must never cost
+> a dropped caveat, warning, or provenance field.
+
 ---
 
 ## 10. The reporting checklist
