@@ -20,7 +20,7 @@ thin client that calls it over the open Model Context Protocol. The engine is
 │   └── workflow-standards.md         # how to compose skills into a vetted workflow
 ├── mcp_server/
 │   ├── server.py          # MCP server (FastMCP, stdio) — exposes 19 tools
-│   ├── _engine/           # the ONE chemistry engine (cli, calculators, tasks, backends, schema)
+│   ├── chemkit_engine/   # the ONE chemistry engine (cli, calculators, tasks, backends, schema)
 │   ├── requirements.txt   # engine + server deps
 │   └── README.md          # how to wire the server into any MCP client
 ├── skills/
@@ -113,16 +113,20 @@ the xtb/dft/hf backends (MOPAC has a native TS optimizer).
 ## Install & run
 
 ```bash
-# 1. Install the server (the engine) once:
-pip install -r mcp_server/requirements.txt
-conda install -c conda-forge xtb mopac openbabel ase    # external binaries
+# 1. Install chemkit once. It ships a `chemkit-mcp` console command:
+pip install chemkit-mcp            # core (xtb/mopac); add [qm] for pyscf DFT/HF + plots
+pip install "chemkit-mcp[qm]"
+#   from a checkout instead:  pip install -e ".[qm]"
+conda install -c conda-forge xtb mopac openbabel    # external binaries (not pip-installable)
 
 # 2a. Run a skill from the shell (the thin client spawns/uses the server):
 python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water mol.xyz
 python skills/single-point-energy/scripts/single-point-energy.py --help
 
-# 2b. Or run the MCP server directly and connect any MCP client:
-python mcp_server/server.py
+# 2b. Or start the MCP server and connect any MCP client (same config everywhere):
+chemkit-mcp                        # stdio MCP server
+#   client config:  { "mcpServers": { "chemkit": { "command": "chemkit-mcp" } } }
+#   see mcp_server/README.md for uvx, OpenAI Agents SDK, and run-from-checkout forms.
 ```
 
 External binaries are NOT pip-installable — install separately (above):

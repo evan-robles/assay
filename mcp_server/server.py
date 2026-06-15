@@ -2,13 +2,14 @@
 """chemkit MCP server — one unified engine behind the open MCP protocol.
 
 Exposes every chemkit skill as an MCP tool. The chemistry engine lives once, in
-`mcp_server/_engine/`; this server owns it and dispatches each tool call to the
-engine's CLI. Built on the official `mcp` SDK (FastMCP) over stdio, so it works
-with ANY MCP-capable client, not just one vendor.
+`mcp_server/chemkit_engine/`; this server owns it and dispatches each tool call
+to the engine's CLI. Built on the official `mcp` SDK (FastMCP) over stdio, so it
+works with ANY MCP-capable client, not just one vendor.
 
 Each tool mirrors a chemkit subcommand. A tool takes the same arguments the CLI
-takes, as a list of CLI tokens (`args`), runs `python -m _engine.cli <task>
-<args>` as an isolated subprocess, and returns the JSON result the engine prints.
+takes, as a list of CLI tokens (`args`), runs `python -m chemkit_engine.cli
+<task> <args>` as an isolated subprocess, and returns the JSON result the engine
+prints.
 Running each calculation in its own process keeps long, stateful QM jobs (pyscf
 globals, matplotlib backends, chdir/tmpdirs) from leaking across calls.
 
@@ -28,7 +29,7 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 HERE = Path(__file__).resolve().parent
-ENGINE_DIR = HERE / "_engine"
+ENGINE_DIR = HERE / "chemkit_engine"
 SKILLS_DIR = HERE.parent / "skills"
 
 # tool name -> (engine subcommand, skill folder for its SKILL.md description)
@@ -94,12 +95,12 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
     always gets structured output.
     """
     env = dict(os.environ)
-    # Make `import _engine` resolve to mcp_server/_engine for the subprocess.
+    # Make `import chemkit_engine` resolve to mcp_server/chemkit_engine for the subprocess.
     env["PYTHONPATH"] = os.pathsep.join(
         [str(HERE), env.get("PYTHONPATH", "")]
     ).rstrip(os.pathsep)
     run_cwd = cwd if (cwd and os.path.isdir(cwd)) else str(HERE)
-    cmd = [sys.executable, "-m", "_engine.cli", subcommand, *args]
+    cmd = [sys.executable, "-m", "chemkit_engine.cli", subcommand, *args]
 
     # Live `.out` log the user can `tail -f` while the calculation runs.
     # Written in the CALLER's cwd so it sits next to their inputs/outputs.
@@ -267,5 +268,10 @@ for _name, (_sub, _folder) in TOOLS.items():
     _make_tool(_name, _sub, _folder)
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Console entry point (`chemkit-mcp`): start the stdio MCP server."""
     mcp.run()  # stdio transport
+
+
+if __name__ == "__main__":
+    main()

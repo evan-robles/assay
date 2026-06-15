@@ -1,6 +1,6 @@
 # chemkit MCP server dependencies.
 #
-# The server hosts the one unified chemistry engine (mcp_server/_engine/) and
+# The server hosts the one unified chemistry engine (mcp_server/chemkit_engine/) and
 # exposes every skill as an MCP tool. Install these once; the skills themselves
 # are thin clients that only need the `mcp` SDK.
 

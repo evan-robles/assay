@@ -1,16 +1,51 @@
-[project]
-name = "chem-skills"
-version = "1.0.0"
-description = "Self-contained computational-chemistry skills (xtb, MOPAC, PySCF, Open Babel)"
-requires-python = ">=3.9"
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
 
-# This project is no longer a single installable package. Each skill under
-# skills/<name>/ is self-contained and run directly:
-#     python skills/<name>/<name>.py --help
-# Install a skill's Python dependencies from its own requirements.txt:
-#     pip install -r skills/<name>/requirements.txt
-# External binaries (xtb, mopac, openbabel) are installed separately, e.g.:
-#     conda install -c conda-forge xtb mopac openbabel ase
+[project]
+name = "chemkit-mcp"
+version = "1.0.0"
+description = "chemkit: computational-chemistry MCP server (xtb, MOPAC, PySCF, Open Babel) over stdio"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "Evan S. Robles" }]
+keywords = ["chemistry", "mcp", "computational-chemistry", "xtb", "mopac", "pyscf", "ase"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Scientific/Engineering :: Chemistry",
+]
+# Pure-pip runtime deps the server + engine I/O layer always need. pyscf/matplotlib
+# are deliberately NOT core (pyscf is heavy/awkward to pip-install and is only needed
+# for --method dft/hf + a few plots; the engine imports them lazily). External binaries
+# (xtb, mopac, openbabel) are NOT pip-installable — see README (conda).
+dependencies = ["mcp", "ase>=3.22", "numpy"]
+
+[project.optional-dependencies]
+qm  = ["pyscf", "matplotlib"]   # pip install "chemkit-mcp[qm]" -> DFT/HF + plots
+all = ["pyscf", "matplotlib"]
+
+[project.scripts]
+chemkit-mcp = "mcp_server.server:main"
+
+[project.urls]
+Homepage   = "https://github.com/evan-robles/chemkit"
+Repository = "https://github.com/evan-robles/chemkit"
+
+[tool.setuptools]
+# Two top-level installs: mcp_server (server; entry target) and chemkit_engine (the
+# engine, imported by the per-call subprocess as `-m chemkit_engine.cli`). package-dir
+# maps the import name chemkit_engine to its on-disk home mcp_server/chemkit_engine so
+# the source stays nested while the name is importable top-level after install.
+# Explicit list (autodiscovery is confused by the dual-top-level + package-dir remap).
+packages = ["mcp_server", "chemkit_engine", "chemkit_engine.tasks",
+            "chemkit_engine.backends", "chemkit_engine.backends.pyscf"]
+
+[tool.setuptools.package-dir]
+"chemkit_engine" = "mcp_server/chemkit_engine"
 
 [tool.pytest.ini_options]
 markers = [

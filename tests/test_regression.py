@@ -1247,7 +1247,7 @@ if _MCP not in sys.path:
 
 
 def _integrity():
-    return importlib.import_module("_engine.integrity")
+    return importlib.import_module("chemkit_engine.integrity")
 
 
 # ---- 1) module unit tests (no QM) ----------------------------------------
