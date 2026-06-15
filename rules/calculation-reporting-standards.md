@@ -31,7 +31,7 @@ It is the *output-facing* counterpart to the rest of the rules set:
 
 ---
 
-## 0. The eight non-negotiables
+## 0. The nine non-negotiables
 
 1. **Never report a bare number.** Every reported quantity carries its level of
    theory, basis (or semi-empirical Hamiltonian), geometry source, and units.
@@ -63,6 +63,19 @@ It is the *output-facing* counterpart to the rest of the rules set:
    hand-writing coordinates or fabricating a geometry. This guarantees the
    structure's provenance (resolving database + citation, force-field/QM build
    method, exact command) is captured and reportable per §3.
+9. **Always surface the `.out` log LIVE, while the calculation is running.**
+   Every skill run streams a live `<subcommand>_<timestamp>.out` log to the
+   caller's cwd (see §9). The `.out` path MUST be given to the user **as soon as
+   the run is launched — while it is still running — not after it finishes.** The
+   whole point is that the user can watch the calculation in real time, so the
+   path is useless if it only arrives with the final result. The moment a
+   calculation is started (especially a long one run in the background),
+   immediately **give its full `.out` path, say it is being written live, and
+   offer to open it / note it can be `tail -f`'d** — do not wait for the run to
+   complete and do not wait to be asked. State it plainly, e.g. "Calculation
+   started; it's logging live to `/abs/path/opt_20260613-101500.out` — want me to
+   open it, or you can `tail -f` it now." Surface the path again with the final
+   result, but the live, mid-run announcement is the requirement.
 
 ---
 
