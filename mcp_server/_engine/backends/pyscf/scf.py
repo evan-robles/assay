@@ -109,7 +109,17 @@ def build_mean_field(
         mf = mf.density_fit(auxbasis=aux)
 
     if solvent:
-        mf = attach_solvent(mf, solvent)
+        # ddCOSMO is native to PySCF; it needs a numeric dielectric, so look the
+        # solvent name up in PYSCF_SOLVENT_EPS and set it directly.
+        eps = PYSCF_SOLVENT_EPS.get(solvent.lower())
+        if eps is None:
+            raise ValueError(
+                f"PySCF backend: unknown solvent {solvent!r}. "
+                f"Known: {sorted(PYSCF_SOLVENT_EPS)}"
+            )
+        from pyscf import solvent as solv_mod
+        mf = solv_mod.ddCOSMO(mf)
+        mf.with_solvent.eps = eps
 
     mf.conv_tol = float(scf_tol)
     if max_cycle is not None:
@@ -130,33 +140,6 @@ def _report_auxbasis(mf):
     if with_df is None:
         return None
     return getattr(with_df, "auxbasis", None)
-
-
-def attach_solvent(mf, solvent_name: str, model: str = "ddcosmo"):
-    """Wrap an SCF object with an implicit solvent model.
-
-    Defaults to ddCOSMO — fastest of PySCF's PCM family and well-tested.
-    SMD (free-energy-of-solvation parameterization) is available via PySCF's
-    smd module; expose it later if/when a `--solvent-model` flag is added.
-    """
-    eps = PYSCF_SOLVENT_EPS.get(solvent_name.lower())
-    if eps is None:
-        raise ValueError(
-            f"PySCF backend: unknown solvent {solvent_name!r}. "
-            f"Known: {sorted(PYSCF_SOLVENT_EPS)}"
-        )
-
-    if model.lower() == "ddcosmo":
-        from pyscf import solvent as solv_mod
-        mf = solv_mod.ddCOSMO(mf)
-        mf.with_solvent.eps = eps
-    elif model.lower() == "smd":
-        from pyscf.solvent import smd as smd_mod
-        mf = smd_mod.SMD(mf)
-        mf.with_solvent.solvent = solvent_name.lower()
-    else:
-        raise ValueError(f"Unknown solvent model {model!r} (use ddcosmo or smd)")
-    return mf
 
 
 def pack_scf_result(mf) -> Dict[str, Any]:
