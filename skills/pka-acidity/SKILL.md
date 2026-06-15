@@ -10,8 +10,6 @@ category: chemistry
 Compute an aqueous $\mathrm{p}K_a$ from the thermodynamic cycle $\mathrm{HA(aq)} \rightleftharpoons \mathrm{A^-(aq)} + \mathrm{H^+(aq)}$ with full optimization and frequency analysis on each species in implicit solvent. Two modes are available: **absolute** (uses a literature $G(\mathrm{H^+,aq})$ reference; large systematic error) and **reference** (anchors against a known acid via an isodesmic exchange so most systematic errors cancel; strongly recommended).
 
 ## Instructions
-Run:
-
 ```bash
 # Env: anl_env
 python skills/pka-acidity/scripts/pka-acidity.py [args]
@@ -20,7 +18,7 @@ python skills/pka-acidity/scripts/pka-acidity.py [args]
 Arguments:
 - `--ha <path>` (required) — xyz of the protonated form HA.
 - `--a-minus <path>` (required) — xyz of the deprotonated form A⁻.
-- `--method {xtb,mopac,dft,hf}` (required — if missing, ask the user).
+- `--method {xtb,mopac,dft,hf}` (required — if missing, ask).
 - `--mode {absolute,reference}` (default `absolute`).
 - `--solvent <name>` (default `water` — the absolute $G(\mathrm{H^+})$ ref only applies to water).
 - `--ha-charge N` (default 0; A⁻ charge is automatically HA charge − 1).
@@ -35,7 +33,7 @@ Stop and ask if `--ha` or `--a-minus` is missing, if `--method` is missing, or i
 
 You must supply both HA and A⁻ xyz files yourself — build the deprotonated form via [build-from-smiles](../build-from-smiles/SKILL.md) (e.g. `CC(=O)O` and `CC(=O)[O-]`) or hand-edit an xyz to delete the acidic proton and run [geometry-optimize](../geometry-optimize/SKILL.md).
 
-Then read the returned JSON and report: the $\mathrm{p}K_a$ (headline number); mode, solvent, temperature; for absolute mode $G(\mathrm{HA})$, $G(\mathrm{A^-})$, $G(\mathrm{H^+,aq})$, the standard-state correction, and $\Delta G_\mathrm{dissociation}$; for reference mode $\Delta G_\mathrm{isodesmic}$ and the reference acid with its experimental pKa; the reminder that lower pKa → stronger acid; every warning (especially imaginary modes on any species); and an estimate of expected error (xtb absolute is not meaningful; xtb reference ±2 units; DFT absolute standard tier ±3 units; DFT reference with a similar anchor ±1 unit or better).
+Then read the JSON and report: the $\mathrm{p}K_a$ (headline number); mode, solvent, temperature; for absolute mode $G(\mathrm{HA})$, $G(\mathrm{A^-})$, $G(\mathrm{H^+,aq})$, the standard-state correction, and $\Delta G_\mathrm{dissociation}$; for reference mode $\Delta G_\mathrm{isodesmic}$ and the reference acid with its experimental pKa; the reminder that lower pKa → stronger acid; every warning (especially imaginary modes on any species); and an estimate of expected error (xtb absolute is not meaningful; xtb reference ±2 units; DFT absolute standard tier ±3 units; DFT reference with a similar anchor ±1 unit or better).
 
 ## Examples
 ```bash

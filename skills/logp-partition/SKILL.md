@@ -10,7 +10,7 @@ category: chemistry
 Estimate $\log P$ from $\Delta G_\text{solv}(\text{water}) - \Delta G_\text{solv}(\text{octanol})$ at 298.15 K via three single-point energies (gas, water, octanol) on the supplied geometry. Screening-grade (±1 log unit typical at semi-empirical level). Sign convention: positive $\log P$ → prefers octanol (lipophilic). Defined for neutral species only.
 
 ## Instructions
-1. Parse arguments. If the `.xyz` path is missing, stop and ask. If `--method` is missing, use **AskUserQuestion**. If the user passed `--charge != 0`, stop and explain logD (see Constraints).
+1. Parse arguments. If the `.xyz` path is missing, stop and ask. If `--method` is missing, use **AskUserQuestion**. If `--charge != 0` was passed, stop and explain logD (see Constraints).
 2. Run the engine.
 
 ```bash
@@ -27,7 +27,7 @@ Arguments:
 
 DFT $\log P$ is slower but meaningfully better than semi-empirical for polar / H-bonding scaffolds. The ddCOSMO model in PySCF lacks cavitation / dispersion-repulsion terms (no SMD parameterization for octanol), so DFT $\log P$ here is still screening-grade — better than xtb/mopac but not a substitute for SMD-parameterized DFT.
 
-Read the JSON and copy it to `<basename>_logp_<method>.json` in the cwd. Report: $\log P$ (the headline number); $\Delta G_\text{solv}(\text{water})$ and $\Delta G_\text{solv}(\text{octanol})$, both in kcal/mol; $\Delta\Delta G$ (water − octanol); method and charge/multiplicity (charge is always 0); and the caveats (±1 log unit; electronic $\Delta G_\text{solv}$ only). Flag any warnings in the JSON. For a single-solvent value on an ionization state, see [solvation](../solvation/SKILL.md). For a fast chemoinformatic comparison, RDKit's `Crippen.MolLogP` (group-contribution) is often comparably accurate for drug-like molecules; the thermodynamic-cycle approach here has the advantage of reflecting the actual electronic structure / conformation for unusual scaffolds.
+Read the JSON and copy it to `<basename>_logp_<method>.json` in the cwd. Report: $\log P$ (headline number); $\Delta G_\text{solv}(\text{water})$ and $\Delta G_\text{solv}(\text{octanol})$, both in kcal/mol; $\Delta\Delta G$ (water − octanol); method and charge/multiplicity (charge is always 0); and the caveats (±1 log unit; electronic $\Delta G_\text{solv}$ only). Flag any JSON warnings. For a single-solvent value on an ionization state, see [solvation](../solvation/SKILL.md). For a fast chemoinformatic comparison, RDKit's `Crippen.MolLogP` (group-contribution) is often comparably accurate for drug-like molecules; the thermodynamic-cycle approach here has the advantage of reflecting the actual electronic structure / conformation for unusual scaffolds.
 
 ## Examples
 ```bash

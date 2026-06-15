@@ -10,8 +10,8 @@ category: chemistry
 Locate a first-order saddle point on the potential-energy surface starting from a TS-guess geometry, then verify it via a Hessian that the converged structure has exactly one imaginary frequency (the reaction-coordinate mode). This yields the geometry needed for an activation energy $\Delta E^{\ddagger}$ / $\Delta G^{\ddagger}$.
 
 ## Instructions
-1. Parse arguments. If the `.xyz` guess is missing, **stop and ask the user**. If `--method` is missing, **ask the user** (default to `mopac`, since every other backend requires Sella to be installed separately).
-2. Run the engine at the actual script path:
+1. Parse arguments. If the `.xyz` guess is missing, **stop and ask**. If `--method` is missing, **ask** (default `mopac`, since every other backend requires Sella installed separately).
+2. Run the engine:
 
 ```bash
 # Env: anl_env
@@ -19,7 +19,7 @@ python skills/transition-state/scripts/transition-state.py guess.xyz --method mo
 ```
 
    Arguments (port from the engine `ts` subcommand):
-   - `.xyz` path with the TS guess — **required**. A good guess is the energy-maximum frame of a [conformational-analysis](../conformational-analysis/SKILL.md) dihedral scan for rotation barriers; otherwise build by hand.
+   - `.xyz` path with the TS guess — **required**. For rotation barriers, a good guess is the energy-maximum frame of a [conformational-analysis](../conformational-analysis/SKILL.md) dihedral scan; otherwise build by hand.
    - `--method {xtb,mopac,dft,hf}` — **required** (ask if missing; default `mopac`).
    - `--solvent <name>`, `--charge N`, `--mult N`, `--steps N` (default 500).
    - `--no-verify-freq` — skip the post-TS frequency verification.

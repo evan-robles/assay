@@ -26,7 +26,7 @@ Arguments:
 - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
 - HF-only: `--basis <name>`.
 
-Read the printed JSON and copy it to `<basename>_electrostatics_<method>.json` in the cwd. Report: the dipole moment in Debye (magnitude + Cartesian vector); atomic partial charges as a table (1-based atom index, element symbol, charge); the sum of charges as a sanity check (should match the total molecular charge); method, solvent (or "gas phase"), and molecular charge/multiplicity; and the partitioning scheme (Mulliken for every backend). Note that Mulliken charges are basis-set-dependent and not a physical observable — for transferable charges, ESP-fit methods would be needed (not available in this build). This is a single point; relax the geometry first with [geometry-optimize](../geometry-optimize/SKILL.md) if needed.
+Read the JSON and copy it to `<basename>_electrostatics_<method>.json` in the cwd. Report: the dipole moment in Debye (magnitude + Cartesian vector); atomic partial charges as a table (1-based atom index, element symbol, charge); the sum of charges as a sanity check (should match the total molecular charge); method, solvent (or "gas phase"), and molecular charge/multiplicity; and the partitioning scheme (Mulliken for every backend). Mulliken charges are basis-set-dependent and not a physical observable — transferable charges need ESP-fit methods (not available in this build). This is a single point; relax the geometry first with [geometry-optimize](../geometry-optimize/SKILL.md) if needed.
 
 ## Examples
 ```bash

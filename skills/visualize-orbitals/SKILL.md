@@ -10,9 +10,9 @@ category: chemistry
 Dump the SCF wavefunction in formats every modern viewer reads so the user can inspect orbital isosurfaces (HOMO, LUMO, or any specific MO). A `.molden` file is always written; `.cube` files for selected orbitals are evaluated on a 3D grid on request. The skill writes files only — it performs **no rendering**.
 
 ## Instructions
-1. Parse arguments. If the `.xyz` is missing, **stop and ask the user**. If `--method` is missing, **ask the user** (header "Method", options `xtb` / `mopac` / `dft` / `hf`).
+1. Parse arguments. If the `.xyz` is missing, **stop and ask**. If `--method` is missing, **ask** (header "Method", options `xtb` / `mopac` / `dft` / `hf`).
 2. If the user asked to "see the HOMO" / "plot the LUMO" / etc. but didn't specify cubes, default to `--cubes homo,lumo`.
-3. Run the engine at the actual script path:
+3. Run the engine:
 
 ```bash
 # Env: anl_env
@@ -27,7 +27,7 @@ python skills/visualize-orbitals/scripts/visualize-orbitals.py mol.xyz \
    - `--cubes <list>` — comma-separated orbital labels to render as `.cube` files. Each label is one of: `homo`, `lumo`, `homo-1`, `lumo+2`, …; a 1-based MO index (e.g. `5`); optionally suffixed `:alpha` or `:beta` for open-shell (e.g. `homo:alpha`). Default empty — only the molden is written.
    - `--grid N` — cube resolution (default 80; 50 = quick preview, 120 = publication).
    - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. HF-only: `--basis <name>`.
-4. Read the returned JSON. Copy it to `<basename>_orbitals_<method>.json` in the cwd.
+4. Read the JSON. Copy it to `<basename>_orbitals_<method>.json` in the cwd.
 5. Report: the path to the `.molden` file (always present) and any `.cube` files (one per requested orbital — these are the deliverables the user opens in **Avogadro / Jmol / IboView / VMD / PyMOL / Multiwfn**; no rendering is done here); the MO summary from `mo_summary` (HOMO / LUMO indices and energies in eV; alpha + beta separately for open-shell); method, solvent (or "gas phase"), charge, multiplicity; for MOPAC, the STO-3G re-fit warning; and one short "how to view" line. For orbital energies only, use [frontier-orbitals](../frontier-orbitals/SKILL.md); for electrostatic potential / partial charges, use [electrostatics](../electrostatics/SKILL.md).
 
 ## Examples

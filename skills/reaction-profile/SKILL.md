@@ -21,7 +21,7 @@ Arguments:
 - `--reactant <path>` (required) — reactant xyz.
 - `--product <path>` (required) — product xyz.
 - `--ts-guess <path>` (required) — TS guess xyz (the highest-energy frame from a [conformational-analysis](../conformational-analysis/SKILL.md) scan is a good starting point; otherwise build by hand).
-- `--method {xtb,mopac,dft,hf}` (required — if missing, ask the user).
+- `--method {xtb,mopac,dft,hf}` (required — if missing, ask).
 - `--charge N`, `--mult N` (defaults 0, 1; must match across all species).
 - `--solvent <name>` (optional).
 - `--temperature K` (default 298.15), `--pressure Pa` (default 101325).
@@ -30,11 +30,11 @@ Arguments:
 - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
 - HF-only: `--basis <name>`.
 
-Stop if any required xyz is missing. If `--method` is missing, ask the user.
+Stop if any required xyz is missing. If `--method` is missing, ask.
 
 **Atom ordering matters**: the Kabsch RMSD used in the IRC check is not permutation-invariant — reactant, product, TS-guess, and IRC endpoints must share the same atom indexing. Eyeball the first lines of each xyz before running.
 
-Then read the returned JSON and report: $\Delta G^\ddagger$ and $\Delta G_\mathrm{rxn}$ (kcal/mol), plus $\Delta E$ and $\Delta H$ for each; the reverse barrier $\Delta G^\ddagger_\mathrm{rev} = G(\mathrm{TS}) - G(\mathrm{P})$; the verdict block (reactant a true minimum, product a true minimum, TS a first-order saddle with exactly one imaginary mode, and whether IRC connects R and P within `--rmsd-tol`); the overall `is_fully_characterized` flag; the path to the diagram PNG (the headline deliverable — surface it prominently); paths to all `_opt.xyz` files; and every warning, especially an IRC connectivity failure.
+Then read the JSON and report: $\Delta G^\ddagger$ and $\Delta G_\mathrm{rxn}$ (kcal/mol), plus $\Delta E$ and $\Delta H$ for each; the reverse barrier $\Delta G^\ddagger_\mathrm{rev} = G(\mathrm{TS}) - G(\mathrm{P})$; the verdict block (reactant a true minimum, product a true minimum, TS a first-order saddle with exactly one imaginary mode, and whether IRC connects R and P within `--rmsd-tol`); the overall `is_fully_characterized` flag; the path to the diagram PNG (the headline deliverable — surface it prominently); paths to all `_opt.xyz` files; and every warning, especially an IRC connectivity failure.
 
 Verdict interpretation: TS with 0 imaginary modes → optimizer fell into a nearby minimum, build a better guess; TS with >1 imaginary modes → higher-order saddle, inspect the modes; IRC `connects_R_and_P: false` → the TS connects different species than supplied; IRC skipped → verdict relies on imaginary-mode counts only, note this caveat.
 

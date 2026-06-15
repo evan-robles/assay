@@ -17,16 +17,14 @@ Compute atom-resolved reactivity from three finite-difference partial-charge cal
 | $\mathrm{dual}_k$ | $f^+_k - f^-_k$ | $>0$ → electrophilic; $<0$ → nucleophilic |
 
 ## Instructions
-Run:
-
 ```bash
 # Env: anl_env
 python skills/fukui-reactivity/scripts/fukui-reactivity.py [args]
 ```
 
 Arguments:
-- An `.xyz` path (required — an already-optimized geometry is recommended; run [geometry-optimize](../geometry-optimize/SKILL.md) first if needed).
-- `--method {xtb,mopac,dft,hf}` (required — if missing, ask the user).
+- An `.xyz` path (required — supply an already-optimized geometry; run [geometry-optimize](../geometry-optimize/SKILL.md) first if needed).
+- `--method {xtb,mopac,dft,hf}` (required — if missing, ask).
 - `--charge`, `--mult` (of the neutral reference; defaults 0 / 1).
 - `--cation-mult`, `--anion-mult` (default 2 / 2 — correct for a closed-shell parent; override for open-shell parents).
 - `--solvent <name>`.
@@ -34,9 +32,9 @@ Arguments:
 - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
 - HF-only: `--basis <name>`.
 
-If the `.xyz` is missing → stop and ask. If `--method` is missing, ask the user.
+If the `.xyz` is missing → stop and ask. If `--method` is missing, ask.
 
-Then read the returned JSON and report: the most electrophilic atom (largest $f^+$ — symbol, 1-based index, value); the most nucleophilic atom (largest $f^-$); the full per-atom table (index, symbol, $f^+$, $f^-$, dual — sort by $|\mathrm{dual}|$ descending if compact); the PNG path (if plotting was on); the partial-charge scheme (Mulliken for both backends); and any warning, especially the "Σ f± ≠ 1.0" charge-conservation drift, which usually indicates an SCF problem in an N±1 state.
+Then read the JSON and report: the most electrophilic atom (largest $f^+$ — symbol, 1-based index, value); the most nucleophilic atom (largest $f^-$); the full per-atom table (index, symbol, $f^+$, $f^-$, dual — sort by $|\mathrm{dual}|$ descending if compact); the PNG path (if plotting was on); the partial-charge scheme (Mulliken for both backends); and any warning, especially the "Σ f± ≠ 1.0" charge-conservation drift, which usually indicates an SCF problem in an N±1 state.
 
 For open-shell parents (radicals) set `--mult 2` and pick `--cation-mult`/`--anion-mult` so each adds/removes a single electron with the right total spin.
 

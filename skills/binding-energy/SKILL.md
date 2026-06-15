@@ -10,19 +10,19 @@ category: chemistry
 Compute the binding (interaction) energy of a molecular complex relative to its separated fragments, $\Delta E_\text{bind} = E_\text{complex} - \sum_i E_{\text{monomer},i}$, where a negative value indicates a stable complex. Applicable to host-guest, ligand, dimerization, and other non-covalent or covalent association problems.
 
 ## Instructions
-The user invokes this skill through a thin MCP-client script that dispatches to the `binding` subcommand of the chemistry engine.
+A thin MCP-client script dispatches to the engine's `binding` subcommand.
 
 ```bash
 # Env: anl_env
 python skills/binding-energy/scripts/binding-energy.py --method <xtb|mopac|dft|hf> --monomer m1.xyz --monomer m2.xyz [other args] complex.xyz
 ```
 
-1. **Provide the inputs.** The complex `.xyz` path is required, plus one or more `--monomer <path.xyz>` arguments (≥2 required). If the complex or monomer paths are missing, stop and ask.
-2. **Choose a method** (required — if missing, ask the user): `xtb`, `mopac`, `dft`, or `hf`.
+1. **Inputs.** The complex `.xyz` path is required, plus one or more `--monomer <path.xyz>` (≥2 required). If any path is missing, stop and ask.
+2. **Method** (required — if missing, ask): `xtb`, `mopac`, `dft`, or `hf`.
 3. **Optional arguments:** `--solvent`, `--charge`, `--mult` (apply to the complex); `--monomer-charge N` / `--monomer-mult N` (repeat once per monomer). **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
 4. **Pick a method that captures dispersion for non-covalent complexes** (H-bonds, π-stacking, host-guest). `--method dft --tier standard` (ωB97X-V) and `--tier accurate` (ωB97M-V) both include VV10 nonlocal correlation. Bare HF does not, so HF binding energies for non-covalent systems are systematically too repulsive.
 5. **Pre-optimize first.** Run [geometry-optimize](../geometry-optimize/SKILL.md) on the complex and on each monomer separately before calling this skill — otherwise the binding energy is contaminated by fragment deformation energy.
-6. **Read the returned JSON** and report:
+6. **Read the JSON** and report:
    - **Binding energy** in eV, kcal/mol, and Hartree (negative = stable complex).
    - E(complex), E(monomer1), E(monomer2), ...
    - Warning: no BSSE correction; geometries are used as-supplied.

@@ -10,23 +10,23 @@ category: chemistry
 Relax an input molecular structure to a local minimum on the chosen potential energy surface, returning the equilibrium geometry and its final energy $E$. For energy-only evaluation at a fixed geometry, use [single-point-energy](../single-point-energy/SKILL.md); for verifying the minimum and obtaining thermochemistry, use [vibrational-analysis](../vibrational-analysis/SKILL.md).
 
 ## Instructions
-The user invokes this skill through a thin MCP-client script that dispatches to the `opt` subcommand of the chemistry engine.
+A thin MCP-client script dispatches to the engine's `opt` subcommand.
 
 ```bash
 # Env: anl_env
 python skills/geometry-optimize/scripts/geometry-optimize.py --method <xtb|mopac|dft|hf> [other args] input.xyz
 ```
 
-1. **Provide the input geometry.** An `.xyz` path is required; if missing, stop and ask.
-2. **Choose a method** (required — if missing, ask the user):
+1. **Input geometry** — an `.xyz` path is required; if missing, stop and ask.
+2. **`--method`** (required; if missing, ask):
    - `xtb` — GFN2-xTB, fast semi-empirical, ASE BFGS
    - `mopac` — PM7, fast semi-empirical, MOPAC's native EF optimizer
    - `dft` — ab initio DFT via PySCF, ASE BFGS with analytic gradients
    - `hf` — Hartree-Fock via PySCF, ASE BFGS with analytic gradients
-3. **Common optional arguments** (all methods): `--solvent <name>`, `--charge N`, `--mult N`, `--fmax <eV/Å>` (default 0.05).
+3. **All methods:** `--solvent <name>`, `--charge N`, `--mult N`, `--fmax <eV/Å>` (default 0.05).
 4. **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
-5. **Manage cost.** DFT optimizations are 10–100× slower than xtb. Default to `--tier fast` (r²SCAN/def2-SVP) for first-pass relaxation, then re-optimize at `--tier standard` if needed. For very flexible molecules, pre-optimize at `--method xtb` first.
-6. **Read the returned JSON** and report:
+5. **Cost.** DFT optimizations are 10–100× slower than xtb. Default to `--tier fast` (r²SCAN/def2-SVP) for first-pass relaxation, then re-optimize at `--tier standard` if needed. For very flexible molecules, pre-optimize at `--method xtb` first.
+6. **Read the JSON** and report:
    - Whether the optimization converged. For `xtb`/`dft`/`hf` include the BFGS step count (`n_steps`); for `mopac` include `mopac_status` and `mopac_gradient_norm_kcal_per_A` (native EF optimizer — `n_steps` is not reported).
    - Final total energy (and `final_heat_of_formation_kcal_mol` for `mopac`).
    - For `dft`/`hf`: functional, basis, tier.

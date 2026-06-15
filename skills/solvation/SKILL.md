@@ -11,7 +11,7 @@ Estimate the solvation free energy $\Delta G_\text{solv} = E_\text{solvated} - E
 
 ## Instructions
 1. Parse arguments. If the `.xyz` path is missing, stop and ask. If `--method` is missing, use **AskUserQuestion**. If `--solvent` is missing, stop and ask.
-2. Run the engine.
+2. Run the engine:
 
 ```bash
 # Env: anl_env
@@ -28,7 +28,7 @@ Arguments:
 
 DFT with `--tier standard` and an implicit solvent gives meaningfully better $\Delta G_\text{solv}$ than semi-empirical (~±1 kcal/mol vs ±2–3 for xtb/mopac) at much higher cost. The DFT path uses ddCOSMO; true research-grade SMD parameterization would require PySCF's `pyscf.solvent.smd` directly.
 
-Read the JSON and copy it to `<basename>_solvation_<solvent>_<method>.json` in the cwd. Report: $\Delta G_\text{solv}$ in kcal/mol (primary) and eV; $E_\text{gas}$ and $E_\text{solvated}$ for context; method, solvent, charge/multiplicity; and the caveats (electronic-only; ±2–3 kcal/mol at semi-empirical; no cavity term). Flag any warnings in the JSON, especially the $|\Delta G_\text{solv}| \approx 0$ silent-drop warning. For tighter numbers, run [geometry-optimize](../geometry-optimize/SKILL.md) separately in gas phase and in solvent and compute $\Delta G_\text{solv}$ from those (this skill uses ONE geometry for both); for research-grade values use DFT with a continuum model including non-electrostatic terms (e.g. SMD).
+Read the JSON and copy it to `<basename>_solvation_<solvent>_<method>.json` in the cwd. Report: $\Delta G_\text{solv}$ in kcal/mol (primary) and eV; $E_\text{gas}$ and $E_\text{solvated}$ for context; method, solvent, charge/multiplicity; and the caveats (electronic-only; ±2–3 kcal/mol at semi-empirical; no cavity term). Flag any JSON warnings, especially the $|\Delta G_\text{solv}| \approx 0$ silent-drop warning. For tighter numbers, run [geometry-optimize](../geometry-optimize/SKILL.md) separately in gas phase and in solvent and compute $\Delta G_\text{solv}$ from those (this skill uses ONE geometry for both); for research-grade values use DFT with a continuum model including non-electrostatic terms (e.g. SMD).
 
 ## Examples
 ```bash

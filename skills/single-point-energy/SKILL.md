@@ -7,36 +7,36 @@ category: chemistry
 # Single-Point Energy
 
 ## Goal
-Evaluate the total electronic energy $E$ of a molecule at a single, fixed nuclear geometry, along with frontier-orbital data (HOMO, LUMO, gap). No geometry relaxation is performed — for the relaxed minimum-energy structure, use [geometry-optimize](../geometry-optimize/SKILL.md) instead.
+Evaluate the total electronic energy $E$ at a single fixed geometry, plus frontier-orbital data (HOMO, LUMO, gap). No relaxation — for the relaxed minimum use [geometry-optimize](../geometry-optimize/SKILL.md).
 
 ## Instructions
-The user invokes this skill through a thin MCP-client script that dispatches to the `sp` subcommand of the chemistry engine.
+A thin MCP-client script dispatches to the engine's `sp` subcommand.
 
 ```bash
 # Env: anl_env
-python skills/single-point-energy/scripts/single-point-energy.py --method <xtb|mopac|dft|hf> [other args] input.xyz
+python skills/single-point-energy/scripts/single-point-energy.py --method <xtb|mopac|dft|hf> [args] input.xyz
 ```
 
-1. **Provide the input geometry.** An `.xyz` path is required. If it is missing, stop and ask the user.
-2. **Choose a method** (required — if missing, ask the user):
+1. **Input geometry** — an `.xyz` path is required; if missing, stop and ask.
+2. **`--method`** (required; if missing, ask):
    - `xtb` — GFN2-xTB, fast semi-empirical
    - `mopac` — PM7, fast semi-empirical
-   - `dft` — ab initio DFT via PySCF (tier presets or explicit functional/basis)
+   - `dft` — DFT via PySCF (tier presets or explicit functional/basis)
    - `hf` — Hartree-Fock via PySCF (basis only)
-3. **Common optional arguments** (all methods): `--solvent <name>` (water, methanol, dmso, ...), `--charge N`, `--mult N`.
-4. **DFT-only arguments:** `--tier {fast,standard,accurate}` (default `standard`), `--functional <libxc>`, `--basis <name>`. Tiers:
+3. **All methods:** `--solvent <name>` (water, methanol, dmso, …), `--charge N`, `--mult N`.
+4. **DFT only:** `--tier {fast,standard,accurate}` (default `standard`), `--functional <libxc>`, `--basis <name>`. Tiers:
    - `fast`: r²SCAN / def2-SVP — screening, large systems
-   - `standard`: ωB97X-V / def2-TZVP — production default (VV10 dispersion, no add-on)
+   - `standard`: ωB97X-V / def2-TZVP — production default (VV10 dispersion)
    - `accurate`: ωB97M-V / def2-QZVPP — benchmark-quality
 
-   `--functional`/`--basis` override the tier defaults. Anions (charge < 0) auto-promote to a diffuse basis (def2-tzvp → def2-tzvpd). For D3/D4-corrected functionals (e.g. `--functional wb97x-d3bj`) install the optional `pyscf-dispersion` add-on; default tiers use VV10 and don't need it.
-5. **HF-only argument:** `--basis <name>` (default `def2-tzvp`).
-6. **Read the returned JSON** and report:
-   - **Total electronic energy** (eV, Hartree, kcal/mol)
-   - **HOMO / LUMO / gap** from `code_specific` (every backend populates these)
-   - For `mopac`: also heat of formation (`code_specific.heat_of_formation_kcal_mol`), dipole, IP
-   - For `dft`/`hf`: also functional, basis, tier, dipole (Debye), SCF cycles
-   - Solvent (or "gas phase"), charge, multiplicity, and the path to the saved JSON
+   `--functional`/`--basis` override the tier. Anions (charge < 0) auto-promote to a diffuse basis (def2-tzvp → def2-tzvpd). D3/D4 functionals (e.g. `wb97x-d3bj`) need the `pyscf-dispersion` add-on; default tiers use VV10 and don't.
+5. **HF only:** `--basis <name>` (default `def2-tzvp`).
+6. **Read the JSON** and report:
+   - Total electronic energy (eV, Hartree, kcal/mol)
+   - HOMO / LUMO / gap from `code_specific` (all backends populate these)
+   - `mopac`: also heat of formation (`code_specific.heat_of_formation_kcal_mol`), dipole, IP
+   - `dft`/`hf`: also functional, basis, tier, dipole (Debye), SCF cycles
+   - Solvent (or "gas phase"), charge, multiplicity, and the saved JSON path
 
 ## Examples
 ```bash
@@ -47,12 +47,12 @@ python skills/single-point-energy/scripts/single-point-energy.py --method xtb --
 See [`examples/`](examples/) for a validated example with literature comparison.
 
 ## Constraints
-- **Environment**: `# Env: anl_env` is required for all script calls.
-- `xtb` (GFN2-xTB) and `mopac` (PM7) are semi-empirical; `dft` and `hf` run via PySCF.
+- **Environment**: `# Env: anl_env` required for all script calls.
+- `xtb` (GFN2-xTB) and `mopac` (PM7) are semi-empirical; `dft`/`hf` run via PySCF.
 - Solvent treatment is implicit only.
-- **Energy zeros differ across backends** — only same-method energies are directly comparable.
-- **Reporting policy**: Never automatically provide experimental or literature data for comparison. Report only the values this calculation produced; do not volunteer accepted/measured/reference values or editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks for one.
-- Errors: `xtb`/`mopac` not installed → `conda install -c conda-forge xtb mopac`; `pyscf` not installed → `pip install pyscf` (required for `--method dft` or `--method hf`); malformed `.xyz` → report which line failed.
+- **Energy zeros differ across backends** — only same-method energies are comparable.
+- **Reporting policy**: Never automatically provide experimental or literature data for comparison. Report only the values this calculation produced; do not volunteer accepted/measured/reference values or editorialize about agreement with experiment. Only include an experimental comparison if the user explicitly asks.
+- Errors: `xtb`/`mopac` missing → `conda install -c conda-forge xtb mopac`; `pyscf` missing → `pip install pyscf` (needed for `--method dft`/`hf`); malformed `.xyz` → report which line failed.
 
 ## References
 - Bannwarth, C.; Ehlert, S.; Grimme, S. "GFN2-xTB", *J. Chem. Theory Comput.* **2019**, 15 (3), 1652-1671. https://doi.org/10.1021/acs.jctc.8b01176

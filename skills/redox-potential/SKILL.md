@@ -10,19 +10,19 @@ category: chemistry
 Estimate a one- or $n$-electron redox potential $E^\circ$ of a redox-active species from the energy difference between its oxidized and reduced states, referenced to SHE, Ag/AgCl, or Fc⁺/Fc. Intended for redox-active species; neutral closed-shell hydrocarbons have no meaningful aqueous redox potential.
 
 ## Instructions
-The user invokes this skill through a thin MCP-client script that dispatches to the `redox` subcommand of the chemistry engine.
+A thin MCP-client script dispatches to the engine's `redox` subcommand.
 
 ```bash
 # Env: anl_env
 python skills/redox-potential/scripts/redox-potential.py --method <xtb|mopac|dft|hf> --ox-charge <Qo> --red-charge <Qr> [other args] input.xyz
 ```
 
-1. **Provide the inputs.** An `.xyz` path is required (the same geometry is used for both oxidation states), plus `--ox-charge N` and `--red-charge N` (e.g. 0 and −1 for a 1-electron reduction). Stop and ask if any of `xyz`, method, `--ox-charge`, or `--red-charge` is missing.
-2. **Choose a method** (required — if missing, ask the user): `xtb`, `mopac`, `dft`, or `hf`.
-3. **Optional arguments:** `--ox-mult` (default 1), `--red-mult` (default 2), `--solvent` (strongly recommended), `--ref {SHE,Ag/AgCl,Fc+/Fc}` (default SHE), `--n-electrons N` (default 1). **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
-4. **Expect method-dependent accuracy.** DFT redox potentials are typically ±0.1–0.2 V vs experiment with a range-separated hybrid + implicit solvent — significantly better than semi-empirical (±0.3–0.5 V). Anions auto-promote to a diffuse basis (def2-tzvp → def2-tzvpd).
+1. **Inputs.** An `.xyz` path is required (the same geometry is used for both oxidation states), plus `--ox-charge N` and `--red-charge N` (e.g. 0 and −1 for a 1-electron reduction). Stop and ask if any of `xyz`, method, `--ox-charge`, or `--red-charge` is missing.
+2. **Method** (required; if missing, ask): `xtb`, `mopac`, `dft`, or `hf`.
+3. **Optional:** `--ox-mult` (default 1), `--red-mult` (default 2), `--solvent` (strongly recommended), `--ref {SHE,Ag/AgCl,Fc+/Fc}` (default SHE), `--n-electrons N` (default 1). **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
+4. **Accuracy is method-dependent.** DFT redox potentials are typically ±0.1–0.2 V vs experiment with a range-separated hybrid + implicit solvent — significantly better than semi-empirical (±0.3–0.5 V). Anions auto-promote to a diffuse basis (def2-tzvp → def2-tzvpd).
 5. **For publication-grade values**, optimize each oxidation state with [geometry-optimize](../geometry-optimize/SKILL.md), run [vibrational-analysis](../vibrational-analysis/SKILL.md) on each for ΔG, and ideally cross-check with a higher-level method. This skill is for screening, not final answers.
-6. **Read the returned JSON** and report:
+6. **Read the JSON** and report:
    - **E° vs reference** (in V).
    - ΔE_redox (eV, kcal/mol).
    - Energies of the oxidized and reduced states.

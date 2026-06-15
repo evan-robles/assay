@@ -10,8 +10,6 @@ category: chemistry
 Convert a SMILES string into a 3D `.xyz` geometry via Open Babel's `--gen3d` coordinate generator, optionally refining with xtb / MOPAC / DFT / HF. A bare molecule name is resolved to a SMILES online before building, with the answering source and an ACS-format citation reported. This is the on-ramp for every other chemkit skill — it produces the `.xyz` that single-point, optimization, and frequency skills require.
 
 ## Instructions
-Run:
-
 ```bash
 # Env: anl_env
 python skills/build-from-smiles/scripts/build-from-smiles.py [args]
@@ -32,7 +30,7 @@ If the molecule (SMILES or name) is missing → stop and ask.
 
 **Name resolution**: when the input is not a SMILES, the name is resolved over the network by trying sources in order and reporting the first hit — PubChem (PUG REST, name → CID → isomeric SMILES), then OPSIN (systematic IUPAC name → SMILES), then NIST WebBook (name → InChI → SMILES via Open Babel; stereochemistry labeled `unspecified` for this source). PubChem and NIST are lookup databases (any common/trade name); OPSIN is a systematic-name parser. Some short names are also valid SMILES (`C` = methane, `N` = ammonia) and resolve as SMILES — supply an explicit SMILES if you mean the named species.
 
-Then read the returned JSON and report: the path to the xyz file (headline deliverable) and the atom count; **if the input was a name**, the resolved SMILES, which source answered (`smiles_source.source`), and the ACS citation (`smiles_source.citation`) — always surface the provenance; if `--opt` was used, the QM energy, convergence flag, and the charge/multiplicity used; and the next-step recipe pointing at [single-point-energy](../single-point-energy/SKILL.md) or [geometry-optimize](../geometry-optimize/SKILL.md). The result JSON records the exact `obabel` command under `build.command`.
+Then read the JSON and report: the xyz file path (headline deliverable) and the atom count; **if the input was a name**, the resolved SMILES, which source answered (`smiles_source.source`), and the ACS citation (`smiles_source.citation`) — always surface the provenance; if `--opt` was used, the QM energy, convergence flag, and the charge/multiplicity used; and the next-step recipe pointing at [single-point-energy](../single-point-energy/SKILL.md) or [geometry-optimize](../geometry-optimize/SKILL.md). The JSON records the exact `obabel` command under `build.command`.
 
 Recommendations: skip `--opt` if a downstream skill does its own optimization; use `--opt xtb` as the standard "good enough" clean-up; for floppy molecules build once here then hand off to [conformer-search](../conformer-search/SKILL.md); set `--charge`/`--mult` explicitly for ions and radicals.
 

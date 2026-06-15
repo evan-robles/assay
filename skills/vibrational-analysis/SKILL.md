@@ -10,20 +10,20 @@ category: chemistry
 Optimize the input geometry, then build the Hessian to obtain vibrational frequencies, zero-point energy (ZPE), and thermochemical quantities — enthalpy $H$, entropy $S$, Gibbs free energy $G$, and heat capacity $C_p$ — at temperature $T$ and pressure $P$. The frequency spectrum also classifies the stationary point as a minimum (no imaginary modes) or a saddle point / transition state (one or more imaginary modes).
 
 ## Instructions
-The user invokes this skill through a thin MCP-client script that dispatches to the `freq` subcommand of the chemistry engine. A pre-optimization is automatic and on by default — taking the Hessian at a true stationary point eliminates spurious imaginary modes from residual gradient.
+A thin MCP-client script dispatches to the engine's `freq` subcommand. A pre-optimization is automatic and on by default — taking the Hessian at a true stationary point eliminates spurious imaginary modes from residual gradient.
 
 ```bash
 # Env: anl_env
 python skills/vibrational-analysis/scripts/vibrational-analysis.py --method <xtb|mopac|dft|hf> [other args] input.xyz
 ```
 
-1. **Provide the input geometry.** An `.xyz` path is required; it does NOT need to be pre-optimized (the freq step optimizes it first by default). If missing, ask the user.
-2. **Choose a method** (required — if missing, ask the user): `xtb`, `mopac`, `dft`, or `hf`.
-3. **Common optional arguments:** `--solvent`, `--charge`, `--mult`, `--temperature <K>` (default 298.15), `--pressure <Pa>` (default 101325).
+1. **Input geometry.** An `.xyz` path is required; it does NOT need to be pre-optimized (the freq step optimizes it first by default). If missing, ask.
+2. **Method** (required; if missing, ask): `xtb`, `mopac`, `dft`, or `hf`.
+3. **Optional:** `--solvent`, `--charge`, `--mult`, `--temperature <K>` (default 298.15), `--pressure <Pa>` (default 101325).
 4. **Partition-function controls** (xtb/dft/hf `IdealGasThermo` path; MOPAC detects these internally): `--geometry {linear,nonlinear,monatomic}` (default nonlinear), `--symmetry <σ>` (rotational symmetry number, default 1).
 5. **Pre-optimization controls:** `--no-preopt` skips the automatic opt (use only when the input is already converged at the same method, e.g. you just ran [geometry-optimize](../geometry-optimize/SKILL.md) with the same method); `--preopt-fmax <eV/Å>` (default 0.01, tighter than opt's 0.05, since residual forces propagate into near-zero imaginary modes).
 6. **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`. Hessians via PySCF cost ~(6N+1)× the SCF time — default to `--tier fast` for screening, reserve `standard` for the final answer.
-7. **Read the returned JSON** and report:
+7. **Read the JSON** and report:
    - From the `preopt` block: whether the pre-opt converged, number of opt steps, and the pre-opt energy/HoF (it records the path to the optimized xyz used for the Hessian). If `--no-preopt` was passed, say so.
    - ZPE, enthalpy (H), entropy (S), Gibbs free energy (G), in both eV and kcal/mol where the schema provides both.
    - Number of real / imaginary modes — **warn loudly** if any imaginary modes remain after the pre-opt.
