@@ -1359,17 +1359,61 @@ def test_integrity_gate_downgrade_with_allow_unconverged():
     assert out["integrity"]["gate_bypassed"] is True
 
 
-def test_integrity_ungated_tasks_pass_vacuously():
+def test_integrity_unknown_task_passes_vacuously():
     I = _integrity()
-    # scan/frontier/confsearch/orbitals/build have no registered error checks.
-    for task in ("scan", "frontier_orbitals", "conformer_search",
-                 "orbital_visualization", "build_from_smiles"):
-        assert I.validate({"task": task}, task) == []
+    # A task name with no registered checks validates to [] (the gate is a no-op
+    # for it). Every chemkit task IS now registered, so use a made-up name.
+    assert I.validate({"task": "not_a_real_task"}, "not_a_real_task") == []
     # finalize still stamps an integrity block (status ok) for uniformity.
-    r = {"task": "scan"}
+    r = {"task": "not_a_real_task"}
     I.finalize(r, gate_integrity=True)
     assert r["integrity"]["status"] == "ok"
     assert r["integrity"]["trustworthy"] is True
+
+
+def test_integrity_all_chemkit_tasks_registered():
+    """Every task chemkit can emit now has integrity checks — no silent gaps.
+    A real (passing) result for each must validate without an error-severity
+    failure on well-formed input."""
+    I = _integrity()
+    registered = set(I._REGISTRY)
+    expected = {
+        "single_point", "geometry_optimization", "vibrational_thermochemistry",
+        "transition_state", "electrostatics", "binding_energy",
+        "redox_potential", "pka", "reaction_energy", "reaction_profile",
+        "logp", "solvation", "fukui",
+        # the formerly-ungated set, now closed:
+        "frontier_orbitals", "visualize_orbitals", "build_from_smiles",
+        "conformational_search", "conformational_analysis",
+        "intrinsic_reaction_coordinate",
+    }
+    missing = expected - registered
+    assert not missing, f"tasks with NO integrity checks (silent gaps): {missing}"
+
+
+def test_integrity_frontier_basis_saturated_passes():
+    """A basis-saturated anion (no LUMO) must still pass the frontier gate —
+    the gate keys on SCF/finite-energy, not on the presence of a virtual MO."""
+    I = _integrity()
+    f_partial = {"task": "frontier_orbitals", "total_energy_eV": -133.6,
+                 "homo_eV": -0.8, "lumo_eV": None}
+    checks = I.validate(f_partial, "frontier_orbitals")
+    assert all(c.ok for c in checks), [c.as_dict() for c in checks]
+
+
+def test_integrity_scan_partial_failure_not_gated():
+    """Some scan points failing is normal (reported via n_converged); only a
+    dihedral where EVERY point failed gates."""
+    I = _integrity()
+    partial = {"task": "conformational_analysis",
+               "dihedrals": [{"atoms_1based": [1, 2, 3, 4],
+                              "n_points": 4, "n_converged": 3}]}
+    assert all(c.ok for c in I.validate(partial, "conformational_analysis"))
+    dead = {"task": "conformational_analysis",
+            "dihedrals": [{"atoms_1based": [1, 2, 3, 4],
+                           "n_points": 4, "n_converged": 0}]}
+    assert any(c.name == "scan_points_converged" and not c.ok
+               for c in I.validate(dead, "conformational_analysis"))
 
 
 # ---- 2) end-to-end gate tests (drive the CLI) -----------------------------

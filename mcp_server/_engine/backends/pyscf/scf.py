@@ -161,6 +161,30 @@ def pack_scf_result(mf) -> Dict[str, Any]:
         "scf_cycles": int(getattr(mf, "cycles", 0) or 0),
     }
 
+    # PySCF mean-field class name(s), so the result is self-documenting about the
+    # RKS/UKS (or RHF/UHF) dispatch AND the wrappers applied to it. PySCF's
+    # `.density_fit()` returns a dynamically-generated subclass (e.g. RKS ->
+    # DFRKS), and a solvent model wraps that again (e.g. DFRKS -> ddCOSMO...),
+    # so the bare class name alone can read as `DF...` or a solvent decorator
+    # rather than the underlying RKS/UKS. We report:
+    #   scf_class       — the outermost object's class (what `type(mf).__name__`
+    #                     shows; carries the DF/solvent decoration);
+    #   scf_base_class  — the underlying restricted/unrestricted SCF class
+    #                     (RKS/UKS/RHF/UHF), recovered from the MRO, present only
+    #                     when it differs from scf_class so the dispatch is
+    #                     always legible even through DF/solvent wrapping.
+    try:
+        out["scf_class"] = type(mf).__name__
+        _BASE_NAMES = ("UKS", "RKS", "UHF", "RHF")
+        base_name = next(
+            (c.__name__ for c in type(mf).__mro__ if c.__name__ in _BASE_NAMES),
+            None,
+        )
+        if base_name is not None and base_name != out["scf_class"]:
+            out["scf_base_class"] = base_name
+    except Exception:
+        pass
+
     # Orbital eigenvalues. For UKS/UHF, mo_energy is a (2, n_mo) array or a
     # 2-tuple — α and β channels. The reported HOMO is the highest occupied
     # across BOTH channels, and LUMO is the lowest unoccupied across both;

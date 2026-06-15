@@ -189,15 +189,21 @@ def _energy_finite_check(result: Dict[str, Any]) -> Optional[IntegrityCheck]:
 
 
 def _scf_converged_check(result: Dict[str, Any]) -> Optional[IntegrityCheck]:
-    """Only when the calculation actually has an SCF flag (dft/hf)."""
-    cs = result.get("code_specific")
-    if not isinstance(cs, dict) or "scf_converged" not in cs:
-        return None  # xtb/mopac: no SCF flag to check
-    ok = cs.get("scf_converged") is True
+    """Only when the calculation actually has an SCF flag (dft/hf). The flag may
+    sit top-level (frontier/orbitals copy it up) or under code_specific (sp via
+    pack_scf_result). xtb/mopac have no SCF flag -> None."""
+    if "scf_converged" in result:
+        flag = result.get("scf_converged")
+    else:
+        cs = result.get("code_specific")
+        if not isinstance(cs, dict) or "scf_converged" not in cs:
+            return None  # xtb/mopac: no SCF flag to check
+        flag = cs.get("scf_converged")
+    ok = flag is True
     return _check(
         "scf_converged", ok, "error",
-        f"code_specific.scf_converged = {cs.get('scf_converged')!r} "
-        f"(SCF must converge for the energy to be meaningful)",
+        f"scf_converged = {flag!r} "
+        f"(SCF must converge for the energy/orbitals to be meaningful)",
     )
 
 
@@ -477,5 +483,111 @@ def _check_fukui(result):
                 abs(s - 1.0) < 0.05, "warning",
                 f"sum({label}) = {s:.4f} (should be ~1.0; large drift suggests "
                 "an N±1 state did not converge)",
+            ))
+    return checks
+
+
+@register("frontier_orbitals")
+def _check_frontier(result):
+    """Frontier orbitals are read off a single SCF, so gate exactly the SCF the
+    same way `single_point` does: finite total energy, and (dft/hf) a converged
+    SCF. Deliberately does NOT gate on a missing LUMO — a basis-saturated anion
+    (e.g. F⁻ in GFN2's minimal valence basis) legitimately has no virtual
+    orbital and returns a valid partial result."""
+    checks = [_energy_finite_check(result)]
+    scf = _scf_converged_check(result)
+    if scf is not None:
+        checks.append(scf)
+    return checks
+
+
+@register("visualize_orbitals")
+def _check_orbitals(result):
+    """The deliverable is a wavefunction file; gate that it was actually written
+    and (dft/hf) that the SCF behind it converged — a molden built from a
+    non-converged SCF would visualize meaningless orbitals."""
+    import os
+    checks = []
+    molden = result.get("molden_path")
+    checks.append(_check(
+        "molden_written", bool(molden) and os.path.isfile(molden), "error",
+        f"molden_path = {molden!r} (the orbital file must exist on disk)",
+    ))
+    scf = _scf_converged_check(result)  # only present on the dft/hf path
+    if scf is not None:
+        checks.append(scf)
+    return checks
+
+
+@register("build_from_smiles")
+def _check_build(result):
+    """A build must have produced a structure (>0 atoms). If an optional QM
+    refinement was run, it must have converged — a build that returns a
+    non-converged 'optimized' geometry is silently wrong."""
+    checks = []
+    n_atoms = result.get("n_atoms")
+    checks.append(_check(
+        "structure_built", isinstance(n_atoms, int) and n_atoms > 0, "error",
+        f"n_atoms = {n_atoms!r} (3D embedding must yield at least one atom)",
+    ))
+    qm = result.get("qm_optimization")
+    if isinstance(qm, dict) and "converged" in qm:
+        checks.append(_check(
+            "qm_refinement_converged", bool(qm.get("converged")), "error",
+            f"qm_optimization.converged = {qm.get('converged')!r} "
+            "(the QM refinement geometry did not converge)",
+        ))
+    return checks
+
+
+@register("conformational_search")
+def _check_confsearch(result):
+    """A conformer search that found zero conformers failed. Finding any is
+    enough — the count itself (and dedup) is the science, not a gate."""
+    n_found = result.get("n_conformers_found")
+    return [_check(
+        "conformers_found", isinstance(n_found, int) and n_found >= 1, "error",
+        f"n_conformers_found = {n_found!r} (a search must return ≥1 conformer)",
+    )]
+
+
+@register("conformational_analysis")
+def _check_scan(result):
+    """Per-point optimizations may individually fail (reported via n_converged)
+    — that is normal and NOT gated. But a dihedral where EVERY scanned point
+    failed to converge yields a meaningless profile; gate that total failure.
+    An empty scan (no rotatable dihedral found) is a warning, not an error."""
+    dihedrals = result.get("dihedrals")
+    if not dihedrals:
+        return [_check(
+            "scan_has_dihedral", False, "warning",
+            "no dihedral was scanned (no rotatable bond found or supplied)",
+        )]
+    dead = [
+        d.get("atoms_1based")
+        for d in dihedrals
+        if (d.get("n_points") or 0) > 0 and (d.get("n_converged") or 0) == 0
+    ]
+    return [_check(
+        "scan_points_converged", len(dead) == 0, "error",
+        f"dihedral(s) with ZERO converged points: {dead or 'none'} "
+        "(every point of a scanned dihedral failed to optimize)",
+    )]
+
+
+@register("intrinsic_reaction_coordinate")
+def _check_irc(result):
+    """IRC has no hard convergence invariant — its endpoints are steepest-descent
+    walk termini, not optimized minima, and isoenergetic endpoints
+    (distinct_endpoints=False) are legitimate for symmetric reactions. So the
+    only gateable floor is that the reported endpoint energies are finite; the
+    connectivity verdict stays informational (surfaced, not gated)."""
+    checks = []
+    for key in ("forward_endpoint_energy_eV", "reverse_endpoint_energy_eV"):
+        if key in result:
+            v = result.get(key)
+            checks.append(_check(
+                f"{key}_finite", _finite(v), "error",
+                f"{key} = {v!r} (IRC endpoint energy must be finite)",
             ))
     return checks

@@ -257,6 +257,10 @@ def _run_generic(atoms, *, calc, out_stem: str, cubes: List[str],
         "n_orbitals": int(np.asarray(mf.mo_occ).size if np.asarray(mf.mo_occ).ndim == 1
                           else np.asarray(mf.mo_occ).shape[1]),
         "grid_resolution": grid if cubes else None,
+        # Surface SCF convergence so the integrity gate can refuse to present a
+        # wavefunction file built from a non-converged SCF (the orbitals would
+        # not be meaningful). xtb/mopac paths don't reach here.
+        "scf_converged": bool(getattr(mf, "converged", False)),
     }
     body["mo_summary"] = _mo_summary(mf.mo_occ, mf.mo_energy)
     if notes:
