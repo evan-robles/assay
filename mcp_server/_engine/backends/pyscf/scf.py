@@ -59,7 +59,7 @@ def build_mean_field(
     *,
     method: str = "dft",
     xc: Optional[str] = None,
-    grid_level: int = 3,
+    grid_level: int = 4,  # matches PySCFCalculator's default and the 'standard' tier
     scf_tol: float = 1e-8,
     max_cycle: Optional[int] = None,
     density_fit: bool = False,

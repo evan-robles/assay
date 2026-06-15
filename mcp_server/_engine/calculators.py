@@ -160,6 +160,25 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
     `--basis` (default def2-tzvp). All PySCF runs use exact integrals
     (no density fitting) — true RKS/UKS and RHF/UHF.
     """
+    # PySCF parallelism is governed by the OpenMP thread count, which it reads at
+    # import time. In containerized / MCP-spawned subprocesses OMP_NUM_THREADS is
+    # frequently 1, which silently single-threads every DFT/HF SCF, gradient, and
+    # finite-difference Hessian — the most expensive backend. Default to all cores
+    # (override via CHEMKIT_PYSCF_THREADS) BEFORE importing pyscf, and record the
+    # effective count on the calculator for reproducibility.
+    n_threads_env = os.environ.get("CHEMKIT_PYSCF_THREADS")
+    if n_threads_env:
+        try:
+            n_threads = max(1, int(n_threads_env))
+        except ValueError:
+            n_threads = os.cpu_count() or 1
+    else:
+        n_threads = os.cpu_count() or 1
+    # Set OMP/MKL env vars only if not already pinned by the user, so an explicit
+    # external setting is respected.
+    for var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
+        os.environ.setdefault(var, str(n_threads))
+
     try:
         from .backends.pyscf import (
             PySCFCalculator, resolve_dft_tier, HF_DEFAULT_BASIS,
@@ -170,6 +189,22 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             f"chemkit.backends.pyscf is unavailable ({e}). "
             "Install pyscf to use --method dft or --method hf."
         )
+
+    # PySCF exposes a runtime setter that also re-pins its internal thread pool;
+    # call it so the count takes effect even if numpy/pyscf were imported earlier
+    # in this process. Best-effort — never fail a calculation over thread tuning.
+    # Note: if PySCF was built without OpenMP, num_threads() always returns 1
+    # regardless of the request (a build limitation, not a chemkit bug).
+    effective_threads = n_threads
+    try:
+        import warnings as _warnings
+        from pyscf import lib as _pyscf_lib
+        with _warnings.catch_warnings():
+            _warnings.simplefilter("ignore")
+            _pyscf_lib.num_threads(n_threads)
+            effective_threads = int(_pyscf_lib.num_threads())
+    except Exception:
+        pass
 
     # PySCF log verbosity. Set once per process from the CLI (--verbose ->
     # CHEMKIT_PYSCF_VERBOSE) so every build_calculator call picks it up without
@@ -189,9 +224,11 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             grid_level=cfg["grid"],
             scf_tol=cfg["scf_tol"],
             max_cycle=cfg["max_cycle"],
-            # auxbasis left as None: the density-fitting auxiliary basis is
-            # chosen in build_mean_field() to match the functional (JK-fit for
-            # hybrids, J-fit for pure functionals).
+            # Density fitting (RI) per tier: ON for fast/standard (screening),
+            # OFF for accurate. The auxbasis is left as None so build_mean_field()
+            # chooses it to match the functional (JK-fit for hybrids, J-fit for
+            # pure functionals).
+            density_fit=cfg.get("density_fit", False),
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,
@@ -225,6 +262,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
 
     calc._chemkit_method = method
     calc._chemkit_workdir = workdir
+    calc._chemkit_threads = effective_threads
     return calc
 
 
@@ -328,6 +366,22 @@ def collect_calc_extras(method: str, atoms, calc) -> dict:
             extras["basis"] = basis
         if tier:
             extras["tier"] = tier
+        # Integration-grid and SCF-tolerance provenance (method-block fields the
+        # reporting standard requires). These live on the PySCFCalculator; the
+        # calculator-driven task path never surfaced them before (only the unused
+        # run_sp path did).
+        grid_level = getattr(calc, "_grid_level", None)
+        scf_tol = getattr(calc, "_scf_tol", None)
+        max_cycle = getattr(calc, "_max_cycle", None)
+        if grid_level is not None and m == "dft":
+            extras["grid_level"] = grid_level
+        if scf_tol is not None:
+            extras["scf_tol"] = scf_tol
+        if max_cycle is not None:
+            extras["scf_max_cycle"] = max_cycle
+        threads = getattr(calc, "_chemkit_threads", None)
+        if threads is not None:
+            extras["n_threads"] = threads
     return extras
 
 

@@ -120,9 +120,21 @@ def run(
             # Pick the largest-magnitude imaginary frequency
             imag_freqs = sorted((f for f in freqs if isinstance(f, (int, float)) and f < 0),
                                 key=lambda x: abs(x), reverse=True)
+            # A genuine reaction-coordinate mode for bond forming/breaking sits in
+            # a chemically sensible band. Below ~100i cm⁻¹ the "saddle" is almost
+            # always a soft torsional/conformational saddle (or finite-difference
+            # noise), not a reaction TS; an implausibly stiff mode (> ~3500i)
+            # usually signals a broken geometry or numerical artifact. The module
+            # docstring promised this magnitude check — enforce it rather than
+            # flagging is_valid_ts on the mode COUNT alone.
+            TS_IMAG_MIN_CM = 100.0
+            TS_IMAG_MAX_CM = 3500.0
+            imag_mag = abs(imag_freqs[0]) if imag_freqs else 0.0
+            magnitude_ok = (n_imag == 1) and (TS_IMAG_MIN_CM <= imag_mag <= TS_IMAG_MAX_CM)
             result["verify_freq"] = {
                 "n_imaginary_modes": n_imag,
-                "is_valid_ts": n_imag == 1,
+                "is_valid_ts": bool(magnitude_ok),
+                "imaginary_mode_magnitude_cm-1": imag_mag if imag_freqs else None,
                 "imaginary_frequencies_cm-1": imag_freqs,
                 "gibbs_free_energy_eV": freq_result.get("gibbs_free_energy_eV"),
             }
@@ -139,6 +151,22 @@ def run(
                     f"TS verification freq found {n_imag} imaginary modes — "
                     f"this is a higher-order saddle, not a true transition state. "
                     f"Use a different initial guess or refine the search."
+                )
+            elif imag_mag < TS_IMAG_MIN_CM:
+                warns.append(
+                    f"TS has a single imaginary mode but it is very soft "
+                    f"({imag_mag:.0f}i cm⁻¹, below {TS_IMAG_MIN_CM:.0f}i). This is "
+                    "more consistent with a conformational/torsional saddle or "
+                    "finite-difference noise than a bond-forming/breaking reaction "
+                    "TS — is_valid_ts set False. Verify the mode visualizes as the "
+                    "reaction coordinate (run an IRC) before trusting it."
+                )
+            elif imag_mag > TS_IMAG_MAX_CM:
+                warns.append(
+                    f"TS has a single imaginary mode but it is implausibly stiff "
+                    f"({imag_mag:.0f}i cm⁻¹, above {TS_IMAG_MAX_CM:.0f}i), which "
+                    "usually indicates a broken/colliding geometry or a numerical "
+                    "artifact — is_valid_ts set False. Inspect the geometry."
                 )
             if warns:
                 result["warnings"] = warns

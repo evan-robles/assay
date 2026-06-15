@@ -39,6 +39,9 @@ Then read the JSON and report: the most electrophilic atom (largest $f^+$ — sy
 
 For open-shell parents (radicals) set `--mult 2` and pick `--cation-mult`/`--anion-mult` so each adds/removes a single electron with the right total spin.
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

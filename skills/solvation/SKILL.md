@@ -31,6 +31,9 @@ DFT with `--tier standard` and an implicit solvent gives meaningfully better $\D
 
 Read the JSON — it is already written to `--out` (default `<stem>_solvation_<method>.json` in the run cwd). Report: $\Delta G_\text{solv}$ in kcal/mol (primary) and eV; $E_\text{gas}$ and $E_\text{solvated}$ for context; method, solvent, charge/multiplicity; and the caveats (electronic-only; ±2–3 kcal/mol at semi-empirical; no cavity term). Flag any JSON warnings, especially the $|\Delta G_\text{solv}| \approx 0$ silent-drop warning. For tighter numbers, run [geometry-optimize](../geometry-optimize/SKILL.md) separately in gas phase and in solvent and compute $\Delta G_\text{solv}$ from those (this skill uses ONE geometry for both); for research-grade values use DFT with a continuum model including non-electrostatic terms (e.g. SMD).
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

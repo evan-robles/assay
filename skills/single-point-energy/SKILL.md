@@ -38,6 +38,9 @@ python skills/single-point-energy/scripts/single-point-energy.py --method <xtb|m
    - `dft`/`hf`: also functional, basis, tier, dipole (Debye), SCF cycles
    - Solvent (or "gas phase"), charge, multiplicity, and the saved JSON path (`--out`, default `<stem>_sp_<method>.json`)
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

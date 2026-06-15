@@ -35,6 +35,9 @@ Ring puckering (automatic): for any non-aromatic ring of size 4–8, the seed po
 
 Read the JSON — it is already written to `--out` (default `<stem>_confsearch_<method>.json` in the run cwd); the CLI also writes `<basename>_conformers.xyz` (all unique post-opt conformers, or the obabel ensemble if `--postopt none`). Report: `n_conformers_found` / `n_conformers_kept`, relative force-field energies (kcal/mol), and paths to `best_conformer_xyz` and `all_conformers_xyz`. If a `postopt` block is present, also report `postopt.method`, `n_input`, `n_converged`, `n_unique`, `n_failed`, each conformer's `rel_hof_kcal_mol` / `degeneracy` / `xyz_path`, and `seed_source`. If only one conformer survives both stages for a flexible molecule, note that this is the converged PM7 answer, not a bug. For DFT-quality conformers, run this skill then re-optimize the top-K with [geometry-optimize](../geometry-optimize/SKILL.md) at DFT.
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

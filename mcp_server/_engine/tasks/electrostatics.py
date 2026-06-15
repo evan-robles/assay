@@ -28,7 +28,10 @@ from ..calculators import (
     register_auto_tempdir,
 )
 from ..io import read_geometry
-from ..schema import base_result, energy_block_from_eV, element_warnings
+from ..schema import (
+    base_result, energy_block_from_eV, element_warnings,
+    scf_convergence_warnings,
+)
 from ._mopac_parsers import parse_mopac_extras, _parse_aux_array, _find_with_ext
 
 # Atomic unit of electric dipole moment (ea0) -> Debye.
@@ -86,8 +89,14 @@ def run(
     else:
         raise ValueError(f"Unknown method {method!r}")
 
+    # A dropped-solvent flag from the xtb path is surfaced as a warning and the
+    # internal carrier key removed.
+    solvent_drop = body.pop("_solvent_drop_warning", None)
     result.update(body)
     warns = element_warnings(symbols, method)
+    warns += scf_convergence_warnings(method, body)
+    if solvent_drop:
+        warns.append(solvent_drop)
     if warns:
         existing = result.get("warnings") or []
         result["warnings"] = existing + warns
@@ -122,6 +131,11 @@ def _run_generic(atoms, *, calc, method) -> Dict[str, Any]:
             "partial_charges_scheme", f"Mulliken ({method.upper()})",
         )
         out["sum_of_charges"] = float(sum(charges))
+    # Carry SCF convergence flags up so run() can promote a non-convergence to a
+    # prominent top-level warning (calculation-reporting-standards #6/#7).
+    for k in ("scf_converged", "scf_cycles"):
+        if k in extras:
+            out[k] = extras[k]
     return out
 
 
@@ -153,9 +167,14 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
             raise ValueError(f"xtb: unknown solvent {solvent!r}")
         try:
             calc.set_solvent(Param.GFN2xTB, sol)
+            solvent_applied = True
         except Exception:
-            # Older xtb-python lacks set_solvent — solvent is silently dropped
-            pass
+            # Older xtb-python lacks set_solvent — the run would otherwise be
+            # gas phase while the result still claims a solvent. Flag it instead
+            # of silently dropping (calculation-reporting-standards #4/§4).
+            solvent_applied = False
+    else:
+        solvent_applied = None  # gas phase requested; nothing to apply
 
     res = calc.singlepoint()
     # Hartree -> eV, CODATA 2022 (27.211386245981 eV). NIST,
@@ -173,6 +192,16 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
     out["partial_charges"] = charges
     out["partial_charges_scheme"] = "Mulliken (GFN2-xTB)"
     out["sum_of_charges"] = float(sum(charges))
+    if solvent_applied is False:
+        out["solvent_applied"] = False
+        out["_solvent_drop_warning"] = (
+            f"Requested solvent {solvent!r} was NOT applied: this xtb-python "
+            "build lacks set_solvent, so the calculation ran in GAS PHASE. The "
+            "reported dipole/charges are gas-phase values — upgrade xtb-python "
+            "or use the xtb CLI path for implicit solvation."
+        )
+    elif solvent_applied is True:
+        out["solvent_applied"] = True
     return out
 
 
@@ -208,8 +237,29 @@ def _run_mopac(atoms, symbols, *, charge: int, multiplicity: int,
         for sym, (x, y, z) in zip(symbols, atoms.get_positions()):
             f.write(f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1\n")
 
-    subprocess.run([mopac_exe, "mopac.mop"], cwd=workdir,
-                   capture_output=True, text=True, timeout=600)
+    proc = subprocess.run([mopac_exe, "mopac.mop"], cwd=workdir,
+                          capture_output=True, text=True, timeout=600)
+
+    # MOPAC can fail (bad geometry, missing PM7 parameters, license) and still
+    # leave a partial/stale .out/.aux that parses into garbage or None. Detect
+    # failure explicitly rather than silently reporting whatever was scraped.
+    out_path_chk = _find_with_ext(workdir, ".out")
+    out_text_chk = ""
+    if out_path_chk and os.path.isfile(out_path_chk):
+        with open(out_path_chk) as _f:
+            out_text_chk = _f.read()
+    mopac_ok = (
+        proc.returncode == 0
+        and ("JOB ENDED NORMALLY" in out_text_chk or "== MOPAC DONE ==" in out_text_chk)
+    )
+    if not mopac_ok:
+        raise RuntimeError(
+            "MOPAC electrostatics run failed or did not complete normally "
+            f"(returncode={proc.returncode}). Charges/dipole would come from a "
+            "partial or stale output. Workdir: {wd}\nstderr: {se}".format(
+                wd=workdir, se=(proc.stderr or "").strip()[-1000:]
+            )
+        )
 
     extras = parse_mopac_extras(workdir)
     # Energy: PM7 reports HoF (kcal/mol); convert

@@ -31,7 +31,7 @@ It is the *output-facing* counterpart to the rest of the rules set:
 
 ---
 
-## 0. The nine non-negotiables
+## 0. The ten non-negotiables
 
 1. **Never report a bare number.** Every reported quantity carries its level of
    theory, basis (or semi-empirical Hamiltonian), geometry source, and units.
@@ -76,6 +76,18 @@ It is the *output-facing* counterpart to the rest of the rules set:
    started; it's logging live to `/abs/path/opt_20260613-101500.out` — want me to
    open it, or you can `tail -f` it now." Surface the path again with the final
    result, but the live, mid-run announcement is the requirement.
+10. **Never assume the method or its parameters — ask when unspecified.** Do NOT
+   silently pick a `--method` (xtb/mopac/dft/hf), `--solvent`, `--functional`,
+   `--basis`, `--tier`, `--charge`, or `--mult` the user did not state. If a
+   required choice (especially `--method`) is missing, **stop and ask** (use
+   AskUserQuestion) rather than defaulting to a convenient value or carrying over
+   what a previous run happened to use. "We just used xtb, so I'll use xtb again"
+   is an assumption, not an instruction — the user may want a different level of
+   theory for this property. Engine/skill defaults that the user did not request
+   (e.g. tier `standard`, gas phase) are only acceptable when the user has left
+   that knob unspecified AND the skill documents it as a default — and even then
+   the chosen value MUST be surfaced in the report per #3. When in doubt about a
+   scientifically consequential knob, ask; do not guess.
 
 ---
 

@@ -73,3 +73,55 @@ def element_warnings(symbols: List[str], method: str) -> List[str]:
                 "Treat absolute energies and barriers with skepticism."
             )
     return warns
+
+
+SINGLE_CONFORMER_WARNING = (
+    "Single-conformer result: every species was evaluated at ONE geometry, with "
+    "no conformational/Boltzmann averaging. For a flexible molecule the "
+    "Boltzmann-averaged free energy over conformers can differ from a single "
+    "conformer by several kcal/mol — shifting pKa by >1 unit, E° by >0.1 V, and "
+    "logP by >0.5. If the molecule has rotatable bonds, run conformer-search "
+    "first and average, or treat this as a screening estimate tied to the input "
+    "geometry."
+)
+
+
+def scf_convergence_warnings(method: str, extras: Optional[Dict[str, Any]]) -> List[str]:
+    """Promote a non-converged PySCF SCF to a prominent top-level warning.
+
+    The PySCF backend always stashes `scf_converged` (and `scf_cycles`) into the
+    extras dict returned by `collect_calc_extras` / `pack_scf_result`. The
+    ASE-driven calculator path (PySCFCalculator) returns the last-iteration
+    energy even when the SCF did NOT converge, with no flag promoted above
+    `code_specific` — so a non-converged DFT/HF energy otherwise reads exactly
+    like a converged one. calculation-reporting-standards #6/#7 require the
+    non-convergence be surfaced loudly, next to the affected value. This helper
+    turns the already-computed flag into a top-level warning string.
+
+    Only applies to dft/hf (PySCF). Returns [] for xtb/mopac, when extras is
+    missing the flag, or when the SCF converged.
+    """
+    if (method or "").lower() not in ("dft", "hf"):
+        return []
+    if not extras:
+        return []
+    # `scf_converged` may sit either directly in extras or nested under a
+    # `code_specific` block, depending on whether the caller passed the raw
+    # collect_calc_extras() dict or an assembled result.
+    converged = extras.get("scf_converged")
+    cycles = extras.get("scf_cycles")
+    if converged is None and isinstance(extras.get("code_specific"), dict):
+        cs = extras["code_specific"]
+        converged = cs.get("scf_converged")
+        cycles = cs.get("scf_cycles")
+    if converged is None:
+        # No flag available — say nothing rather than guess.
+        return []
+    if converged:
+        return []
+    cyc = f" after {cycles} cycles" if cycles else ""
+    return [
+        f"{(method or '').upper()} SCF did NOT converge{cyc}; the reported energy "
+        "is the last-iteration value and is UNRELIABLE. Tighten the geometry, "
+        "raise --max-cycle, or try a different tier before trusting this number."
+    ]

@@ -32,6 +32,9 @@ python skills/conformational-analysis/scripts/conformational-analysis.py butane.
 4. Two files are written next to the JSON per scanned dihedral (both required): `<stem>_dih<i>_<a>_<b>_<l>.png` — ΔE-vs-angle line plot (matplotlib, 150 dpi; title carries IUPAC name via Open Babel → PubChem with filename fallback, the method, and the four atoms) — and `<stem>_dih<i>_<a>_<b>_<l>.xyz` — relaxed trajectory, one frame per step. Per-point data (step / target° / measured° / E / ΔE / converged) is in the `points` array of the JSON.
 5. If `n_dihedrals_scanned == 0`, the molecule has no rotatable bonds — suggest `--dihedral i,j,k,l` to force a scan. The energy-maximum frame is a good TS guess for [transition-state](../transition-state/SKILL.md). Use [conformer-search](../conformer-search/SKILL.md) instead for stochastic ensemble sampling of many coupled flexible degrees of freedom.
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

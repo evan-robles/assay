@@ -33,6 +33,9 @@ python skills/reaction-energy/scripts/reaction-energy.py \
 4. Report: the balanced reaction string (e.g. `2 H2 + O2 → 2 H2O`); **$\Delta E$** (always, in kcal/mol and eV); **$\Delta H$** and **$\Delta G$** (when `--mode freq`); per-species energy/enthalpy/$G$ with converged yes/no; method, solvent, temperature, pressure; the sign-convention reminder; and every warning from the JSON (especially atom/charge imbalance and imaginary-mode flags).
 5. For an activation energy $\Delta G^{\ddagger}$ this skill is **not** the right tool — use [transition-state](../transition-state/SKILL.md) + [vibrational-analysis](../vibrational-analysis/SKILL.md), or the composite [reaction-profile](../reaction-profile/SKILL.md) skill.
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

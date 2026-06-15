@@ -197,6 +197,10 @@ def run(
     if smiles_source is not None:
         # The input was a name; record where the SMILES came from.
         result["smiles_source"] = smiles_source
+        # Surface any resolver-provenance warnings (e.g. a lower-priority source
+        # answered because a higher one timed out, risking different stereo).
+        for w in smiles_source.get("warnings", []) or []:
+            result["warnings"].append(w)
 
     # Optional QM refinement step
     if opt_method:

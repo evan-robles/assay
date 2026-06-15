@@ -40,6 +40,33 @@ KCAL_TO_EV = 1.0 / 23.060547830619026
 CAL_TO_EV = KCAL_TO_EV / 1000.0
 
 
+def _gas_phase_entropy_warning(solvent: Optional[str]) -> List[str]:
+    """Warn that thermochemistry uses gas-phase ideal-gas entropy even when an
+    implicit solvent is requested.
+
+    ASE's IdealGasThermo applies the rigid-rotor / ideal-gas translational and
+    rotational partition functions at a 1 atm standard state. Under an implicit
+    solvent the electronic energy is solvated, but the rot/trans entropy is NOT
+    — free rotation and free translation are unphysical for a solute in a
+    condensed phase, so S (and hence G) is systematically over-estimated, often
+    by several kcal/mol for a molecule of moderate size. This propagates into
+    every G-derived quantity (pKa, redox mode=freq, reaction_energy/profile in
+    freq mode). calculation-reporting-standards §4/§7 require the approximation
+    be surfaced, not hidden. Returns [] for gas-phase runs (where it is exact).
+    """
+    if not solvent:
+        return []
+    return [
+        f"Thermochemistry uses GAS-PHASE ideal-gas rotational/translational "
+        f"entropy at a 1 atm standard state, even though an implicit solvent "
+        f"({solvent}) was applied to the electronic energy. Condensed-phase "
+        "entropy is NOT modeled, so S is over-estimated and G is biased "
+        "(typically by a few kcal/mol); the 1 atm → 1 M standard-state shift is "
+        "also not applied. Treat solution-phase ΔG (and any pKa/redox/ΔG‡ "
+        "derived from it) as screening-grade."
+    ]
+
+
 def run(
     input_path: str,
     *,
@@ -350,7 +377,9 @@ def _run_ase(
     # Fix: pull the raw 3N x 3N Hessian, project out the trans+rot
     # subspace (Eckart conditions), then diagonalize only the vibrational
     # complement — gives exactly 3N-6 (or 3N-5 for linear) genuine modes.
-    energies_eV, frequencies_cm = _project_trans_rot_and_diagonalize(vib, atoms, geometry)
+    energies_eV, frequencies_cm, projection_warnings = (
+        _project_trans_rot_and_diagonalize(vib, atoms, geometry)
+    )
     vib.clean()
 
     # ASE Vibrations returns 3N modes — the 6 (or 5, linear) translational/
@@ -363,11 +392,21 @@ def _run_ase(
     # The Eckart-projected diagonalization yields the right number of
     # vibrational modes (3N-6 or 3N-5) with the projected-out trans/rot
     # entries padded as zeros at the front of the array. Strip the zero pad,
-    # then raise any remaining tiny soft-modes up to a floor frequency
-    # (Truhlar's quasi-RRHO trick) — keeps the mode count correct and
-    # prevents the harmonic-oscillator entropy from diverging on near-zero
-    # torsions. (Dropping the modes outright crashes ASE's IdealGasThermo
-    # for any flexible organic with a low-frequency conformer mode.)
+    # then raise any remaining tiny soft-modes up to a floor frequency to keep
+    # the mode count correct and prevent the harmonic-oscillator entropy from
+    # diverging as ν→0. (Dropping the modes outright crashes ASE's
+    # IdealGasThermo for any flexible organic with a low-frequency conformer
+    # mode.)
+    #
+    # NOTE — this is a simple low-frequency CUTOFF (a Cramer–Truhlar-style floor),
+    # NOT Grimme's quasi-RRHO. True quasi-RRHO replaces the *entropy* of each low
+    # mode with a free-rotor interpolation (Head-Gordon damping around ~100 cm^-1);
+    # here we only clamp the frequency and then apply pure rigid-rotor-harmonic-
+    # oscillator entropy via IdealGasThermo. Clamping a genuine 5–10 cm^-1 torsion
+    # up to the floor still assigns it a larger harmonic S than the real
+    # anharmonic mode has, so S (and hence G) is over-estimated for flexible
+    # molecules with low torsional modes. A warning is emitted when any mode is
+    # clamped so the approximation is visible (calculation-reporting-standards #5/§7).
     NEAR_ZERO_CM = 50.0
     # eV per cm^-1. CODATA 2022 (exact): inverse meter-electron volt relationship
     # = 1.239 841 984e-6 eV/m^-1; ×100 m^-1/cm^-1 = 1.239 841 984e-4 eV/cm^-1.
@@ -376,6 +415,7 @@ def _run_ase(
     EV_PER_CM = 1.239841984e-4
     FLOOR_eV = NEAR_ZERO_CM * EV_PER_CM
     real_vib_energies = []
+    n_clamped = 0
     for e, f in zip(energies_eV, frequencies_cm):
         # Skip the projected-out trans/rot padding (energies are exactly 0).
         if np.isreal(e) and e.real == 0 and np.isreal(f) and f.real == 0:
@@ -387,6 +427,7 @@ def _run_ase(
             continue
         if e.real < FLOOR_eV:
             real_vib_energies.append(FLOOR_eV)   # raise soft modes to floor
+            n_clamped += 1
         else:
             real_vib_energies.append(e.real)
     # Count ANY mode with a nonzero imaginary frequency — including soft imag
@@ -441,6 +482,16 @@ def _run_ase(
     ]
 
     warns = element_warnings(symbols, method)
+    warns += projection_warnings
+    warns += _gas_phase_entropy_warning(solvent)
+    if n_clamped > 0:
+        warns.append(
+            f"{n_clamped} low-frequency mode(s) below {NEAR_ZERO_CM:.0f} cm⁻¹ were "
+            f"raised to a {NEAR_ZERO_CM:.0f} cm⁻¹ floor (a simple cutoff, NOT "
+            "Grimme quasi-RRHO). Harmonic entropy of soft torsions is therefore "
+            "over-estimated, so S and G are biased high for this flexible molecule "
+            "— treat the free energy as screening-grade."
+        )
     if n_imag > 0:
         warns.append(
             f"{n_imag} imaginary mode(s) detected — geometry is not a true minimum. "
@@ -524,6 +575,7 @@ def _run_atomic(
     result["vibrational_frequencies_cm-1"] = []
     result["geometry_auto_detected"] = True
     warns = element_warnings(symbols, method)
+    warns += _gas_phase_entropy_warning(solvent)
     if warns:
         result["warnings"] = warns
     return result
@@ -639,6 +691,7 @@ def _run_mopac(
 
     result["symmetry_number"] = symmetrynumber
     warns = element_warnings(symbols, "mopac")
+    warns += _gas_phase_entropy_warning(solvent)
     n_imag = force.get("n_imaginary_modes") or 0
     if n_imag > 0:
         warns.append(
@@ -696,11 +749,25 @@ def _project_trans_rot_and_diagonalize(vib, atoms, geometry):
     """Pull the 3N x 3N Hessian from ASE Vibrations, project out the trans/rot
     subspace (Eckart conditions at the current geometry), and diagonalize the
     remaining (3N-6 or 3N-5) vibrational subspace. Returns (energies_eV,
-    frequencies_cm) arrays matching the shape expected by the rest of _run_ase.
+    frequencies_cm, warnings) — the first two arrays match the shape expected by
+    the rest of _run_ase; `warnings` is a list of strings (empty when clean).
 
     The arrays are padded back up to 3N with zeros at the front (so the calling
     code's "filter > NEAR_ZERO_CM" check still drops them naturally) — only the
     last 3N-6 (or 3N-5) entries are real vibrational data.
+
+    The n_tr projected-out (trans/rot) modes are identified by SMALLEST absolute
+    eigenvalue, NOT by ascending sort position. The previous `eigvals[n_tr:]`
+    after an ascending sort silently mis-selected modes in two cases:
+      (1) Transition states — a genuine NEGATIVE (imaginary-mode) eigenvalue
+          sorts BELOW the near-zero projected modes, so it was dropped and a
+          near-zero residual was promoted into the vibrational set, corrupting
+          the imaginary-mode tally that TS/freq verdicts depend on.
+      (2) Off-stationary geometries (auto_confsearch / skipped pre-opt) — the
+          residual gradient leaks into the projection so the "zeroed" modes are
+          not exactly zero; a genuine soft real mode could sort below a residual.
+    Selecting by |eigenvalue| fixes both, and we additionally VERIFY that the
+    n_tr dropped modes really are near zero, warning when they are not.
     """
     import numpy as np
     from ase import units
@@ -747,12 +814,20 @@ def _project_trans_rot_and_diagonalize(vib, atoms, geometry):
     Hproj = P @ Hmw @ P
 
     eigvals, _ = np.linalg.eigh(Hproj)
-    # The (3N - n_tr) largest-magnitude eigenvalues are vibrational; the
-    # remaining n_tr are numerical zeros from the projection.
-    n_tr = Q.shape[1]
-    # Sort eigenvalues ascending. The first n_tr are ~0 (projected-out modes).
-    # The rest are real vibrations (positive for minima, negative for saddles).
-    vib_eigvals = eigvals[n_tr:]
+    n_tr = Q.shape[1]  # 5 (linear) or 6 (nonlinear) trans/rot dof
+
+    # Identify the projected-out (trans/rot) modes by SMALLEST |eigenvalue|.
+    # eigh() returns eigvals ascending; the projected modes cluster near zero
+    # but can sit anywhere in that ordering once a genuine negative (imaginary)
+    # mode is present, so we select on magnitude, not position.
+    order_by_mag = np.argsort(np.abs(eigvals))
+    drop_idx = set(order_by_mag[:n_tr].tolist())
+    vib_eigvals = np.array(
+        [ev for i, ev in enumerate(eigvals) if i not in drop_idx]
+    )
+    dropped_eigvals = np.array(
+        [ev for i, ev in enumerate(eigvals) if i in drop_idx]
+    )
 
     # Convert eigenvalues -> angular frequency^2 (in units eV / (amu * A^2))
     # then -> energy (eV) and frequency (cm^-1).
@@ -761,23 +836,48 @@ def _project_trans_rot_and_diagonalize(vib, atoms, geometry):
     # Use the same conversion as ase.vibrations.Vibrations.get_energies:
     s = units._hbar * 1e10 / np.sqrt(units._e * units._amu)
     # s has units such that energy_eV = s * sqrt(eigval_in_eV/A^2/amu)
+    EV_TO_CM = 1.0 / 1.239841984e-4
+
     def _ev_from_eig(ev):
         if ev >= 0:
             return s * np.sqrt(ev)
         else:
             return -1j * s * np.sqrt(-ev)
 
-    energies_eV_vib = np.array([_ev_from_eig(ev) for ev in vib_eigvals], dtype=complex)
-    EV_TO_CM = 1.0 / 1.239841984e-4
-    frequencies_cm_vib = np.array(
-        [e.real * EV_TO_CM if e.imag == 0 else 1j * abs(e.imag) * EV_TO_CM
-         for e in energies_eV_vib], dtype=complex
+    def _cm_from_eig(ev):
+        e = _ev_from_eig(ev)
+        return e.real * EV_TO_CM if e.imag == 0 else 1j * abs(e.imag) * EV_TO_CM
+
+    # Sanity-check the dropped modes: they should be ~0 cm^-1. A large residual
+    # means the Eckart projection did not cleanly separate trans/rot from
+    # vibration — almost always because the geometry is off-stationary (finite
+    # residual gradient), which is exactly the condition that corrupts the
+    # imaginary-mode count. Warn rather than silently trust the slice.
+    warnings: List[str] = []
+    dropped_cm = np.array([_cm_from_eig(ev) for ev in dropped_eigvals], dtype=complex)
+    # Magnitude in cm^-1 whether the residual came out real or imaginary.
+    dropped_mag_cm = np.array(
+        [abs(f.real) if f.imag == 0 else abs(f.imag) for f in dropped_cm]
     )
+    RESIDUAL_TOL_CM = 30.0  # trans/rot residual above this is suspicious
+    max_residual = float(dropped_mag_cm.max()) if dropped_mag_cm.size else 0.0
+    if max_residual > RESIDUAL_TOL_CM:
+        warnings.append(
+            f"Eckart trans/rot projection left a residual of {max_residual:.0f} "
+            f"cm^-1 (expected ~0). The geometry is likely NOT a stationary point "
+            "at this level of theory, so the vibrational/imaginary-mode split is "
+            "unreliable — re-optimize tightly at the SAME method before trusting "
+            "the frequencies and thermochemistry."
+        )
+
+    energies_eV_vib = np.array([_ev_from_eig(ev) for ev in vib_eigvals], dtype=complex)
+    frequencies_cm_vib = np.array([_cm_from_eig(ev) for ev in vib_eigvals], dtype=complex)
 
     # Pad with n_tr zeros at the front so existing downstream code (which
-    # filters > 50 cm^-1) drops them naturally and counts work out.
+    # filters out the exact-zero pads, then > 50 cm^-1) drops them naturally and
+    # counts work out.
     pad_e = np.zeros(n_tr, dtype=complex)
     pad_f = np.zeros(n_tr, dtype=complex)
     energies_eV = np.concatenate([pad_e, energies_eV_vib])
     frequencies_cm = np.concatenate([pad_f, frequencies_cm_vib])
-    return energies_eV, frequencies_cm
+    return energies_eV, frequencies_cm, warnings

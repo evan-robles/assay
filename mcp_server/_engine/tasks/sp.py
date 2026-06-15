@@ -8,7 +8,10 @@ from ..calculators import (
     method_label, program_label, collect_calc_extras,
 )
 from ..io import read_geometry
-from ..schema import base_result, energy_block_from_eV, element_warnings
+from ..schema import (
+    base_result, energy_block_from_eV, element_warnings,
+    scf_convergence_warnings,
+)
 
 
 def run(
@@ -67,6 +70,7 @@ def run(
         result["code_specific"] = extras
 
     warns = element_warnings(symbols, method)
+    warns += scf_convergence_warnings(method, extras)
     if warns:
         result["warnings"] = warns
     return result

@@ -24,11 +24,19 @@ from typing import Any, Dict, Optional
 from . import sp as sp_task
 from ..calculators import program_label
 from ..io import read_geometry
-from ..schema import base_result, EV_TO_HARTREE, EV_TO_KCAL, element_warnings
+from ..schema import (
+    base_result, EV_TO_HARTREE, EV_TO_KCAL, element_warnings,
+    SINGLE_CONFORMER_WARNING,
+)
 
 _SCREENING_WARNINGS = [
     "Electronic ΔG_solv only — no cavitation, dispersion-repulsion, or thermal "
-    "correction.",
+    "correction. This is an electronic-energy difference E(solv) − E(gas), not a "
+    "thermodynamic free energy (no ZPE/entropy).",
+    "Standard-state caveat: the value is NOT corrected to the conventional "
+    "ΔG*_solv 1 M (gas) → 1 M (solution) state; the experimental tables you may "
+    "compare against include a ~1.9 kcal/mol (RT ln 24.46) term this number "
+    "omits. Do not compare directly to tabulated ΔG*_solv without adding it.",
     "Semi-empirical implicit solvation is screening-grade; ±2–3 kcal/mol typical.",
 ]
 
@@ -84,6 +92,7 @@ def run(
             f"solvent={solvent!r} request."
         )
     warns += _SCREENING_WARNINGS
+    warns.append(SINGLE_CONFORMER_WARNING)
     warns += element_warnings(symbols, method)
     result["warnings"] = warns
     return result

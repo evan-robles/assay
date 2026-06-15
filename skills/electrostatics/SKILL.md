@@ -29,6 +29,9 @@ Arguments:
 
 Read the JSON — it is already written to `--out` (default `<stem>_electrostatics_<method>.json` in the run cwd). Report: the dipole moment in Debye (magnitude + Cartesian vector); atomic partial charges as a table (1-based atom index, element symbol, charge); the sum of charges as a sanity check (should match the total molecular charge); method, solvent (or "gas phase"), and molecular charge/multiplicity; and the partitioning scheme (Mulliken for every backend). Mulliken charges are basis-set-dependent and not a physical observable — transferable charges need ESP-fit methods (not available in this build). This is a single point; relax the geometry first with [geometry-optimize](../geometry-optimize/SKILL.md) if needed.
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

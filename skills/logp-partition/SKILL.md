@@ -30,6 +30,9 @@ DFT $\log P$ is slower but meaningfully better than semi-empirical for polar / H
 
 Read the result JSON, written to `--out` (default `<stem>_logp_<method>.json` in the run cwd). Report: $\log P$ (headline number); $\Delta G_\text{solv}(\text{water})$ and $\Delta G_\text{solv}(\text{octanol})$, both in kcal/mol; $\Delta\Delta G$ (water − octanol); method and charge/multiplicity (charge is always 0); and the caveats (±1 log unit; electronic $\Delta G_\text{solv}$ only). Flag any JSON warnings. For a single-solvent value on an ionization state, see [solvation](../solvation/SKILL.md). For a fast chemoinformatic comparison, RDKit's `Crippen.MolLogP` (group-contribution) is often comparably accurate for drug-like molecules; the thermodynamic-cycle approach here has the advantage of reflecting the actual electronic structure / conformation for unusual scaffolds.
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

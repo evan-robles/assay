@@ -41,6 +41,9 @@ Verdict interpretation: TS with 0 imaginary modes → optimizer fell into a near
 
 Related skills: [geometry-optimize](../geometry-optimize/SKILL.md), [transition-state](../transition-state/SKILL.md), [vibrational-analysis](../vibrational-analysis/SKILL.md), [intrinsic-reaction-coordinate](../intrinsic-reaction-coordinate/SKILL.md).
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

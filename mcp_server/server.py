@@ -146,6 +146,13 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
             t = threading.Thread(target=_pump_stderr, daemon=True)
             t.start()
 
+            # Announce the live-log path AT LAUNCH (before the blocking read
+            # below), so a caller learns where to `tail -f` while the
+            # calculation is still running — calculation-reporting-standards
+            # non-negotiable #9. Flush so it isn't buffered behind the result.
+            sys.stderr.write(f"# chemkit live log (tail -f): {out_path}\n")
+            sys.stderr.flush()
+
             stdout_data = ""
             try:
                 # proc.stdout.read() blocks until the engine closes stdout,

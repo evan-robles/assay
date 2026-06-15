@@ -36,6 +36,9 @@ You must supply both HA and A⁻ xyz files yourself — build the deprotonated f
 
 Then read the JSON and report: the $\mathrm{p}K_a$ (headline number); mode, solvent, temperature; for absolute mode $G(\mathrm{HA})$, $G(\mathrm{A^-})$, $G(\mathrm{H^+,aq})$, the standard-state correction, and $\Delta G_\mathrm{dissociation}$; for reference mode $\Delta G_\mathrm{isodesmic}$ and the reference acid with its experimental pKa; the reminder that lower pKa → stronger acid; every warning (especially imaginary modes on any species); and an estimate of expected error (xtb absolute is not meaningful; xtb reference ±2 units; DFT absolute standard tier ±3 units; DFT reference with a similar anchor ±1 unit or better).
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

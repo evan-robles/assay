@@ -33,6 +33,9 @@ python skills/geometry-optimize/scripts/geometry-optimize.py --method <xtb|mopac
    - Path to the optimized `.xyz` (`--xyz-out`, default `<stem>_<method>_opt.xyz`; paste its contents in a fenced block) and to the result JSON (`--out`, default `<stem>_opt_<method>.json`).
    - Any `warnings` entries verbatim. If not converged, still deliver the last geometry and flag `converged: false` prominently.
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

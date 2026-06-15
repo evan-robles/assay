@@ -22,16 +22,66 @@ from __future__ import annotations
 
 import datetime
 import json
+import os
 import shutil
 import subprocess
 import urllib.error
 import urllib.parse
 import urllib.request
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional
 
 _TIMEOUT = 20  # seconds per request
 _USER_AGENT = "chemkit/1.0 (https://github.com/; molecule name resolver)"
+
+# On-disk cache of name -> resolution so repeat runs reuse the FIRST successful
+# resolution. Without it, a transient outage of a higher-priority resolver
+# (PubChem) silently lets a lower one (NIST, round-tripped through InChI) answer
+# with possibly-different stereochemistry, making a build non-reproducible at the
+# structure level. Override the location with CHEMKIT_RESOLVE_CACHE; set it to
+# the empty string to disable caching.
+def _cache_path() -> Optional[str]:
+    env = os.environ.get("CHEMKIT_RESOLVE_CACHE")
+    if env == "":
+        return None
+    if env:
+        return env
+    base = os.environ.get("XDG_CACHE_HOME") or os.path.join(
+        os.path.expanduser("~"), ".cache"
+    )
+    return os.path.join(base, "chemkit", "name_resolution.json")
+
+
+def _cache_key(name: str) -> str:
+    return name.strip().lower()
+
+
+def _cache_load() -> dict:
+    path = _cache_path()
+    if not path or not os.path.isfile(path):
+        return {}
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def _cache_store(name: str, res: "Resolution") -> None:
+    path = _cache_path()
+    if not path:
+        return
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        data = _cache_load()
+        data[_cache_key(name)] = res.as_dict()
+        tmp = path + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump(data, f, indent=2)
+        os.replace(tmp, path)
+    except Exception:
+        # Caching is best-effort; never fail a build over it.
+        pass
 
 
 @dataclass
@@ -44,6 +94,8 @@ class Resolution:
     citation: str          # ACS-format attribution string
     url: Optional[str] = None
     identifier: Optional[str] = None   # e.g. "CID 702"
+    from_cache: bool = False
+    warnings: List[str] = field(default_factory=list)
 
     def as_dict(self) -> dict:
         return {
@@ -54,7 +106,23 @@ class Resolution:
             "citation": self.citation,
             "url": self.url,
             "identifier": self.identifier,
+            "from_cache": self.from_cache,
+            "warnings": list(self.warnings),
         }
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Resolution":
+        return cls(
+            smiles=d["smiles"],
+            name_input=d.get("name_input", ""),
+            source=d.get("source", "unknown"),
+            smiles_kind=d.get("smiles_kind", "unspecified"),
+            citation=d.get("citation", ""),
+            url=d.get("url"),
+            identifier=d.get("identifier"),
+            from_cache=True,
+            warnings=list(d.get("warnings", [])),
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -268,7 +336,14 @@ def resolve_name_to_smiles(name: str) -> Resolution:
     if not name:
         raise LookupError("Empty molecule name.")
 
+    # Reuse a prior successful resolution so the same name always yields the same
+    # structure (and stereochemistry) regardless of which services are up today.
+    cached = _cache_load().get(_cache_key(name))
+    if cached and cached.get("smiles"):
+        return Resolution.from_dict(cached)
+
     tried: List[str] = []
+    failed_higher: List[str] = []
     for label, fn in _RESOLVERS:
         tried.append(label)
         try:
@@ -276,7 +351,20 @@ def resolve_name_to_smiles(name: str) -> Resolution:
         except Exception:
             res = None
         if res is not None and res.smiles:
+            # If a higher-priority resolver was skipped because it failed/timed
+            # out, surface that — a silent fall-through to NIST can change the
+            # stereochemistry of every downstream calculation.
+            if failed_higher:
+                res.warnings.append(
+                    f"Name resolved via {res.source} because higher-priority "
+                    f"resolver(s) {failed_higher} did not answer this run "
+                    "(timeout/outage/no match). A different run could resolve via "
+                    "a different source with different stereochemistry; the result "
+                    "is now cached to pin this resolution. Verify the SMILES."
+                )
+            _cache_store(name, res)
             return res
+        failed_higher.append(label)
 
     raise LookupError(
         f"Could not resolve {name!r} to a SMILES from any reliable source. "

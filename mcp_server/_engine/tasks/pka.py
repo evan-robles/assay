@@ -36,7 +36,7 @@ from typing import Any, Dict, List, Optional
 
 from ..calculators import program_label, method_label, build_calculator
 from ..io import read_geometry
-from ..schema import base_result, EV_TO_KCAL
+from ..schema import base_result, EV_TO_KCAL, SINGLE_CONFORMER_WARNING
 from . import freq as freq_task
 
 
@@ -284,6 +284,8 @@ def run(
                 f"{label}: {n_imag} imaginary mode(s) — not a true minimum; "
                 "pKa is approximate."
             )
+
+    warnings.append(SINGLE_CONFORMER_WARNING)
 
     if warnings:
         result["warnings"] = warnings

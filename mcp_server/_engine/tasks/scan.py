@@ -356,8 +356,21 @@ def run(
             p["delta_E_kcal_mol"] = p["energy_kcal_mol"] - e_min
         e_max_pt = max(valid, key=lambda p: p["energy_kcal_mol"])
         e_min_pt = min(valid, key=lambda p: p["energy_kcal_mol"])
+        grid_barrier = e_max_pt["energy_kcal_mol"] - e_min_pt["energy_kcal_mol"]
 
-        dihedral_records.append({
+        # The grid-point barrier underestimates a sharp torsional maximum that
+        # falls BETWEEN sampled angles (default 15° spacing). A relaxed dihedral
+        # profile is periodic in 360°, so fit a truncated Fourier series and read
+        # the barrier off a dense evaluation — this removes the grid-alignment
+        # dependence (different n_steps no longer give different barriers) without
+        # adding a scipy dependency.
+        interp = _interpolated_barrier(
+            [p.get("target_deg") if p.get("target_deg") is not None
+             else p.get("measured_deg") for p in valid],
+            [p["energy_kcal_mol"] for p in valid],
+        )
+
+        record = {
             "atoms_1based": [bond["i"]+1, bond["a"]+1, bond["b"]+1, bond["l"]+1],
             "n_points": len(points),
             "n_converged": sum(1 for p in points if p["converged"]),
@@ -365,16 +378,96 @@ def run(
             "min_energy_kcal_mol": e_min_pt["energy_kcal_mol"],
             "max_angle_deg": e_max_pt["measured_deg"],
             "max_energy_kcal_mol": e_max_pt["energy_kcal_mol"],
-            "barrier_kcal_mol": e_max_pt["energy_kcal_mol"] - e_min_pt["energy_kcal_mol"],
+            # Headline barrier: never below the grid evidence (a smoothing fit
+            # can dip under a sharp sampled peak); take the larger of the
+            # interpolated and grid values. Both are reported for auditability.
+            "barrier_kcal_mol": (
+                max(interp["barrier_kcal_mol"], grid_barrier) if interp
+                else grid_barrier
+            ),
+            "barrier_grid_kcal_mol": grid_barrier,
             "trajectory_xyz": traj_path,
             "plot_png": plot_path,
             "points": valid,
-        })
+        }
+        if interp:
+            record["barrier_interpolated_kcal_mol"] = interp["barrier_kcal_mol"]
+            record["max_angle_interpolated_deg"] = interp["max_angle_deg"]
+            record["min_angle_interpolated_deg"] = interp["min_angle_deg"]
+            # If the interpolated maximum sits noticeably above the grid max, the
+            # true barrier was between sampled points — flag so the user can
+            # densify the scan if they need the precise barrier.
+            if interp["barrier_kcal_mol"] - grid_barrier > 0.3:
+                warns.append(
+                    f"Dihedral {record['atoms_1based']}: the interpolated barrier "
+                    f"({interp['barrier_kcal_mol']:.2f} kcal/mol) exceeds the grid "
+                    f"barrier ({grid_barrier:.2f}) by "
+                    f"{interp['barrier_kcal_mol']-grid_barrier:.2f} kcal/mol — the "
+                    "true maximum lies between sampled angles. Increase --steps "
+                    "for a more precise barrier."
+                )
+        dihedral_records.append(record)
 
     result["dihedrals"] = dihedral_records
     if warns:
         result["warnings"] = warns
     return result
+
+
+def _interpolated_barrier(angles_deg, energies_kcal):
+    """Fit a periodic (360°) truncated Fourier series to a relaxed dihedral
+    profile and return the barrier from a dense evaluation.
+
+    Returns {"barrier_kcal_mol", "max_angle_deg", "min_angle_deg"} or None when
+    a fit isn't warranted (too few points, missing angles, non-finite values).
+    numpy-only; robust to non-uniform angle spacing via least squares.
+    """
+    pts = [
+        (a, e) for a, e in zip(angles_deg, energies_kcal)
+        if a is not None and e is not None and np.isfinite(e)
+    ]
+    # Need a handful of points for a meaningful periodic fit.
+    if len(pts) < 6:
+        return None
+    theta = np.radians(np.array([a for a, _ in pts], dtype=float))
+    y = np.array([e for _, e in pts], dtype=float)
+
+    # Number of harmonics: enough to capture 1-, 2-, 3-fold torsional terms but
+    # bounded well below the Nyquist limit of the sample count to avoid ringing.
+    n_harm = min(6, (len(pts) - 1) // 2)
+    if n_harm < 1:
+        return None
+    # Design matrix: [1, cos θ, sin θ, cos 2θ, sin 2θ, ...]
+    cols = [np.ones_like(theta)]
+    for k in range(1, n_harm + 1):
+        cols.append(np.cos(k * theta))
+        cols.append(np.sin(k * theta))
+    A = np.vstack(cols).T
+    try:
+        coeffs, *_ = np.linalg.lstsq(A, y, rcond=None)
+    except Exception:
+        return None
+
+    # Evaluate on a dense uniform grid over the full period.
+    grid = np.radians(np.linspace(0.0, 360.0, 1441, endpoint=False))  # 0.25° step
+    gcols = [np.ones_like(grid)]
+    for k in range(1, n_harm + 1):
+        gcols.append(np.cos(k * grid))
+        gcols.append(np.sin(k * grid))
+    fit = np.vstack(gcols).T @ coeffs
+    if not np.all(np.isfinite(fit)):
+        return None
+    imax = int(np.argmax(fit))
+    imin = int(np.argmin(fit))
+    barrier = float(fit[imax] - fit[imin])
+    # Guard against a pathological fit returning a smaller barrier than the data.
+    if barrier < 0:
+        return None
+    return {
+        "barrier_kcal_mol": barrier,
+        "max_angle_deg": float(np.degrees(grid[imax])),
+        "min_angle_deg": float(np.degrees(grid[imin])),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -440,6 +533,21 @@ def _scan_one_dihedral(
     points: List[Dict[str, Any]] = []
     frames: List = []
 
+    # For dft/hf, build ONE PySCFCalculator for the whole dihedral and reuse it
+    # across every scan point. Consecutive points are seeded from the previous
+    # optimized geometry, so they are electronically very close — reusing the
+    # calculator lets its cached converged density matrix warm-start each point's
+    # SCF (cutting iterations ~2-3x). A fresh calculator per point (the old
+    # behavior) threw that cache away every step. xtb/mopac have no DM cache to
+    # preserve, so they keep building per-point (None => per-point build).
+    shared_calc = None
+    if method in ("dft", "hf"):
+        from ..calculators import build_calculator
+        shared_calc = build_calculator(
+            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+            tier=tier, functional=functional, basis=basis,
+        )
+
     # Seed each step from the previous *optimized* geometry — gives smoother
     # profiles (the optimizer already knows where the H's want to be) and is
     # what a hand-rolled scan would do.
@@ -470,6 +578,7 @@ def _scan_one_dihedral(
                 charge=charge, multiplicity=multiplicity, solvent=solvent,
                 fmax=fmax, steps=opt_steps,
                 tier=tier, functional=functional, basis=basis,
+                calc=shared_calc,
             )
 
         if opt_atoms is None or energy_eV is None or not np.isfinite(energy_eV):
@@ -505,15 +614,19 @@ def _opt_with_ase_dihedral_constraint(
     fmax: float, steps: int,
     tier: Optional[str] = None, functional: Optional[str] = None,
     basis: Optional[str] = None,
+    calc=None,
 ) -> Tuple[Optional[Any], Optional[float], bool]:
     from ase.constraints import FixInternals
     from ase.optimize import BFGS
     from ..calculators import build_calculator, apply_calc_to_atoms
 
-    calc = build_calculator(
-        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-        tier=tier, functional=functional, basis=basis,
-    )
+    # Reuse a caller-supplied calculator (dft/hf warm-start across scan points);
+    # otherwise build a fresh one (xtb/mopac, or standalone calls).
+    if calc is None:
+        calc = build_calculator(
+            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+            tier=tier, functional=functional, basis=basis,
+        )
     apply_calc_to_atoms(atoms, calc)
 
     # FixInternals expects radians for dihedrals.

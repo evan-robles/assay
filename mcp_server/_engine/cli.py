@@ -34,10 +34,64 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
                         "Ignored unless --method dft or --method hf.")
     p.add_argument("--out", default=None,
                    help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
+    _add_stdout_option(p)
     p.add_argument("--verbose", type=int, default=4,
                    help="PySCF log verbosity (0=silent .. 4=default rich SCF/opt "
                         "detail .. 5=debug). Streamed to the live .out log; "
                         "ignored for xtb/mopac.")
+
+
+def _add_stdout_option(p):
+    """Add the --stdout channel selector to a subparser.
+
+    Controls what the CLI prints to fd 1 (which the MCP server / skill client
+    captures into the agent's context). The result JSON is ALWAYS written to
+    the --out file regardless of this flag; --stdout only governs the stdout
+    copy, so choosing 'path' avoids re-ingesting the full blob into context
+    (calculation-reporting-standards §9.1).
+
+      json  full indented result JSON on stdout (legacy default; verbose)
+      path  a compact one-line pointer ({"out":...,"converged":...,"warnings":[...]})
+      none  nothing on stdout (the file is still written; paths still go to stderr)
+    """
+    p.add_argument(
+        "--stdout", choices=["json", "path", "none"], default="json",
+        help="What to print on stdout. 'json' = full result (default), "
+             "'path' = compact one-line pointer to the --out file plus "
+             "convergence/warnings, 'none' = silent. The --out JSON file is "
+             "always written either way. Use 'path' to keep the full blob out "
+             "of an agent's context and read back fields with jq.",
+    )
+
+
+def _compact_pointer(result: dict, out_path: str) -> str:
+    """Build the one-line stdout summary for --stdout path.
+
+    Surfaces only the fields an agent needs to decide what to read back with
+    jq: where the file is, whether it converged, and any warnings (which must
+    NEVER be dropped, per calculation-reporting-standards §7/§9.1). Everything
+    else stays in the on-disk JSON.
+    """
+    summary: dict = {"out": out_path}
+    # Convergence may live under different keys depending on the task.
+    for key in ("converged", "scf_converged"):
+        if key in result:
+            summary[key] = result[key]
+            break
+    cs = result.get("code_specific")
+    if "converged" not in summary and "scf_converged" not in summary and isinstance(cs, dict):
+        if "scf_converged" in cs:
+            summary["scf_converged"] = cs["scf_converged"]
+    # Always carry warnings through so a caveat is never silently lost.
+    warnings = result.get("warnings")
+    if warnings:
+        summary["warnings"] = warnings
+    # A couple of cheap, near-universal headline numbers when present, so the
+    # pointer is informative without the agent needing a second read.
+    for key in ("total_energy_eV",):
+        if key in result:
+            summary[key] = result[key]
+    return json.dumps(summary, default=str)
 
 
 def _add_common(p):
@@ -90,7 +144,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     p_freq.add_argument(
         "--preopt-fmax", type=float, default=0.001,
-        help="Force convergence (eV/Å) for the pre-opt step (default 0.01, "
+        help="Force convergence (eV/Å) for the pre-opt step (default 0.001, "
              "tighter than `opt`'s 0.05 because residual forces propagate into "
              "near-zero imaginary modes).",
     )
@@ -119,6 +173,32 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_redox.add_argument("--red-mult", type=int, default=2)
     p_redox.add_argument("--ref", choices=["SHE", "Ag/AgCl", "Fc+/Fc"], default="SHE")
     p_redox.add_argument("--n-electrons", type=int, default=1)
+    p_redox.add_argument(
+        "--mode", choices=["adiabatic", "vertical", "freq"], default="adiabatic",
+        help=(
+            "How to evaluate the redox free-energy difference. "
+            "adiabatic (default): relax each oxidation state separately, ΔE "
+            "between relaxed geometries (includes reorganization). "
+            "vertical: ΔE with both states on the input geometry (Franck-Condon, "
+            "no relaxation). freq: full ΔG via opt+freq on each state."
+        ),
+    )
+    p_redox.add_argument(
+        "--fmax", type=float, default=0.05,
+        help="Force convergence threshold (eV/Å) for the per-state optimizations "
+             "in --mode adiabatic/freq (default 0.05).",
+    )
+    p_redox.add_argument("--temperature", type=float, default=298.15,
+                         help="Temperature (K) for --mode freq thermochemistry.")
+    p_redox.add_argument("--pressure", type=float, default=101325.0,
+                         help="Pressure (Pa) for --mode freq thermochemistry.")
+    p_redox.add_argument(
+        "--e-abs-she", type=float, default=None,
+        help="Absolute potential of SHE in volts used to place results on the "
+             "SHE scale (default 4.281; literature spans ~4.28–4.44 V depending "
+             "on convention). This is a systematic offset on every reported "
+             "potential — set it to match your reference convention.",
+    )
 
     p_conf = sub.add_parser("confsearch", help="Conformer search via Open Babel (confab).")
     _add_common(p_conf)
@@ -201,6 +281,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_prof.add_argument("--functional", default=None)
     p_prof.add_argument("--basis", default=None)
     p_prof.add_argument("--out", default=None)
+    _add_stdout_option(p_prof)
 
     p_pka = sub.add_parser(
         "pka",
@@ -248,6 +329,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_pka.add_argument("--functional", default=None)
     p_pka.add_argument("--basis", default=None)
     p_pka.add_argument("--out", default=None)
+    _add_stdout_option(p_pka)
 
     p_build = sub.add_parser(
         "build",
@@ -291,6 +373,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_build.add_argument("--functional", default=None)
     p_build.add_argument("--basis", default=None)
     p_build.add_argument("--out", default=None, help="Result JSON path.")
+    _add_stdout_option(p_build)
 
     p_fukui = sub.add_parser(
         "fukui",
@@ -470,7 +553,12 @@ def main(argv: Optional[List[str]] = None) -> int:
                            oxidized_multiplicity=args.ox_mult,
                            reduced_multiplicity=args.red_mult,
                            solvent=args.solvent, reference=args.ref,
-                           n_electrons=args.n_electrons, cli=cli,
+                           n_electrons=args.n_electrons,
+                           mode=args.mode, fmax=args.fmax,
+                           temperature_K=args.temperature,
+                           pressure_Pa=args.pressure, cli=cli,
+                           **({"e_abs_she": args.e_abs_she}
+                              if args.e_abs_she is not None else {}),
                            **pyscf_kwargs)
     elif args.task == "confsearch":
         from .tasks import confsearch
@@ -684,7 +772,15 @@ def main(argv: Optional[List[str]] = None) -> int:
     os.dup2(_real_stdout_fd, 1)
     os.close(_real_stdout_fd)
 
-    print(json.dumps(result, indent=2, default=str))
+    # --stdout selects what reaches fd 1 (captured into the agent context). The
+    # result JSON is always on disk at out_path regardless; 'path'/'none' keep
+    # the full blob out of context (calculation-reporting-standards §9.1).
+    stdout_mode = getattr(args, "stdout", "json")
+    if stdout_mode == "json":
+        print(json.dumps(result, indent=2, default=str))
+    elif stdout_mode == "path":
+        print(_compact_pointer(result, out_path))
+    # 'none': print nothing to stdout (file written, paths still on stderr).
     print(f"\n# result written to: {out_path}", file=sys.stderr)
     if args.task == "confsearch" and result.get("conformers_xyz"):
         print(f"# conformers xyz written to: {result['conformers_xyz']}", file=sys.stderr)

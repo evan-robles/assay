@@ -30,6 +30,9 @@ Arguments:
 
 Read the JSON — it is already written to `--out` (default `<stem>_frontier_<method>.json` in the run cwd). Report: HOMO, LUMO, and HOMO–LUMO gap (eV); the full frontier table (HOMO−$K$..HOMO, LUMO..LUMO+$K$) sorted by energy; the Koopmans descriptors from `koopmans` (vertical IP, vertical EA, $\chi$, $\eta$, $S$, $\omega$); method, solvent (or "gas phase"), charge, multiplicity; and the JSON path. For MOPAC, also surface heat of formation and dipole from `code_specific`. xtb and MOPAC orbital zeros differ — compare orbital energies only within the same method — and Koopmans values are first-order estimates (for quantitative IP/EA use ΔSCF with DFT). To relax the geometry first, run [geometry-optimize](../geometry-optimize/SKILL.md) beforehand; for a single-point energy see [single-point-energy](../single-point-energy/SKILL.md).
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

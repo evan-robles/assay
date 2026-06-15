@@ -17,7 +17,10 @@ from ..calculators import (
     register_auto_tempdir,
 )
 from ..io import read_geometry
-from ..schema import base_result, energy_block_from_eV, element_warnings
+from ..schema import (
+    base_result, energy_block_from_eV, element_warnings,
+    scf_convergence_warnings,
+)
 from ._mopac_parsers import parse_mopac_extras
 
 # CODATA 2022: Hartree energy = 27.211 386 245 981(30) eV; Bohr radius =
@@ -83,8 +86,15 @@ def run(
             f"Unknown method {method!r}. Expected 'xtb', 'mopac', 'dft', or 'hf'."
         )
 
+    solvent_drop = body.pop("_solvent_drop_warning", None)
+    # Preserve any warnings the body itself carries (e.g. "no virtual orbitals"
+    # for basis-saturated species) — merge, don't overwrite.
+    body_warns = list(body.pop("warnings", []) or [])
     result.update(body)
-    warns = element_warnings(symbols, method)
+    warns = body_warns + element_warnings(symbols, method)
+    warns += scf_convergence_warnings(method, body)
+    if solvent_drop:
+        warns.append(solvent_drop)
     if warns:
         result["warnings"] = warns
     return result
@@ -125,6 +135,11 @@ def _run_generic(atoms, *, calc, method, nfrontier) -> Dict[str, Any]:
     body = _build_block(eigs_flat, occs_flat, total_energy_eV,
                         energy_zero="electronic energy (bare nuclei + electrons)",
                         nfrontier=nfrontier)
+    # Carry the SCF convergence flags up so run() can promote a non-convergence
+    # to a prominent top-level warning (calculation-reporting-standards #6/#7).
+    for k in ("scf_converged", "scf_cycles"):
+        if k in extras:
+            body[k] = extras[k]
     return body
 
 
@@ -150,6 +165,7 @@ def _run_xtb(atoms, *, charge, multiplicity, solvent, nfrontier) -> Dict[str, An
     xcalc = Calculator(Param.GFN2xTB, numbers, positions_bohr,
                        charge=float(charge), uhf=uhf)
     xcalc.set_verbosity(VERBOSITY_MUTED)
+    solvent_dropped = False
     if solvent:
         try:
             from xtb.utils import get_solvent, Solvent
@@ -157,16 +173,25 @@ def _run_xtb(atoms, *, charge, multiplicity, solvent, nfrontier) -> Dict[str, An
             if sol != Solvent.none:
                 xcalc.set_solvent(sol)
         except Exception:
-            pass
+            # Older xtb-python lacks set_solvent — orbital energies would be
+            # gas-phase while the result claims a solvent. Flag it.
+            solvent_dropped = True
 
     res = xcalc.singlepoint()
     eigs_eV = (np.asarray(res.get_orbital_eigenvalues()) * HARTREE_TO_EV).tolist()
     occs = np.asarray(res.get_orbital_occupations()).tolist()
     total_energy_eV = float(res.get_energy()) * HARTREE_TO_EV
 
-    return _build_block(eigs_eV, occs, total_energy_eV,
-                        energy_zero="isolated atoms at infinity (xtb)",
-                        nfrontier=nfrontier)
+    block = _build_block(eigs_eV, occs, total_energy_eV,
+                         energy_zero="isolated atoms at infinity (xtb)",
+                         nfrontier=nfrontier)
+    if solvent_dropped:
+        block["solvent_applied"] = False
+        block["_solvent_drop_warning"] = (
+            f"Requested solvent {solvent!r} was NOT applied (this xtb-python "
+            "build lacks set_solvent); orbital energies are GAS-PHASE values."
+        )
+    return block
 
 
 # ---------------------------------------------------------------------------

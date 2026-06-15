@@ -30,6 +30,9 @@ python skills/visualize-orbitals/scripts/visualize-orbitals.py mol.xyz \
 4. Read the result JSON — it is written to `--out` (default `<stem>_orbitals_<method>.json` in the run cwd); read it there.
 5. Report: the path to the `.molden` file (always present) and any `.cube` files (one per requested orbital — these are the deliverables the user opens in **Avogadro / Jmol / IboView / VMD / PyMOL / Multiwfn**; no rendering is done here); the MO summary from `mo_summary` (HOMO / LUMO indices and energies in eV; alpha + beta separately for open-shell); method, solvent (or "gas phase"), charge, multiplicity; for MOPAC, the STO-3G re-fit warning; and one short "how to view" line. For orbital energies only, use [frontier-orbitals](../frontier-orbitals/SKILL.md); for electrostatic potential / partial charges, use [electrostatics](../electrostatics/SKILL.md).
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

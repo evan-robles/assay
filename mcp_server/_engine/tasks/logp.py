@@ -21,7 +21,9 @@ from typing import Any, Dict, Optional
 from . import sp as sp_task
 from ..calculators import program_label
 from ..io import read_geometry
-from ..schema import base_result, EV_TO_KCAL, element_warnings
+from ..schema import (
+    base_result, EV_TO_KCAL, element_warnings, SINGLE_CONFORMER_WARNING,
+)
 
 # RT * ln(10) at 298.15 K, in kcal/mol.
 #   R = 1.987204e-3 kcal/(mol·K); RT = 0.5925 kcal/mol; * ln10 = 1.3643.
@@ -97,8 +99,14 @@ def run(
     warns += [
         "logP from semi-empirical ΔG_solv differences is screening-grade; "
         "±1 log unit typical.",
+        "Each leg is an electronic-energy difference on a single frozen geometry "
+        "— no ZPE/thermal/entropy and no per-phase relaxation. The reported "
+        "delta_G_solv_* legs are electronic only; the 1 atm→1 M standard-state "
+        "term cancels in the water−octanol difference, so logP itself is "
+        "insensitive to it, but the individual legs are not corrected ΔG*_solv.",
         "For chemoinformatic logP, also consider RDKit's Crippen/XLogP "
         "(group-contribution).",
+        SINGLE_CONFORMER_WARNING,
     ]
     warns += element_warnings(symbols, method)
     result["warnings"] = warns

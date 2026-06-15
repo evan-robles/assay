@@ -30,6 +30,9 @@ python skills/transition-state/scripts/transition-state.py guess.xyz --method mo
 4. Report: **converged?** and the optimizer status; **heat of formation** (kcal/mol, MOPAC only) and total energy (eV); the verification-frequency result — **is this a valid TS?** (yes iff `verify_freq.n_imaginary_modes == 1`), the **imaginary frequency** (cm⁻¹) of the reaction-coordinate mode, and the **number of imaginary modes** (flag explicitly if 0 = collapsed to a minimum, or >1 = higher-order saddle); and the path to the saved TS xyz.
 5. Recommend running [intrinsic-reaction-coordinate](../intrinsic-reaction-coordinate/SKILL.md) next to confirm which reactant and product the TS connects. For publication geometries, re-refine the saddle with `--method dft --tier fast` (DFT/HF TS searches are 10–100× slower and benefit greatly from a high-quality guess). See also the composite [reaction-profile](../reaction-profile/SKILL.md) skill.
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

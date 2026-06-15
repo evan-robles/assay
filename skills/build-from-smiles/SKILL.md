@@ -35,6 +35,9 @@ Then read the JSON and report: the xyz file path (headline deliverable) and the 
 
 Recommendations: skip `--opt` if a downstream skill does its own optimization; use `--opt xtb` as the standard "good enough" clean-up; for floppy molecules build once here then hand off to [conformer-search](../conformer-search/SKILL.md); set `--charge`/`--mult` explicitly for ions and radicals.
 
+
+> **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
+
 ## Examples
 ```bash
 # Env: anl_env

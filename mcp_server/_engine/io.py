@@ -18,20 +18,39 @@ def read_geometry(path: str):
     return atoms
 
 
+# Significant figures retained when serializing floats. Eight sig figs is more
+# than any chemkit quantity supports (a DFT total energy is meaningful to
+# ~µHartree on hundreds of Hartree ≈ 8 sig figs; xtb/PM7 far less), so this only
+# trims the meaningless float-repr tail (e.g. -137.96738451827179 ->
+# -137.967385) — cutting tokens and false precision without losing any real
+# information. Differences are still computed from the FULL-precision in-memory
+# result before this write, so chained calculations are unaffected.
+_SERIALIZE_SIG_FIGS = 8
+
+
 def write_result(result: Dict[str, Any], out_path: str) -> str:
     """Write result dict to JSON; create parent dir if missing. Returns abs path.
 
     NaN and ±Infinity are coerced to None so the output is strict-JSON valid
     (browsers, Go, Rust will choke on `NaN` literals). A failed calculation
     that propagates NaN into a result field is still readable by consumers
-    rather than silently producing malformed JSON.
+    rather than silently producing malformed JSON. Floats are rounded to
+    _SERIALIZE_SIG_FIGS significant figures to avoid emitting false precision.
     """
     out_path = os.path.abspath(out_path)
     os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
     with open(out_path, "w") as f:
-        json.dump(_scrub(result), f, indent=2, default=_default_json,
-                 allow_nan=False)
+        json.dump(_scrub(result, round_sig=True), f, indent=2,
+                  default=_default_json, allow_nan=False)
     return out_path
+
+
+def _round_sig(x: float, sig: int = _SERIALIZE_SIG_FIGS) -> float:
+    """Round x to `sig` significant figures. Leaves 0.0 and non-finite alone."""
+    if x == 0 or not math.isfinite(x):
+        return x
+    from math import floor, log10
+    return round(x, -int(floor(log10(abs(x)))) + (sig - 1))
 
 
 def _default_json(o):
@@ -41,12 +60,14 @@ def _default_json(o):
     try:
         import numpy as np
         if isinstance(o, np.ndarray):
-            return _scrub(o.tolist())
+            return _scrub(o.tolist(), round_sig=True)
         if isinstance(o, np.bool_):
             return bool(o)
         if isinstance(o, np.floating):
             v = float(o)
-            return v if math.isfinite(v) else None
+            if not math.isfinite(v):
+                return None
+            return _round_sig(v)
         if isinstance(o, np.integer):
             return int(o)
         if isinstance(o, np.complexfloating):
@@ -64,18 +85,21 @@ def _default_json(o):
     raise TypeError(f"Not JSON-serializable: {type(o).__name__}")
 
 
-def _scrub(value):
+def _scrub(value, round_sig: bool = False):
     """Recursively replace non-finite floats with None (the JSON-strict
-    representation of NaN/Inf). Walks lists/tuples/dicts only — leaves
-    everything else alone."""
+    representation of NaN/Inf), optionally rounding finite floats to
+    _SERIALIZE_SIG_FIGS significant figures. Walks lists/tuples/dicts only —
+    leaves everything else alone."""
     if isinstance(value, float):
-        return value if math.isfinite(value) else None
+        if not math.isfinite(value):
+            return None
+        return _round_sig(value) if round_sig else value
     if isinstance(value, list):
-        return [_scrub(v) for v in value]
+        return [_scrub(v, round_sig) for v in value]
     if isinstance(value, tuple):
-        return [_scrub(v) for v in value]
+        return [_scrub(v, round_sig) for v in value]
     if isinstance(value, dict):
-        return {k: _scrub(v) for k, v in value.items()}
+        return {k: _scrub(v, round_sig) for k, v in value.items()}
     return value
 
 
