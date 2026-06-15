@@ -15,7 +15,7 @@ Estimate the solvation free energy $\Delta G_\text{solv} = E_\text{solvated} - E
 
 ```bash
 # Env: anl_env
-python skills/solvation/scripts/solvation.py --method <xtb|mopac|dft|hf> --solvent <S> [--charge N] [--mult N] [--tier <T>] [--functional <F>] [--basis <B>] input.xyz
+python skills/solvation/scripts/solvation.py --method <xtb|mopac|dft|hf> --solvent <S> [--charge N] [--mult N] [--tier <T>] [--functional <F>] [--basis <B>] [--out <path>] input.xyz
 ```
 
 Arguments:
@@ -25,10 +25,11 @@ Arguments:
 - `--charge N`, `--mult N` — molecular charge and spin multiplicity.
 - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
 - HF-only: `--basis <name>`.
+- `--out <path>` — result JSON (default `<stem>_solvation_<method>.json` in the run cwd).
 
 DFT with `--tier standard` and an implicit solvent gives meaningfully better $\Delta G_\text{solv}$ than semi-empirical (~±1 kcal/mol vs ±2–3 for xtb/mopac) at much higher cost. The DFT path uses ddCOSMO; true research-grade SMD parameterization would require PySCF's `pyscf.solvent.smd` directly.
 
-Read the JSON and copy it to `<basename>_solvation_<solvent>_<method>.json` in the cwd. Report: $\Delta G_\text{solv}$ in kcal/mol (primary) and eV; $E_\text{gas}$ and $E_\text{solvated}$ for context; method, solvent, charge/multiplicity; and the caveats (electronic-only; ±2–3 kcal/mol at semi-empirical; no cavity term). Flag any JSON warnings, especially the $|\Delta G_\text{solv}| \approx 0$ silent-drop warning. For tighter numbers, run [geometry-optimize](../geometry-optimize/SKILL.md) separately in gas phase and in solvent and compute $\Delta G_\text{solv}$ from those (this skill uses ONE geometry for both); for research-grade values use DFT with a continuum model including non-electrostatic terms (e.g. SMD).
+Read the JSON — it is already written to `--out` (default `<stem>_solvation_<method>.json` in the run cwd). Report: $\Delta G_\text{solv}$ in kcal/mol (primary) and eV; $E_\text{gas}$ and $E_\text{solvated}$ for context; method, solvent, charge/multiplicity; and the caveats (electronic-only; ±2–3 kcal/mol at semi-empirical; no cavity term). Flag any JSON warnings, especially the $|\Delta G_\text{solv}| \approx 0$ silent-drop warning. For tighter numbers, run [geometry-optimize](../geometry-optimize/SKILL.md) separately in gas phase and in solvent and compute $\Delta G_\text{solv}$ from those (this skill uses ONE geometry for both); for research-grade values use DFT with a continuum model including non-electrostatic terms (e.g. SMD).
 
 ## Examples
 ```bash

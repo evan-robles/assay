@@ -24,7 +24,8 @@ python skills/intrinsic-reaction-coordinate/scripts/intrinsic-reaction-coordinat
    - `--solvent <name>`, `--charge N`, `--mult N`.
    - `--max-points N` (default 40).
    - `--step <au>` (xtb only, default 0.05).
-3. Read the JSON. Copy it to `<basename>_irc_<method>.json` in the cwd. The engine also writes `<basename>_irc_<method>_forward.xyz` and `..._reverse.xyz` trajectory files; copy them next to the user's input.
+   - `--out <path>` (result JSON; default `<stem>_irc_<method>.json` in the run cwd).
+3. Read the result JSON, written to `--out` (default `<stem>_irc_<method>.json` in the run cwd). The engine also writes `<basename>_irc_<method>_forward.xyz` and `..._reverse.xyz` trajectory files; copy them next to the user's input.
 4. Report: **forward** and **reverse endpoint energies** (eV); the **energy drops** from the TS in each direction (kcal/mol — both should be negative for a real saddle); **distinct_endpoints** (true if the two endpoints differ by > 0.01 eV); the paths to the two trajectory xyz files; and the per-direction status messages.
 5. If `distinct_endpoints` is false, both directions relaxed to the same minimum — usually the input was not a true TS, or the imaginary mode was very weak. Recommend re-running [transition-state](../transition-state/SKILL.md) with a different guess, or running [vibrational-analysis](../vibrational-analysis/SKILL.md) to verify exactly one imaginary mode. To get a DFT-quality path, run IRC at `xtb`/`mopac` first, then re-optimize each endpoint with [geometry-optimize](../geometry-optimize/SKILL.md) at DFT.
 

@@ -26,10 +26,10 @@ python skills/reaction-energy/scripts/reaction-energy.py \
    - `--product SPEC` — **required, repeatable** (≥1).
    - `--method {xtb,mopac,dft,hf}` — **required** (ask if missing).
    - `--mode {sp,opt,freq}` (default `sp`): `sp` = single point per xyz, returns $\Delta E$ only; `opt` = optimize each species then SP; `freq` = full opt + freq per species, returns $\Delta E$, $\Delta H(T)$, $\Delta G(T)$. Use `freq` whenever $\Delta G$ matters.
-   - `--solvent <name>`, `--temperature <K>` (default 298.15, `freq` only), `--pressure <Pa>` (default 101325, `freq` only).
+   - `--solvent <name>`, `--temperature <K>` (default 298.15, `freq` only), `--pressure <Pa>` (default 101325, `freq` only), `--out <path>` (result JSON; default `<first-species-stem>_rxn-energy_<method>.json` in the run cwd).
    - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. HF-only: `--basis <name>`.
    - **Species spec syntax**: `[COEF*]PATH[,charge=Q][,mult=M]` — e.g. `2*h2.xyz`, `acetate.xyz,charge=-1`, `3*radical.xyz,mult=2`, `complex.xyz,charge=-2,mult=3`. Each species carries its own charge/mult; the top-level `--charge` flag is **ignored** for this skill because reactants and products can differ (acid-base, redox, fragmentation).
-3. Read the JSON. Copy it to a sensible filename in the cwd (default name uses the first reactant's stem).
+3. Read the result JSON — it is written to `--out` (default `<first-species-stem>_rxn-energy_<method>.json` in the run cwd); read it there.
 4. Report: the balanced reaction string (e.g. `2 H2 + O2 → 2 H2O`); **$\Delta E$** (always, in kcal/mol and eV); **$\Delta H$** and **$\Delta G$** (when `--mode freq`); per-species energy/enthalpy/$G$ with converged yes/no; method, solvent, temperature, pressure; the sign-convention reminder; and every warning from the JSON (especially atom/charge imbalance and imaginary-mode flags).
 5. For an activation energy $\Delta G^{\ddagger}$ this skill is **not** the right tool — use [transition-state](../transition-state/SKILL.md) + [vibrational-analysis](../vibrational-analysis/SKILL.md), or the composite [reaction-profile](../reaction-profile/SKILL.md) skill.
 

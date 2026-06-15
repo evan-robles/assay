@@ -15,7 +15,7 @@ Compute the dipole moment (magnitude and Cartesian vector, in Debye) and atomic 
 
 ```bash
 # Env: anl_env
-python skills/electrostatics/scripts/electrostatics.py --method <xtb|mopac|dft|hf> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge N] [--mult N] input.xyz
+python skills/electrostatics/scripts/electrostatics.py --method <xtb|mopac|dft|hf> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge N] [--mult N] [--out <path>] input.xyz
 ```
 
 Arguments:
@@ -25,8 +25,9 @@ Arguments:
 - `--charge N`, `--mult N` — molecular charge and spin multiplicity.
 - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
 - HF-only: `--basis <name>`.
+- `--out <path>` — result JSON (default `<stem>_electrostatics_<method>.json` in the run cwd).
 
-Read the JSON and copy it to `<basename>_electrostatics_<method>.json` in the cwd. Report: the dipole moment in Debye (magnitude + Cartesian vector); atomic partial charges as a table (1-based atom index, element symbol, charge); the sum of charges as a sanity check (should match the total molecular charge); method, solvent (or "gas phase"), and molecular charge/multiplicity; and the partitioning scheme (Mulliken for every backend). Mulliken charges are basis-set-dependent and not a physical observable — transferable charges need ESP-fit methods (not available in this build). This is a single point; relax the geometry first with [geometry-optimize](../geometry-optimize/SKILL.md) if needed.
+Read the JSON — it is already written to `--out` (default `<stem>_electrostatics_<method>.json` in the run cwd). Report: the dipole moment in Debye (magnitude + Cartesian vector); atomic partial charges as a table (1-based atom index, element symbol, charge); the sum of charges as a sanity check (should match the total molecular charge); method, solvent (or "gas phase"), and molecular charge/multiplicity; and the partitioning scheme (Mulliken for every backend). Mulliken charges are basis-set-dependent and not a physical observable — transferable charges need ESP-fit methods (not available in this build). This is a single point; relax the geometry first with [geometry-optimize](../geometry-optimize/SKILL.md) if needed.
 
 ## Examples
 ```bash

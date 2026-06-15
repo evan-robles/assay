@@ -19,7 +19,7 @@ python skills/redox-potential/scripts/redox-potential.py --method <xtb|mopac|dft
 
 1. **Inputs.** An `.xyz` path is required (the same geometry is used for both oxidation states), plus `--ox-charge N` and `--red-charge N` (e.g. 0 and −1 for a 1-electron reduction). Stop and ask if any of `xyz`, method, `--ox-charge`, or `--red-charge` is missing.
 2. **Method** (required; if missing, ask): `xtb`, `mopac`, `dft`, or `hf`.
-3. **Optional:** `--ox-mult` (default 1), `--red-mult` (default 2), `--solvent` (strongly recommended), `--ref {SHE,Ag/AgCl,Fc+/Fc}` (default SHE), `--n-electrons N` (default 1). **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
+3. **Optional:** `--ox-mult` (default 1), `--red-mult` (default 2), `--solvent` (strongly recommended), `--ref {SHE,Ag/AgCl,Fc+/Fc}` (default SHE), `--n-electrons N` (default 1), `--out <path>` (result JSON; default `<stem>_redox_<method>.json` in the run cwd). **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
 4. **Accuracy is method-dependent.** DFT redox potentials are typically ±0.1–0.2 V vs experiment with a range-separated hybrid + implicit solvent — significantly better than semi-empirical (±0.3–0.5 V). Anions auto-promote to a diffuse basis (def2-tzvp → def2-tzvpd).
 5. **For publication-grade values**, optimize each oxidation state with [geometry-optimize](../geometry-optimize/SKILL.md), run [vibrational-analysis](../vibrational-analysis/SKILL.md) on each for ΔG, and ideally cross-check with a higher-level method. This skill is for screening, not final answers.
 6. **Read the JSON** and report:
@@ -27,7 +27,7 @@ python skills/redox-potential/scripts/redox-potential.py --method <xtb|mopac|dft
    - ΔE_redox (eV, kcal/mol).
    - Energies of the oxidized and reduced states.
    - **Warn explicitly**: semi-empirical methods give ±0.3–0.5 V at best; the calculation uses the same geometry for both states (no reorganization energy); solvation correction is implicit-only.
-   - Path to the saved JSON.
+   - The saved JSON path (`--out`, default `<stem>_redox_<method>.json`).
 
 ## Examples
 ```bash

@@ -18,6 +18,7 @@ python skills/build-from-smiles/scripts/build-from-smiles.py [args]
 Arguments:
 - A SMILES string **or** a plain molecule name (required, positional). Detection is automatic: if Open Babel can parse the input as SMILES it is used directly with no network call; otherwise it is treated as a name and resolved.
 - `--out-xyz <path>` — destination xyz (default: sanitized input + `.xyz` in cwd).
+- `--out <path>` — result JSON path.
 - `--name <str>` — title comment for the xyz (default: the input string).
 - `--opt {xtb,mopac,dft,hf}` — optional QM refinement after the obabel build. The QM-relaxed xyz becomes the canonical output; the obabel-only file is kept as `xyz_path_obabel`.
 - `--solvent <name>` — implicit solvent for the optional QM step.

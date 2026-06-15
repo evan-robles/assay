@@ -23,14 +23,14 @@ python skills/geometry-optimize/scripts/geometry-optimize.py --method <xtb|mopac
    - `mopac` — PM7, fast semi-empirical, MOPAC's native EF optimizer
    - `dft` — ab initio DFT via PySCF, ASE BFGS with analytic gradients
    - `hf` — Hartree-Fock via PySCF, ASE BFGS with analytic gradients
-3. **All methods:** `--solvent <name>`, `--charge N`, `--mult N`, `--fmax <eV/Å>` (default 0.05).
+3. **All methods:** `--solvent <name>`, `--charge N`, `--mult N`, `--fmax <eV/Å>` (default 0.05), `--steps N` (default 500, max optimizer iterations), `--xyz-out <path>` (relaxed-geometry destination; default `<stem>_<method>_opt.xyz`), `--out <path>` (result JSON; default `<stem>_opt_<method>.json` in the run cwd).
 4. **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
 5. **Cost.** DFT optimizations are 10–100× slower than xtb. Default to `--tier fast` (r²SCAN/def2-SVP) for first-pass relaxation, then re-optimize at `--tier standard` if needed. For very flexible molecules, pre-optimize at `--method xtb` first.
 6. **Read the JSON** and report:
    - Whether the optimization converged. For `xtb`/`dft`/`hf` include the BFGS step count (`n_steps`); for `mopac` include `mopac_status` and `mopac_gradient_norm_kcal_per_A` (native EF optimizer — `n_steps` is not reported).
    - Final total energy (and `final_heat_of_formation_kcal_mol` for `mopac`).
    - For `dft`/`hf`: functional, basis, tier.
-   - Path to the optimized `.xyz` (`<stem>_<method>_opt.xyz`, paste its contents in a fenced block) and to the JSON.
+   - Path to the optimized `.xyz` (`--xyz-out`, default `<stem>_<method>_opt.xyz`; paste its contents in a fenced block) and to the result JSON (`--out`, default `<stem>_opt_<method>.json`).
    - Any `warnings` entries verbatim. If not converged, still deliver the last geometry and flag `converged: false` prominently.
 
 ## Examples

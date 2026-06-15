@@ -19,14 +19,14 @@ python skills/binding-energy/scripts/binding-energy.py --method <xtb|mopac|dft|h
 
 1. **Inputs.** The complex `.xyz` path is required, plus one or more `--monomer <path.xyz>` (≥2 required). If any path is missing, stop and ask.
 2. **Method** (required — if missing, ask): `xtb`, `mopac`, `dft`, or `hf`.
-3. **Optional arguments:** `--solvent`, `--charge`, `--mult` (apply to the complex); `--monomer-charge N` / `--monomer-mult N` (repeat once per monomer). **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
+3. **Optional arguments:** `--solvent`, `--charge`, `--mult` (apply to the complex); `--monomer-charge N` / `--monomer-mult N` (repeat once per monomer); `--out <path>` (result JSON; default `<complex-stem>_binding_<method>.json` in the run cwd). **DFT-only:** `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **HF-only:** `--basis <name>`.
 4. **Pick a method that captures dispersion for non-covalent complexes** (H-bonds, π-stacking, host-guest). `--method dft --tier standard` (ωB97X-V) and `--tier accurate` (ωB97M-V) both include VV10 nonlocal correlation. Bare HF does not, so HF binding energies for non-covalent systems are systematically too repulsive.
 5. **Pre-optimize first.** Run [geometry-optimize](../geometry-optimize/SKILL.md) on the complex and on each monomer separately before calling this skill — otherwise the binding energy is contaminated by fragment deformation energy.
 6. **Read the JSON** and report:
    - **Binding energy** in eV, kcal/mol, and Hartree (negative = stable complex).
    - E(complex), E(monomer1), E(monomer2), ...
    - Warning: no BSSE correction; geometries are used as-supplied.
-   - Path to the saved JSON.
+   - The saved JSON path (`--out`, default `<complex-stem>_binding_<method>.json`).
 
 ## Examples
 ```bash

@@ -25,6 +25,7 @@ Arguments:
 - `--charge N`, `--mult N` (defaults 0, 1; must match across all species).
 - `--solvent <name>` (optional).
 - `--temperature K` (default 298.15), `--pressure Pa` (default 101325).
+- `--out <path>` (result JSON; default `<reactant-stem>_profile_<method>.json` in the run cwd).
 - `--rmsd-tol Å` (default 0.5) — IRC-endpoint matching threshold.
 - `--no-irc` — skip the IRC connectivity check (the verdict then omits `irc_connects_R_and_P`).
 - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.

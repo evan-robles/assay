@@ -15,7 +15,7 @@ Compute the HOMO and LUMO energies, the HOMO–LUMO gap, the $K$ neighbouring fr
 
 ```bash
 # Env: anl_env
-python skills/frontier-orbitals/scripts/frontier-orbitals.py --method <xtb|mopac|dft|hf> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge N] [--mult N] [--nfrontier K] input.xyz
+python skills/frontier-orbitals/scripts/frontier-orbitals.py --method <xtb|mopac|dft|hf> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge N] [--mult N] [--nfrontier K] [--out <path>] input.xyz
 ```
 
 Arguments:
@@ -26,8 +26,9 @@ Arguments:
 - `--nfrontier K` — frontier orbitals on each side of the gap (default 3).
 - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
 - HF-only: `--basis <name>`.
+- `--out <path>` — result JSON (default `<stem>_frontier_<method>.json` in the run cwd).
 
-Read the JSON and copy it to `<basename>_frontier_<method>.json` in the cwd. Report: HOMO, LUMO, and HOMO–LUMO gap (eV); the full frontier table (HOMO−$K$..HOMO, LUMO..LUMO+$K$) sorted by energy; the Koopmans descriptors from `koopmans` (vertical IP, vertical EA, $\chi$, $\eta$, $S$, $\omega$); method, solvent (or "gas phase"), charge, multiplicity; and the JSON path. For MOPAC, also surface heat of formation and dipole from `code_specific`. xtb and MOPAC orbital zeros differ — compare orbital energies only within the same method — and Koopmans values are first-order estimates (for quantitative IP/EA use ΔSCF with DFT). To relax the geometry first, run [geometry-optimize](../geometry-optimize/SKILL.md) beforehand; for a single-point energy see [single-point-energy](../single-point-energy/SKILL.md).
+Read the JSON — it is already written to `--out` (default `<stem>_frontier_<method>.json` in the run cwd). Report: HOMO, LUMO, and HOMO–LUMO gap (eV); the full frontier table (HOMO−$K$..HOMO, LUMO..LUMO+$K$) sorted by energy; the Koopmans descriptors from `koopmans` (vertical IP, vertical EA, $\chi$, $\eta$, $S$, $\omega$); method, solvent (or "gas phase"), charge, multiplicity; and the JSON path. For MOPAC, also surface heat of formation and dipole from `code_specific`. xtb and MOPAC orbital zeros differ — compare orbital energies only within the same method — and Koopmans values are first-order estimates (for quantitative IP/EA use ΔSCF with DFT). To relax the geometry first, run [geometry-optimize](../geometry-optimize/SKILL.md) beforehand; for a single-point energy see [single-point-energy](../single-point-energy/SKILL.md).
 
 ## Examples
 ```bash

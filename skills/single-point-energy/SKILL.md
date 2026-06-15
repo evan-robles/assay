@@ -23,7 +23,7 @@ python skills/single-point-energy/scripts/single-point-energy.py --method <xtb|m
    - `mopac` — PM7, fast semi-empirical
    - `dft` — DFT via PySCF (tier presets or explicit functional/basis)
    - `hf` — Hartree-Fock via PySCF (basis only)
-3. **All methods:** `--solvent <name>` (water, methanol, dmso, …), `--charge N`, `--mult N`.
+3. **All methods:** `--solvent <name>` (water, methanol, dmso, …), `--charge N`, `--mult N` (alias `--multiplicity`), `--out <path>` (result JSON; default `<stem>_sp_<method>.json` in the run cwd).
 4. **DFT only:** `--tier {fast,standard,accurate}` (default `standard`), `--functional <libxc>`, `--basis <name>`. Tiers:
    - `fast`: r²SCAN / def2-SVP — screening, large systems
    - `standard`: ωB97X-V / def2-TZVP — production default (VV10 dispersion)
@@ -36,7 +36,7 @@ python skills/single-point-energy/scripts/single-point-energy.py --method <xtb|m
    - HOMO / LUMO / gap from `code_specific` (all backends populate these)
    - `mopac`: also heat of formation (`code_specific.heat_of_formation_kcal_mol`), dipole, IP
    - `dft`/`hf`: also functional, basis, tier, dipole (Debye), SCF cycles
-   - Solvent (or "gas phase"), charge, multiplicity, and the saved JSON path
+   - Solvent (or "gas phase"), charge, multiplicity, and the saved JSON path (`--out`, default `<stem>_sp_<method>.json`)
 
 ## Examples
 ```bash

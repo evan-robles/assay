@@ -23,9 +23,10 @@ python skills/transition-state/scripts/transition-state.py guess.xyz --method mo
    - `--method {xtb,mopac,dft,hf}` — **required** (ask if missing; default `mopac`).
    - `--solvent <name>`, `--charge N`, `--mult N`, `--steps N` (default 500).
    - `--no-verify-freq` — skip the post-TS frequency verification.
+   - `--out <path>` (result JSON; default `<stem>_ts_<method>.json` in the run cwd).
    - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
    - HF-only: `--basis <name>`.
-3. Read the returned JSON. Copy it to `<basename>_ts_<method>.json` in the cwd. The engine also writes `<basename>_ts_<method>.xyz` with the converged TS geometry; copy it next to the user's input.
+3. Read the result JSON, written to `--out` (default `<stem>_ts_<method>.json` in the run cwd). The engine also writes `<basename>_ts_<method>.xyz` with the converged TS geometry; copy it next to the user's input.
 4. Report: **converged?** and the optimizer status; **heat of formation** (kcal/mol, MOPAC only) and total energy (eV); the verification-frequency result — **is this a valid TS?** (yes iff `verify_freq.n_imaginary_modes == 1`), the **imaginary frequency** (cm⁻¹) of the reaction-coordinate mode, and the **number of imaginary modes** (flag explicitly if 0 = collapsed to a minimum, or >1 = higher-order saddle); and the path to the saved TS xyz.
 5. Recommend running [intrinsic-reaction-coordinate](../intrinsic-reaction-coordinate/SKILL.md) next to confirm which reactant and product the TS connects. For publication geometries, re-refine the saddle with `--method dft --tier fast` (DFT/HF TS searches are 10–100× slower and benefit greatly from a high-quality guess). See also the composite [reaction-profile](../reaction-profile/SKILL.md) skill.
 

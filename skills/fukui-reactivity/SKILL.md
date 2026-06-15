@@ -31,6 +31,7 @@ Arguments:
 - `--no-plot` — skip the PNG bar chart.
 - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
 - HF-only: `--basis <name>`.
+- `--out <path>` (result JSON; default `<stem>_fukui_<method>.json` in the run cwd).
 
 If the `.xyz` is missing → stop and ask. If `--method` is missing, ask.
 

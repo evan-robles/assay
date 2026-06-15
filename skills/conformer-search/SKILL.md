@@ -15,7 +15,7 @@ Find the low-energy conformers of a flexible molecule using Open Babel's `confab
 
 ```bash
 # Env: anl_env
-python skills/conformer-search/scripts/conformer-search.py --method xtb [--solvent <name>] [--charge N] [--mult N] [--max-conformers N] [--postopt {none,mopac}] [--postopt-rmsd <Å>] [--postopt-ewin <kcal/mol>] input.xyz
+python skills/conformer-search/scripts/conformer-search.py --method xtb [--solvent <name>] [--charge N] [--mult N] [--max-conformers N] [--postopt {none,mopac}] [--postopt-rmsd <Å>] [--postopt-ewin <kcal/mol>] [--out <path>] input.xyz
 ```
 
 Arguments:
@@ -27,12 +27,13 @@ Arguments:
 - `--postopt {none,mopac}` — re-optimize the ensemble at PM7 (default `mopac`); `none` skips it.
 - `--postopt-rmsd <Å>` — RMSD dedup threshold for post-opt structures, also the confab diversity cutoff (default 0.25).
 - `--postopt-ewin <kcal/mol>` — energy window kept after post-opt (default 6.0).
+- `--out <path>` — result JSON (default `<stem>_confsearch_<method>.json` in the run cwd).
 
 When to use `--postopt mopac`: force-field sampling underestimates rotational well depths for short alkanes and flexible aliphatics, collapsing distinct minima. PM7 re-optimization recovers them (~0.5–1.5 kcal/mol per gauche substitution). When confab returns one conformer, post-opt seeds by rotating each non-methyl C–C bond through {gauche+, anti, gauche−}, jitters to break symmetry, optimizes at PM7, and rejects eclipsed saddles; finals are deduped by heavy-atom Kabsch RMSD.
 
 Ring puckering (automatic): for any non-aromatic ring of size 4–8, the seed pool adds canonical Cremer–Pople puckered geometries (4-ring planar/butterfly; 5-ring envelope/twist; 6-ring chair/inverted-chair/twist-boats; 7- and 8-ring chairs/boats/crowns). Each is constrained-relaxed at GFN2-xTB with ring dihedrals frozen, then fed through PM7 post-opt + RMSD dedup. This recovers e.g. the cyclohexane twist-boat that force-field sampling never visits.
 
-Read the JSON and copy it to `<basename>_confsearch.json`; the CLI also writes `<basename>_conformers.xyz` (all unique post-opt conformers, or the obabel ensemble if `--postopt none`). Report: `n_conformers_found` / `n_conformers_kept`, relative force-field energies (kcal/mol), and paths to `best_conformer_xyz` and `all_conformers_xyz`. If a `postopt` block is present, also report `postopt.method`, `n_input`, `n_converged`, `n_unique`, `n_failed`, each conformer's `rel_hof_kcal_mol` / `degeneracy` / `xyz_path`, and `seed_source`. If only one conformer survives both stages for a flexible molecule, note that this is the converged PM7 answer, not a bug. For DFT-quality conformers, run this skill then re-optimize the top-K with [geometry-optimize](../geometry-optimize/SKILL.md) at DFT.
+Read the JSON — it is already written to `--out` (default `<stem>_confsearch_<method>.json` in the run cwd); the CLI also writes `<basename>_conformers.xyz` (all unique post-opt conformers, or the obabel ensemble if `--postopt none`). Report: `n_conformers_found` / `n_conformers_kept`, relative force-field energies (kcal/mol), and paths to `best_conformer_xyz` and `all_conformers_xyz`. If a `postopt` block is present, also report `postopt.method`, `n_input`, `n_converged`, `n_unique`, `n_failed`, each conformer's `rel_hof_kcal_mol` / `degeneracy` / `xyz_path`, and `seed_source`. If only one conformer survives both stages for a flexible molecule, note that this is the converged PM7 answer, not a bug. For DFT-quality conformers, run this skill then re-optimize the top-K with [geometry-optimize](../geometry-optimize/SKILL.md) at DFT.
 
 ## Examples
 ```bash

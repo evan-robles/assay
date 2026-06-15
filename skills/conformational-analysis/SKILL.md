@@ -26,8 +26,9 @@ python skills/conformational-analysis/scripts/conformational-analysis.py butane.
    - `--fmax <eV/Å>` (default 0.05) — per-step force convergence.
    - `--opt-steps N` (default 200) — max iterations per scan point.
    - `--charge N`, `--mult N`, `--solvent <name>`.
+   - `--out <path>` (result JSON; default `<stem>_scan_<method>.json` in the run cwd).
    - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. HF-only: `--basis <name>`.
-3. Read the JSON. For each dihedral entry report: the 4-atom selection (element symbols, 1-based, e.g. `C1–C2–C3–C4`); `barrier_kcal_mol`, `min_angle_deg`, `max_angle_deg`; `n_converged` / `n_points`; the **PNG path** (always surface this as the primary deliverable — it is the headline result); and the path to the `.xyz` trajectory.
+3. Read the result JSON, written to `--out` (default `<stem>_scan_<method>.json` in the run cwd). For each dihedral entry report: the 4-atom selection (element symbols, 1-based, e.g. `C1–C2–C3–C4`); `barrier_kcal_mol`, `min_angle_deg`, `max_angle_deg`; `n_converged` / `n_points`; the **PNG path** (always surface this as the primary deliverable — it is the headline result); and the path to the `.xyz` trajectory.
 4. Two files are written next to the JSON per scanned dihedral (both required): `<stem>_dih<i>_<a>_<b>_<l>.png` — ΔE-vs-angle line plot (matplotlib, 150 dpi; title carries IUPAC name via Open Babel → PubChem with filename fallback, the method, and the four atoms) — and `<stem>_dih<i>_<a>_<b>_<l>.xyz` — relaxed trajectory, one frame per step. Per-point data (step / target° / measured° / E / ΔE / converged) is in the `points` array of the JSON.
 5. If `n_dihedrals_scanned == 0`, the molecule has no rotatable bonds — suggest `--dihedral i,j,k,l` to force a scan. The energy-maximum frame is a good TS guess for [transition-state](../transition-state/SKILL.md). Use [conformer-search](../conformer-search/SKILL.md) instead for stochastic ensemble sampling of many coupled flexible degrees of freedom.
 
