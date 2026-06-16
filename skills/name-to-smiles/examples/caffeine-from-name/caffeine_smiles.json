@@ -1,0 +1,23 @@
+{
+  "task": "name_to_smiles",
+  "program": "PubChem",
+  "input": "caffeine",
+  "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+  "smiles_source": {
+    "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+    "name_input": "caffeine",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 2519, Caffeine. https://pubchem.ncbi.nlm.nih.gov/compound/2519 (accessed 2026-06-16).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/2519",
+    "identifier": "CID 2519",
+    "from_cache": true,
+    "warnings": []
+  },
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py resolve caffeine --out ../skills/name-to-smiles/examples/caffeine-from-name/caffeine_smiles.json --stdout path",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": []
+  }
+}

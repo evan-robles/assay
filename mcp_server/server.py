@@ -49,6 +49,7 @@ TOOLS = {
     "reaction-profile":        ("profile",        "reaction-profile"),
     "pka-acidity":             ("pka",            "pka-acidity"),
     "build-from-smiles":       ("build",          "build-from-smiles"),
+    "name-to-smiles":          ("resolve",        "name-to-smiles"),
     "fukui-reactivity":        ("fukui",          "fukui-reactivity"),
     "transition-state":        ("ts",             "transition-state"),
     "intrinsic-reaction-coordinate": ("irc",      "intrinsic-reaction-coordinate"),

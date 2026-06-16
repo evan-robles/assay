@@ -172,6 +172,11 @@ def _resolve_out_path(args, result: dict) -> str:
             return os.path.abspath(f"{os.path.splitext(xyz)[0]}_build.json")
         # Failure before the xyz was produced — fall back to a name from input.
         return os.path.abspath(f"{str(getattr(args, 'molecule', 'build'))}_build.json")
+    if args.task == "resolve":
+        # name->SMILES has no input file or method; name it after the query.
+        import re
+        safe = re.sub(r"[^A-Za-z0-9_-]", "_", str(getattr(args, "name", "molecule")))[:60] or "molecule"
+        return os.path.abspath(f"{safe}_smiles.json")
     return _default_out(args.input, args.task, args.method)
 
 
@@ -352,6 +357,12 @@ def _dispatch(args, parser, cli: str, pyscf_kwargs: dict):
             tier=args.tier, functional=args.functional, basis=args.basis,
             density_fit=getattr(args, "density_fit", False),
             cli=cli,
+            allow_unconverged=pyscf_kwargs.get("allow_unconverged", False),
+        )
+    elif args.task == "resolve":
+        from .tasks import resolve_name
+        return resolve_name.run(
+            name=args.name, cli=cli,
             allow_unconverged=pyscf_kwargs.get("allow_unconverged", False),
         )
     elif args.task == "orbitals":
@@ -688,6 +699,21 @@ def main(argv: Optional[List[str]] = None) -> int:
     _add_stdout_option(p_build)
     _add_gate_option(p_build)
 
+    p_resolve = sub.add_parser(
+        "resolve",
+        help="Resolve a molecule NAME to a SMILES string (PubChem -> OPSIN -> "
+             "NIST WebBook). Pure lookup — no 3D geometry. Use 'build' for an .xyz.",
+    )
+    p_resolve.add_argument(
+        "name",
+        help="Plain molecule name to resolve, e.g. 'caffeine', 'L-alanine', or a "
+             "systematic IUPAC name. Resolved online; the answering source and an "
+             "ACS citation are reported.",
+    )
+    p_resolve.add_argument("--out", default=None, help="Result JSON path.")
+    _add_stdout_option(p_resolve)
+    _add_gate_option(p_resolve)
+
     p_fukui = sub.add_parser(
         "fukui",
         help="Condensed Fukui functions + dual descriptor (atom-resolved reactivity).",
@@ -853,7 +879,11 @@ def main(argv: Optional[List[str]] = None) -> int:
     # task.run() signature. This keeps `pyscf_kwargs` to the knobs the tasks
     # actually accept (tier/functional/basis).
     os.environ["CHEMKIT_PYSCF_VERBOSE"] = str(getattr(args, "verbose", 4))
-    pyscf_kwargs = dict(tier=args.tier, functional=args.functional, basis=args.basis)
+    # getattr-guarded: non-QM subcommands (e.g. `resolve`) don't declare these
+    # PySCF knobs, and None is the correct "no level of theory" default for them.
+    pyscf_kwargs = dict(tier=getattr(args, "tier", None),
+                        functional=getattr(args, "functional", None),
+                        basis=getattr(args, "basis", None))
     # Density fitting is OFF by default (exact integrals); --density-fit opts in.
     # Threaded through the same shared kwargs so every task.run() receives it.
     pyscf_kwargs["density_fit"] = getattr(args, "density_fit", False)

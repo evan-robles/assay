@@ -1,0 +1,7 @@
+# This skill is a thin client for the chemkit MCP server; it carries no
+# chemistry engine. It needs only the MCP client SDK:
+mcp
+
+# The actual resolution runs in the chemkit MCP server. Name->SMILES lookup uses
+# only the Python standard library (urllib) over the network — no extra binaries.
+# Install the server's dependencies once (see mcp_server/requirements.txt).
