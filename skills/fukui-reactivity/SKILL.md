@@ -40,7 +40,7 @@ Arguments:
 - `--cation-mult`, `--anion-mult` (default 2 / 2 — correct for a closed-shell parent; override for open-shell parents).
 - `--solvent <name>`.
 - `--no-plot` — skip the PNG bar chart.
-- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **`--density-fit`** enables RI density fitting (~3-10x faster SCF, ~0.1-0.8 mEh error); OFF by default — chemkit uses exact integrals (plain RKS/UKS, matching hand-run PySCF).
 - HF-only: `--basis <name>`.
 - `--out <path>` (result JSON; default `<stem>_fukui_<method>.json` in the run cwd).
 

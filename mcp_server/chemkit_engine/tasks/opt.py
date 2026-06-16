@@ -42,6 +42,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -82,6 +83,7 @@ def run(
             tier=tier,
             functional=functional,
             basis=basis,
+            density_fit=density_fit,
         )
 
     # The .xyz was already written inside the sub-path, so evidence is on disk
@@ -94,7 +96,7 @@ def run(
 def _run_ase(
     *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
     fmax, steps, out_xyz, cli,
-    tier=None, functional=None, basis=None,
+    tier=None, functional=None, basis=None, density_fit=False,
 ) -> Dict[str, Any]:
     from ase.io import write as ase_write
     from ase.optimize import BFGS
@@ -105,7 +107,7 @@ def _run_ase(
 
     calc = build_calculator(
         method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-        tier=tier, functional=functional, basis=basis,
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
     )
     apply_calc_to_atoms(atoms, calc)
 

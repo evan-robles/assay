@@ -52,6 +52,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -62,10 +63,12 @@ def run(
     gas = sp_task.run(input_path, method=method, charge=charge,
                       multiplicity=multiplicity, solvent=None, cli=cli,
                       tier=tier, functional=functional, basis=basis,
+                      density_fit=density_fit,
                       gate_integrity=False)
     solv = sp_task.run(input_path, method=method, charge=charge,
                        multiplicity=multiplicity, solvent=solvent, cli=cli,
                        tier=tier, functional=functional, basis=basis,
+                       density_fit=density_fit,
                        gate_integrity=False)
 
     delta_eV = solv["total_energy_eV"] - gas["total_energy_eV"]

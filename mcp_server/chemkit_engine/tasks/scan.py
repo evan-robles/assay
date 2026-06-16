@@ -257,6 +257,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -284,7 +285,7 @@ def run(
     if method in ("dft", "hf"):
         _calc_for_label = _bc(method, charge=charge, multiplicity=multiplicity,
                               solvent=solvent, tier=tier, functional=functional,
-                              basis=basis)
+                              basis=basis, density_fit=density_fit)
     result = base_result(
         task="conformational_analysis",
         method=_ml(method, _calc_for_label),
@@ -324,7 +325,7 @@ def run(
             atoms.copy(), bond,
             method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, n_steps=n_steps, fmax=fmax, opt_steps=opt_steps,
-            tier=tier, functional=functional, basis=basis,
+            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
         )
         if not points:
             dihedral_records.append({
@@ -526,7 +527,7 @@ def _scan_one_dihedral(
     atoms, bond: Dict[str, Any], *, method: str, charge: int, multiplicity: int,
     solvent: Optional[str], n_steps: int, fmax: float, opt_steps: int,
     tier: Optional[str] = None, functional: Optional[str] = None,
-    basis: Optional[str] = None,
+    basis: Optional[str] = None, density_fit: bool = False,
 ) -> Tuple[List[Dict[str, Any]], List]:
     """Sweep one dihedral through n_steps equally-spaced target angles.
 
@@ -552,7 +553,7 @@ def _scan_one_dihedral(
         from ..calculators import build_calculator
         shared_calc = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-            tier=tier, functional=functional, basis=basis,
+            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
         )
 
     # Seed each step from the previous *optimized* geometry — gives smoother
@@ -585,6 +586,7 @@ def _scan_one_dihedral(
                 charge=charge, multiplicity=multiplicity, solvent=solvent,
                 fmax=fmax, steps=opt_steps,
                 tier=tier, functional=functional, basis=basis,
+                density_fit=density_fit,
                 calc=shared_calc,
             )
 
@@ -620,7 +622,7 @@ def _opt_with_ase_dihedral_constraint(
     charge: int, multiplicity: int, solvent: Optional[str],
     fmax: float, steps: int,
     tier: Optional[str] = None, functional: Optional[str] = None,
-    basis: Optional[str] = None,
+    basis: Optional[str] = None, density_fit: bool = False,
     calc=None,
 ) -> Tuple[Optional[Any], Optional[float], bool]:
     from ase.constraints import FixInternals
@@ -632,7 +634,7 @@ def _opt_with_ase_dihedral_constraint(
     if calc is None:
         calc = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-            tier=tier, functional=functional, basis=basis,
+            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
         )
     apply_calc_to_atoms(atoms, calc)
 

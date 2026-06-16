@@ -25,6 +25,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -32,7 +33,7 @@ def run(
     symbols = atoms.get_chemical_symbols()
     calc = build_calculator(
         method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-        tier=tier, functional=functional, basis=basis,
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
     )
     apply_calc_to_atoms(atoms, calc)
 

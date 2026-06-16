@@ -35,7 +35,7 @@ Arguments:
 - `--solvent <name>` — implicit solvent (water, methanol, dmso, mecn, dcm, …).
 - `--charge N`, `--mult N` — molecular charge and spin multiplicity.
 - `--nfrontier K` — frontier orbitals on each side of the gap (default 3).
-- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **`--density-fit`** enables RI density fitting (~3-10x faster SCF, ~0.1-0.8 mEh error); OFF by default — chemkit uses exact integrals (plain RKS/UKS, matching hand-run PySCF).
 - HF-only: `--basis <name>`.
 - `--out <path>` — result JSON (default `<stem>_frontier_<method>.json` in the run cwd).
 

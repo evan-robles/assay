@@ -35,7 +35,7 @@ python skills/transition-state/scripts/transition-state.py guess.xyz --method mo
    - `--solvent <name>`, `--charge N`, `--mult N`, `--steps N` (default 500).
    - `--no-verify-freq` — skip the post-TS frequency verification.
    - `--out <path>` (result JSON; default `<stem>_ts_<method>.json` in the run cwd).
-   - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
+   - DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **`--density-fit`** enables RI density fitting (~3-10x faster SCF, ~0.1-0.8 mEh error); OFF by default — chemkit uses exact integrals (plain RKS/UKS, matching hand-run PySCF).
    - HF-only: `--basis <name>`.
 3. Read the result JSON, written to `--out` (default `<stem>_ts_<method>.json` in the run cwd). The engine also writes `<basename>_ts_<method>.xyz` with the converged TS geometry; copy it next to the user's input.
 4. Report: **converged?** and the optimizer status; **heat of formation** (kcal/mol, MOPAC only) and total energy (eV); the verification-frequency result — **is this a valid TS?** (yes iff `verify_freq.n_imaginary_modes == 1`), the **imaginary frequency** (cm⁻¹) of the reaction-coordinate mode, and the **number of imaginary modes** (flag explicitly if 0 = collapsed to a minimum, or >1 = higher-order saddle); and the path to the saved TS xyz.

@@ -115,6 +115,7 @@ def build_calculator(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
 ):
     """Return an ASE calculator for the requested method.
 
@@ -122,6 +123,9 @@ def build_calculator(
     multiplicity: 2S+1 (ASE uses unpaired-electron count internally for some calcs)
     solvent: e.g. 'water' for ALPB (xtb) or COSMO EPS=... (MOPAC). None = gas phase.
     tier/functional/basis: PySCF-only knobs. Silently ignored for xtb/mopac.
+    density_fit: PySCF-only. Enable the RI density-fitting approximation. OFF by
+        default (exact four-center integrals); turned on only by the user's
+        explicit --density-fit flag. Ignored for xtb/mopac.
 
     If `workdir` is None a fresh tempdir is allocated and registered for
     auto-cleanup at process exit. Callers that want the workdir to persist
@@ -141,6 +145,7 @@ def build_calculator(
         return _build_pyscf(
             method, charge, multiplicity, solvent, workdir,
             tier=tier, functional=functional, basis=basis,
+            density_fit=density_fit,
         )
     raise ValueError(
         f"Unknown method {method!r}. Expected 'xtb', 'mopac', 'dft', or 'hf'."
@@ -148,7 +153,7 @@ def build_calculator(
 
 
 def _build_pyscf(method, charge, multiplicity, solvent, workdir,
-                 *, tier=None, functional=None, basis=None):
+                 *, tier=None, functional=None, basis=None, density_fit=False):
     """Dispatch DFT/HF to the PySCF backend (lazy import).
 
     The PySCF backend lives in chemkit.backends.pyscf and exposes an
@@ -157,8 +162,13 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
 
     DFT tier presets bundle (xc, basis, grid_level); explicit
     `--functional`/`--basis` override the tier defaults. HF takes only a
-    `--basis` (default def2-tzvp). All PySCF runs use exact integrals
-    (no density fitting) — true RKS/UKS and RHF/UHF.
+    `--basis` (default def2-tzvp).
+
+    density_fit: when False (the default) chemkit runs EXACT four-center
+    integrals — true RKS/UKS and RHF/UHF, matching a hand-written PySCF run.
+    The user's explicit --density-fit flag sets this True to enable the RI
+    approximation. The tier table's own `density_fit` value is documentation of
+    each tier's profile only; this flag is what actually controls the run.
     """
     # PySCF parallelism is governed by the OpenMP thread count, which it reads at
     # import time. In containerized / MCP-spawned subprocesses OMP_NUM_THREADS is
@@ -224,11 +234,11 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             grid_level=cfg["grid"],
             scf_tol=cfg["scf_tol"],
             max_cycle=cfg["max_cycle"],
-            # Density fitting (RI) per tier: ON for fast/standard (screening),
-            # OFF for accurate. The auxbasis is left as None so build_mean_field()
-            # chooses it to match the functional (JK-fit for hybrids, J-fit for
-            # pure functionals).
-            density_fit=cfg.get("density_fit", False),
+            # Density fitting is controlled by the explicit --density-fit flag
+            # (default OFF = exact integrals), NOT by the tier. The auxbasis is
+            # left None so build_mean_field() chooses it to match the functional
+            # (JK-fit for hybrids, J-fit for pure functionals) when DF is on.
+            density_fit=density_fit,
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,
@@ -251,6 +261,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             basis=used_basis,
             scf_tol=hf_cfg["scf_tol"],
             max_cycle=hf_cfg["max_cycle"],
+            density_fit=density_fit,  # off by default; --density-fit opts in
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,

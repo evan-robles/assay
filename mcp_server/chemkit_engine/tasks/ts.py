@@ -48,6 +48,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -59,7 +60,7 @@ def run(
     if method in ("dft", "hf"):
         calc_for_label = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-            tier=tier, functional=functional, basis=basis,
+            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
         )
 
     result = base_result(
@@ -86,7 +87,7 @@ def run(
             atoms, method=method,
             charge=charge, multiplicity=multiplicity, solvent=solvent,
             steps=steps,
-            tier=tier, functional=functional, basis=basis,
+            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
         )
     else:
         raise ValueError(f"Unknown method {method!r}")
@@ -116,6 +117,7 @@ def run(
                 tier=tier,
                 functional=functional,
                 basis=basis,
+                density_fit=density_fit,
                 # A TS legitimately has 1 imaginary mode — freq's minimum gate
                 # would always fail here. Stamp only; ts.run gates its own result.
                 gate_integrity=False,
@@ -319,7 +321,7 @@ def _parse_mopac_final_geometry(arc_path, symbols):
 # ---------------------------------------------------------------------------
 
 def _ts_sella(atoms, *, method, charge, multiplicity, solvent, steps,
-              tier=None, functional=None, basis=None):
+              tier=None, functional=None, basis=None, density_fit=False):
     try:
         from sella import Sella
     except ImportError as e:
@@ -330,7 +332,7 @@ def _ts_sella(atoms, *, method, charge, multiplicity, solvent, steps,
 
     calc = build_calculator(
         method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-        tier=tier, functional=functional, basis=basis,
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
     )
     apply_calc_to_atoms(atoms, calc)
     ts_opt = Sella(atoms, internal=True, order=1)

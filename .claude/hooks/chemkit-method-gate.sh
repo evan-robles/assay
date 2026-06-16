@@ -43,7 +43,9 @@ MARKER_DIR="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/.chemkit-gate"
 
 # Consequential knobs whose values define the level of theory / state.
 # --opt is the build-from-smiles QM-refinement method (its analogue of --method).
-KNOBS=(--method --opt --functional --basis --tier --solvent --charge --mult --multiplicity)
+# --density-fit toggles the RI approximation (off by default); a change to it
+# between runs is a level-of-theory change worth re-confirming.
+KNOBS=(--method --opt --functional --basis --tier --density-fit --solvent --charge --mult --multiplicity)
 
 # Subcommands / skill folders that REQUIRE an explicit --method (everything
 # except the pure structure builder, which uses an optional --opt instead).

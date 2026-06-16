@@ -142,6 +142,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     cli: str = "",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
@@ -218,7 +219,7 @@ def run(
             solvent=opt_solvent,
             out_xyz=qm_xyz,
             cli=f"(internal build_from_smiles QM refinement: {opt_method})",
-            tier=tier, functional=functional, basis=basis,
+            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
             gate_integrity=False,  # surface opt convergence in the build block, don't abort the build
         )
         result["qm_optimization"] = {

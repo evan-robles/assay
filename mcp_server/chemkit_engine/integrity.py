@@ -154,6 +154,32 @@ def gate(result: Dict[str, Any], task_name: str, *, allow_unconverged: bool = Fa
     return result
 
 
+# Method-provenance fields that the calculation-reporting standard wants in the
+# top-level method block, but which the PySCF backend only stashes under
+# `code_specific`. We copy them up (additively) so any consumer can read
+# result["basis"] / result["functional"] without reaching into the per-backend
+# block. solvent is NOT listed: schema.base_result already sets it top-level
+# (gas phase = None is its real value), so promoting would risk clobbering it.
+_PROMOTE_FROM_CODE_SPECIFIC = ("functional", "basis")
+
+
+def _promote_method_provenance(result: Dict[str, Any]) -> None:
+    """Additively copy method-provenance fields from code_specific to top level.
+
+    Idempotent and non-destructive: a key is promoted ONLY when it is absent or
+    None at top level, so an authoritative top-level value is never overwritten.
+    Semi-empirical backends (xtb/PM7) carry no functional/basis in
+    code_specific, so nothing is promoted for them -- correct, since they have
+    no basis set. Never raises; a malformed code_specific is simply skipped.
+    """
+    cs = result.get("code_specific")
+    if not isinstance(cs, dict):
+        return
+    for key in _PROMOTE_FROM_CODE_SPECIFIC:
+        if result.get(key) is None and cs.get(key) is not None:
+            result[key] = cs[key]
+
+
 def finalize(result: Dict[str, Any], *, gate_integrity: bool = True,
              allow_unconverged: bool = False) -> Dict[str, Any]:
     """Single end-of-run() seam for every task.
@@ -166,6 +192,7 @@ def finalize(result: Dict[str, Any], *, gate_integrity: bool = True,
 
     The task name is read from result["task"] (set by schema.base_result).
     """
+    _promote_method_provenance(result)
     task_name = result.get("task", "")
     if gate_integrity:
         return gate(result, task_name, allow_unconverged=allow_unconverged)

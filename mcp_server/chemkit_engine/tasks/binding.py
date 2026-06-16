@@ -25,6 +25,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -65,6 +66,7 @@ def run(
         complex_path, method=method, charge=charge,
         multiplicity=multiplicity, solvent=solvent, cli=cli,
         tier=tier, functional=functional, basis=basis,
+        density_fit=density_fit,
         gate_integrity=False,
     )
     monomer_results = []
@@ -73,6 +75,7 @@ def run(
         r = sp_task.run(path, method=method, charge=q, multiplicity=m,
                         solvent=solvent, cli=cli,
                         tier=tier, functional=functional, basis=basis,
+                        density_fit=density_fit,
                         gate_integrity=False)
         monomer_results.append(r)
         monomer_sum_eV += r["total_energy_eV"]

@@ -45,6 +45,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -58,7 +59,7 @@ def run(
     if method in ("dft", "hf"):
         calc_for_label = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-            tier=tier, functional=functional, basis=basis,
+            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
         )
 
     result = base_result(

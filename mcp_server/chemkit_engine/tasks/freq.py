@@ -86,6 +86,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -178,6 +179,7 @@ def run(
         probe_fmax = _probe_max_force(
             atoms, method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, tier=tier, functional=functional, basis=basis,
+            density_fit=density_fit,
         )
         if probe_fmax is not None and probe_fmax <= effective_fmax:
             preopt_info = {
@@ -204,6 +206,7 @@ def run(
                 tier=tier,
                 functional=functional,
                 basis=basis,
+                density_fit=density_fit,
                 gate_integrity=False,  # preopt sub-call: stamp only; freq gates the result
             )
             # Reload atoms from the optimized xyz so the freq step works on the
@@ -253,6 +256,7 @@ def run(
             tier=tier,
             functional=functional,
             basis=basis,
+            density_fit=density_fit,
         )
 
     # Always report the original user-supplied input as `input_file`, even if
@@ -315,7 +319,7 @@ def _detect_geometry(atoms) -> str:
 
 def _probe_max_force(
     atoms, *, method, charge, multiplicity, solvent,
-    tier=None, functional=None, basis=None,
+    tier=None, functional=None, basis=None, density_fit=False,
 ) -> Optional[float]:
     """One force evaluation on `atoms`; return max |f| in eV/Å, or None if it
     failed (in which case the caller falls through to the full opt).
@@ -328,6 +332,7 @@ def _probe_max_force(
         calc = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
             tier=tier, functional=functional, basis=basis,
+            density_fit=density_fit,
         )
         apply_calc_to_atoms(probe, calc)
         forces = probe.get_forces()
@@ -339,7 +344,7 @@ def _probe_max_force(
 def _run_ase(
     *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
     temperature_K, pressure_Pa, geometry, symmetrynumber, cli,
-    tier=None, functional=None, basis=None,
+    tier=None, functional=None, basis=None, density_fit=False,
 ) -> Dict[str, Any]:
     from ase.thermochemistry import IdealGasThermo
     from ase.vibrations import Vibrations
@@ -357,11 +362,13 @@ def _run_ase(
             charge=charge, multiplicity=multiplicity, solvent=solvent,
             temperature_K=temperature_K, pressure_Pa=pressure_Pa, cli=cli,
             tier=tier, functional=functional, basis=basis,
+            density_fit=density_fit,
         )
 
     calc = build_calculator(
         method, charge=charge, multiplicity=multiplicity, solvent=solvent,
         tier=tier, functional=functional, basis=basis,
+        density_fit=density_fit,
     )
     apply_calc_to_atoms(atoms, calc)
 
@@ -525,7 +532,7 @@ def _run_ase(
 def _run_atomic(
     *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
     temperature_K, pressure_Pa, cli,
-    tier=None, functional=None, basis=None,
+    tier=None, functional=None, basis=None, density_fit=False,
 ) -> Dict[str, Any]:
     """Thermochemistry for a single atom: no vibrational, no rotational; only
     electronic + translational contributions. ASE's IdealGasThermo refuses
@@ -537,6 +544,7 @@ def _run_atomic(
     calc = build_calculator(
         method, charge=charge, multiplicity=multiplicity, solvent=solvent,
         tier=tier, functional=functional, basis=basis,
+        density_fit=density_fit,
     )
     apply_calc_to_atoms(atoms, calc)
     energy_eV = atoms.get_potential_energy()

@@ -54,6 +54,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -64,7 +65,7 @@ def run(
             "mopac for the IRC walk; you can re-optimize the endpoints with "
             "--method dft/hf afterwards."
         )
-    del tier, functional, basis  # silenced; no PySCF route yet
+    del tier, functional, basis, density_fit  # silenced; no PySCF route yet
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
 

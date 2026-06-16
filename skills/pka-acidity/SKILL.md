@@ -37,7 +37,7 @@ Arguments:
 - `--hplus-reference {tissandier_1998,kelly_2006}` (default `tissandier_1998`, −270.28 kcal/mol; Kelly gives −265.9, shifting every pKa by ~1.4 units).
 - `--temperature K` (default 298.15), `--pressure Pa` (default 101325).
 - `--out <path>` (result JSON; default `<ha-stem>_pka_<method>.json` in the run cwd).
-- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`.
+- DFT-only: `--tier {fast,standard,accurate}`, `--functional <libxc>`, `--basis <name>`. **`--density-fit`** enables RI density fitting (~3-10x faster SCF, ~0.1-0.8 mEh error); OFF by default — chemkit uses exact integrals (plain RKS/UKS, matching hand-run PySCF).
 - HF-only: `--basis <name>`.
 - Reference-mode extras (all required when `--mode reference`): `--ref-ha <path>`, `--ref-a-minus <path>`, `--pka-ref FLOAT` (the experimental pKa of the reference acid — a user-supplied input), `--ref-ha-charge N`, `--ref-ha-mult N`, `--ref-a-minus-mult N`.
 

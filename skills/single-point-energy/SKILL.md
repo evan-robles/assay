@@ -40,7 +40,7 @@ python skills/single-point-energy/scripts/single-point-energy.py --method <xtb|m
    - `standard`: ωB97X-V / def2-TZVP — production default (VV10 dispersion)
    - `accurate`: ωB97M-V / def2-QZVPP — benchmark-quality
 
-   `--functional`/`--basis` override the tier. Anions (charge < 0) auto-promote to a diffuse basis (def2-tzvp → def2-tzvpd). D3/D4 functionals (e.g. `wb97x-d3bj`) need the `pyscf-dispersion` add-on; default tiers use VV10 and don't.
+   `--functional`/`--basis` override the tier. Anions (charge < 0) auto-promote to a diffuse basis (def2-tzvp → def2-tzvpd). D3/D4 functionals (e.g. `wb97x-d3bj`) need the `pyscf-dispersion` add-on; default tiers use VV10 and don't. **`--density-fit`** enables RI density fitting (~3-10x faster SCF, ~0.1-0.8 mEh error); OFF by default — chemkit uses exact integrals (plain RKS/UKS, matching hand-run PySCF).
 5. **HF only:** `--basis <name>` (default `def2-tzvp`).
 6. **Read the JSON** and report:
    - Total electronic energy (eV, Hartree, kcal/mol)

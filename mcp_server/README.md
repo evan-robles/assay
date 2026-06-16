@@ -100,3 +100,22 @@ python ../skills/single_point_energy/single_point_energy.py --method xtb mol.xyz
 ```
 
 Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to pin a specific server.
+
+## DFT/HF defaults: density fitting is OFF
+
+By default, `--method dft`/`hf` use **exact four-center two-electron integrals**
+— i.e. true `RKS`/`UKS`/`RHF`/`UHF`, matching a hand-written PySCF run. chemkit
+does **not** silently apply the density-fitting (RI) approximation.
+
+Pass **`--density-fit`** to opt into the RI approximation: a **~3–10× faster SCF**
+for a typically negligible **~0.1–0.8 mEh** error (it largely cancels in energy
+*differences*). chemkit picks the matching auxiliary basis automatically (JK-fit
+for hybrids/HF, J-fit for pure functionals) and reports the treatment honestly in
+the result JSON (`code_specific.integral_treatment`, `density_fit`, `scf_class`).
+
+```bash
+# exact integrals (default) — reproducible against your own PySCF RKS/UKS
+python ../skills/single_point_energy/single_point_energy.py --method dft --tier standard mol.xyz
+# RI / density fitting — faster, ~sub-mEh approximation
+python ../skills/single_point_energy/single_point_energy.py --method dft --tier standard --density-fit mol.xyz
+```

@@ -21,12 +21,13 @@ from .scf import build_mean_field, pack_scf_result, _report_auxbasis
 # (standard/accurate use wB97X-V / wB97M-V, which carry exact exchange) and a
 # J-only auxbasis for pure functionals (fast = r2scan). Hard-coding a J-only
 # auxbasis previously mis-fit the exchange (K) matrix of the hybrid tiers.
-# `density_fit`: enable the RI (resolution-of-identity) approximation to the
-# two-electron integrals. It gives a 3–10× SCF speedup for a typical error of
-# ~0.1–0.8 mEh — negligible at the screening grade the fast/standard tiers
-# target, so it is ON for those. The accurate tier keeps EXACT integrals for
-# publication-grade absolute energies. build_mean_field() picks the matching
-# auxbasis (JK-fit for hybrids/HF, J-fit for pure functionals) automatically.
+#
+# `density_fit` is each tier's DF profile, surfaced to the user when offering
+# tier choices and on the command line: the screening-grade fast/standard tiers
+# carry RI ON (≈3–10× faster SCF, ~0.1–0.8 mEh error), accurate keeps EXACT
+# integrals. The explicit --density-fit flag, when given, OVERRIDES this tier
+# value. build_mean_field() picks the matching auxbasis (JK-fit for hybrids/HF,
+# J-fit for pure functionals) when DF is on.
 TIERS = {
     "fast":     {"xc": "r2scan",  "basis": "def2-svp",   "grid": 3,
                  "scf_tol": 1e-7,  "max_cycle": 80,  "density_fit": True},

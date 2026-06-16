@@ -32,6 +32,15 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
     p.add_argument("--basis", default=None,
                    help="Basis-set override for DFT/HF (e.g. def2-tzvp, cc-pvtz). "
                         "Ignored unless --method dft or --method hf.")
+    p.add_argument("--density-fit", dest="density_fit", action="store_true",
+                   default=False,
+                   help="Enable density fitting (the RI/resolution-of-identity "
+                        "approximation to the two-electron integrals) for DFT/HF: "
+                        "~3-10x faster SCF for a ~0.1-0.8 mEh error. OFF BY "
+                        "DEFAULT — chemkit uses exact four-center integrals "
+                        "(plain RKS/UKS/RHF/UHF, matching a hand-written PySCF "
+                        "run); pass this flag to opt into the RI speedup. "
+                        "Ignored for xtb/mopac.")
     p.add_argument("--out", default=None,
                    help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
     p.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
@@ -341,6 +350,7 @@ def _dispatch(args, parser, cli: str, pyscf_kwargs: dict):
             opt_method=args.opt_method, opt_solvent=args.solvent,
             opt_charge=args.charge, opt_multiplicity=args.multiplicity,
             tier=args.tier, functional=args.functional, basis=args.basis,
+            density_fit=getattr(args, "density_fit", False),
             cli=cli,
             allow_unconverged=pyscf_kwargs.get("allow_unconverged", False),
         )
@@ -559,6 +569,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_prof.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
     p_prof.add_argument("--functional", default=None)
     p_prof.add_argument("--basis", default=None)
+    p_prof.add_argument("--density-fit", dest="density_fit", action="store_true",
+                        default=False,
+                        help="Enable DFT/HF density fitting (RI). OFF by default "
+                             "(exact integrals); opts into the ~3-10x SCF speedup.")
     p_prof.add_argument("--out", default=None)
     p_prof.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
                         help="Consent to silent defaults (DFT tier=standard; HF "
@@ -612,6 +626,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_pka.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
     p_pka.add_argument("--functional", default=None)
     p_pka.add_argument("--basis", default=None)
+    p_pka.add_argument("--density-fit", dest="density_fit", action="store_true",
+                       default=False,
+                       help="Enable DFT/HF density fitting (RI). OFF by default "
+                            "(exact integrals); opts into the ~3-10x SCF speedup.")
     p_pka.add_argument("--out", default=None)
     p_pka.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
                        help="Consent to silent DFT/HF defaults (tier=standard / "
@@ -662,6 +680,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     p_build.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
     p_build.add_argument("--functional", default=None)
     p_build.add_argument("--basis", default=None)
+    p_build.add_argument("--density-fit", dest="density_fit", action="store_true",
+                         default=False,
+                         help="Enable DFT/HF density fitting (RI) for the optional "
+                              "--opt QM refinement. OFF by default (exact integrals).")
     p_build.add_argument("--out", default=None, help="Result JSON path.")
     _add_stdout_option(p_build)
     _add_gate_option(p_build)
@@ -832,6 +854,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     # actually accept (tier/functional/basis).
     os.environ["CHEMKIT_PYSCF_VERBOSE"] = str(getattr(args, "verbose", 4))
     pyscf_kwargs = dict(tier=args.tier, functional=args.functional, basis=args.basis)
+    # Density fitting is OFF by default (exact integrals); --density-fit opts in.
+    # Threaded through the same shared kwargs so every task.run() receives it.
+    pyscf_kwargs["density_fit"] = getattr(args, "density_fit", False)
     # The integrity gate runs inside every task.run(); thread the escape-hatch
     # flag through the same shared kwargs so all tasks receive it uniformly. (The
     # gate itself defaults on; --allow-unconverged downgrades a failure.)

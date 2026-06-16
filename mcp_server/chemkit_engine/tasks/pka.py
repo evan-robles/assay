@@ -125,6 +125,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -162,7 +163,7 @@ def run(
     common_kw = dict(
         method=method, solvent=solvent,
         temperature_K=temperature_K, pressure_Pa=pressure_Pa,
-        tier=tier, functional=functional, basis=basis,
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
         gate_integrity=False,  # sub-calls stamp only; pka gates the whole result
     )
 
@@ -188,7 +189,7 @@ def run(
     if method in ("dft", "hf"):
         any_calc = build_calculator(
             method, charge=0, multiplicity=1, solvent=solvent,
-            tier=tier, functional=functional, basis=basis,
+            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
         )
         canonical_method = method_label(method, any_calc)
 

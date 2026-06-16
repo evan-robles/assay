@@ -108,6 +108,7 @@ def run(
     tier: Optional[str] = None,
     functional: Optional[str] = None,
     basis: Optional[str] = None,
+    density_fit: bool = False,
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -156,13 +157,15 @@ def run(
         input_path, method=method, charge=oxidized_charge,
         multiplicity=oxidized_multiplicity, solvent=solvent, mode=mode, fmax=fmax,
         temperature_K=temperature_K, pressure_Pa=pressure_Pa, cli=cli,
-        tier=tier, functional=functional, basis=basis, label="oxidized",
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        label="oxidized",
     )
     red_E, _, red_block, red_warns = _state_energy_eV(
         input_path, method=method, charge=reduced_charge,
         multiplicity=reduced_multiplicity, solvent=solvent, mode=mode, fmax=fmax,
         temperature_K=temperature_K, pressure_Pa=pressure_Pa, cli=cli,
-        tier=tier, functional=functional, basis=basis, label="reduced",
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        label="reduced",
     )
 
     delta_eV = red_E - ox_E
@@ -264,7 +267,7 @@ def run(
 
 def _state_energy_eV(
     input_path, *, method, charge, multiplicity, solvent, mode, fmax,
-    temperature_K, pressure_Pa, cli, tier, functional, basis, label,
+    temperature_K, pressure_Pa, cli, tier, functional, basis, density_fit, label,
 ):
     """Compute the energy used for one oxidation state under `mode`.
 
@@ -279,6 +282,7 @@ def _state_energy_eV(
         st = sp_task.run(
             input_path, method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, cli=cli, tier=tier, functional=functional, basis=basis,
+            density_fit=density_fit,
             gate_integrity=False,
         )
         for w in st.get("warnings", []) or []:
@@ -296,6 +300,7 @@ def _state_energy_eV(
             input_path, method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, fmax=fmax, cli=cli,
             tier=tier, functional=functional, basis=basis,
+            density_fit=density_fit,
             gate_integrity=False,
         )
         for w in st.get("warnings", []) or []:
@@ -325,6 +330,7 @@ def _state_energy_eV(
         solvent=solvent, temperature_K=temperature_K, pressure_Pa=pressure_Pa,
         preopt=True, preopt_fmax=fmax, cli=cli,
         tier=tier, functional=functional, basis=basis,
+        density_fit=density_fit,
         gate_integrity=False,
     )
     for w in st.get("warnings", []) or []:
