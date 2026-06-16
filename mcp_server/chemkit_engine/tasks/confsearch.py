@@ -38,13 +38,14 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
-    # tier/functional/basis/density_fit are accepted for CLI uniformity but
-    # ignored: the obabel sampler is force-field based and the post-opt path
-    # is xtb/mopac-only.
-    del tier, functional, basis, density_fit
+    # tier/functional/basis/density_fit/solvent_model are accepted for CLI
+    # uniformity but ignored: the obabel sampler is force-field based and the
+    # post-opt path is xtb/mopac-only.
+    del tier, functional, basis, density_fit, solvent_model
     if method != "xtb":
         # 'xtb' is retained as the canonical method token for CLI uniformity,
         # but the conformer sampler is now Open Babel (force-field confab).

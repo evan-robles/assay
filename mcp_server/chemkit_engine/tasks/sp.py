@@ -26,6 +26,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -34,6 +35,7 @@ def run(
     calc = build_calculator(
         method, charge=charge, multiplicity=multiplicity, solvent=solvent,
         tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        solvent_model=solvent_model,
     )
     apply_calc_to_atoms(atoms, calc)
 

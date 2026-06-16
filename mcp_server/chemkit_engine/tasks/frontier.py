@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
     method_label, program_label, collect_calc_extras, mopac_spin_keyword,
-    register_auto_tempdir,
+    register_auto_tempdir, resolve_dielectric,
 )
 from ..io import read_geometry
 from ..schema import (
@@ -46,6 +46,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -60,6 +61,7 @@ def run(
         calc_for_label = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
         )
 
     result = base_result(
@@ -215,9 +217,7 @@ def _run_mopac(atoms, *, charge, multiplicity, solvent, nfrontier) -> Dict[str, 
         keywords.append(mopac_spin_keyword(multiplicity))
         keywords.append("UHF")
     if solvent:
-        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
-        if eps is None:
-            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
         keywords.append(f"EPS={eps}")
 
     workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_frontier_mopac_"))

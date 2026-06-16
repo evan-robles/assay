@@ -55,6 +55,7 @@ class PySCFCalculator(Calculator):
         charge: int = 0,
         multiplicity: int = 1,
         solvent: Optional[str] = None,
+        solvent_model: str = "ddcosmo",
         grid_level: int = 4,
         scf_tol: float = 1e-8,
         max_cycle: Optional[int] = None,
@@ -75,6 +76,7 @@ class PySCFCalculator(Calculator):
         self._charge = int(charge)
         self._multiplicity = int(multiplicity)
         self._solvent = solvent
+        self._solvent_model = solvent_model or "ddcosmo"
         self._grid_level = int(grid_level)
         self._scf_tol = float(scf_tol)
         self._max_cycle = max_cycle if max_cycle is None else int(max_cycle)
@@ -154,6 +156,7 @@ class PySCFCalculator(Calculator):
                 density_fit=self._density_fit,
                 auxbasis=self._auxbasis,
                 solvent=self._solvent,
+                solvent_model=self._solvent_model,
             )
 
             # Warm-start: pass the previous converged density as initial guess
@@ -168,6 +171,7 @@ class PySCFCalculator(Calculator):
                 self._xc,
                 self._method,
                 self._solvent,
+                self._solvent_model,
             )
             dm0 = self._cached_dm if self._cached_dm_key == current_key else None
 

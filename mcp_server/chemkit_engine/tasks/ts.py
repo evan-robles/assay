@@ -27,6 +27,7 @@ from ase.io import write as ase_write
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
     method_label, program_label, mopac_spin_keyword, register_auto_tempdir,
+    resolve_dielectric,
 )
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings
@@ -49,6 +50,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -61,6 +63,7 @@ def run(
         calc_for_label = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
         )
 
     result = base_result(
@@ -88,6 +91,7 @@ def run(
             charge=charge, multiplicity=multiplicity, solvent=solvent,
             steps=steps,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
         )
     else:
         raise ValueError(f"Unknown method {method!r}")
@@ -118,6 +122,7 @@ def run(
                 functional=functional,
                 basis=basis,
                 density_fit=density_fit,
+                solvent_model=solvent_model,
                 # A TS legitimately has 1 imaginary mode — freq's minimum gate
                 # would always fail here. Stamp only; ts.run gates its own result.
                 gate_integrity=False,
@@ -208,9 +213,7 @@ def _ts_mopac(atoms, symbols, *, charge, multiplicity, solvent, steps):
         keywords.append(mopac_spin_keyword(multiplicity))
         keywords.append("UHF")
     if solvent:
-        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
-        if eps is None:
-            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
         keywords.append(f"EPS={eps}")
     keywords.append("THREADS=1")
 
@@ -321,7 +324,8 @@ def _parse_mopac_final_geometry(arc_path, symbols):
 # ---------------------------------------------------------------------------
 
 def _ts_sella(atoms, *, method, charge, multiplicity, solvent, steps,
-              tier=None, functional=None, basis=None, density_fit=False):
+              tier=None, functional=None, basis=None, density_fit=False,
+              solvent_model="ddcosmo"):
     try:
         from sella import Sella
     except ImportError as e:
@@ -333,6 +337,7 @@ def _ts_sella(atoms, *, method, charge, multiplicity, solvent, steps,
     calc = build_calculator(
         method, charge=charge, multiplicity=multiplicity, solvent=solvent,
         tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        solvent_model=solvent_model,
     )
     apply_calc_to_atoms(atoms, calc)
     ts_opt = Sella(atoms, internal=True, order=1)

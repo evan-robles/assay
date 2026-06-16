@@ -108,6 +108,7 @@ def _evaluate_species(
     temperature_K: float, pressure_Pa: float,
     tier: Optional[str], functional: Optional[str], basis: Optional[str],
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
 ) -> Dict[str, Any]:
     """Run sp / opt+sp / opt+freq on one species, return a normalized block."""
     path = species["path"]
@@ -119,6 +120,7 @@ def _evaluate_species(
         multiplicity=species["multiplicity"], solvent=solvent,
         tier=tier, functional=functional, basis=basis,
         density_fit=density_fit,
+        solvent_model=solvent_model,
         cli=f"(internal reaction_energy: {species['spec']})",
         gate_integrity=False,  # sub-call: stamp only; rxn-energy gates the result
     )
@@ -199,6 +201,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -227,6 +230,7 @@ def run(
         temperature_K=temperature_K, pressure_Pa=pressure_Pa,
         tier=tier, functional=functional, basis=basis,
         density_fit=density_fit,
+        solvent_model=solvent_model,
     )
     r_blocks = [_evaluate_species(s, **eval_kw) for s in r_species]
     p_blocks = [_evaluate_species(s, **eval_kw) for s in p_species]
@@ -293,6 +297,7 @@ def run(
             method, charge=0, multiplicity=1, solvent=solvent,
             tier=tier, functional=functional, basis=basis,
             density_fit=density_fit,
+            solvent_model=solvent_model,
         )
         canonical_method = method_label(method, any_calc)
 

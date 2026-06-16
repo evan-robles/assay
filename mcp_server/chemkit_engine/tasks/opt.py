@@ -16,7 +16,7 @@ import subprocess
 import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..calculators import MOPAC_SOLVENT_EPS, mopac_spin_keyword
+from ..calculators import MOPAC_SOLVENT_EPS, mopac_spin_keyword, resolve_dielectric
 from ..io import read_geometry
 from ..schema import (
     base_result,
@@ -43,6 +43,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -84,6 +85,7 @@ def run(
             functional=functional,
             basis=basis,
             density_fit=density_fit,
+            solvent_model=solvent_model,
         )
 
     # The .xyz was already written inside the sub-path, so evidence is on disk
@@ -97,6 +99,7 @@ def _run_ase(
     *, input_path, atoms, symbols, method, charge, multiplicity, solvent,
     fmax, steps, out_xyz, cli,
     tier=None, functional=None, basis=None, density_fit=False,
+    solvent_model="ddcosmo",
 ) -> Dict[str, Any]:
     from ase.io import write as ase_write
     from ase.optimize import BFGS
@@ -108,6 +111,7 @@ def _run_ase(
     calc = build_calculator(
         method, charge=charge, multiplicity=multiplicity, solvent=solvent,
         tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        solvent_model=solvent_model,
     )
     apply_calc_to_atoms(atoms, calc)
 
@@ -267,9 +271,7 @@ def _mopac_opt_keywords(
         kw.append(mopac_spin_keyword(multiplicity))
         kw.append("UHF")
     if solvent:
-        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
-        if eps is None:
-            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
         kw.append(f"EPS={eps}")
     kw.append("THREADS=1")
     return kw

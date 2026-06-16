@@ -74,6 +74,75 @@ MOPAC_SOLVENT_EPS = {
 }
 
 
+def resolve_dielectric(solvent, eps_table, *, backend: str = "") -> float:
+    """Resolve a `--solvent` value to a dielectric constant (eps) for a
+    continuum-solvation backend (PySCF ddCOSMO, MOPAC COSMO).
+
+    The value may be EITHER:
+      * a number (e.g. "2.0") — used directly as the custom dielectric, so a user
+        can specify any solvent's eps without it being in `eps_table`; or
+      * a known solvent name (e.g. "hexane") — looked up case-insensitively in
+        `eps_table` (each backend passes its own table, preserving its values).
+
+    Args:
+      solvent: the raw --solvent string (name or numeric dielectric).
+      eps_table: the backend's name -> eps mapping (MOPAC_SOLVENT_EPS or the
+        PySCF table); used only for the name path.
+      backend: short label ("mopac"/"pyscf") for error messages.
+
+    Returns the dielectric as a float.
+
+    Raises ValueError if a non-numeric name is not in `eps_table`, or if a
+    numeric dielectric is not strictly positive.
+    """
+    s = str(solvent).strip()
+    try:
+        val = float(s)
+    except ValueError:
+        eps = eps_table.get(s.lower())
+        if eps is None:
+            raise ValueError(
+                f"{backend or 'solvent'}: unknown solvent {solvent!r}. "
+                f"Pass a known name ({sorted(eps_table)}) or a numeric "
+                f"dielectric constant, e.g. --solvent 2.0."
+            )
+        return float(eps)
+    if val <= 0:
+        raise ValueError(
+            f"dielectric constant must be positive (got {val}). "
+            f"Pass a real solvent eps, e.g. --solvent 2.0."
+        )
+    return val
+
+
+def resolve_xtb_solvent(solvent) -> str:
+    """Resolve a `--solvent` value to an ALPB solvent name for xtb.
+
+    xtb's ALPB solvation is parameterized per *named* solvent and has no
+    arbitrary-dielectric mode, so a numeric value cannot be honored — it is
+    rejected with guidance rather than silently mishandled. A name is mapped
+    (case-insensitively) through XTB_SOLVENT_MAP.
+
+    Raises ValueError for a numeric value (point the user at dft/hf/mopac) or an
+    unknown name.
+    """
+    s = str(solvent).strip()
+    try:
+        float(s)
+    except ValueError:
+        name = XTB_SOLVENT_MAP.get(s.lower())
+        if name is None:
+            raise ValueError(
+                f"xtb: unknown solvent {solvent!r}. Known: {sorted(XTB_SOLVENT_MAP)}."
+            )
+        return name
+    raise ValueError(
+        f"xtb (ALPB) requires a named solvent, not a numeric dielectric "
+        f"({solvent!r}). Use --method dft, hf, or mopac for a custom dielectric "
+        f"constant, or pass a named solvent ({sorted(XTB_SOLVENT_MAP)})."
+    )
+
+
 # Track tempdirs allocated implicitly by build_calculator so we can clean
 # them up at process exit. Tempdirs registered here are NOT surfaced in the
 # result JSON (caller passed workdir=None, so the path isn't known outside
@@ -116,6 +185,7 @@ def build_calculator(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
 ):
     """Return an ASE calculator for the requested method.
 
@@ -126,6 +196,10 @@ def build_calculator(
     density_fit: PySCF-only. Enable the RI density-fitting approximation. OFF by
         default (exact four-center integrals); turned on only by the user's
         explicit --density-fit flag. Ignored for xtb/mopac.
+    solvent_model: PySCF-only continuum model ('ddcosmo' default, 'cpcm', or
+        'iefpcm'). MOPAC (COSMO) and xtb (ALPB) have their own fixed models; a
+        non-default value with those methods AND a solvent set is an error
+        (rather than silently ignored).
 
     If `workdir` is None a fresh tempdir is allocated and registered for
     auto-cleanup at process exit. Callers that want the workdir to persist
@@ -137,6 +211,17 @@ def build_calculator(
         workdir = tempfile.mkdtemp(prefix=f"chemkit_{method}_")
         _AUTO_TEMPDIRS.append(workdir)
 
+    # --solvent-model is a PySCF-only knob. For xtb/mopac, reject a non-default
+    # model when a solvent is actually requested, instead of silently ignoring
+    # it (the user would otherwise believe PCM ran when it didn't).
+    if method in ("xtb", "mopac") and solvent and (solvent_model or "ddcosmo").lower() != "ddcosmo":
+        fixed = "COSMO" if method == "mopac" else "ALPB"
+        raise ValueError(
+            f"--solvent-model {solvent_model!r} is not available for "
+            f"--method {method} (it uses its own continuum model, {fixed}). "
+            "The ddcosmo/cpcm/iefpcm choice applies only to --method dft or hf."
+        )
+
     if method == "xtb":
         return _build_xtb(charge, multiplicity, solvent, workdir)
     if method == "mopac":
@@ -145,7 +230,7 @@ def build_calculator(
         return _build_pyscf(
             method, charge, multiplicity, solvent, workdir,
             tier=tier, functional=functional, basis=basis,
-            density_fit=density_fit,
+            density_fit=density_fit, solvent_model=solvent_model,
         )
     raise ValueError(
         f"Unknown method {method!r}. Expected 'xtb', 'mopac', 'dft', or 'hf'."
@@ -153,7 +238,8 @@ def build_calculator(
 
 
 def _build_pyscf(method, charge, multiplicity, solvent, workdir,
-                 *, tier=None, functional=None, basis=None, density_fit=False):
+                 *, tier=None, functional=None, basis=None, density_fit=False,
+                 solvent_model="ddcosmo"):
     """Dispatch DFT/HF to the PySCF backend (lazy import).
 
     The PySCF backend lives in chemkit.backends.pyscf and exposes an
@@ -242,6 +328,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,
+            solvent_model=solvent_model,
             verbose=pyscf_verbose,
         )
         calc._chemkit_tier = cfg["tier"]
@@ -265,6 +352,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             charge=charge,
             multiplicity=multiplicity,
             solvent=solvent,
+            solvent_model=solvent_model,
             verbose=pyscf_verbose,
         )
         calc._chemkit_tier = hf_tier
@@ -403,10 +491,10 @@ def _build_xtb(charge, multiplicity, solvent, workdir):
     route through the CLI even when xtb-python is installed — otherwise the
     ASE wrapper silently drops the solvent and reports gas-phase energies.
     """
-    sol_key = solvent.lower() if solvent else None
-    if sol_key and sol_key not in XTB_SOLVENT_MAP:
-        raise ValueError(f"xtb: unknown solvent {solvent!r}")
-    if sol_key in XTB_PYTHON_UNSUPPORTED_SOLVENTS:
+    # Resolve the name to its ALPB form (also rejects a numeric dielectric: xtb
+    # has no arbitrary-eps mode). None stays None (gas phase).
+    alpb_name = resolve_xtb_solvent(solvent) if solvent else None
+    if alpb_name in XTB_PYTHON_UNSUPPORTED_SOLVENTS:
         return _XtbCliCalculator(
             charge=charge, uhf=max(0, multiplicity - 1),
             solvent=solvent, workdir=workdir,
@@ -414,8 +502,8 @@ def _build_xtb(charge, multiplicity, solvent, workdir):
     try:
         from xtb.ase.calculator import XTB
         kwargs = {"method": "GFN2-xTB"}
-        if solvent:
-            kwargs["solvent"] = XTB_SOLVENT_MAP[sol_key]
+        if alpb_name:
+            kwargs["solvent"] = alpb_name
         calc = XTB(**kwargs)
         calc._chemkit_charge = charge
         calc._chemkit_uhf = max(0, multiplicity - 1)
@@ -439,9 +527,7 @@ def _build_mopac(charge, multiplicity, solvent, workdir):
         task_keywords.append(mopac_spin_keyword(multiplicity))
         task_keywords.append("UHF")
     if solvent:
-        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
-        if eps is None:
-            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
         task_keywords.append(f"EPS={eps}")
     # Always request ENPART + AUX so we can recover the absolute electronic energy.
     # THREADS scales with available cores; honor CHEMKIT_MOPAC_THREADS override.
@@ -508,7 +594,7 @@ class _XtbCliCalculator:
         cmd = ["xtb", xyz, "--gfn", "2", "--sp",
                "--chrg", str(self.charge), "--uhf", str(self.uhf)]
         if self.solvent:
-            sol = XTB_SOLVENT_MAP.get(self.solvent.lower(), self.solvent)
+            sol = resolve_xtb_solvent(self.solvent)  # ALPB name; rejects numeric eps
             cmd += ["--alpb", sol]
         res = subprocess.run(cmd, capture_output=True, text=True,
                              cwd=self.workdir, timeout=300)

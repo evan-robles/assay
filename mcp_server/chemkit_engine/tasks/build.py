@@ -143,6 +143,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     cli: str = "",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
@@ -220,6 +221,7 @@ def run(
             out_xyz=qm_xyz,
             cli=f"(internal build_from_smiles QM refinement: {opt_method})",
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
             gate_integrity=False,  # surface opt convergence in the build block, don't abort the build
         )
         result["qm_optimization"] = {

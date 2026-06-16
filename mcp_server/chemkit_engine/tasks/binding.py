@@ -26,6 +26,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -67,6 +68,7 @@ def run(
         multiplicity=multiplicity, solvent=solvent, cli=cli,
         tier=tier, functional=functional, basis=basis,
         density_fit=density_fit,
+        solvent_model=solvent_model,
         gate_integrity=False,
     )
     monomer_results = []
@@ -76,6 +78,7 @@ def run(
                         solvent=solvent, cli=cli,
                         tier=tier, functional=functional, basis=basis,
                         density_fit=density_fit,
+                        solvent_model=solvent_model,
                         gate_integrity=False)
         monomer_results.append(r)
         monomer_sum_eV += r["total_energy_eV"]

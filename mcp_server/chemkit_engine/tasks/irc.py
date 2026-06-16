@@ -27,7 +27,8 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 
 from ..calculators import (build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-                            mopac_spin_keyword, register_auto_tempdir)
+                            mopac_spin_keyword, register_auto_tempdir,
+                            resolve_dielectric)
 from ..io import read_geometry
 from ..schema import base_result, element_warnings
 from ._mopac_parsers import _find_with_ext
@@ -55,6 +56,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -65,7 +67,7 @@ def run(
             "mopac for the IRC walk; you can re-optimize the endpoints with "
             "--method dft/hf afterwards."
         )
-    del tier, functional, basis, density_fit  # silenced; no PySCF route yet
+    del tier, functional, basis, density_fit, solvent_model  # silenced; no PySCF route yet
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
 
@@ -189,9 +191,7 @@ def _run_one_irc_direction(atoms, symbols, direction, charge, multiplicity,
         keywords.append(mopac_spin_keyword(multiplicity))
         keywords.append("UHF")
     if solvent:
-        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
-        if eps is None:
-            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
         keywords.append(f"EPS={eps}")
     keywords += ["THREADS=1", "T=3600"]
 

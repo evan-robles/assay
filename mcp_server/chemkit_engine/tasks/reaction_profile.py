@@ -162,6 +162,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -175,6 +176,7 @@ def run(
     common_kw = dict(
         method=method, charge=charge, multiplicity=multiplicity, solvent=solvent,
         tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        solvent_model=solvent_model,
         # Every R/P/TS opt+freq is a sub-call: stamp its own integrity but never
         # raise mid-profile (the TS freq legitimately has 1 imaginary mode). The
         # profile gates its own aggregated verdict at the end.
@@ -341,6 +343,7 @@ def run(
         any_calc = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
         )
         canonical_method = method_label(method, any_calc)
 
@@ -447,6 +450,7 @@ def run(
 def _relax_endpoint(coords, *, atoms_template, label, workdir,
                     method, charge, multiplicity, solvent,
                     tier=None, functional=None, basis=None, density_fit=False,
+                    solvent_model="ddcosmo",
                     gate_integrity=False, allow_unconverged=False):
     # gate_integrity/allow_unconverged accepted (they ride in via **common_kw)
     # but are intentionally ignored here — the internal opt always runs ungated
@@ -476,7 +480,7 @@ def _relax_endpoint(coords, *, atoms_template, label, workdir,
             in_xyz, out_xyz=out_xyz,
             method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, tier=tier, functional=functional, basis=basis,
-            density_fit=density_fit,
+            density_fit=density_fit, solvent_model=solvent_model,
             cli=f"(internal reaction_profile: relax IRC {label} endpoint)",
             gate_integrity=False,
         )

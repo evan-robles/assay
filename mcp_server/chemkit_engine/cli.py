@@ -21,7 +21,19 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
                    type=int, default=1, help="Spin multiplicity 2S+1 (default 1).")
     if with_solvent:
         p.add_argument("--solvent", default=None,
-                       help="Implicit solvent (e.g. water, methanol, dmso). Gas phase if omitted.")
+                       help="Implicit solvent: either a known name (e.g. water, "
+                            "methanol, dmso, hexane) OR a numeric dielectric "
+                            "constant (e.g. 2.0) for a custom solvent. Gas phase "
+                            "if omitted. Note: xtb (ALPB) requires a named "
+                            "solvent — a numeric dielectric needs --method "
+                            "dft, hf, or mopac.")
+        p.add_argument("--solvent-model", dest="solvent_model",
+                       choices=["ddcosmo", "cpcm", "iefpcm"], default="ddcosmo",
+                       help="PySCF continuum solvation model (DFT/HF only): "
+                            "ddcosmo (default, domain-decomposition COSMO), cpcm "
+                            "(C-PCM), or iefpcm (IEF-PCM). MOPAC uses COSMO and "
+                            "xtb uses ALPB regardless; a non-default value with "
+                            "those methods (and a solvent set) is an error.")
     # PySCF-only knobs; silently ignored for xtb/mopac.
     p.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None,
                    help="DFT tier preset (fast=r2SCAN/def2-SVP, standard=wB97X-V/def2-TZVP, "
@@ -356,6 +368,7 @@ def _dispatch(args, parser, cli: str, pyscf_kwargs: dict):
             opt_charge=args.charge, opt_multiplicity=args.multiplicity,
             tier=args.tier, functional=args.functional, basis=args.basis,
             density_fit=getattr(args, "density_fit", False),
+            solvent_model=getattr(args, "solvent_model", "ddcosmo"),
             cli=cli,
             allow_unconverged=pyscf_kwargs.get("allow_unconverged", False),
         )
@@ -678,7 +691,15 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
     p_build.add_argument(
         "--solvent", default=None,
-        help="Implicit solvent for the optional QM step (ignored without --opt).",
+        help="Implicit solvent for the optional QM step (ignored without --opt). "
+             "A known name (water, hexane, …) OR a numeric dielectric constant "
+             "(e.g. 2.0); xtb requires a name.",
+    )
+    p_build.add_argument(
+        "--solvent-model", dest="solvent_model",
+        choices=["ddcosmo", "cpcm", "iefpcm"], default="ddcosmo",
+        help="PySCF continuum model for the optional dft/hf --opt step "
+             "(ddcosmo default, cpcm, iefpcm). Ignored for xtb/mopac refinement.",
     )
     p_build.add_argument(
         "--charge", type=int, default=None,
@@ -887,6 +908,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     # Density fitting is OFF by default (exact integrals); --density-fit opts in.
     # Threaded through the same shared kwargs so every task.run() receives it.
     pyscf_kwargs["density_fit"] = getattr(args, "density_fit", False)
+    # Continuum solvation model (PySCF dft/hf): ddcosmo (default) / cpcm / iefpcm.
+    # Threaded through the same shared kwargs, exactly like density_fit.
+    pyscf_kwargs["solvent_model"] = getattr(args, "solvent_model", "ddcosmo")
     # The integrity gate runs inside every task.run(); thread the escape-hatch
     # flag through the same shared kwargs so all tasks receive it uniformly. (The
     # gate itself defaults on; --allow-unconverged downgrades a failure.)

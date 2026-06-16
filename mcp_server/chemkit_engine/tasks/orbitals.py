@@ -37,6 +37,7 @@ from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
     method_label, program_label, mopac_spin_keyword,
     register_auto_tempdir, XTB_SOLVENT_MAP,
+    resolve_dielectric, resolve_xtb_solvent,
 )
 from ..io import read_geometry
 from ..schema import base_result, element_warnings
@@ -68,6 +69,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -89,6 +91,7 @@ def run(
         calc_for_label = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
         )
 
     result = base_result(
@@ -333,7 +336,7 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
     if uhf:
         cmd += ["--uhf", str(uhf)]
     if solvent:
-        sol = XTB_SOLVENT_MAP.get(solvent.lower(), solvent)
+        sol = resolve_xtb_solvent(solvent)  # ALPB name; rejects numeric eps
         cmd += ["--alpb", sol]
 
     proc = subprocess.run(cmd, cwd=workdir, capture_output=True, text=True, timeout=600)
@@ -434,9 +437,7 @@ def _run_mopac(atoms, *, charge: int, multiplicity: int,
         keywords.append(mopac_spin_keyword(multiplicity))
         keywords.append("UHF")
     if solvent:
-        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
-        if eps is None:
-            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
         keywords.append(f"EPS={eps}")
 
     workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_orb_mopac_"))

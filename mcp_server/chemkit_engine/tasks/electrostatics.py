@@ -25,7 +25,7 @@ import numpy as np
 from ..calculators import (
     build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
     method_label, program_label, collect_calc_extras, mopac_spin_keyword,
-    register_auto_tempdir,
+    register_auto_tempdir, resolve_dielectric,
 )
 from ..io import read_geometry
 from ..schema import (
@@ -54,6 +54,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -67,6 +68,7 @@ def run(
         calc_for_label = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
         )
 
     result = base_result(
@@ -167,10 +169,8 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
                       charge=float(charge), uhf=uhf)
     calc.set_verbosity(VERBOSITY_MUTED)
     if solvent:
-        from ..calculators import XTB_SOLVENT_MAP
-        sol = XTB_SOLVENT_MAP.get(solvent.lower())
-        if sol is None:
-            raise ValueError(f"xtb: unknown solvent {solvent!r}")
+        from ..calculators import resolve_xtb_solvent
+        sol = resolve_xtb_solvent(solvent)  # ALPB name; rejects numeric eps
         try:
             calc.set_solvent(Param.GFN2xTB, sol)
             solvent_applied = True
@@ -231,9 +231,7 @@ def _run_mopac(atoms, symbols, *, charge: int, multiplicity: int,
         keywords.append(mopac_spin_keyword(multiplicity))
         keywords.append("UHF")
     if solvent:
-        eps = MOPAC_SOLVENT_EPS.get(solvent.lower())
-        if eps is None:
-            raise ValueError(f"mopac: unknown solvent {solvent!r}")
+        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
         keywords.append(f"EPS={eps}")
     keywords += ["MULLIK", "THREADS=1"]
 

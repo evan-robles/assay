@@ -43,6 +43,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -79,7 +80,8 @@ def run(
     # Sub-calls stamp their own integrity but never raise; fukui gates its own
     # result (the Σf± charge-conservation check proxies for a failed N±1 state).
     es_kwargs = dict(tier=tier, functional=functional, basis=basis,
-                     density_fit=density_fit, gate_integrity=False)
+                     density_fit=density_fit, solvent_model=solvent_model,
+                     gate_integrity=False)
     neutral = electrostatics.run(
         input_path, method=method, charge=charge,
         multiplicity=multiplicity, solvent=solvent, cli=cli, **es_kwargs,

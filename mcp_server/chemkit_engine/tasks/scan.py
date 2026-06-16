@@ -258,6 +258,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -285,7 +286,8 @@ def run(
     if method in ("dft", "hf"):
         _calc_for_label = _bc(method, charge=charge, multiplicity=multiplicity,
                               solvent=solvent, tier=tier, functional=functional,
-                              basis=basis, density_fit=density_fit)
+                              basis=basis, density_fit=density_fit,
+                              solvent_model=solvent_model)
     result = base_result(
         task="conformational_analysis",
         method=_ml(method, _calc_for_label),
@@ -326,6 +328,7 @@ def run(
             method=method, charge=charge, multiplicity=multiplicity,
             solvent=solvent, n_steps=n_steps, fmax=fmax, opt_steps=opt_steps,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
         )
         if not points:
             dihedral_records.append({
@@ -528,6 +531,7 @@ def _scan_one_dihedral(
     solvent: Optional[str], n_steps: int, fmax: float, opt_steps: int,
     tier: Optional[str] = None, functional: Optional[str] = None,
     basis: Optional[str] = None, density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
 ) -> Tuple[List[Dict[str, Any]], List]:
     """Sweep one dihedral through n_steps equally-spaced target angles.
 
@@ -554,6 +558,7 @@ def _scan_one_dihedral(
         shared_calc = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
         )
 
     # Seed each step from the previous *optimized* geometry — gives smoother
@@ -587,6 +592,7 @@ def _scan_one_dihedral(
                 fmax=fmax, steps=opt_steps,
                 tier=tier, functional=functional, basis=basis,
                 density_fit=density_fit,
+                solvent_model=solvent_model,
                 calc=shared_calc,
             )
 
@@ -623,6 +629,7 @@ def _opt_with_ase_dihedral_constraint(
     fmax: float, steps: int,
     tier: Optional[str] = None, functional: Optional[str] = None,
     basis: Optional[str] = None, density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     calc=None,
 ) -> Tuple[Optional[Any], Optional[float], bool]:
     from ase.constraints import FixInternals
@@ -635,6 +642,7 @@ def _opt_with_ase_dihedral_constraint(
         calc = build_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+            solvent_model=solvent_model,
         )
     apply_calc_to_atoms(atoms, calc)
 

@@ -41,6 +41,7 @@ def run(
     functional: Optional[str] = None,
     basis: Optional[str] = None,
     density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
@@ -60,16 +61,19 @@ def run(
                       multiplicity=multiplicity, solvent=None, cli=cli,
                       tier=tier, functional=functional, basis=basis,
                       density_fit=density_fit,
+                      solvent_model=solvent_model,
                       gate_integrity=False)
     water = sp_task.run(input_path, method=method, charge=charge,
                         multiplicity=multiplicity, solvent="water", cli=cli,
                         tier=tier, functional=functional, basis=basis,
                         density_fit=density_fit,
+                        solvent_model=solvent_model,
                         gate_integrity=False)
     octanol = sp_task.run(input_path, method=method, charge=charge,
                           multiplicity=multiplicity, solvent="octanol", cli=cli,
                           tier=tier, functional=functional, basis=basis,
                           density_fit=density_fit,
+                          solvent_model=solvent_model,
                           gate_integrity=False)
 
     dG_w_kcal = (water["total_energy_eV"]   - gas["total_energy_eV"]) * EV_TO_KCAL

@@ -65,6 +65,7 @@ def build_mean_field(
     density_fit: bool = False,
     auxbasis: Optional[str] = None,
     solvent: Optional[str] = None,
+    solvent_model: str = "ddcosmo",
 ):
     """Construct a converged-or-ready-to-converge SCF/KS object.
 
@@ -109,17 +110,34 @@ def build_mean_field(
         mf = mf.density_fit(auxbasis=aux)
 
     if solvent:
-        # ddCOSMO is native to PySCF; it needs a numeric dielectric, so look the
-        # solvent name up in PYSCF_SOLVENT_EPS and set it directly.
-        eps = PYSCF_SOLVENT_EPS.get(solvent.lower())
-        if eps is None:
-            raise ValueError(
-                f"PySCF backend: unknown solvent {solvent!r}. "
-                f"Known: {sorted(PYSCF_SOLVENT_EPS)}"
-            )
+        # Both ddCOSMO and PCM are native to PySCF and need a numeric dielectric.
+        # The shared resolver accepts EITHER a known name (looked up in
+        # PYSCF_SOLVENT_EPS, this backend's own values) OR a numeric dielectric
+        # passed directly, so a user can specify any solvent's eps. Lazy import
+        # avoids a module-load cycle (calculators.py imports the pyscf backend
+        # lazily in the other direction).
+        from ...calculators import resolve_dielectric
+        eps = resolve_dielectric(solvent, PYSCF_SOLVENT_EPS, backend="pyscf")
         from pyscf import solvent as solv_mod
-        mf = solv_mod.ddCOSMO(mf)
-        mf.with_solvent.eps = eps
+        model = (solvent_model or "ddcosmo").lower()
+        if model == "ddcosmo":
+            # Domain-decomposition COSMO (the chemkit default continuum model).
+            mf = solv_mod.ddCOSMO(mf)
+            mf.with_solvent.eps = eps
+        elif model in ("cpcm", "c-pcm", "pcm", "iefpcm", "ief-pcm"):
+            # Polarizable Continuum Model. PySCF's PCM.method selects the
+            # formalism; C-PCM (conductor-like) is the robust default, IEF-PCM
+            # (integral-equation formalism) is the more rigorous variant.
+            mf = solv_mod.PCM(mf)
+            mf.with_solvent.method = (
+                "IEF-PCM" if model in ("iefpcm", "ief-pcm") else "C-PCM"
+            )
+            mf.with_solvent.eps = eps
+        else:
+            raise ValueError(
+                f"unknown solvent model {solvent_model!r}; choose one of "
+                "'ddcosmo', 'cpcm', or 'iefpcm'."
+            )
 
     mf.conv_tol = float(scf_tol)
     if max_cycle is not None:
@@ -182,6 +200,19 @@ def pack_scf_result(mf) -> Dict[str, Any]:
         )
         if base_name is not None and base_name != out["scf_class"]:
             out["scf_base_class"] = base_name
+    except Exception:
+        pass
+
+    # Continuum-solvation model actually applied (None for gas phase), read off
+    # the attached with_solvent handler so the result records which model ran
+    # (calc-reporting §4). ddCOSMO reports as "ddCOSMO"; PCM reports its method
+    # ("C-PCM" / "IEF-PCM"). Absent key => gas phase.
+    try:
+        ws = getattr(mf, "with_solvent", None)
+        if ws is not None:
+            pcm_method = getattr(ws, "method", None)  # set only on PCM
+            out["solvent_model"] = pcm_method or type(ws).__name__
+            out["solvent_eps"] = getattr(ws, "eps", None)
     except Exception:
         pass
 
