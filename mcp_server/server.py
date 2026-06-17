@@ -326,6 +326,25 @@ def cli_main(argv: list[str] | None = None) -> int:
         )
         return 2
 
+    # A per-subcommand help request (e.g. `chemkit pka --help`) is NOT a
+    # calculation: it must not spawn the server, create a live `.out` log, or get
+    # wrapped in result JSON. Print argparse's help directly, in-process, and
+    # exit. (We import the engine CLI lazily and let argparse's own --help action
+    # print + SystemExit; we translate that exit code back to an int.)
+    if "-h" in rest or "--help" in rest:
+        engine_dir = HERE / "chemkit_engine"
+        if str(HERE) not in sys.path:
+            sys.path.insert(0, str(HERE))
+        try:
+            from chemkit_engine.cli import main as engine_main  # type: ignore
+        except Exception:  # noqa: BLE001 — fall back to the server path if import fails
+            engine_main = None
+        if engine_main is not None:
+            try:
+                return int(engine_main([subcommand, *rest]) or 0)
+            except SystemExit as e:  # argparse --help raises SystemExit(0)
+                return int(e.code or 0)
+
     # Route through the shared MCP client (skills/_mcp_client.py), which speaks to
     # this same server. It lives in skills/, a sibling of mcp_server/.
     skills_dir = HERE.parent / "skills"
