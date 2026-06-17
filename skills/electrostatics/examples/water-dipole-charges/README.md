@@ -30,7 +30,7 @@ Generated files: [`water_electrostatics.json`](water_electrostatics.json), [`wat
 | Dipole moment | 2.29 D | 1.855 D | GFN2-xTB overestimates the water dipole (2.29 vs 1.855 D); a known tendency, honest to report. |
 
 ## References
-- T. R. Dyke, J. S. Muenter. "Electric dipole moments of low J states of H2O and D2O." *J. Chem. Phys.* **1973**, *59*, 3125. https://doi.org/10.1063/1.1680453 — experimental. *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Dyke, T. R.; Muenter, J. S. Electric Dipole Moments of Low J States of H2O and D2O. *J. Chem. Phys.* **1973**, *59*, 3125–3127. https://doi.org/10.1063/1.1680453.
 
 ## 3D Structures
 - [water.xyz](water.xyz)

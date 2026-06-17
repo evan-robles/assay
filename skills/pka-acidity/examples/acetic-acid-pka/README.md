@@ -35,7 +35,7 @@ Generated files: [acetic_acid.xyz](acetic_acid.xyz), [acetate.xyz](acetate.xyz),
 Absolute mode gives a physically meaningless value (−114.7) — expected, since absolute pKa from semi-empirical free energies plus a literature G(H⁺,aq) carries enormous systematic error (the skill itself warns against absolute mode). Reference mode (against formic acid, exp pKa 3.75) is far better at 10.58 but still ~6 units too high — GFN2-xTB pKa is screening-grade even in reference mode for this pair. Both are reported honestly; higher-level methods are recommended for quantitative pKa. Note: `--pka-ref 3.75` (formic acid) is a user-supplied experimental reference value — an allowed input, not auto-reported experimental data.
 
 ## References
-- CRC Handbook of Chemistry and Physics, 95th ed., 2014 (dissociation constants of organic acids: acetic acid 4.76, formic acid 3.75; experimental). *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Haynes, W. M., Ed. *CRC Handbook of Chemistry and Physics*, 95th ed.; CRC Press: Boca Raton, FL, **2014**; Dissociation Constants of Organic Acids and Bases. (Acetic acid pKa 4.76; formic acid pKa 3.75.)
 
 ## 3D Structures
 - [acetic_acid.xyz](acetic_acid.xyz)

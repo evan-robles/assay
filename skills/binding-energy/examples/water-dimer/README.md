@@ -39,7 +39,7 @@ The CCSD(T)/CBS value is a high-level **computational** benchmark, not an experi
 **Verdict:** GFN2-xTB (-4.39) sits reasonably between the ZPE-inclusive D0 (~-3.0) and the electronic De (~-5.0); good for a semi-empirical method. Note this skill reports an electronic binding energy with no BSSE correction.
 
 ## References
-- B. Temelso, K. A. Archer, G. C. Shields. "Benchmark structures and binding energies of small water clusters." J. Phys. Chem. A 2011, 115, 12034. https://doi.org/10.1021/jp2069489 — CCSD(T)/CBS computational benchmark. *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Temelso, B.; Archer, K. A.; Shields, G. C. Benchmark Structures and Binding Energies of Small Water Clusters with Anharmonicity Corrections. *J. Phys. Chem. A* **2011**, *115*, 12034–12046. https://doi.org/10.1021/jp2069489. (CCSD(T)/CBS computational benchmark.)
 
 ## 3D Structures
 - [water_dimer.xyz](water_dimer.xyz)

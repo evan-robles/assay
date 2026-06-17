@@ -46,8 +46,6 @@ source record. Verified live against the PubChem PUG REST API for CID 2519
 | Molecular formula | — | `C8H10N4O2` | Consistent with caffeine |
 | IUPAC name | — | `1,3,7-trimethylpurine-2,6-dione` | Confirms caffeine |
 
-`[verified: PubChem PUG REST 200 via curl, SMILES/formula/IUPAC read from CID 2519, 2026-06-16]`
-
 The resolver's own provenance points at the same record (CID 2519), so the
 returned SMILES is correctly attributed to its source.
 

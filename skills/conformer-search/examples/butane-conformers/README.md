@@ -37,7 +37,7 @@ Generated files: [butane.xyz](butane.xyz), [butane_confsearch.json](butane_confs
 **Verdict:** The search correctly finds the anti global minimum plus two equivalent gauche conformers, but MMFF94 OVERESTIMATES the anti-gauche gap (2.14 vs ~0.67 kcal/mol). This is force-field-level sampling; running with `--postopt mopac` (PM7 re-optimization) would tighten the energetics. Honest to flag.
 
 ## References
-- W. A. Herrebout et al. / D. A. C. Compton, S. Montero, W. F. Murphy. J. Phys. Chem. 1980, 84, 3587. https://doi.org/10.1021/j100463a018 — experimental n-butane conformer energetics. *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Compton, D. A. C.; Montero, S.; Murphy, W. F. Low-Frequency Raman Spectrum and Asymmetric Potential Function for Internal Rotation of Gaseous n-Butane. *J. Phys. Chem.* **1980**, *84*, 3587–3591. https://doi.org/10.1021/j100463a018.
 
 ## 3D Structures
 - [butane.xyz](butane.xyz)

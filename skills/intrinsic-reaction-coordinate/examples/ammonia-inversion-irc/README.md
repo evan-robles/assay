@@ -32,7 +32,7 @@ Generated files: [nh3_ts.xyz](nh3_ts.xyz), [nh3_irc.json](nh3_irc.json), [nh3_ir
 NH₃ inversion connects two equivalent pyramidal minima that are mirror images, so the forward and reverse endpoints are the same molecule — `distinct_endpoints = False` is the chemically correct result, confirming the TS connects the umbrella-inverted forms. This validates the IRC walk qualitatively (an IRC produces a path, not an experimental number).
 
 ## References
-- K. Fukui. "The path of chemical reactions — the IRC approach." Acc. Chem. Res. 1981, 14, 363 (IRC concept). https://doi.org/10.1021/ar00072a001 *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Fukui, K. The Path of Chemical Reactions — the IRC Approach. *Acc. Chem. Res.* **1981**, *14*, 363–368. https://doi.org/10.1021/ar00072a001.
 
 ## 3D Structures
 - [nh3_ts.xyz](nh3_ts.xyz)

@@ -47,10 +47,8 @@ honest to flag.
 
 ## Reference
 
-- A. Ben-Naim, Y. Marcus. "Solvation thermodynamics of nonionic solutes."
-  *J. Chem. Phys.* **1984**, *81*, 2016–2027. https://doi.org/10.1063/1.447824 —
-  experimental solvation free energies (source of the −6.3 kcal/mol value for
-  water). *(DOI/value not web-verified in this session. [CITATION UNVERIFIED])*
+- Ben-Naim, A.; Marcus, Y. Solvation Thermodynamics of Nonionic Solutes.
+  *J. Chem. Phys.* **1984**, *81*, 2016–2027. https://doi.org/10.1063/1.447824.
 
 ## 3D Structures
 

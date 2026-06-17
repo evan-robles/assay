@@ -34,7 +34,7 @@ Generated files: [benzoquinone.xyz](benzoquinone.xyz), [benzoquinone_redox.json]
 **Verdict:** VERY POOR absolute agreement (+4.68 V computed vs ~+0.10 V). Honest to report: this skill's absolute redox potential from semi-empirical energies + implicit solvation is screening-grade only; absolute potentials carry large systematic error. Useful at best for relative ranking within a closely related series, not absolute values. State this plainly.
 
 ## References
-- P. S. Guin, S. Das, P. C. Mandal. "Electrochemical reduction of quinones in different media." Int. J. Electrochem. 2011, 816202. https://doi.org/10.4061/2011/816202 — experimental quinone reduction potentials. *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Guin, P. S.; Das, S.; Mandal, P. C. Electrochemical Reduction of Quinones in Different Media: A Review. *Int. J. Electrochem.* **2011**, *2011*, 816202. https://doi.org/10.4061/2011/816202. (Review tabulating experimental quinone reduction potentials.)
 
 ## 3D Structures
 - [benzoquinone.xyz](benzoquinone.xyz)

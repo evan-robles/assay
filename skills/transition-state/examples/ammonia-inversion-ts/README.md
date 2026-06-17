@@ -38,7 +38,7 @@ Generated files: [nh3_planar_ts_guess.xyz](nh3_planar_ts_guess.xyz), [nh3_ts_opt
 The TS is correctly located and validated (single imaginary mode = the inversion coordinate). PM7 underestimates the barrier (3.80 vs 5.8 kcal/mol, ~2 kcal/mol low) — honest and reasonable for a semi-empirical method. Note also: xtb/Sella on this system returned a minimum (0 imaginary modes); MOPAC's native saddle optimizer succeeded — a good illustration of choosing the right TS method.
 
 ## References
-- J. D. Swalen, J. A. Ibers. "Potential function for the inversion of ammonia." J. Chem. Phys. 1962, 36, 1914 (experimental NH₃ inversion barrier). https://doi.org/10.1063/1.1701290 *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Swalen, J. D.; Ibers, J. A. Potential Function for the Inversion of Ammonia. *J. Chem. Phys.* **1962**, *36*, 1914–1918. https://doi.org/10.1063/1.1701290.
 
 ## 3D Structures
 - [nh3_planar_ts_guess.xyz](nh3_planar_ts_guess.xyz)

@@ -40,7 +40,7 @@ Generated files: [nh3_reactant.xyz](nh3_reactant.xyz), [nh3_product.xyz](nh3_pro
 The full reaction-profile pipeline succeeds end-to-end (opt + TS + freq + diagram). ΔG reaction = 0 is correct (symmetric inversion: identical reactant/product). The activation barrier (3.79–4.22 kcal/mol) underestimates the experimental ~5.8 kcal/mol, consistent with the standalone TS example — an honest PM7 limitation.
 
 ## References
-- J. D. Swalen, J. A. Ibers. "Potential function for the inversion of ammonia." J. Chem. Phys. 1962, 36, 1914 (experimental NH₃ inversion barrier). https://doi.org/10.1063/1.1701290 *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Swalen, J. D.; Ibers, J. A. Potential Function for the Inversion of Ammonia. *J. Chem. Phys.* **1962**, *36*, 1914–1918. https://doi.org/10.1063/1.1701290.
 
 ## 3D Structures
 - [nh3_reactant.xyz](nh3_reactant.xyz)

@@ -52,14 +52,15 @@ a strong validation of the relaxed-scan workflow on the textbook case.
 
 ## References
 
-- D. A. C. Compton, S. Montero, W. F. Murphy. "Low-frequency Raman spectrum and
-  conformational analysis of n-butane." *J. Phys. Chem.* **1980**, *84*,
-  3587–3591. https://doi.org/10.1021/j100463a018 — experimental anti–gauche
-  energy difference of n-butane. *(value/DOI not web-verified in this session.
-  [CITATION UNVERIFIED])*
-- C. Bannwarth, S. Ehlert, S. Grimme. "GFN2-xTB." *J. Chem. Theory Comput.*
-  **2019**, *15*, 1652–1671. https://doi.org/10.1021/acs.jctc.8b01176 — the
-  semi-empirical method used.
+- Compton, D. A. C.; Montero, S.; Murphy, W. F. Low-Frequency Raman Spectrum and
+  Asymmetric Potential Function for Internal Rotation of Gaseous n-Butane.
+  *J. Phys. Chem.* **1980**, *84*, 3587–3591.
+  https://doi.org/10.1021/j100463a018.
+- Bannwarth, C.; Ehlert, S.; Grimme, S. GFN2-xTB — An Accurate and Broadly
+  Parametrized Self-Consistent Tight-Binding Quantum Chemical Method with
+  Multipole Electrostatics and Density-Dependent Dispersion Contributions.
+  *J. Chem. Theory Comput.* **2019**, *15*, 1652–1671.
+  https://doi.org/10.1021/acs.jctc.8b01176.
 
 ## 3D Structures
 

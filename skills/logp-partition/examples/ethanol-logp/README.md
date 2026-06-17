@@ -36,7 +36,7 @@ Generated files: [ethanol.xyz](ethanol.xyz), [ethanol_logp.json](ethanol_logp.js
 **Verdict:** POOR agreement — GFN2-xTB predicts +1.10 vs experimental -0.31 (wrong sign). Honest to report: implicit-solvent logP from a semi-empirical method is screening-grade and small polar molecules like ethanol are a hard case. Report this as a known limitation, not a success.
 
 ## References
-- C. Hansch, A. Leo, D. Hoekman. "Exploring QSAR: Hydrophobic, Electronic, and Steric Constants." ACS, 1995 — compiled experimental logP values (ethanol -0.31). *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Hansch, C.; Leo, A.; Hoekman, D. *Exploring QSAR: Hydrophobic, Electronic, and Steric Constants*; ACS Professional Reference Book; American Chemical Society: Washington, DC, **1995**. (Compiled experimental logP; ethanol logP = −0.31.)
 
 ## 3D Structures
 - [ethanol.xyz](ethanol.xyz)

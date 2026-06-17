@@ -51,11 +51,14 @@ state.
 
 ## Reference
 
-- K. Kimura, S. Katsumata, Y. Achiba, T. Yamazaki, S. Iwata. *Handbook of HeI
-  Photoelectron Spectra of Fundamental Organic Molecules*; Japan Scientific
-  Societies Press, **1981** — experimental photoelectron (ionization energy)
-  data for H₂O (IE₁ ≈ 12.62 eV). *(Exact value/source not web-verified in this
-  session. [CITATION UNVERIFIED])*
+- National Institute of Standards and Technology. Water, Ion Energetics Data;
+  NIST Chemistry WebBook, NIST Standard Reference Database Number 69.
+  https://webbook.nist.gov/cgi/cbook.cgi?ID=C7732185&Mask=20 (accessed
+  2026-06-17). (First ionization energy IE₁ ≈ 12.62 eV, as compiled in the NIST
+  WebBook.)
+- Kimura, K.; Katsumata, S.; Achiba, Y.; Yamazaki, T.; Iwata, S. *Handbook of
+  HeI Photoelectron Spectra of Fundamental Organic Molecules*; Japan Scientific
+  Societies Press: Tokyo, **1981**. (Photoelectron ionization-energy data.)
 
 ## 3D Structures
 

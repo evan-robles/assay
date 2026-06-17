@@ -45,12 +45,10 @@ systematic offset is expected and should not be read as error in the run.
 
 ## Reference
 
-- T. Shimanouchi. *Tables of Molecular Vibrational Frequencies, Consolidated
-  Volume I*; NSRDS-NBS 39; National Bureau of Standards, **1972** —
-  experimental vibrational fundamentals of H₂O.
-  https://doi.org/10.6028/NBS.NSRDS.39
-  *(Citation details — exact page for H₂O — not web-verified in this session;
-  confirm the primary measurement source if needed. [CITATION UNVERIFIED])*
+- Shimanouchi, T. Tables of Molecular Vibrational Frequencies. Consolidated
+  Volume II. *J. Phys. Chem. Ref. Data* **1977**, *6*, 993–1102.
+  https://doi.org/10.1063/1.555560. (Experimental vibrational fundamentals of
+  H₂O.)
 
 ## 3D Structures
 

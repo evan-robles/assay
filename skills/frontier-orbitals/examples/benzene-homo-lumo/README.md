@@ -33,7 +33,7 @@ Generated files: [`benzene_frontier.json`](benzene_frontier.json), [`benzene.xyz
 | HOMO-LUMO gap | 4.825 eV | — | This is an orbital-energy gap, not an optical gap; no claim is made that it matches a measured optical/excitation gap. |
 
 ## References
-- P. G. Wilkinson, "Absorption spectra of benzene"; or NIST Chemistry WebBook, benzene ionization energy 9.24 eV — experimental photoelectron data. *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- National Institute of Standards and Technology. Benzene, Ion Energetics Data; NIST Chemistry WebBook, NIST Standard Reference Database Number 69. https://webbook.nist.gov/cgi/cbook.cgi?ID=C71432&Mask=20 (accessed 2026-06-17). (Ionization energy IE ≈ 9.24 eV, as compiled in the NIST WebBook.)
 
 ## 3D Structures
 - [benzene.xyz](benzene.xyz)

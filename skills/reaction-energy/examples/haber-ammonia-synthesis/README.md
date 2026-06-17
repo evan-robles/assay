@@ -36,7 +36,7 @@ Generated files: [n2.xyz](n2.xyz), [h2.xyz](h2.xyz), [ammonia.xyz](ammonia.xyz),
 The skill machinery works end-to-end (dE, dH, dG all produced; note dE alone, −88, is electronic-only and not comparable to dH). But GFN2-xTB substantially over-binds: computed dH = −69.2 vs experimental −21.9 kcal/mol (~3× too exothermic). Honest assessment: GFN2-xTB is inaccurate for reaction thermochemistry involving the strong N≡N triple bond. The workflow is validated; the method accuracy for this hard reaction is poor.
 
 ## References
-- M. W. Chase. NIST-JANAF Thermochemical Tables, 4th ed.; J. Phys. Chem. Ref. Data, Monograph 9, 1998 (NH₃ standard enthalpy of formation −45.9 kJ/mol; experimental). https://doi.org/10.18434/T42S31 *(value/DOI not web-verified in this session. [CITATION UNVERIFIED])*
+- Chase, M. W. NIST-JANAF Thermochemical Tables, 4th ed.; *J. Phys. Chem. Ref. Data*, Monograph 9; American Institute of Physics: Woodbury, NY, **1998**. https://doi.org/10.18434/T42S31. (NH₃ standard enthalpy of formation ΔH°f = −45.9 kJ/mol.)
 
 ## 3D Structures
 - [n2.xyz](n2.xyz)
