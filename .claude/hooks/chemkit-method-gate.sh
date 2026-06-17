@@ -89,13 +89,26 @@ if [[ "$CMD" == *"$GATE_SCRIPT_BASENAME"* && "$CMD" == *"--ack"* ]]; then
   exit 0
 fi
 
-# Is this a chemkit calculation command? Match a skill script under
-# skills/<name>/scripts/ OR a direct engine call (_engine.cli / _mcp_client).
+# Is this a chemkit calculation command? Match any of the ways a calculation is
+# launched from a shell:
+#   * a skill wrapper script under skills/<name>/scripts/<name>.py
+#   * a direct engine module call: python -m chemkit_engine.cli <subcommand>
+#   * the shared MCP client (_mcp_client)
+#   * the `chemkit` console command: `chemkit <subcommand> ...`
+# The `chemkit` front door routes through the server like the skill scripts, so
+# it MUST be gated here too — otherwise it would be a short, obvious, UNGATED
+# path that an agent would naturally prefer.
 is_chemkit=0
 if [[ "$CMD" == *"skills/"*"/scripts/"*".py"* ]] \
-   || [[ "$CMD" == *"_engine.cli"* ]] \
-   || [[ "$CMD" == *"_mcp_client"* ]]; then
+   || [[ "$CMD" == *"chemkit_engine.cli"* ]] \
+   || [[ "$CMD" == *"_mcp_client"* ]] \
+   || [[ "$CMD" =~ (^|[[:space:]\;\&\|\(])chemkit[[:space:]] ]]; then
   is_chemkit=1
+fi
+# `chemkit-mcp` only STARTS the server; it runs no calculation -> never gate it.
+if [[ "$CMD" == *"chemkit-mcp"* && "$CMD" != *"chemkit_engine.cli"* \
+      && "$CMD" != *"skills/"*"/scripts/"* ]]; then
+  is_chemkit=0
 fi
 [[ "$is_chemkit" -eq 0 ]] && exit 0   # not a chemkit calc -> never interfere
 
@@ -103,7 +116,8 @@ fi
 # unless it carries a QM-refine knob. Detect build-from-smiles / `build`.
 is_build=0
 if [[ "$CMD" == *"build-from-smiles"* ]] || [[ "$CMD" == *" build "* ]] \
-   || [[ "$CMD" == *"_engine.cli build"* ]]; then
+   || [[ "$CMD" == *"chemkit_engine.cli build"* ]] \
+   || [[ "$CMD" =~ (^|[[:space:]])chemkit[[:space:]]+build([[:space:]]|$) ]]; then
   is_build=1
 fi
 

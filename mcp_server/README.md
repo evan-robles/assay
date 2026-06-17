@@ -91,12 +91,31 @@ The older path-based form still works if you don't want to install:
 }
 ```
 
-## Run a skill from the shell
+## Run from the shell
 
-The thin clients connect for you:
+After `pip install -e .` (or `pip install chemkit-mcp`) two console commands exist:
+
+- **`chemkit`** — the human-facing CLI. Run one calculation:
+  ```bash
+  chemkit sp --method xtb mol.xyz
+  chemkit redox --method dft --tier standard --ox-charge 0 --red-charge -1 mol.xyz
+  chemkit sp --help          # per-subcommand arguments
+  chemkit                    # list subcommands
+  ```
+  `chemkit <subcommand>` routes **through the MCP server** — the same path the
+  skill scripts use — so it gets the live `.out` log (surfaced for `tail -f`) and
+  the level-of-theory / integrity gates, identically to every other entry point.
+
+- **`chemkit-mcp`** — starts the stdio MCP server (this is what *agents* connect
+  to; it runs no calculation itself).
+
+Equivalent forms (no install, or for scripting a specific skill):
 
 ```bash
+# the per-skill wrapper script (what agents invoke)
 python ../skills/single_point_energy/single_point_energy.py --method xtb mol.xyz
+# the engine module directly (no server, no live-log streaming)
+PYTHONPATH=. python -m chemkit_engine.cli sp --method xtb mol.xyz
 ```
 
 Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to pin a specific server.
@@ -115,7 +134,7 @@ the result JSON (`code_specific.integral_treatment`, `density_fit`, `scf_class`)
 
 ```bash
 # exact integrals (default) — reproducible against your own PySCF RKS/UKS
-python ../skills/single_point_energy/single_point_energy.py --method dft --tier standard mol.xyz
+chemkit sp --method dft --tier standard mol.xyz
 # RI / density fitting — faster, ~sub-mEh approximation
-python ../skills/single_point_energy/single_point_energy.py --method dft --tier standard --density-fit mol.xyz
+chemkit sp --method dft --tier standard --density-fit mol.xyz
 ```

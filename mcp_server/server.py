@@ -274,5 +274,73 @@ def main() -> None:
     mcp.run()  # stdio transport
 
 
+# ---------------------------------------------------------------------------
+# `chemkit` human-facing CLI front door.
+#
+# Routes a shell call `chemkit <subcommand> <args...>` THROUGH the MCP server
+# (via the shared _mcp_client), exactly like the per-skill wrapper scripts do —
+# so it inherits every server-path guarantee: the live `.out` log is streamed
+# and its path surfaced (calculation-reporting-standards #9), and the in-engine
+# --accept-defaults level-of-theory gate + integrity gate still apply.
+#
+# Subcommand -> MCP tool name is derived from TOOLS (the single source of truth),
+# so this never drifts from the server's own dispatch table.
+# ---------------------------------------------------------------------------
+
+# subcommand (e.g. "sp") -> tool name (e.g. "single-point-energy")
+_SUBCOMMAND_TO_TOOL = {sub: name for name, (sub, _folder) in TOOLS.items()}
+
+
+def _chemkit_usage() -> str:
+    subs = ", ".join(sorted(_SUBCOMMAND_TO_TOOL))
+    return (
+        "usage: chemkit <subcommand> [args...]\n\n"
+        "Runs a chemkit calculation through the MCP server (same path as the\n"
+        "skill scripts: live .out log + level-of-theory/integrity gates apply).\n\n"
+        f"subcommands: {subs}\n\n"
+        "Run a subcommand with --help for its arguments, e.g.:\n"
+        "  chemkit sp --help\n"
+        "  chemkit sp --method xtb mol.xyz\n"
+        "  chemkit redox --method dft --tier standard --ox-charge 0 --red-charge -1 mol.xyz\n\n"
+        "To start the MCP server instead (for agents), use: chemkit-mcp\n"
+    )
+
+
+def cli_main(argv: list[str] | None = None) -> int:
+    """Console entry point (`chemkit`): run one calculation via the MCP server.
+
+    `chemkit sp --method xtb mol.xyz` -> calls the `single-point-energy` MCP
+    tool with the remaining argv. Returns the tool's exit code.
+    """
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if not argv or argv[0] in ("-h", "--help"):
+        sys.stdout.write(_chemkit_usage())
+        return 0 if argv else 2
+
+    subcommand = argv[0]
+    rest = argv[1:]
+    tool_name = _SUBCOMMAND_TO_TOOL.get(subcommand)
+    if tool_name is None:
+        sys.stderr.write(
+            f"chemkit: unknown subcommand {subcommand!r}.\n\n" + _chemkit_usage()
+        )
+        return 2
+
+    # Route through the shared MCP client (skills/_mcp_client.py), which speaks to
+    # this same server. It lives in skills/, a sibling of mcp_server/.
+    skills_dir = HERE.parent / "skills"
+    if str(skills_dir) not in sys.path:
+        sys.path.insert(0, str(skills_dir))
+    try:
+        from _mcp_client import run_skill  # type: ignore
+    except ModuleNotFoundError as exc:
+        if exc.name == "mcp":
+            sys.stderr.write("chemkit needs the MCP client SDK: pip install mcp\n")
+            return 2
+        sys.stderr.write(f"chemkit: could not load the MCP client ({exc}).\n")
+        return 2
+    return run_skill(tool_name, rest)
+
+
 if __name__ == "__main__":
     main()

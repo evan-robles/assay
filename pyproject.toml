@@ -29,6 +29,12 @@ qm  = ["pyscf", "matplotlib"]   # pip install "chemkit-mcp[qm]" -> DFT/HF + plot
 all = ["pyscf", "matplotlib"]
 
 [project.scripts]
+# chemkit       : human-facing CLI — runs ONE calculation through the MCP server
+#                 (`chemkit sp --method xtb mol.xyz`). Routes via the same path as
+#                 the skill scripts, so the live .out log + level-of-theory and
+#                 integrity gates all apply.
+# chemkit-mcp   : starts the stdio MCP server (for agents to connect to).
+chemkit     = "mcp_server.server:cli_main"
 chemkit-mcp = "mcp_server.server:main"
 
 [project.urls]
