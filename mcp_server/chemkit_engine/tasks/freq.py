@@ -434,44 +434,78 @@ def _run_ase(
     # https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
     EV_PER_CM = 1.239841984e-4
     FLOOR_eV = NEAR_ZERO_CM * EV_PER_CM
+    # An imaginary mode whose MAGNITUDE is at/below the soft-mode floor is, on a
+    # structure meant to be a minimum, almost always a floppy low-frequency real
+    # mode (a methyl/torsional rotor, a ring pucker) that finite-difference noise
+    # or an imperfect Eckart projection pushed slightly negative — NOT a reaction
+    # coordinate. Standard low-mode practice (Cramer–Truhlar / Grimme) is to take
+    # its magnitude and treat it as a floored real vibration, so it stays in the
+    # 3N−6 count and thermochemistry is well-defined (screening-grade). A LARGER
+    # imaginary mode is a genuine saddle: the structure is not a minimum, its
+    # thermochemistry is not meaningful, and it must be surfaced (and gate the
+    # result via the integrity layer), never silently floored.
+    SOFT_IMAG_CM = NEAR_ZERO_CM  # |ν| <= 50i cm⁻¹ -> reclassify as a floored real mode
+
     real_vib_energies = []
-    n_clamped = 0
+    n_clamped = 0          # real modes (or soft-imag reclassified) raised to the floor
+    n_soft_imag = 0        # imaginary modes reclassified as floored real low modes
+    n_hard_imag = 0        # genuine saddle-point imaginary modes (count > floor)
     for e, f in zip(energies_eV, frequencies_cm):
         # Skip the projected-out trans/rot padding (energies are exactly 0).
         if np.isreal(e) and e.real == 0 and np.isreal(f) and f.real == 0:
             continue
-        # Imaginary modes are not vibrations — counted separately below.
         if np.iscomplex(f) and f.imag != 0:
+            imag_cm = abs(f.imag)
+            if imag_cm <= SOFT_IMAG_CM:
+                # Soft imaginary -> treat as a floored real low-frequency mode so
+                # the vibrational count stays 3N−6 and thermochemistry is defined.
+                real_vib_energies.append(FLOOR_eV)
+                n_clamped += 1
+                n_soft_imag += 1
+            else:
+                # Genuine saddle-point mode: not a vibration, excluded. The
+                # resulting count mismatch is handled by the guarded thermo call
+                # below; the integrity gate will mark the result untrustworthy.
+                n_hard_imag += 1
             continue
         if not np.isreal(e):
             continue
         if e.real < FLOOR_eV:
-            real_vib_energies.append(FLOOR_eV)   # raise soft modes to floor
+            real_vib_energies.append(FLOOR_eV)   # raise soft real modes to floor
             n_clamped += 1
         else:
             real_vib_energies.append(e.real)
-    # Count ANY mode with a nonzero imaginary frequency — including soft imag
-    # modes between 0 and 50 cm⁻¹. A real TS often has the reaction-coordinate
-    # mode in the 100–800i cm⁻¹ range, but conformational saddles can have
-    # imag modes as soft as 20i. Dropping them silently turned saddles into
-    # "minima" in the previous version.
-    n_imag = sum(
-        1 for f in frequencies_cm
-        if np.iscomplex(f) and f.imag != 0
-    )
+    # n_imag = ALL imaginary modes (soft reclassified + hard). Reported so the
+    # integrity gate / downstream consumers see the true count; n_hard_imag is
+    # what actually signals "this is a saddle, not a minimum".
+    n_imag = n_soft_imag + n_hard_imag
 
-    thermo = IdealGasThermo(
-        vib_energies=real_vib_energies,
-        potentialenergy=energy_eV,
-        atoms=atoms,
-        geometry=geometry,
-        symmetrynumber=symmetrynumber,
-        spin=(multiplicity - 1) / 2.0,
-    )
-    zpe_eV = thermo.get_ZPE_correction()
-    H_eV = thermo.get_enthalpy(temperature_K, verbose=False)
-    S_eV_per_K = thermo.get_entropy(temperature_K, pressure_Pa, verbose=False)
-    G_eV = thermo.get_gibbs_energy(temperature_K, pressure_Pa, verbose=False)
+    # Guard the thermo call: even after the soft-imag reclassification, a genuine
+    # saddle (n_hard_imag > 0) leaves fewer than 3N−6 modes, which ASE's
+    # IdealGasThermo rejects with a raw ValueError. Convert that into a clean,
+    # structured chemkit failure (a non-finite G that the integrity gate catches)
+    # rather than letting an uncaught traceback escape. fail loudly, never crash.
+    thermo_failed_reason = None
+    try:
+        thermo = IdealGasThermo(
+            vib_energies=real_vib_energies,
+            potentialenergy=energy_eV,
+            atoms=atoms,
+            geometry=geometry,
+            symmetrynumber=symmetrynumber,
+            spin=(multiplicity - 1) / 2.0,
+        )
+        zpe_eV = thermo.get_ZPE_correction()
+        H_eV = thermo.get_enthalpy(temperature_K, verbose=False)
+        S_eV_per_K = thermo.get_entropy(temperature_K, pressure_Pa, verbose=False)
+        G_eV = thermo.get_gibbs_energy(temperature_K, pressure_Pa, verbose=False)
+    except ValueError as exc:
+        # Mode-count mismatch (genuine saddle), or any other thermo rejection.
+        # Report NaN thermochemistry + a reason; the integrity gate's
+        # `gibbs_finite` / `n_imag_minimum` checks turn this into a trustworthy=
+        # false result with a clear message, not a process-killing traceback.
+        thermo_failed_reason = str(exc)
+        zpe_eV = H_eV = S_eV_per_K = G_eV = float("nan")
 
     result = base_result(
         task="vibrational_thermochemistry",
@@ -501,6 +535,11 @@ def _run_ase(
         (f.real if np.isreal(f) else -abs(f.imag)) for f in frequencies_cm
     ]
 
+    result["n_soft_imaginary_modes"] = n_soft_imag
+    result["n_saddle_imaginary_modes"] = n_hard_imag
+    if thermo_failed_reason is not None:
+        result["thermochemistry_error"] = thermo_failed_reason
+
     warns = element_warnings(symbols, method)
     warns += projection_warnings
     warns += _gas_phase_entropy_warning(solvent)
@@ -512,10 +551,23 @@ def _run_ase(
             "over-estimated, so S and G are biased high for this flexible molecule "
             "— treat the free energy as screening-grade."
         )
-    if n_imag > 0:
+    if n_soft_imag > 0:
         warns.append(
-            f"{n_imag} imaginary mode(s) detected — geometry is not a true minimum. "
-            "Thermochemistry values are approximate; re-optimize and re-run."
+            f"{n_soft_imag} SOFT imaginary mode(s) (|ν| ≤ {SOFT_IMAG_CM:.0f}i cm⁻¹) "
+            "were reclassified as floored low-frequency real modes — these are "
+            "almost always a floppy rotor/torsion pushed slightly negative by "
+            "finite-difference noise or the Eckart projection, not a reaction "
+            "coordinate. Thermochemistry is computed (screening-grade); if you "
+            "need a clean minimum, re-optimize more tightly."
+        )
+    if n_hard_imag > 0:
+        warns.append(
+            f"{n_hard_imag} genuine imaginary mode(s) (|ν| > {SOFT_IMAG_CM:.0f}i "
+            "cm⁻¹) detected — this geometry is a saddle point, NOT a minimum. "
+            "Thermochemistry is NOT valid here"
+            + (" (and could not be computed: " + thermo_failed_reason + ")"
+               if thermo_failed_reason else "")
+            + ". Re-optimize to a true minimum before using these values."
         )
     if geometry_was_default:
         result["geometry_auto_detected"] = True
