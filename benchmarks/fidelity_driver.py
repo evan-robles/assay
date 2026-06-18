@@ -222,13 +222,42 @@ def _strip(d: Dict[str, Any]) -> Dict[str, Any]:
     return {k: v for k, v in d.items() if k not in _DETERMINISM_IGNORE}
 
 
-def check_determinism(skill: str, flags: List[str], xyz: str) -> Tuple[bool, str]:
-    """Layer A: run the engine twice; chemistry fields must be identical."""
+def _field_diff(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
+    """Return {key: [a_val, b_val]} for every chemistry field that differs."""
+    sa, sb = _strip(a), _strip(b)
+    diff: Dict[str, Any] = {}
+    for key in sorted(set(sa) | set(sb)):
+        if sa.get(key) != sb.get(key):
+            diff[key] = [sa.get(key), sb.get(key)]
+    return diff
+
+
+def check_determinism(skill: str, flags: List[str], xyz: str,
+                      run_dir: Optional[Path] = None) -> Tuple[bool, str]:
+    """Layer A: run the engine twice; chemistry fields must be identical.
+
+    Both runs' result JSON and live .out log are persisted into
+    `<run_dir>/determinism/` (run_a.*, run_b.*) so they are always available to
+    inspect — crucially when the check FAILS, where comparing the two logs is the
+    only way to find the source of nondeterminism. On failure a
+    `determinism_diff.json` lists every chemistry field that differs.
+    """
+    det_dir = (run_dir / "determinism") if run_dir is not None else None
     with tempfile.TemporaryDirectory() as td:
-        a = run_engine(skill, flags, xyz, os.path.join(td, "a.json"))
-        b = run_engine(skill, flags, xyz, os.path.join(td, "b.json"))
+        a = run_engine(skill, flags, xyz, os.path.join(td, "a.json"),
+                       keep_dir=det_dir, label="run_a")
+        b = run_engine(skill, flags, xyz, os.path.join(td, "b.json"),
+                       keep_dir=det_dir, label="run_b")
     if _strip(a) == _strip(b):
         return True, "identical across two runs"
+
+    if det_dir is not None:
+        diff = _field_diff(a, b)
+        (det_dir / "determinism_diff.json").write_text(json.dumps(diff, indent=2, default=str))
+        n = len(diff)
+        return False, (f"engine output differs across identical runs "
+                       f"({n} field(s): {', '.join(list(diff)[:5])}); "
+                       f"see {det_dir}/run_a.out vs run_b.out and determinism_diff.json")
     return False, "engine output differs across identical runs"
 
 
@@ -589,8 +618,8 @@ def main() -> int:
         "timestamp": datetime.now().isoformat(timespec="seconds"),
     }, indent=2))
 
-    # Layer A: determinism.
-    det_ok, det_msg = check_determinism(skill, flags, xyz)
+    # Layer A: determinism. Both runs' .json/.out persist into <run_dir>/determinism/.
+    det_ok, det_msg = check_determinism(skill, flags, xyz, run_dir=run_dir)
     print(f"[Layer A - determinism] {'PASS' if det_ok else 'FAIL'}: {det_msg}")
 
     # Ground truth (single canonical run), persisted into the run dir.

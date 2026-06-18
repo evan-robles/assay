@@ -104,6 +104,10 @@ The path is printed at the end of each run.
 ```
 runs/<YYYYMMDD-HHMMSS>_<specname>/
 ├── meta.json              # spec, skill, xyz, mode, rule set, model, endpoint, git commit, timestamp
+├── determinism/           # the Layer-A double-run (always kept, for inspection)
+│   ├── run_a.json/.out     #   first run's result + live log
+│   ├── run_b.json/.out     #   second run's result + live log
+│   └── determinism_diff.json  # (only on FAIL) the chemistry fields that differ
 ├── engine_reference.json  # what chemkit itself produced with the spec's intended flags
 ├── engine_reference.out   # the engine's live log for that run
 ├── agent_call_NN.json/.out  # (live mode) each chemkit tool call the agent made + its log
@@ -111,6 +115,10 @@ runs/<YYYYMMDD-HHMMSS>_<specname>/
 ├── agent_run.json         # the scored agent-run record (result_json + reported + prose)
 └── result.json            # per-layer findings + overall PASS/FAIL + exit code
 ```
+
+When **Layer A (determinism) fails**, compare `determinism/run_a.out` against
+`run_b.out` to locate the source of nondeterminism, and read
+`determinism_diff.json` for the exact fields that differ between the two runs.
 
 `engine_reference.*` is the grading key for **agent fidelity** — what chemkit
 produces when the driver runs it correctly. It is **not** a literature-validated
