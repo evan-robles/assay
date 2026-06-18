@@ -19,6 +19,29 @@ Three layers, scored in dependency order:
 A finding is `FAIL` (error severity) or `WARN` (warning severity). Overall PASS
 requires Layer C plus all error-severity checks in A and B.
 
+## Writing a spec
+
+A **spec** is the JSON file you pass with `--spec`. It defines one test: the task
+the agent is given AND the answer key the driver grades against. Copy
+[`spec.template.json`](spec.template.json) and edit the fields below.
+
+| Field | Req? | What it is |
+|-------|------|------------|
+| `name` | optional (default `"run"`) | Short label; used in the run-dir name. |
+| `skill` | **required** | chemkit skill to run, e.g. `single-point-energy`, `geometry-optimize`. |
+| `xyz` | **required** | Molecule file path (absolute, or relative to cwd / repo root). `--xyz` overrides it. |
+| `prompt` | **required** | The natural-language task the live agent sees. This is the *only* thing the LLM reads — phrase it like a user request. |
+| `intended_flags` | **required** | The "correct" CLI flags the driver runs to build the engine reference, e.g. `["--method","xtb"]`. |
+| `intended` | **required** | The answer key for Layer B (invocation): the `method`, `charge`, `multiplicity`, `solvent` a correct agent should use. Must match the molecule (set `charge`/`multiplicity` for ions/radicals). |
+| `report_value_field` | optional (default `total_energy_eV`) | Which result field Layer C compares. |
+| `energy_tol_eV` | optional (default `0.001`) | How close the agent's reported value must be to count as a match. |
+| `rules` | optional (default: calc-reporting + research) | Which `rules/*.md` to inject into the live agent's system prompt. Set `[]` for a control arm with no rules. |
+
+> `intended_flags` (what the driver runs) and `intended` (what the agent should
+> have done) describe the *same* correct calculation from two sides — keep them
+> consistent. Note `method` in `intended` is the CLI token (`xtb`), which the
+> driver maps to the engine's display name (`GFN2-xTB`) when scoring.
+
 ## Run it (Half 1 — no API key)
 
 Half 1 scores a **recorded agent-run record** against a fresh ground-truth run.

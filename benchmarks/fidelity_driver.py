@@ -62,14 +62,20 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 _REPO = Path(__file__).resolve().parent.parent
-_RUNS_DIR = _REPO / "benchmarks" / "fidelity" / "runs"
+_RUNS_DIR = _REPO / "benchmarks" / "runs"
 
 
-def _new_run_dir(spec_name: str) -> Path:
-    """Create and return a fresh timestamped run directory under runs/."""
+def _new_run_dir(spec_name: str, base: Optional[Path] = None) -> Path:
+    """Create and return a fresh timestamped run directory.
+
+    The timestamped subfolder is created inside `base` (the --out-dir value) if
+    given, else under the default runs/ directory. A relative `base` is resolved
+    against the current working directory.
+    """
+    root = base.resolve() if base is not None else _RUNS_DIR
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in spec_name)
-    run_dir = _RUNS_DIR / f"{ts}_{safe}"
+    run_dir = root / f"{ts}_{safe}"
     run_dir.mkdir(parents=True, exist_ok=True)
     return run_dir
 
@@ -549,6 +555,8 @@ def main() -> int:
                     "(absolute, or relative to your cwd / the repo root)")
     ap.add_argument("--agent-run", help="recorded agent-run record JSON (Half 1)")
     ap.add_argument("--live", action="store_true", help="run a live OpenAI agent (Half 2)")
+    ap.add_argument("--out-dir", help="directory to write the timestamped run "
+                    "folder into (default: benchmarks/runs/)")
     args = ap.parse_args()
 
     spec = json.loads(Path(args.spec).read_text())
@@ -565,7 +573,8 @@ def main() -> int:
     spec["xyz"] = xyz  # canonical absolute path for downstream (live agent, etc.)
 
     # Persistent, timestamped run directory for all artifacts.
-    run_dir = _new_run_dir(spec.get("name", "run"))
+    out_base = Path(args.out_dir) if args.out_dir else None
+    run_dir = _new_run_dir(spec.get("name", "run"), base=out_base)
     mode = "live" if args.live else ("recorded" if args.agent_run else "determinism-only")
     (run_dir / "meta.json").write_text(json.dumps({
         "spec_name": spec.get("name"),

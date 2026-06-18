@@ -39,7 +39,7 @@ benchmarks/fidelity/.env.local
 
 # Fidelity run artifacts (transcripts, .out logs, scored results). Scratch by
 # default; promote chosen runs into the Zenodo/GitHub-release bundle for the paper.
-benchmarks/fidelity/runs/
+benchmarks/runs/
 
 # Safety net: keep committed example deliverables tracked.
 !skills/**/examples/**
