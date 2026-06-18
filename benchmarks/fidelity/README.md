@@ -116,9 +116,16 @@ runs/<YYYYMMDD-HHMMSS>_<specname>/
 └── result.json            # per-layer findings + overall PASS/FAIL + exit code
 ```
 
+Determinism compares numeric fields within a small absolute tolerance (1e-6),
+not bit-for-bit: two runs of a multithreaded QM engine can differ in the last
+few digits of a float purely from thread-order summation noise (~1e-10), which
+is ~7 orders of magnitude below chemical accuracy and is not real
+nondeterminism. String/integer fields (method, charge, …) still require exact
+equality.
+
 When **Layer A (determinism) fails**, compare `determinism/run_a.out` against
 `run_b.out` to locate the source of nondeterminism, and read
-`determinism_diff.json` for the exact fields that differ between the two runs.
+`determinism_diff.json` for the exact fields that differ beyond tolerance.
 
 `engine_reference.*` is the grading key for **agent fidelity** — what chemkit
 produces when the driver runs it correctly. It is **not** a literature-validated

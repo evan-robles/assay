@@ -218,16 +218,42 @@ def _parse_out_log(stderr: str) -> Optional[str]:
     return None
 
 
+# Absolute tolerance for numeric determinism. Two runs of a multithreaded QM
+# engine can differ in the last few digits of a float purely from thread-order
+# summation noise (~1e-10); that is NOT real nondeterminism and is ~7 orders of
+# magnitude below chemical accuracy. Only differences exceeding this count.
+_DETERMINISM_NUM_TOL = 1e-6
+
+
 def _strip(d: Dict[str, Any]) -> Dict[str, Any]:
     return {k: v for k, v in d.items() if k not in _DETERMINISM_IGNORE}
 
 
+def _values_match(x: Any, y: Any, tol: float = _DETERMINISM_NUM_TOL) -> bool:
+    """Equality with a tolerance for numbers; exact for everything else.
+
+    Numbers (int/float, but not bool) match within `tol`. Lists/dicts recurse so
+    nested numeric fields (e.g. atomic charges) also get the tolerance. Strings,
+    bools, None, and structural mismatches use exact equality.
+    """
+    if isinstance(x, bool) or isinstance(y, bool):
+        return x == y
+    if isinstance(x, (int, float)) and isinstance(y, (int, float)):
+        return abs(float(x) - float(y)) <= tol
+    if isinstance(x, list) and isinstance(y, list):
+        return len(x) == len(y) and all(_values_match(i, j, tol) for i, j in zip(x, y))
+    if isinstance(x, dict) and isinstance(y, dict):
+        return x.keys() == y.keys() and all(_values_match(x[k], y[k], tol) for k in x)
+    return x == y
+
+
 def _field_diff(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
-    """Return {key: [a_val, b_val]} for every chemistry field that differs."""
+    """Return {key: [a_val, b_val]} for every chemistry field that differs
+    beyond the numeric determinism tolerance."""
     sa, sb = _strip(a), _strip(b)
     diff: Dict[str, Any] = {}
     for key in sorted(set(sa) | set(sb)):
-        if sa.get(key) != sb.get(key):
+        if not _values_match(sa.get(key), sb.get(key)):
             diff[key] = [sa.get(key), sb.get(key)]
     return diff
 
@@ -248,17 +274,17 @@ def check_determinism(skill: str, flags: List[str], xyz: str,
                        keep_dir=det_dir, label="run_a")
         b = run_engine(skill, flags, xyz, os.path.join(td, "b.json"),
                        keep_dir=det_dir, label="run_b")
-    if _strip(a) == _strip(b):
-        return True, "identical across two runs"
+    diff = _field_diff(a, b)  # respects the numeric tolerance
+    if not diff:
+        return True, f"identical across two runs (within {_DETERMINISM_NUM_TOL:g} numeric tol)"
 
     if det_dir is not None:
-        diff = _field_diff(a, b)
         (det_dir / "determinism_diff.json").write_text(json.dumps(diff, indent=2, default=str))
         n = len(diff)
-        return False, (f"engine output differs across identical runs "
+        return False, (f"engine output differs beyond {_DETERMINISM_NUM_TOL:g} tol "
                        f"({n} field(s): {', '.join(list(diff)[:5])}); "
                        f"see {det_dir}/run_a.out vs run_b.out and determinism_diff.json")
-    return False, "engine output differs across identical runs"
+    return False, f"engine output differs beyond {_DETERMINISM_NUM_TOL:g} tol"
 
 
 # --------------------------------------------------------------------------- #
