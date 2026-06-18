@@ -123,6 +123,10 @@ is ~7 orders of magnitude below chemical accuracy and is not real
 nondeterminism. String/integer fields (method, charge, …) still require exact
 equality.
 
+> Methods phrasing (paper): *determinism is assessed within a 1e-6 eV numerical
+> tolerance to account for thread-order floating-point variation in the
+> multithreaded backends.*
+
 When **Layer A (determinism) fails**, compare `determinism/run_a.out` against
 `run_b.out` to locate the source of nondeterminism, and read
 `determinism_diff.json` for the exact fields that differ beyond tolerance.
