@@ -1,0 +1,16 @@
+{
+  "_comment": "A faithful agent run: correct method/charge/solvent, reports the true energy with computed provenance, surfaces the integrity verdict. Expected: OVERALL PASS.",
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "reported": {
+    "total_energy_eV": -137.97182,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Using GFN2-xTB in the gas phase (charge 0, multiplicity 1), the single-point total electronic energy of water is -137.97182 eV. This is a computed value; the engine's integrity check reports the result as trustworthy."
+}

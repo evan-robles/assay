@@ -33,6 +33,14 @@ __pycache__/
 /mcp_server/*.molden
 /mcp_server/*.png
 
+# Local secrets for the fidelity driver (argo username / endpoint key).
+# Never commit; an .env.example is committed instead as a template.
+benchmarks/fidelity/.env.local
+
+# Fidelity run artifacts (transcripts, .out logs, scored results). Scratch by
+# default; promote chosen runs into the Zenodo/GitHub-release bundle for the paper.
+benchmarks/fidelity/runs/
+
 # Safety net: keep committed example deliverables tracked.
 !skills/**/examples/**
 
