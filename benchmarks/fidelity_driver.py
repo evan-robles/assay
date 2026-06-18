@@ -123,7 +123,13 @@ _METHOD_DISPLAY = {
 }
 
 # Chemistry fields whose values define "the same calculation" for determinism.
-_DETERMINISM_IGNORE = {"cli_invocation", "input_file", "out_log"}
+# `integrity` is excluded: it is the engine's self-check (status/trustworthy/
+# checks), derived from the numbers — and it embeds the energy as TEXT inside its
+# `detail` strings, where thread-order FP noise (~1e-14) would otherwise leak
+# past the numeric tolerance as a string mismatch. The actual energy is still
+# compared numerically via total_energy_eV, and the integrity verdict is checked
+# in Layer C (reporting fidelity).
+_DETERMINISM_IGNORE = {"cli_invocation", "input_file", "out_log", "integrity"}
 
 
 # --------------------------------------------------------------------------- #
