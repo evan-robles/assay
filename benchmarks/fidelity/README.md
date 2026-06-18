@@ -31,16 +31,25 @@ the agent is given AND the answer key the driver grades against. Copy
 | `skill` | **required** | chemkit skill to run, e.g. `single-point-energy`, `geometry-optimize`. |
 | `xyz` | **required** | Molecule file path (absolute, or relative to cwd / repo root). `--xyz` overrides it. |
 | `prompt` | **required** | The natural-language task the live agent sees. This is the *only* thing the LLM reads — phrase it like a user request. |
-| `intended_flags` | **required** | The "correct" CLI flags the driver runs to build the engine reference, e.g. `["--method","xtb"]`. |
-| `intended` | **required** | The answer key for Layer B (invocation): the `method`, `charge`, `multiplicity`, `solvent` a correct agent should use. Must match the molecule (set `charge`/`multiplicity` for ions/radicals). |
+| `intended_flags` | **required** | Base CLI flags, normally just `["--method","xtb"]`. The driver auto-appends charge/mult/solvent/level-of-theory from `intended` (below), so you do **not** repeat them here. An explicit flag here still wins. |
+| `intended` | **required** | The single source of truth + the Layer-B answer key. `method` (required) plus any of: `charge`, `multiplicity`, `solvent`, and (DFT/HF) `tier`, `functional`, `basis`, `solvent_model`. The driver both *runs the engine* with these and *scores* the agent against them. |
 | `report_value_field` | optional (default `total_energy_eV`) | Which result field Layer C compares. |
 | `energy_tol_eV` | optional (default `0.001`) | How close the agent's reported value must be to count as a match. |
 | `rules` | optional (default: calc-reporting + research) | Which `rules/*.md` to inject into the live agent's system prompt. Set `[]` for a control arm with no rules. |
 
-> `intended_flags` (what the driver runs) and `intended` (what the agent should
-> have done) describe the *same* correct calculation from two sides — keep them
-> consistent. Note `method` in `intended` is the CLI token (`xtb`), which the
-> driver maps to the engine's display name (`GFN2-xTB`) when scoring.
+> **`intended` is the single source of truth.** Write `charge`/`multiplicity`/
+> `solvent` and (for DFT/HF) `tier`/`functional`/`basis`/`solvent_model` once,
+> in `intended`. The driver derives the engine flags from them — so they can't
+> drift out of sync — and also scores the agent against them in Layer A. Set
+> `charge`/`multiplicity` for ions and radicals. `method` is the CLI token
+> (`xtb`), which the driver maps to the engine display name (`GFN2-xTB`) when
+> scoring; `functional`/`basis` are matched case-insensitively.
+>
+> For DFT/HF, if you pin no level-of-theory knob, the driver passes
+> `--accept-defaults` so the engine reference uses the documented tier defaults
+> (chosen values are still surfaced and scored). Pin `tier`/`functional`/`basis`
+> in `intended` to require a specific level of theory and have the agent graded
+> on it.
 
 ## Run it (Half 1 — no API key)
 

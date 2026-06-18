@@ -133,6 +133,68 @@ _DETERMINISM_IGNORE = {"cli_invocation", "input_file", "out_log", "integrity"}
 
 
 # --------------------------------------------------------------------------- #
+# Engine flags
+# --------------------------------------------------------------------------- #
+def _engine_flags(spec: Dict[str, Any]) -> List[str]:
+    """Build the CLI flags for the engine reference run.
+
+    Starts from `intended_flags`, then appends --charge/--mult/--solvent derived
+    from the `intended` block IF not already present. This makes `intended` the
+    single source of truth: charge/mult/solvent are written once (where they are
+    also used for Layer-B scoring) and can't drift out of sync with the flags the
+    engine actually receives. An explicit flag in `intended_flags` always wins;
+    `solvent: null` (gas phase) adds nothing.
+    """
+    flags = list(spec.get("intended_flags", []))
+    intended = spec.get("intended", {})
+    present = set(flags)
+
+    def _has(*names: str) -> bool:
+        return any(n in present for n in names)
+
+    charge = intended.get("charge")
+    if charge is not None and not _has("--charge"):
+        flags += ["--charge", str(charge)]
+
+    mult = intended.get("multiplicity")
+    if mult is not None and not _has("--mult", "--multiplicity"):
+        flags += ["--mult", str(mult)]
+
+    solvent = intended.get("solvent")
+    if solvent and not _has("--solvent"):  # None/"" = gas phase, add nothing
+        flags += ["--solvent", str(solvent)]
+
+    # DFT/HF level-of-theory knobs (ignored by the engine for xtb/mopac).
+    tier = intended.get("tier")
+    if tier and not _has("--tier"):
+        flags += ["--tier", str(tier)]
+
+    functional = intended.get("functional")
+    if functional and not _has("--functional"):
+        flags += ["--functional", str(functional)]
+
+    basis = intended.get("basis")
+    if basis and not _has("--basis"):
+        flags += ["--basis", str(basis)]
+
+    solvent_model = intended.get("solvent_model")
+    if solvent_model and not _has("--solvent-model"):
+        flags += ["--solvent-model", str(solvent_model)]
+
+    # DFT/HF refuse to choose tier/functional/basis silently unless the level of
+    # theory is pinned or --accept-defaults is given. If this is a dft/hf run and
+    # no level-of-theory knob was specified, consent to the documented defaults
+    # so the engine reference run doesn't error out (the chosen values are still
+    # surfaced in the result JSON and scored).
+    method = intended.get("method", "")
+    if method in ("dft", "hf") and not (tier or functional or basis) \
+            and not _has("--accept-defaults"):
+        flags += ["--accept-defaults"]
+
+    return flags
+
+
+# --------------------------------------------------------------------------- #
 # Input resolution
 # --------------------------------------------------------------------------- #
 def _resolve_xyz(path: str) -> str:
@@ -305,8 +367,24 @@ def _method_matches(intended_token: str, reported: str) -> bool:
     return intended_token.lower() in reported.lower() or reported != ""
 
 
+def _result_field(result: Dict[str, Any], key: str) -> Any:
+    """Read a field that may live at the top level or inside code_specific."""
+    if key in result:
+        return result[key]
+    return (result.get("code_specific") or {}).get(key)
+
+
+def _knob_matches(intended: Any, got: Any) -> bool:
+    """Case-insensitive equality for level-of-theory strings (the engine
+    lowercases functional/basis, e.g. 'r2scan', 'def2-svp')."""
+    if isinstance(intended, str) and isinstance(got, str):
+        return intended.strip().lower() == got.strip().lower()
+    return intended == got
+
+
 def score_layer_a(spec: Dict[str, Any], agent_result: Dict[str, Any]) -> List[Dict]:
-    """Did the agent's call use the intended method/charge/mult/solvent?"""
+    """Did the agent's call use the intended method/charge/mult/solvent and
+    (for DFT/HF) the intended level of theory (functional/basis/tier)?"""
     intended = spec["intended"]
     findings = []
 
@@ -321,6 +399,16 @@ def score_layer_a(spec: Dict[str, Any], agent_result: Dict[str, Any]) -> List[Di
             findings.append({
                 "check": key, "ok": got == intended[key], "severity": "error",
                 "intended": intended[key], "got": got,
+            })
+    # Level-of-theory knobs (DFT/HF). Only scored when the spec pins them.
+    # functional/basis are top-level in the result; tier/solvent_model are in
+    # code_specific. Read via _result_field so either location works.
+    for key in ("functional", "basis", "tier", "solvent_model"):
+        if intended.get(key):
+            got = _result_field(agent_result, key)
+            findings.append({
+                "check": key, "ok": _knob_matches(intended[key], got),
+                "severity": "error", "intended": intended[key], "got": got,
             })
     return findings
 
@@ -552,12 +640,20 @@ def run_live_agent(spec: Dict[str, Any],
             if fn == "final_report":
                 print("[live] agent submitted final_report.")
                 _dump_transcript()
+                _cs = last_result_json.get("code_specific") or {}
                 return {
                     "result_json": {
                         "method": last_result_json.get("method"),
                         "charge": last_result_json.get("charge"),
                         "multiplicity": last_result_json.get("multiplicity"),
                         "solvent": last_result_json.get("solvent"),
+                        # Level-of-theory knobs for Layer-A scoring (DFT/HF).
+                        # functional/basis are top-level; tier/solvent_model live
+                        # in code_specific.
+                        "functional": last_result_json.get("functional"),
+                        "basis": last_result_json.get("basis"),
+                        "tier": _cs.get("tier"),
+                        "solvent_model": _cs.get("solvent_model"),
                     },
                     "reported": {
                         "total_energy_eV": fargs.get("total_energy_eV"),
@@ -622,7 +718,7 @@ def main() -> int:
 
     spec = json.loads(Path(args.spec).read_text())
     skill = spec["skill"]
-    flags = spec["intended_flags"]
+    flags = _engine_flags(spec)
 
     # Resolve the input geometry. --xyz overrides the spec; both are resolved the
     # same way so the live agent (which re-reads spec["xyz"]) sees the same file.
