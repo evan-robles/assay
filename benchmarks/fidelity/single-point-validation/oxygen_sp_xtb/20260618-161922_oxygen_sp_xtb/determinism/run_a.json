@@ -1,0 +1,36 @@
+{
+  "task": "single_point",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/runs/oxygen_sp_xtb/oxygen.xyz",
+  "n_atoms": 2,
+  "atoms": [
+    "O",
+    "O"
+  ],
+  "charge": 0,
+  "multiplicity": 3,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py sp --method xtb --charge 0 --mult 3 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/runs/oxygen_sp_xtb/oxygen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpwy3f1tcx/a.json",
+  "total_energy_eV": -215.08201,
+  "total_energy_hartree": -7.9041182,
+  "total_energy_kcal_mol": -4959.9091,
+  "energy_zero": "isolated atoms at infinity (xtb)",
+  "code_specific": {
+    "homo_eV": -12.050595,
+    "lumo_eV": 3.3827654,
+    "homo_lumo_gap_eV": 15.43336
+  },
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -215.08201457633348 (must be a finite number)"
+      }
+    ]
+  }
+}

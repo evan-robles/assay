@@ -1,0 +1,19 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": -215.08201,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed property: Total electronic energy (E_total) = \u2013215.08 eV.\nMethod provenance:\n\u2022 Property: Single-point total electronic energy (electronic), units eV.\n\u2022 Level of theory: GFN2-xTB (semi-empirical extended tight-binding; no Gaussian basis set).\n\u2022 Geometry provenance: user-supplied coordinates (file \u201coxygen.xyz\u201d); single-point calculation \u2014 geometry not re-optimized (GFN2-xTB//input geometry).\n\u2022 Solvent / environment: gas phase (no implicit solvation model).\n\u2022 Charge & multiplicity: charge 0 (neutral), multiplicity 3 \u2192 open-shell triplet treated with unrestricted formalism.\n\u2022 Software / version: xTB  (via chemkit single-point-energy skill; see CLI in result JSON). Density-fitting is intrinsic to GFN2-xTB.\n\u2022 Convergence & caveats: SCF self-consistent; engine integrity check status \u201cok\u201d (trustworthy = true). No warnings reported.\n\nThe calculation was launched through chemkit; its live log was written to the working directory (see path in the `cli_invocation` field of the result JSON) and contains the full PySCF/xtb stdout. The energy zero for GFN2-xTB is defined relative to isolated atoms at infinite separation and is not directly comparable to ab-initio total energies.\n\nResult: E_total(GFN2-xTB, gas-phase O\u2082, triplet) = \u2013215.08 eV."
+}

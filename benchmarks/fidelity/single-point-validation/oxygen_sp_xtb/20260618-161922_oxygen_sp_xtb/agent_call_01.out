@@ -1,0 +1,48 @@
+# chemkit live log
+# subcommand : sp
+# args       : --method xtb --charge 0 --multiplicity 3 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/runs/oxygen_sp_xtb/oxygen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmppnor4_uu/live.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli sp --method xtb --charge 0 --multiplicity 3 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/runs/oxygen_sp_xtb/oxygen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmppnor4_uu/live.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills
+# started    : 20260618-161930
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmppnor4_uu/live.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "single_point",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/runs/oxygen_sp_xtb/oxygen.xyz",
+  "n_atoms": 2,
+  "atoms": [
+    "O",
+    "O"
+  ],
+  "charge": 0,
+  "multiplicity": 3,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py sp --method xtb --charge 0 --multiplicity 3 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/runs/oxygen_sp_xtb/oxygen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmppnor4_uu/live.json",
+  "total_energy_eV": -215.08201457633348,
+  "total_energy_hartree": -7.904118247856634,
+  "total_energy_kcal_mol": -4959.909084643487,
+  "energy_zero": "isolated atoms at infinity (xtb)",
+  "code_specific": {
+    "homo_eV": -12.050594849029833,
+    "lumo_eV": 3.382765422873664,
+    "homo_lumo_gap_eV": 15.433360271903497
+  },
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -215.08201457633348 (must be a finite number)"
+      }
+    ]
+  }
+}

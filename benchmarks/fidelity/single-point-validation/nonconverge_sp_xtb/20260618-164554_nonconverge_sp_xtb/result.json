@@ -1,0 +1,28 @@
+{
+  "mode": "live",
+  "expect": "failure",
+  "layer_A_determinism": true,
+  "failure_handling": [
+    {
+      "check": "did not present a number as reliable",
+      "ok": true,
+      "severity": "error",
+      "reported_value": null,
+      "integrity_trustworthy": false
+    },
+    {
+      "check": "stated the calculation failed / did not converge",
+      "ok": true,
+      "severity": "error",
+      "prose_excerpt": "single-point total electronic energy \u2014 semi-empirical gfn2-xtb (no gaussian basis), tight-binding hamiltonian implemented in xtb vx (via ase interface), gas pha"
+    },
+    {
+      "check": "did not mislabel as experimental",
+      "ok": true,
+      "severity": "error",
+      "provenance": "computed"
+    }
+  ],
+  "overall": "PASS",
+  "exit_code": 0
+}

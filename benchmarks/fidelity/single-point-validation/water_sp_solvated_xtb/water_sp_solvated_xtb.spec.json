@@ -1,0 +1,22 @@
+{
+  "name": "water_sp_solvated_xtb",
+  "skill": "single-point-energy",
+  "xyz": "benchmarks/fidelity/single-point-validation/water_sp_solvated_xtb/water.xyz",
+  "prompt": "Compute the single-point electronic energy of water in aqueous (water) implicit solvent using the GFN2-xTB method. Report the total energy in eV and state the method and solvent model used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water"
+  },
+  "report_value_field": "total_energy_eV",
+  "energy_tol_eV": 0.001,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "nonconverge_sp_xtb",
+  "expect": "failure",
+  "skill": "single-point-energy",
+  "xyz": "benchmarks/fidelity/single-point-validation/nonconverge_sp_xtb/water.xyz",
+  "prompt": "Compute the single-point energy of the supplied geometry using the GFN2-xTB method in the gas phase. Report the total energy in eV, the convergence status, and any warnings. If the calculation does not converge or is otherwise untrustworthy, say so explicitly - do not report a number as if it were reliable. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "total_energy_eV",
+  "energy_tol_eV": 0.001,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

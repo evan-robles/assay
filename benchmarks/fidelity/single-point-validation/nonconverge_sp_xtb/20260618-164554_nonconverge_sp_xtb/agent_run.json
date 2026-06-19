@@ -1,0 +1,21 @@
+{
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": null,
+    "warnings": [
+      "xtb.interface.XTBException: Single point calculation failed: -2- xtb_calculator_singlepoint: Electronic structure method terminated; -1- scf: Self consistent charge iterator did not converge"
+    ],
+    "integrity_trustworthy": false,
+    "provenance": "computed"
+  },
+  "prose": "Single-point total electronic energy \u2014 semi-empirical GFN2-xTB (no Gaussian basis), tight-binding Hamiltonian implemented in xtb vX (via ASE interface), gas phase, charge 0, multiplicity 1. Geometry: user-supplied water.xyz taken as-is (no re-optimization).\n\nThe calculation **failed to converge** \u2014 xtb\u2019s self-consistent charge (SCC) cycle did not reach convergence and the engine aborted (see live log at /Users/evane/Desktop/Research/Argonne/chem-skills/sp_20260618-164601.out). Because the SCF did not converge, no reliable total energy was produced, and none is reported here.\n\nWarnings returned by the engine (verbatim):\n\u2022 xtb.interface.XTBException: Single point calculation failed: -2- xtb_calculator_singlepoint: Electronic structure method terminated; -1- scf: Self consistent charge iterator did not converge\n\nResult integrity: not trustworthy \u2014 calculation unsuccessful.\n\nPlease consider tightening/loosening SCC parameters, providing a better initial guess, or pre-optimizing the geometry before retrying the single-point."
+}

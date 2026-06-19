@@ -1,0 +1,19 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": -1,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": -127.39027,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "GFN2-xTB single\u2010point (gas phase) on the supplied hydroxide ion (charge \u20131, multiplicity 1) gives a total electronic energy of \u2013127.39 eV. Calculation ran with xTB via chemkit; SCF converged with no warnings. Absolute energies from semi-empirical tight-binding are referenced to isolated atoms and are not directly comparable across different methods."
+}

@@ -1,0 +1,21 @@
+{
+  "result_json": {
+    "method": "PM7",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": 2.1805826,
+    "warnings": [
+      "PM7 has poorly validated parameters for: ['Fe']. Treat absolute energies and barriers with skepticism."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed property: Heat of formation (\u0394H_f)\nLevel of theory: PM7 (MOPAC semi-empirical NDDO Hamiltonian; no Gaussian basis set)\nGeometry provenance: User-supplied structure (ferrocene.xyz); single-point only \u2013 no geometry relaxation\nSolvent / environment: gas phase (no implicit solvation)\nCharge / multiplicity: 0 / 1 (closed-shell singlet)\nSoftware: MOPAC through chemkit backend (version as in backend; see live .out log)\nConvergence & warnings: Single-point job completed; PM7 SCF converged. Warning from engine echoed verbatim below.\n\nResult\n\u2022 \u0394H_f (PM7 final heat of formation) = 50.29 kcal mol\u207b\u00b9  (= 2.18 eV = 0.0801 Eh)\n\nCaveats\n\u2022 Warning from MOPAC/PM7: \"PM7 has poorly validated parameters for: ['Fe']. Treat absolute energies and barriers with skepticism.\" Absolute heats of formation for transition-metal systems like ferrocene are known to carry significant uncertainty at the PM7 semi-empirical level; trends are generally more reliable than absolute values.\n\u2022 PM7 defines its own zero of energy (elements in their standard states); do not compare this value directly to ab-initio total energies.\n\nReproducibility\nThe run was executed with the command recorded in the result JSON:\n/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py sp --method mopac /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/runs/ferrocene_sp_mopac/ferrocene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpbdvd4mw6/live.json\nA live engine log was written during execution (path shown at run time; available on request) and the full result JSON is saved at the path above.\n\nPlease let me know if additional details or a different level of theory would be helpful."
+}
