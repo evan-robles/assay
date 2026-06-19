@@ -60,8 +60,6 @@ def collect(base: Path) -> List[Dict[str, Any]]:
             meta = json.loads((run / "meta.json").read_text())
 
         findings = _findings(result)
-        n_total = len(findings)
-        n_pass = sum(1 for f in findings if f.get("ok"))
         failed = [f.get("check") for f in findings if not f.get("ok")]
 
         rows.append({
@@ -71,14 +69,13 @@ def collect(base: Path) -> List[Dict[str, Any]]:
             "model": meta.get("model") or "",
             "determinism": "pass" if result.get("layer_A_determinism") else "FAIL",
             "overall": result.get("overall", "?"),
-            "checks_passed": f"{n_pass}/{n_total}",
             "failed_checks": "; ".join(c for c in failed if c) or "",
         })
     return rows
 
 
 def _print_table(rows: List[Dict[str, Any]]) -> None:
-    cols = ["case", "expect", "overall", "checks_passed", "determinism", "model"]
+    cols = ["case", "expect", "overall", "determinism", "model"]
     widths = {c: max(len(c), *(len(str(r[c])) for r in rows)) for c in cols} if rows else {}
     header = "  ".join(c.ljust(widths[c]) for c in cols)
     print(header)
