@@ -525,15 +525,44 @@ def _norm_lot(s: Any) -> Any:
     return s
 
 
-def _coerce_float(v: Any, field: Optional[str] = None) -> Optional[float]:
+# Tokens that carry no physical meaning when matching a dict key to a field
+# name — units and connective words. A shared token outside this set is what
+# makes 'homo_lumo_gap_eV' and 'gap_eV' a real match (they share 'gap'), while
+# 'ev' alone is not enough.
+_UNINFORMATIVE_TOKENS = {
+    "ev", "kcal", "mol", "kcalmol", "hartree", "ha", "au", "debye", "d",
+    "kj", "v", "value", "the", "of", "per", "in", "energy",
+}
+
+
+def _field_tokens(name: str) -> set:
+    """Split a field/key name into meaningful lowercase tokens (drop units and
+    connectives). 'HOMO_LUMO_gap_eV' -> {'homo','lumo','gap'}; 'gap_eV' -> {'gap'}."""
+    import re
+    raw = re.split(r"[\s_\-/]+", str(name).strip().lower())
+    return {t for t in raw if t and t not in _UNINFORMATIVE_TOKENS}
+
+
+def _coerce_float(
+    v: Any, field: Optional[str] = None, truth: Optional[float] = None,
+    tol: Optional[float] = None,
+) -> Optional[float]:
     """Best-effort numeric coercion of a reported value. Handles plain numbers,
     numeric strings, the unicode minus (U+2212), a leading number with a trailing
     unit (e.g. '-9.2 eV'), and a DICT (the agent sometimes reports a structured
-    object like {'HOMO_eV':..,'LUMO_eV':..,'HOMO_LUMO_gap_eV': 7.43}). For a dict,
-    pull the entry whose key matches `field` (case/underscore-insensitive); if no
-    field match, accept it only when the dict has exactly one numeric value.
-    Returns None if no number can be extracted — the caller scores that as a FAIL
-    rather than crashing."""
+    object like {'HOMO_eV':..,'LUMO_eV':..,'gap_eV': 7.43}).
+
+    For a dict, resolve which entry is the headline value, in priority order:
+      1. exact key match to `field` (case/underscore-insensitive);
+      2. token-overlap match — the dict key shares a meaningful (non-unit) token
+         with `field` (so 'homo_lumo_gap_eV' matches 'gap_eV' via 'gap'). If
+         several keys overlap, the best is the one matching the truth value when
+         `truth`/`tol` are given, else the most-overlapping key;
+      3. the dict has exactly one numeric value (unambiguous);
+      4. as a last resort, if `truth`/`tol` are given, the unique numeric entry
+         that equals the truth within tolerance.
+    Returns None if no number can be confidently extracted — the caller scores
+    that as a FAIL rather than crashing or guessing."""
     if isinstance(v, bool):
         return None
     if isinstance(v, (int, float)):
@@ -552,17 +581,57 @@ def _coerce_float(v: Any, field: Optional[str] = None) -> Optional[float]:
                     return None
         return None
     if isinstance(v, dict):
-        # 1) key matching the requested field (case/underscore-insensitive)
+        # Numeric entries only, as (key, float) pairs.
+        numeric = []
+        for k, val in v.items():
+            if isinstance(val, (int, float)) and not isinstance(val, bool):
+                numeric.append((str(k), float(val)))
+            elif isinstance(val, str):
+                f = _coerce_float(val)
+                if f is not None:
+                    numeric.append((str(k), f))
+        if not numeric:
+            return None
+
+        # 1) exact key match (case/underscore-insensitive)
         if field:
             want = field.strip().lower().replace("-", "_")
-            for k, val in v.items():
-                if str(k).strip().lower().replace("-", "_") == want:
-                    return _coerce_float(val)
-        # 2) otherwise, accept only an unambiguous single numeric value
-        nums = [val for val in v.values()
-                if isinstance(val, (int, float)) and not isinstance(val, bool)]
-        if len(nums) == 1:
-            return float(nums[0])
+            for k, val in numeric:
+                if k.strip().lower().replace("-", "_") == want:
+                    return val
+
+        # 2) token-overlap match (e.g. 'gap_eV' <-> 'homo_lumo_gap_eV' share 'gap')
+        if field:
+            fset = _field_tokens(field)
+            overlaps = [(k, val, len(_field_tokens(k) & fset))
+                        for k, val in numeric]
+            overlaps = [o for o in overlaps if o[2] > 0]
+            if overlaps:
+                if len(overlaps) == 1:
+                    return overlaps[0][1]
+                # Several keys share a token (e.g. field 'homo_lumo_gap_eV' vs
+                # keys 'HOMO_eV','LUMO_eV','gap_eV' — each shares exactly one
+                # token, so token math alone cannot pick the headline value).
+                # First try a strictly-best token overlap; if that ties, use the
+                # truth value to pick the CLOSEST entry. This only *extracts* the
+                # most plausible number — score_layer_b's tolerance check is still
+                # the gate, so a rounded/wrong value reported under the right-ish
+                # key surfaces as a clean number mismatch, not a coercion failure.
+                best = max(overlaps, key=lambda o: o[2])
+                if sum(1 for o in overlaps if o[2] == best[2]) == 1:
+                    return best[1]
+                if truth is not None:
+                    return min(overlaps, key=lambda o: abs(o[1] - truth))[1]
+
+        # 3) exactly one numeric value -> unambiguous
+        if len(numeric) == 1:
+            return numeric[0][1]
+
+        # 4) last resort: the unique entry equal to truth within tolerance
+        if truth is not None and tol is not None:
+            near = [val for _, val in numeric if abs(val - truth) <= tol]
+            if len(near) == 1:
+                return near[0]
     return None
 
 
@@ -849,8 +918,10 @@ def score_layer_b(
         # The agent's reported value may not be a clean number — e.g. a string
         # with units ("-9.2 eV"), a unicode minus, or non-numeric text. Coerce
         # defensively and score a FAIL (never crash the run) if it isn't numeric.
-        rnum = _coerce_float(rep_val, field)
+        # Coerce truth first (it is the engine's own number — never a dict, but
+        # be defensive), then use it to disambiguate a structured agent dict.
         tnum = _coerce_float(truth_val, field)
+        rnum = _coerce_float(rep_val, field, truth=tnum, tol=tol)
         if rnum is None or tnum is None:
             findings.append({
                 "check": f"reported {field}", "ok": False, "severity": "error",
@@ -946,8 +1017,12 @@ _FINAL_REPORT_TOOL = {
                 # under `value`. The driver maps it to the spec's
                 # report_value_field. Null if no value was produced.
                 "value": {"type": ["number", "null"],
-                          "description": "the headline numeric result you obtained "
-                                         "(null for structure-building tasks)"},
+                          "description": "the headline numeric result you obtained, "
+                                         "as a single bare number (not an object) at "
+                                         "AT LEAST 5 significant figures exactly as "
+                                         "the tool returned it — do NOT round to "
+                                         "fewer digits (null for structure-building "
+                                         "tasks)"},
                 "n_atoms": {"type": ["integer", "null"],
                             "description": "atom count of a structure you built "
                                            "(structure tasks only; else null)"},
@@ -967,11 +1042,13 @@ _LIVE_INSTRUCTIONS = (
     "the requested task — never guess or fabricate a result; only report what a "
     "tool actually returned. The molecule (an xyz path, or a SMILES/name to "
     "build) is given in the task. When finished, call `final_report`: put any "
-    "headline number under `value` (and the atom count under `n_atoms` for a "
-    "structure-building task), include warnings from the result JSON, the "
-    "engine's integrity.trustworthy verdict, and provenance='computed' (a "
-    "computed/built result is NEVER 'experimental'). State the method or build "
-    "tool you used in your prose."
+    "headline number under `value` as a single bare number (not an object) at "
+    "AT LEAST 5 significant figures, copied exactly from the tool's result with "
+    "no rounding (and the atom count under `n_atoms` for a structure-building "
+    "task), include warnings from the result JSON, the engine's "
+    "integrity.trustworthy verdict, and provenance='computed' (a computed/built "
+    "result is NEVER 'experimental'). State the method or build tool you used in "
+    "your prose."
 )
 
 # chemkit's runtime-behavior rules. In the real harness these load via
