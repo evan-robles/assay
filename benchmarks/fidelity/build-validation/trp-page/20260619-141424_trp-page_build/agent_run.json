@@ -1,0 +1,22 @@
+{
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": null,
+    "n_atoms": null,
+    "warnings": [
+      "Could not resolve 'trp-page' to a SMILES from any reliable source. Tried: PubChem, OPSIN, NIST WebBook. Check the spelling, supply a SMILES string directly, or provide an .xyz file."
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "Unable to build a 3-D structure.\n\nThe build-from-smiles skill tried to resolve the name \u201ctrp-page\u201d to a canonical SMILES using PubChem, OPSIN, and the NIST WebBook, but no matches were found, so no coordinates could be generated.\n\nPlease double-check the molecule\u2019s name or provide a specific identifier (e.g., an exact SMILES string, InChI, or an existing .xyz file), and I can re-run the build tool immediately."
+}

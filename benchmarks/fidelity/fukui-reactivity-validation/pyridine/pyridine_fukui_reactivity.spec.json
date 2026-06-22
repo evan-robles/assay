@@ -1,0 +1,24 @@
+{
+  "name": "pyridine_fukui_reactivity",
+  "skill": "fukui-reactivity",
+  "xyz": "benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz",
+  "prompt": "Run the fukui-reactivity task on pyridine using the DFT method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "dft"
+  ],
+  "intended": {
+    "method": "dft",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "tier": "standard",
+    "functional": "wb97x-v",
+    "basis": "def2-tzvp"
+  },
+  "report_value_field": null,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

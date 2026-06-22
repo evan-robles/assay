@@ -1,0 +1,22 @@
+{
+  "name": "acetate_geometry_optimize",
+  "skill": "geometry-optimize",
+  "xyz": "benchmarks/fidelity/geometry-optimize-validation/acetate/acetate.xyz",
+  "prompt": "Run the geometry-optimize task on acetate using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": -1,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "total_energy_eV",
+  "value_tol": 0.001,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

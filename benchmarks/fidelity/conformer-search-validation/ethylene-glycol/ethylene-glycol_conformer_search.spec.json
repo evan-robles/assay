@@ -1,0 +1,21 @@
+{
+  "name": "ethylene-glycol_conformer_search",
+  "skill": "conformer-search",
+  "xyz": "benchmarks/fidelity/conformer-search-validation/ethylene-glycol/ethylene_glycol.xyz",
+  "prompt": "Run the conformer-search task on ethylene glycol using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": null,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

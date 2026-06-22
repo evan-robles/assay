@@ -1,0 +1,21 @@
+{
+  "name": "ferrocene_fukui_reactivity",
+  "skill": "fukui-reactivity",
+  "xyz": "benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz",
+  "prompt": "Run the fukui-reactivity task on ferrocene using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": null,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

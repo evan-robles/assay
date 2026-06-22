@@ -1,0 +1,16 @@
+{
+  "spec_name": "cisplatin_build",
+  "spec_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/cisplatin/cisplatin_build.spec.json",
+  "skill": "build-from-smiles",
+  "input": "cisplatin",
+  "input_kind": "string",
+  "mode": "live",
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ],
+  "model": "argo:o3",
+  "endpoint": "http://0.0.0.0:51664/v1",
+  "git_commit": "08b4988",
+  "timestamp": "2026-06-19T13:46:00"
+}

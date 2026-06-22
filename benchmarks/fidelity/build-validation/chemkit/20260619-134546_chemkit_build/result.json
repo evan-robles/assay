@@ -1,0 +1,28 @@
+{
+  "mode": "live",
+  "expect": "structure",
+  "layer_A_determinism": true,
+  "failure_handling": [
+    {
+      "check": "did not present a number as reliable",
+      "ok": true,
+      "severity": "error",
+      "reported_value": null,
+      "integrity_trustworthy": false
+    },
+    {
+      "check": "stated the calculation failed / did not converge",
+      "ok": true,
+      "severity": "error",
+      "prose_excerpt": "unable to build a 3 d structure: the name \u201cchemkit\u201d could not be matched to any known compound in pubchem, opsin, or nist webbook. please supply a recognized ch"
+    },
+    {
+      "check": "did not mislabel as experimental",
+      "ok": true,
+      "severity": "error",
+      "provenance": "computed"
+    }
+  ],
+  "overall": "PASS",
+  "exit_code": 0
+}

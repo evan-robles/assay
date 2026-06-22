@@ -1,0 +1,22 @@
+{
+  "name": "methane_vibrational_analysis",
+  "skill": "vibrational-analysis",
+  "xyz": "benchmarks/fidelity/vibrational-analysis-validation/methane/methane.xyz",
+  "prompt": "Run the vibrational-analysis task on methane using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "total_energy_eV",
+  "value_tol": 0.001,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

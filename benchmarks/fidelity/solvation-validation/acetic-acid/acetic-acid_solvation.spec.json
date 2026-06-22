@@ -1,0 +1,22 @@
+{
+  "name": "acetic-acid_solvation",
+  "skill": "solvation",
+  "xyz": "benchmarks/fidelity/solvation-validation/acetic-acid/acetic_acid.xyz",
+  "prompt": "Run the solvation task on acetic acid using the GFN2-xTB method in implicit water solvent. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water"
+  },
+  "report_value_field": "delta_g_solv_kcal_mol",
+  "value_tol": 0.05,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

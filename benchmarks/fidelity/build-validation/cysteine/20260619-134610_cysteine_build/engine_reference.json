@@ -1,0 +1,36 @@
+{
+  "task": "build_from_smiles",
+  "program": "openbabel",
+  "input": "cysteine",
+  "smiles_input": "C([C@@H](C(=O)O)N)S",
+  "n_atoms": 14,
+  "build": {
+    "method": "obabel --gen3d",
+    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_6g3evvxt.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/cysteine.xyz --title chemkit build: cysteine"
+  },
+  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/cysteine.xyz",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build --charge 0 cysteine --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpw2b649jp/truth.json",
+  "smiles_source": {
+    "smiles": "C([C@@H](C(=O)O)N)S",
+    "name_input": "cysteine",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 5862, L-(+)-Cysteine. https://pubchem.ncbi.nlm.nih.gov/compound/5862 (accessed 2026-06-19).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5862",
+    "identifier": "CID 5862",
+    "from_cache": true,
+    "warnings": []
+  },
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "structure_built",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_atoms = 14 (3D embedding must yield at least one atom)"
+      }
+    ]
+  }
+}

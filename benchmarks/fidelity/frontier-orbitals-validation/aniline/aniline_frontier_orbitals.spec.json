@@ -1,0 +1,25 @@
+{
+  "name": "aniline_frontier_orbitals",
+  "skill": "frontier-orbitals",
+  "xyz": "benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz",
+  "prompt": "Run the frontier-orbitals task on aniline using the DFT method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "dft"
+  ],
+  "intended": {
+    "method": "dft",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "tier": "standard",
+    "functional": "wb97x-v",
+    "basis": "def2-tzvp"
+  },
+  "report_value_field": "homo_lumo_gap_eV",
+  "value_tol": 0.05,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

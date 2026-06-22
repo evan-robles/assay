@@ -1,0 +1,36 @@
+{
+  "task": "build_from_smiles",
+  "program": "openbabel",
+  "input": "3,5-dibromophenol",
+  "smiles_input": "C1=C(C=C(C=C1Br)Br)O",
+  "n_atoms": 13,
+  "build": {
+    "method": "obabel --gen3d",
+    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_835yd6t6.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/3_5-dibromophenol.xyz --title chemkit build: 3,5-dibromophenol"
+  },
+  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/3_5-dibromophenol.xyz",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build --charge 0 3,5-dibromophenol --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp4lhkmjy3/truth.json",
+  "smiles_source": {
+    "smiles": "C1=C(C=C(C=C1Br)Br)O",
+    "name_input": "3,5-dibromophenol",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 12280, 3,5-Dibromophenol. https://pubchem.ncbi.nlm.nih.gov/compound/12280 (accessed 2026-06-19).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/12280",
+    "identifier": "CID 12280",
+    "from_cache": true,
+    "warnings": []
+  },
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "structure_built",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_atoms = 13 (3D embedding must yield at least one atom)"
+      }
+    ]
+  }
+}

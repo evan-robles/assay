@@ -1,0 +1,22 @@
+{
+  "name": "diethyl-ether_logp_partition",
+  "skill": "logp-partition",
+  "xyz": "benchmarks/fidelity/logp-partition-validation/diethyl-ether/diethyl_ether.xyz",
+  "prompt": "Run the logp-partition task on diethyl ether using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "logp",
+  "value_tol": 0.05,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

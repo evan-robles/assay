@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": null,
+    "n_atoms": 21,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method and provenance:\nA 3-dimensional structure of aspirin was generated with the chemkit build-from-smiles skill.\n\u2022 SMILES resolution: PubChem search on the name \u201caspirin\u201d \u2192 isomeric SMILES CC(=O)OC1=CC=CC=C1C(=O)O (CID 2244).\n\u2022 3-D coordinate generation: Open Babel (command invoked with `--gen3d`).\n\u2022 Environment: gas phase; no additional geometry optimization beyond Open Babel\u2019s default.\n\u2022 Software: Open Babel via chemkit build-from-smiles skill.\nLive .out log was streamed during execution (path: \u2026/aspirin_build/agent_call_01.out).\nIntegrity check: status ok, trustworthy = true; engine returned no warnings.\n\nResult built:\n\u2022 Molecule: aspirin\n\u2022 Atom count: 21\n\u2022 Coordinates written to \u2026/aspirin_build/agent_call_01.xyz (available on request).\n\nThis structure is provided as-built; no experimental coordinates were used or inferred \u2013 provenance: computed."
+}

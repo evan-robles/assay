@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": null,
+    "n_atoms": 10,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Built 3-D coordinates for dimethyl sulfoxide (DMSO) with the chemkit build-from-smiles skill.\n\n\u2022 Name resolved via PubChem (CID 679) to isomeric SMILES \u201cCS(=O)C\u201d.\n\u2022 Geometry embedded with Open Babel `--gen3d` (build-from-smiles skill).\n\u2022 Output XYZ written to /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/DMSO/20260619-134509_DMSO_build/agent_call_01.xyz (path is local to the run directory).\n\nThe resulting molecule contains 10 atoms (formula C\u2082H\u2086OS).\n\nNo warnings were raised; integrity check status: trustworthy."
+}

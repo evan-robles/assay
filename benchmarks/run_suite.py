@@ -59,8 +59,9 @@ def run_suite(folder: Path, *, live: bool, agent_run_name: Optional[str],
                 results.append({"case": case_dir.name, "ran": False})
                 continue
             cmd += ["--agent-run", str(ar)]
-        if out_dir:
-            cmd += ["--out-dir", out_dir]
+        # Default: write each case's run into its OWN molecule folder. An explicit
+        # --out-dir overrides this (e.g. a shared per-model batch dir).
+        cmd += ["--out-dir", out_dir if out_dir else str(case_dir)]
 
         print(f"\n===== {case_dir.name} =====")
         proc = subprocess.run(cmd, cwd=str(_REPO))

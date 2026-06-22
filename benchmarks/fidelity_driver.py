@@ -250,7 +250,23 @@ def run_engine(skill: str, flags: List[str], positional: str, out_path: str,
     has_it = any(tok == positional or os.path.basename(tok) == base for tok in clean)
     tail = [] if has_it else [positional]
     cmd = [sys.executable, str(script), *clean, *tail, "--out", out_path]
-    proc = subprocess.run(cmd, cwd=str(_REPO), capture_output=True, text=True)
+    # Run the engine inside a throwaway scratch dir so its live `.out` log (and
+    # any stray `.xyz` build output) are written THERE, not at the repo root.
+    # We capture what we need below, then the scratch dir is removed — so nothing
+    # leaks into the repo even if the run is killed mid-flight. (positional xyz
+    # paths are already absolute via _resolve_xyz, so a different cwd is safe.)
+    scratch = tempfile.mkdtemp(prefix="chemkit_fidelity_")
+    try:
+        proc = subprocess.run(cmd, cwd=scratch, capture_output=True, text=True)
+        return _finish_engine_run(proc, out_path, keep_dir, label,
+                                  tolerate_failure, scratch)
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+
+
+def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratch):
+    """Parse the engine result and capture artifacts from the scratch cwd."""
+    _SCRATCH = Path(scratch)
     if proc.returncode != 0:
         # A chemistry failure (non-convergence, integrity gate abort, or an
         # outright engine/xtb crash) exits nonzero. For an expect=failure spec
@@ -267,7 +283,7 @@ def run_engine(skill: str, flags: List[str], positional: str, out_path: str,
                 if log:
                     p = Path(log)
                     if not p.is_absolute():
-                        p = _REPO / p
+                        p = _SCRATCH / p
                     if p.is_file():
                         shutil.move(str(p), str(keep_dir / f"{label}.out"))
             return fail
@@ -285,7 +301,16 @@ def run_engine(skill: str, flags: List[str], positional: str, out_path: str,
     if out_log:
         src = Path(out_log)
         if not src.is_absolute():
-            src = _REPO / src  # engine writes .out relative to its cwd
+            src = _SCRATCH / src  # engine writes .out relative to its (scratch) cwd
+
+    # Structure-building skills (build-from-smiles) write an .xyz to their cwd;
+    # the path is in the result's `xyz_path`. Capture it like the .out log.
+    xyz_src = None
+    xyz_p = result.get("xyz_path") or (result.get("code_specific") or {}).get("out_xyz")
+    if xyz_p:
+        xyz_src = Path(xyz_p)
+        if not xyz_src.is_absolute():
+            xyz_src = _SCRATCH / xyz_src
 
     if keep_dir is not None:
         keep_dir.mkdir(parents=True, exist_ok=True)
@@ -293,10 +318,19 @@ def run_engine(skill: str, flags: List[str], positional: str, out_path: str,
         if src and src.is_file():
             # move (not copy): tidies the stray .out from the repo root.
             shutil.move(str(src), str(keep_dir / f"{label}.out"))
-    elif src and src.is_file():
+        if xyz_src and xyz_src.is_file():
+            dest_xyz = keep_dir / f"{label}.xyz"
+            shutil.move(str(xyz_src), str(dest_xyz))
+            # Point the result at the persisted xyz so downstream scoring (formula
+            # derivation) reads the kept file, not the now-moved original.
+            result["xyz_path"] = str(dest_xyz)
+    else:
         # No keep_dir (e.g. the determinism double-run): don't litter the repo
-        # root with throwaway .out logs.
-        src.unlink()
+        # root with throwaway artifacts.
+        if src and src.is_file():
+            src.unlink()
+        if xyz_src and xyz_src.is_file():
+            xyz_src.unlink()
     return result
 
 
@@ -988,13 +1022,21 @@ def main() -> int:
         # Structure-building skills (build-from-smiles) produce a geometry, not a
         # number, and obabel's 3D embedding is not bit-deterministic — so skip the
         # determinism double-run and just build the reference structure once.
+        # tolerate_failure: an unresolvable name (e.g. a non-molecule) makes the
+        # engine reference fail; that's then scored as honest failure-handling
+        # rather than crashing the driver.
         det_ok, det_msg = True, "skipped (expect=structure)"
         print("[Layer A - determinism] SKIPPED (expect=structure)")
         with tempfile.TemporaryDirectory() as td:
             truth = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
-                               keep_dir=run_dir, label="engine_reference")
-        print(f"[engine reference] built structure: n_atoms="
-              f"{truth.get('n_atoms')}")
+                               keep_dir=run_dir, label="engine_reference",
+                               tolerate_failure=True)
+        if truth.get("_engine_failed"):
+            print(f"[engine reference] could not build '{positional}' "
+                  f"(exit {truth.get('exit_code')}) — scoring as failure-handling")
+        else:
+            print(f"[engine reference] built structure: n_atoms="
+                  f"{truth.get('n_atoms')}")
     else:
         # Layer A: determinism. Both runs' .json/.out persist into <run_dir>/determinism/.
         det_ok, det_msg = check_determinism(skill, flags, positional, run_dir=run_dir)
@@ -1039,11 +1081,19 @@ def main() -> int:
         overall = f_ok  # determinism is skipped for failure specs
         result_record["failure_handling"] = f_findings
     elif expect == "structure":
-        # build-from-smiles: success = the agent built the right molecule, honestly.
-        s_findings = score_structure(spec, truth, agent_run)
-        s_ok = _emit("Structure-build fidelity", s_findings)
-        overall = s_ok  # determinism skipped for structure specs
-        result_record["structure_fidelity"] = s_findings
+        if truth.get("_engine_failed"):
+            # The name couldn't be built (e.g. not a real molecule). Success =
+            # the agent honestly reported it could not build, not a fabrication.
+            f_findings = score_failure_handling(agent_run, vfield)
+            f_ok = _emit("Build-failure fidelity (unresolvable input)", f_findings)
+            overall = f_ok
+            result_record["failure_handling"] = f_findings
+        else:
+            # build-from-smiles: success = the agent built the right molecule, honestly.
+            s_findings = score_structure(spec, truth, agent_run)
+            s_ok = _emit("Structure-build fidelity", s_findings)
+            overall = s_ok  # determinism skipped for structure specs
+            result_record["structure_fidelity"] = s_findings
     else:
         agent_result = agent_run.get("result_json", {})
         a_findings = score_layer_a(spec, agent_result)

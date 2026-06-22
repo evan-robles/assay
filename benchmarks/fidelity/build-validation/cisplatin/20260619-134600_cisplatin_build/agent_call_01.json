@@ -1,0 +1,36 @@
+{
+  "task": "build_from_smiles",
+  "program": "openbabel",
+  "input": "cisplatin",
+  "smiles_input": "N.N.Cl[Pt]Cl",
+  "n_atoms": 11,
+  "build": {
+    "method": "obabel --gen3d",
+    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_8l47bg80.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/cisplatin.xyz --title chemkit build: cisplatin"
+  },
+  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/cisplatin.xyz",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build cisplatin --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpx9hmmhpi/live.json",
+  "smiles_source": {
+    "smiles": "N.N.Cl[Pt]Cl",
+    "name_input": "cisplatin",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 5460033, Cisplatin. https://pubchem.ncbi.nlm.nih.gov/compound/5460033 (accessed 2026-06-19).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5460033",
+    "identifier": "CID 5460033",
+    "from_cache": true,
+    "warnings": []
+  },
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "structure_built",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_atoms = 11 (3D embedding must yield at least one atom)"
+      }
+    ]
+  }
+}
