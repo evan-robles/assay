@@ -525,6 +525,30 @@ def _norm_lot(s: Any) -> Any:
     return s
 
 
+def _coerce_float(v: Any) -> Optional[float]:
+    """Best-effort numeric coercion of a reported value. Handles plain numbers,
+    numeric strings, the unicode minus (U+2212), and a leading number with a
+    trailing unit (e.g. '-9.2 eV'). Returns None if no number can be extracted —
+    the caller scores that as a FAIL rather than crashing."""
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, (int, float)):
+        return float(v)
+    if isinstance(v, str):
+        s = v.strip().replace("−", "-")  # normalize unicode minus
+        try:
+            return float(s)
+        except ValueError:
+            import re
+            m = re.match(r"[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?", s)
+            if m:
+                try:
+                    return float(m.group(0))
+                except ValueError:
+                    return None
+    return None
+
+
 def _knob_matches(intended: Any, got: Any) -> bool:
     """Equality for level-of-theory strings, case- and hyphen/underscore-insensitive
     (the engine lowercases and varies '-'/'_', e.g. 'wb97x-v' == 'wb97x_v')."""
@@ -805,11 +829,24 @@ def score_layer_b(
             "detail": "agent did not report this value at all",
         })
     else:
-        ok = abs(float(rep_val) - float(truth_val)) <= tol
-        findings.append({
-            "check": f"reported {field}", "ok": ok, "severity": "error",
-            "truth": truth_val, "reported": rep_val, "tol": tol,
-        })
+        # The agent's reported value may not be a clean number — e.g. a string
+        # with units ("-9.2 eV"), a unicode minus, or non-numeric text. Coerce
+        # defensively and score a FAIL (never crash the run) if it isn't numeric.
+        rnum = _coerce_float(rep_val)
+        tnum = _coerce_float(truth_val)
+        if rnum is None or tnum is None:
+            findings.append({
+                "check": f"reported {field}", "ok": False, "severity": "error",
+                "detail": (f"reported value is not a clean number "
+                           f"(got {rep_val!r}); must be numeric in the field's units"),
+                "truth": truth_val, "reported": rep_val,
+            })
+        else:
+            ok = abs(rnum - tnum) <= tol
+            findings.append({
+                "check": f"reported {field}", "ok": ok, "severity": "error",
+                "truth": truth_val, "reported": rep_val, "tol": tol,
+            })
 
     # Warnings must not be silently dropped.
     truth_warns = truth.get("warnings") or []
