@@ -100,7 +100,7 @@ Every task takes `--method {xtb, mopac, dft, hf}`:
   transition-metal parameters are spotty — flagged in the schema `warnings`.)*
 - **`dft`** / **`hf`** — PySCF. DFT supports **tier presets** via `--tier`:
   - `fast` → r2SCAN / def2-SVP
-  - `standard` → ωB97X-V / def2-TZVP
+  - `standard` → B3LYP / def2-TZVP
   - `accurate` → ωB97M-V / def2-QZVPP
 
   Override directly with `--functional <libxc name>` and `--basis <basis>`

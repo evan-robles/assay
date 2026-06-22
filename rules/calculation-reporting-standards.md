@@ -99,7 +99,7 @@ of a paper, inline. The required fields, in order:
 
 1. **Property** — what was calculated (total energy, ΔG, barrier, pKa, dipole…).
 2. **Level of theory** — see §2. The headline identifier, e.g.
-   `ωB97X-V/def2-TZVP`, `HF/def2-TZVP`, `GFN2-xTB`, `PM7`.
+   `B3LYP/def2-TZVP`, `HF/def2-TZVP`, `GFN2-xTB`, `PM7`.
 3. **Geometry provenance** — see §3. Where the coordinates came from and whether
    they were relaxed at this level or carried over from another.
 4. **Solvent / environment** — see §4. The implicit-solvation model and solvent,
@@ -113,7 +113,7 @@ of a paper, inline. The required fields, in order:
 
 A minimal, honest example:
 
-> **Acetone HOMO/LUMO energies** — DFT, **ωB97X-V/def2-TZVP** (PySCF), gas
+> **Acetone HOMO/LUMO energies** — DFT, **B3LYP/def2-TZVP** (PySCF), gas
 > phase, charge 0, multiplicity 1. Geometry: built from PubChem SMILES,
 > GFN2-xTB-relaxed (not re-optimized at DFT). SCF converged. HOMO = −9.67 eV,
 > LUMO = +2.05 eV.
@@ -130,13 +130,13 @@ The single most important line. Report the method at the granularity that lets a
 reader reproduce it.
 
 ### 2.1 DFT (`--method dft`, PySCF RKS/UKS)
-- Report **functional/basis** explicitly, e.g. `ωB97X-V/def2-TZVP`.
+- Report **functional/basis** explicitly, e.g. `B3LYP/def2-TZVP`.
 - If a **tier** shorthand was used, expand it — the tier name alone is *not*
   enough for an outside reader:
   - `fast` → **r²SCAN / def2-SVP**
-  - `standard` → **ωB97X-V / def2-TZVP**
+  - `standard` → **B3LYP / def2-TZVP**
   - `accurate` → **ωB97M-V / def2-QZVPP**
-  - Report it as "tier `standard` (ωB97X-V/def2-TZVP)" so both the chemkit knob
+  - Report it as "tier `standard` (B3LYP/def2-TZVP)" so both the chemkit knob
     and the underlying theory are visible.
 - Note **density fitting (RI/RIJK)** if it was on (it is on by default in
   chemkit) — it is an approximation to the two-electron integrals and belongs in
@@ -382,7 +382,7 @@ precision implying a validated result.
 **Good** (transparent, reproducible, honest about scope):
 
 > **Acetone frontier-orbital gap** — DFT, tier `standard`
-> (**ωB97X-V/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0,
+> (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0,
 > multiplicity 1. Geometry: built from name → PubChem (SMILES `CC(=O)C`),
 > GFN2-xTB-relaxed; the DFT was a single point on that xtb geometry
 > (`DFT//GFN2-xTB`), not re-optimized at DFT. SCF converged.

@@ -26,7 +26,7 @@ honest computational chemistry"). The benchmark serves three jobs:
 ## 1. Scope decisions
 
 - **Methods compared:** `xtb` (GFN2-xTB) and `dft` (tier `standard` =
-  ωB97X-V/def2-TZVP) as the two primary columns; `mopac` (PM7) and `hf` as
+  B3LYP/def2-TZVP) as the two primary columns; `mopac` (PM7) and `hf` as
   secondary columns where chemically meaningful. Not every property runs every
   method (e.g. PM7 ΔH_f is not comparable to ab initio total energies — keep it in
   its own column, never subtract across methods).
