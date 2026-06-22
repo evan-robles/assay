@@ -516,12 +516,64 @@ def _result_field(result: Dict[str, Any], key: str) -> Any:
     return (result.get("code_specific") or {}).get(key)
 
 
+def _norm_lot(s: Any) -> Any:
+    """Normalize a level-of-theory token for comparison: lowercase and treat '-'
+    and '_' as equivalent (libxc/engine use them interchangeably, e.g. the engine
+    writes 'wb97x_v' in its method string but 'wb97x-v' as the functional field)."""
+    if isinstance(s, str):
+        return s.strip().lower().replace("_", "-")
+    return s
+
+
 def _knob_matches(intended: Any, got: Any) -> bool:
-    """Case-insensitive equality for level-of-theory strings (the engine
-    lowercases functional/basis, e.g. 'r2scan', 'def2-svp')."""
+    """Equality for level-of-theory strings, case- and hyphen/underscore-insensitive
+    (the engine lowercases and varies '-'/'_', e.g. 'wb97x-v' == 'wb97x_v')."""
     if isinstance(intended, str) and isinstance(got, str):
-        return intended.strip().lower() == got.strip().lower()
+        return _norm_lot(intended) == _norm_lot(got)
     return intended == got
+
+
+# DFT tier presets -> (functional, basis), used to validate `tier` when a skill
+# (e.g. fukui) reports the level of theory only as a 'functional/basis' method
+# string and does not emit a separate `tier` field.
+_TIER_EXPANSION = {
+    "fast": ("r2scan", "def2-svp"),
+    "standard": ("wb97x-v", "def2-tzvp"),
+    "accurate": ("wb97m-v", "def2-qzvpp"),
+}
+
+
+def _parse_method_lot(method: Any) -> Dict[str, Optional[str]]:
+    """Extract (functional, basis) from a combined method string like
+    'wb97x-v/def2-tzvp'. Some skills (fukui) report the level of theory ONLY this
+    way rather than as separate fields, so Layer A falls back to parsing it."""
+    out: Dict[str, Optional[str]] = {"functional": None, "basis": None}
+    if isinstance(method, str) and "/" in method:
+        func, _, basis = method.partition("/")
+        out["functional"] = func.strip() or None
+        out["basis"] = basis.strip() or None
+    return out
+
+
+def _lot_value(result: Dict[str, Any], key: str) -> Any:
+    """Resolve a level-of-theory knob (functional/basis/tier) from the result,
+    falling back to parsing the combined `method` string when the dedicated field
+    is absent (the fukui-style schema). Returns None only when truly unavailable."""
+    got = _result_field(result, key)
+    if got is not None:
+        return got
+    parsed = _parse_method_lot(result.get("method"))
+    if key in ("functional", "basis"):
+        return parsed.get(key)
+    if key == "tier":
+        # No tier field and none in the method string. Infer it: if the parsed
+        # functional+basis match a known tier's expansion, that tier is satisfied.
+        f = _norm_lot(parsed.get("functional") or "")
+        b = _norm_lot(parsed.get("basis") or "")
+        for tname, (tf, tb) in _TIER_EXPANSION.items():
+            if f == _norm_lot(tf) and b == _norm_lot(tb):
+                return tname
+    return None
 
 
 def score_layer_a(spec: Dict[str, Any], agent_result: Dict[str, Any]) -> List[Dict]:
@@ -543,15 +595,22 @@ def score_layer_a(spec: Dict[str, Any], agent_result: Dict[str, Any]) -> List[Di
                 "intended": intended[key], "got": got,
             })
     # Level-of-theory knobs (DFT/HF). Only scored when the spec pins them.
-    # functional/basis are top-level in the result; tier/solvent_model are in
-    # code_specific. Read via _result_field so either location works.
-    for key in ("functional", "basis", "tier", "solvent_model"):
+    # functional/basis/tier are read via _lot_value, which falls back to parsing
+    # the combined 'method' string (e.g. fukui reports only 'wb97x-v/def2-tzvp'
+    # rather than separate fields). solvent_model stays a plain field read.
+    for key in ("functional", "basis", "tier"):
         if intended.get(key):
-            got = _result_field(agent_result, key)
+            got = _lot_value(agent_result, key)
             findings.append({
                 "check": key, "ok": _knob_matches(intended[key], got),
                 "severity": "error", "intended": intended[key], "got": got,
             })
+    if intended.get("solvent_model"):
+        got = _result_field(agent_result, "solvent_model")
+        findings.append({
+            "check": "solvent_model", "ok": _knob_matches(intended["solvent_model"], got),
+            "severity": "error", "intended": intended["solvent_model"], "got": got,
+        })
     return findings
 
 
