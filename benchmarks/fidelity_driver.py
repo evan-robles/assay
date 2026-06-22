@@ -399,16 +399,38 @@ def _parse_out_log(stderr: str) -> Optional[str]:
 _DETERMINISM_NUM_TOL = 1e-6
 
 
+# A key (at ANY nesting depth) is a path/scratch field if its name matches one
+# of these — its value is a filesystem location the harness/engine varies per run,
+# never chemistry. Checked by substring so nested variants are caught too:
+# preopt.optimized_xyz, postopt.ensemble_xyz, conformers[].xyz_path, work_directory…
+_PATH_KEY_HINTS = ("_xyz", "xyz_path", "_path", "path", "plot", "out_log",
+                   "workdir", "work_directory", "directory", "molden", "cube", "mgf")
+
+
+def _is_path_key(key: str) -> bool:
+    k = key.lower()
+    return any(h in k for h in _PATH_KEY_HINTS)
+
+
+def _looks_like_path(val: Any) -> bool:
+    """A string value that is a filesystem path to a run artifact (varies per run)."""
+    if not isinstance(val, str):
+        return False
+    if "/" not in val:
+        return False
+    return val.rstrip().endswith((".xyz", ".png", ".molden", ".cube", ".mgf",
+                                  ".out", ".json")) or "/tmp/" in val or "/T/" in val
+
+
 def _strip(d: Dict[str, Any]) -> Dict[str, Any]:
     return {k: v for k, v in d.items() if k not in _DETERMINISM_IGNORE}
 
 
 def _values_match(x: Any, y: Any, tol: float = _DETERMINISM_NUM_TOL) -> bool:
-    """Equality with a tolerance for numbers; exact for everything else.
-
-    Numbers (int/float, but not bool) match within `tol`. Lists/dicts recurse so
-    nested numeric fields (e.g. atomic charges) also get the tolerance. Strings,
-    bools, None, and structural mismatches use exact equality.
+    """Equality with a tolerance for numbers; exact for everything else, EXCEPT
+    filesystem-path fields (at any depth) which are treated as matching because
+    the harness/engine renames them per run (temp dirs, artifact files) — they are
+    locations, not chemistry. Nested chemistry fields are still compared.
     """
     if isinstance(x, bool) or isinstance(y, bool):
         return x == y
@@ -417,16 +439,30 @@ def _values_match(x: Any, y: Any, tol: float = _DETERMINISM_NUM_TOL) -> bool:
     if isinstance(x, list) and isinstance(y, list):
         return len(x) == len(y) and all(_values_match(i, j, tol) for i, j in zip(x, y))
     if isinstance(x, dict) and isinstance(y, dict):
-        return x.keys() == y.keys() and all(_values_match(x[k], y[k], tol) for k in x)
+        keys = set(x) | set(y)
+        for k in keys:
+            if _is_path_key(k):
+                continue  # skip path-like sub-keys at any depth
+            if k not in x or k not in y:
+                return False
+            if not _values_match(x[k], y[k], tol):
+                return False
+        return True
+    # Two filesystem-path strings: treat as matching (per-run location, not chemistry).
+    if _looks_like_path(x) and _looks_like_path(y):
+        return True
     return x == y
 
 
 def _field_diff(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
     """Return {key: [a_val, b_val]} for every chemistry field that differs
-    beyond the numeric determinism tolerance."""
+    beyond the numeric determinism tolerance. Top-level path keys are dropped via
+    _strip; nested path keys/values are handled inside _values_match."""
     sa, sb = _strip(a), _strip(b)
     diff: Dict[str, Any] = {}
     for key in sorted(set(sa) | set(sb)):
+        if _is_path_key(key):
+            continue  # belt-and-suspenders: skip any path key _strip missed
         if not _values_match(sa.get(key), sb.get(key)):
             diff[key] = [sa.get(key), sb.get(key)]
     return diff
@@ -682,14 +718,27 @@ def score_layer_b(
 
     truth_val = truth.get(field) if field else None
     rep_val = agent.get("reported", {}).get(field) if field else None
-    if field is None or truth_val is None:
-        # No scalar headline value for this skill (e.g. geometry-optimize, which
-        # returns a structure). Skip the value-match check; the skill is scored on
-        # invocation fidelity + warnings/convergence instead.
+    if field is None:
+        # Skill legitimately has no scalar headline value (report_value_field is
+        # explicitly null, e.g. fukui / conformer-search / visualize-orbitals).
+        # Skip the value match; the skill is scored on invocation + warnings.
         findings.append({
-            "check": "value match (skipped — no scalar value for this skill)",
+            "check": "value match (skipped — report_value_field is null)",
             "ok": True, "severity": "warning",
-            "field": field, "truth": truth_val,
+            "field": field,
+        })
+    elif truth_val is None:
+        # A non-null report_value_field that is ABSENT from the engine output is a
+        # spec/engine field-name mismatch (e.g. a casing typo). This must FAIL
+        # loudly, not silently skip — otherwise the value gate is dead and any
+        # number (including a fabricated one) would pass. (Audit blocker fix.)
+        findings.append({
+            "check": f"reported {field}", "ok": False, "severity": "error",
+            "detail": (f"report_value_field {field!r} is not present in the engine "
+                       f"result — spec/engine field-name mismatch (the value gate "
+                       f"cannot run). Fix the spec's report_value_field."),
+            "truth_keys_sample": sorted(k for k in truth
+                                        if isinstance(truth.get(k), (int, float)))[:12],
         })
     elif rep_val is None:
         findings.append({

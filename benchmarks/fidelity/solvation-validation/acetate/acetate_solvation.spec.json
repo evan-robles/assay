@@ -13,7 +13,7 @@
     "multiplicity": 1,
     "solvent": "water"
   },
-  "report_value_field": "delta_g_solv_kcal_mol",
+  "report_value_field": "delta_G_solv_kcal_mol",
   "value_tol": 0.05,
   "rules": [
     "calculation-reporting-standards",

@@ -13,7 +13,7 @@
     "multiplicity": 1,
     "solvent": null
   },
-  "report_value_field": "total_energy_eV",
+  "report_value_field": "electronic_energy_eV",
   "value_tol": 0.001,
   "rules": [
     "calculation-reporting-standards",
