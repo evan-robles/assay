@@ -82,10 +82,17 @@ def main() -> int:
                     help="after running, collect results into a summary table + CSV")
     args = ap.parse_args()
 
+    # Resolve the suite folder robustly: as given, or relative to the repo root,
+    # so it works whether you run from the repo root or from inside benchmarks/.
     folder = Path(args.folder)
     if not folder.is_dir():
-        print(f"error: not a directory: {folder}")
-        return 2
+        alt = _REPO / args.folder
+        if alt.is_dir():
+            folder = alt
+        else:
+            print(f"error: not a directory: {args.folder} "
+                  f"(also tried {alt})")
+            return 2
     if not args.live and not args.agent_run_name:
         print("error: choose --live or --agent-run-name <file>")
         return 2

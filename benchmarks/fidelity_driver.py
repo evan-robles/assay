@@ -525,11 +525,15 @@ def _norm_lot(s: Any) -> Any:
     return s
 
 
-def _coerce_float(v: Any) -> Optional[float]:
+def _coerce_float(v: Any, field: Optional[str] = None) -> Optional[float]:
     """Best-effort numeric coercion of a reported value. Handles plain numbers,
-    numeric strings, the unicode minus (U+2212), and a leading number with a
-    trailing unit (e.g. '-9.2 eV'). Returns None if no number can be extracted —
-    the caller scores that as a FAIL rather than crashing."""
+    numeric strings, the unicode minus (U+2212), a leading number with a trailing
+    unit (e.g. '-9.2 eV'), and a DICT (the agent sometimes reports a structured
+    object like {'HOMO_eV':..,'LUMO_eV':..,'HOMO_LUMO_gap_eV': 7.43}). For a dict,
+    pull the entry whose key matches `field` (case/underscore-insensitive); if no
+    field match, accept it only when the dict has exactly one numeric value.
+    Returns None if no number can be extracted — the caller scores that as a FAIL
+    rather than crashing."""
     if isinstance(v, bool):
         return None
     if isinstance(v, (int, float)):
@@ -546,6 +550,19 @@ def _coerce_float(v: Any) -> Optional[float]:
                     return float(m.group(0))
                 except ValueError:
                     return None
+        return None
+    if isinstance(v, dict):
+        # 1) key matching the requested field (case/underscore-insensitive)
+        if field:
+            want = field.strip().lower().replace("-", "_")
+            for k, val in v.items():
+                if str(k).strip().lower().replace("-", "_") == want:
+                    return _coerce_float(val)
+        # 2) otherwise, accept only an unambiguous single numeric value
+        nums = [val for val in v.values()
+                if isinstance(val, (int, float)) and not isinstance(val, bool)]
+        if len(nums) == 1:
+            return float(nums[0])
     return None
 
 
@@ -832,8 +849,8 @@ def score_layer_b(
         # The agent's reported value may not be a clean number — e.g. a string
         # with units ("-9.2 eV"), a unicode minus, or non-numeric text. Coerce
         # defensively and score a FAIL (never crash the run) if it isn't numeric.
-        rnum = _coerce_float(rep_val)
-        tnum = _coerce_float(truth_val)
+        rnum = _coerce_float(rep_val, field)
+        tnum = _coerce_float(truth_val, field)
         if rnum is None or tnum is None:
             findings.append({
                 "check": f"reported {field}", "ok": False, "severity": "error",
