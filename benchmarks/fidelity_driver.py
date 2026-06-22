@@ -123,13 +123,22 @@ _METHOD_DISPLAY = {
 }
 
 # Chemistry fields whose values define "the same calculation" for determinism.
-# `integrity` is excluded: it is the engine's self-check (status/trustworthy/
-# checks), derived from the numbers — and it embeds the energy as TEXT inside its
-# `detail` strings, where thread-order FP noise (~1e-14) would otherwise leak
-# past the numeric tolerance as a string mismatch. The actual energy is still
-# compared numerically via total_energy_eV, and the integrity verdict is checked
-# in Layer C (reporting fidelity).
-_DETERMINISM_IGNORE = {"cli_invocation", "input_file", "out_log", "integrity"}
+# Excluded:
+#  - cli_invocation/input_file/out_log: paths/commands, not chemistry.
+#  - integrity: the engine's self-check; it embeds the energy as TEXT in its
+#    `detail` strings, where thread-order FP noise (~1e-14) would leak past the
+#    numeric tolerance as a string mismatch. (Energy is compared via
+#    total_energy_eV; the verdict is checked in Layer C.)
+#  - artifact-path fields (plot/molden_path/cube_paths/*_xyz/...): these are FILE
+#    LOCATIONS, which the harness renames per run (run_a_plot.png vs run_b_plot.png),
+#    so they ALWAYS differ and would falsely fail determinism. The artifacts'
+#    chemistry content is identical; only the path differs.
+_DETERMINISM_IGNORE = {
+    "cli_invocation", "input_file", "out_log", "integrity",
+    "xyz_path", "molden_path", "plot", "mgf_path", "cube_paths",
+    "trajectory_xyz", "forward_trajectory_xyz", "reverse_trajectory_xyz",
+    "xtb_workdir",
+}
 
 
 # --------------------------------------------------------------------------- #
@@ -333,7 +342,7 @@ def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratc
 # Result-JSON keys that hold output-file paths the engine produced. (input_file
 # and bare "path" are inputs and excluded.) cube_paths is a dict of MO->file.
 _ARTIFACT_KEYS = (
-    "xyz_path", "molden_path", "plot_png", "mgf_path",
+    "xyz_path", "molden_path", "plot", "mgf_path",
     "trajectory_xyz", "forward_trajectory_xyz", "reverse_trajectory_xyz",
 )
 

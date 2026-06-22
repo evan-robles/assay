@@ -167,7 +167,7 @@ def run(
         _write_plot(png_path, symbols, f_plus, f_minus, dual,
                     method=neutral["method"], input_path=input_path)
         if os.path.isfile(png_path):
-            result["plot_png"] = os.path.abspath(png_path)
+            result["plot"] = os.path.abspath(png_path)
 
     from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,

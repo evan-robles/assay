@@ -2,7 +2,7 @@
   "name": "ethylene_frontier_orbitals",
   "skill": "frontier-orbitals",
   "xyz": "benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz",
-  "prompt": "Run the frontier-orbitals task on ethylene using the DFT method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the frontier-orbitals task on ethylene using DFT at the wb97x-v functional with the def2-tzvp basis set (tier 'standard') in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "dft"

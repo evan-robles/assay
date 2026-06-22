@@ -395,7 +395,7 @@ def run(
             ),
             "barrier_grid_kcal_mol": grid_barrier,
             "trajectory_xyz": traj_path,
-            "plot_png": plot_path,
+            "plot": plot_path,
             "points": valid,
         }
         if interp:

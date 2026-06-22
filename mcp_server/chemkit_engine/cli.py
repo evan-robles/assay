@@ -983,11 +983,11 @@ def main(argv: Optional[List[str]] = None) -> int:
         print(f"# conformers xyz written to: {result['conformers_xyz']}", file=sys.stderr)
     if args.task == "scan":
         for d in result.get("dihedrals", []):
-            for k in ("trajectory_xyz", "plot_png"):
+            for k in ("trajectory_xyz", "plot"):
                 if d.get(k):
                     print(f"# {k}: {d[k]}", file=sys.stderr)
-    if args.task == "fukui" and result.get("plot_png"):
-        print(f"# plot_png: {result['plot_png']}", file=sys.stderr)
+    if args.task == "fukui" and result.get("plot"):
+        print(f"# plot: {result['plot']}", file=sys.stderr)
     if args.task == "orbitals":
         if result.get("molden_path"):
             print(f"# molden: {result['molden_path']}", file=sys.stderr)
