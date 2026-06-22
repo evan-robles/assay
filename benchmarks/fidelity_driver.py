@@ -250,11 +250,21 @@ def run_engine(skill: str, flags: List[str], positional: str, out_path: str,
     has_it = any(tok == positional or os.path.basename(tok) == base for tok in clean)
     tail = [] if has_it else [positional]
     cmd = [sys.executable, str(script), *clean, *tail, "--out", out_path]
-    # Run the engine inside a throwaway scratch dir so its live `.out` log (and
-    # any stray `.xyz` build output) are written THERE, not at the repo root.
-    # We capture what we need below, then the scratch dir is removed — so nothing
-    # leaks into the repo even if the run is killed mid-flight. (positional xyz
-    # paths are already absolute via _resolve_xyz, so a different cwd is safe.)
+    # Choose the engine's working directory:
+    #  - With keep_dir (the real engine-reference / agent-call runs): run IN
+    #    keep_dir so the live `.out` log is written there from the start. It is
+    #    then watchable mid-run (`tail -f`) and persists afterward — satisfying
+    #    calculation-reporting-standards #9 (surface the live log). Nothing leaks
+    #    to the repo root.
+    #  - Without keep_dir (the determinism double-run): use a throwaway scratch
+    #    dir that's deleted, so those throwaway logs don't accumulate anywhere.
+    # (positional xyz paths are absolute via _resolve_xyz, so a non-root cwd is safe.)
+    if keep_dir is not None:
+        keep_dir.mkdir(parents=True, exist_ok=True)
+        run_cwd = str(keep_dir)
+        proc = subprocess.run(cmd, cwd=run_cwd, capture_output=True, text=True)
+        return _finish_engine_run(proc, out_path, keep_dir, label,
+                                  tolerate_failure, run_cwd)
     scratch = tempfile.mkdtemp(prefix="chemkit_fidelity_")
     try:
         proc = subprocess.run(cmd, cwd=scratch, capture_output=True, text=True)
@@ -303,35 +313,66 @@ def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratc
         if not src.is_absolute():
             src = _SCRATCH / src  # engine writes .out relative to its (scratch) cwd
 
-    # Structure-building skills (build-from-smiles) write an .xyz to their cwd;
-    # the path is in the result's `xyz_path`. Capture it like the .out log.
-    xyz_src = None
-    xyz_p = result.get("xyz_path") or (result.get("code_specific") or {}).get("out_xyz")
-    if xyz_p:
-        xyz_src = Path(xyz_p)
-        if not xyz_src.is_absolute():
-            xyz_src = _SCRATCH / xyz_src
-
     if keep_dir is not None:
         keep_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(out_path, keep_dir / f"{label}.json")
         if src and src.is_file():
-            # move (not copy): tidies the stray .out from the repo root.
             shutil.move(str(src), str(keep_dir / f"{label}.out"))
-        if xyz_src and xyz_src.is_file():
-            dest_xyz = keep_dir / f"{label}.xyz"
-            shutil.move(str(xyz_src), str(dest_xyz))
-            # Point the result at the persisted xyz so downstream scoring (formula
-            # derivation) reads the kept file, not the now-moved original.
-            result["xyz_path"] = str(dest_xyz)
+        # Capture EVERY artifact the engine produced (png plots, molden/cube
+        # orbital files, trajectory xyz, etc.) into the run folder and repoint
+        # `result` at the kept copies. Done BEFORE writing the JSON so the saved
+        # <label>.json points at the kept artifacts, not the soon-deleted temp dir.
+        _capture_artifacts(result, keep_dir, label)
+        (keep_dir / f"{label}.json").write_text(json.dumps(result, indent=2))
     else:
-        # No keep_dir (e.g. the determinism double-run): don't litter the repo
-        # root with throwaway artifacts.
+        # No keep_dir (the determinism double-run): drop throwaway artifacts.
         if src and src.is_file():
             src.unlink()
-        if xyz_src and xyz_src.is_file():
-            xyz_src.unlink()
     return result
+
+
+# Result-JSON keys that hold output-file paths the engine produced. (input_file
+# and bare "path" are inputs and excluded.) cube_paths is a dict of MO->file.
+_ARTIFACT_KEYS = (
+    "xyz_path", "molden_path", "plot_png", "mgf_path",
+    "trajectory_xyz", "forward_trajectory_xyz", "reverse_trajectory_xyz",
+)
+
+
+def _capture_artifacts(result: Dict[str, Any], keep_dir: Path, label: str) -> None:
+    """Copy every engine-produced artifact referenced in `result` into keep_dir,
+    renaming with the run label, and repoint the result at the kept copies."""
+    def _keep(path_str: str, suffix: str) -> Optional[str]:
+        if not path_str:
+            return None
+        p = Path(path_str)
+        if not p.is_file():
+            return None
+        ext = p.suffix or ""
+        dest = keep_dir / f"{label}{suffix}{ext}"
+        shutil.copyfile(str(p), str(dest))
+        return str(dest)
+
+    for key in _ARTIFACT_KEYS:
+        val = result.get(key)
+        if isinstance(val, str):
+            suffix = "" if key == "xyz_path" else f"_{key.replace('_path','').replace('_xyz','')}"
+            kept = _keep(val, suffix)
+            if kept:
+                result[key] = kept
+
+    # cube_paths is a dict {orbital_label: file}; keep each, preserving its name.
+    cubes = result.get("cube_paths")
+    if isinstance(cubes, dict) and cubes:
+        new = {}
+        for mo, path_str in cubes.items():
+            p = Path(path_str)
+            if p.is_file():
+                dest = keep_dir / f"{label}_{mo}{p.suffix or '.cube'}"
+                shutil.copyfile(str(p), str(dest))
+                new[mo] = str(dest)
+            else:
+                new[mo] = path_str
+        result["cube_paths"] = new
 
 
 def _parse_out_log(stderr: str) -> Optional[str]:
