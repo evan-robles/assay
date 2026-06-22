@@ -18,7 +18,7 @@ from .scf import build_mean_field, pack_scf_result, _report_auxbasis
 #
 # NOTE on density fitting: the auxiliary basis is NOT pinned here. It is chosen
 # in build_mean_field() to match the functional — a JK-fit auxbasis for hybrids
-# (standard/accurate use wB97X-V / wB97M-V, which carry exact exchange) and a
+# (standard = B3LYP, accurate = wB97M-V, both carry exact exchange) and a
 # J-only auxbasis for pure functionals (fast = r2scan). Hard-coding a J-only
 # auxbasis previously mis-fit the exchange (K) matrix of the hybrid tiers.
 #
@@ -31,7 +31,7 @@ from .scf import build_mean_field, pack_scf_result, _report_auxbasis
 TIERS = {
     "fast":     {"xc": "r2scan",  "basis": "def2-svp",   "grid": 3,
                  "scf_tol": 1e-7,  "max_cycle": 80,  "density_fit": True},
-    "standard": {"xc": "wb97x_v", "basis": "def2-tzvp",  "grid": 4,
+    "standard": {"xc": "b3lyp",   "basis": "def2-tzvp",  "grid": 4,
                  "scf_tol": 1e-8,  "max_cycle": 150, "density_fit": True},
     "accurate": {"xc": "wb97m_v", "basis": "def2-qzvpp", "grid": 5,
                  "scf_tol": 1e-10, "max_cycle": 300, "density_fit": False},

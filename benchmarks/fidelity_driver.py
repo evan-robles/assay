@@ -538,7 +538,7 @@ def _knob_matches(intended: Any, got: Any) -> bool:
 # string and does not emit a separate `tier` field.
 _TIER_EXPANSION = {
     "fast": ("r2scan", "def2-svp"),
-    "standard": ("wb97x-v", "def2-tzvp"),
+    "standard": ("b3lyp", "def2-tzvp"),   # standard tier functional changed to B3LYP
     "accurate": ("wb97m-v", "def2-qzvpp"),
 }
 

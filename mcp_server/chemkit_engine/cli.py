@@ -36,7 +36,7 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
                             "those methods (and a solvent set) is an error.")
     # PySCF-only knobs; silently ignored for xtb/mopac.
     p.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None,
-                   help="DFT tier preset (fast=r2SCAN/def2-SVP, standard=wB97X-V/def2-TZVP, "
+                   help="DFT tier preset (fast=r2SCAN/def2-SVP, standard=B3LYP/def2-TZVP, "
                         "accurate=wB97M-V/def2-QZVPP). Ignored unless --method dft.")
     p.add_argument("--functional", default=None,
                    help="DFT functional override, libxc name (e.g. b3lyp, pbe0, wb97x_v, "
@@ -58,7 +58,7 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
     p.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
                    help="Explicitly consent to chemkit's silent defaults for "
                         "consequential knobs the user did not set (DFT "
-                        "tier=standard -> wB97X-V/def2-TZVP; HF basis=def2-tzvp; "
+                        "tier=standard -> B3LYP/def2-TZVP; HF basis=def2-tzvp; "
                         "gas phase when no --solvent). Without this flag, a DFT/HF "
                         "run that omits those knobs is REFUSED so the level of "
                         "theory is never chosen silently "
@@ -875,7 +875,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             parser.error(
                 "--method dft was given without --tier/--functional/--basis. "
                 "chemkit would SILENTLY default to tier=standard "
-                "(wB97X-V/def2-TZVP, density-fit) — do not choose the level of "
+                "(B3LYP/def2-TZVP, density-fit) — do not choose the level of "
                 "theory silently. Either pass an explicit --tier/--functional/"
                 "--basis, or, only after confirming with the user, pass "
                 "--accept-defaults to consciously accept tier=standard. "
