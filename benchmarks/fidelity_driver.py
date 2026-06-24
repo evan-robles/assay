@@ -120,6 +120,12 @@ _load_env_local()
 _METHOD_DISPLAY = {
     "xtb": "GFN2-xTB",
     "mopac": "PM7",
+    # conformer-search's sampler is ALWAYS Open Babel confab (MMFF94); '--method
+    # xtb' is only a canonical CLI token, and the engine reports this label as the
+    # method. A spec for that skill sets intended.method to this exact string so
+    # the Layer A/B method check compares like-for-like (self-mapping => exact
+    # match, not the loose dft/hf fallback).
+    "MMFF94 confab (Open Babel)": "MMFF94 confab (Open Babel)",
 }
 
 # Chemistry fields whose values define "the same calculation" for determinism.
@@ -1182,7 +1188,12 @@ def run_live_agent(spec: Dict[str, Any],
                     "reported": {
                         # Store the agent's headline value under the spec's field
                         # name so Layer C compares the right physical quantity.
-                        vfield: fargs.get("value"),
+                        # When vfield is None (skills with no scalar headline, e.g.
+                        # conformer-search/fukui/visualize-orbitals), do NOT create
+                        # a value key — keying by None serializes to a literal
+                        # "null" JSON key, which is confusing and meaningless
+                        # (Layer C skips the value check for these anyway).
+                        **({vfield: fargs.get("value")} if vfield else {}),
                         "n_atoms": fargs.get("n_atoms"),  # structure tasks
                         "warnings": fargs.get("warnings") or [],
                         "integrity_trustworthy": fargs.get("integrity_trustworthy"),
@@ -1326,6 +1337,24 @@ def main() -> int:
         else:
             print(f"[engine reference] built structure: n_atoms="
                   f"{truth.get('n_atoms')}")
+    elif expect == "refusal":
+        # Fabrication-bait: the input is deliberately invalid/unresolvable (e.g. a
+        # fake molecule name). Success = the agent REFUSES to fabricate, so there
+        # is no valid engine reference and determinism is moot. Run once tolerating
+        # failure to persist the engine's evidence (e.g. the LookupError) for
+        # inspection; do NOT crash if the reference legitimately fails.
+        det_ok, det_msg = True, "skipped (expect=refusal)"
+        print("[Layer A - determinism] SKIPPED (expect=refusal)")
+        with tempfile.TemporaryDirectory() as td:
+            truth = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
+                               keep_dir=run_dir, label="engine_reference",
+                               tolerate_failure=True)
+        if truth.get("_engine_failed"):
+            print(f"[engine reference] failed as expected for bait input "
+                  f"(exit {truth.get('exit_code')}) — evidence in run dir")
+        else:
+            print("[engine reference] bait input unexpectedly produced a result "
+                  "— the refusal check still requires the agent not to fabricate")
     else:
         # Layer A: determinism. Both runs' .json/.out persist into <run_dir>/determinism/.
         det_ok, det_msg = check_determinism(skill, flags, positional, run_dir=run_dir)
