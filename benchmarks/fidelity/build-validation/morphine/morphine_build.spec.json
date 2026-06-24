@@ -1,0 +1,19 @@
+{
+  "name": "morphine_build",
+  "skill": "build-from-smiles",
+  "input": "morphine",
+  "input_kind": "string",
+  "expect": "structure",
+  "expected_n_atoms": 40,
+  "expected_formula": "C17H19NO3",
+  "prompt": "Build a 3D structure of morphine from its name using the build-from-smiles tool. Morphine is a complex pentacyclic alkaloid with five stereocenters, so the resolved structure must be the correct isomeric form. Report what you built (the molecule and its atom count) and the source it was resolved from. Do not fabricate coordinates; use the tool.",
+  "intended_flags": [],
+  "intended": {
+    "method": "",
+    "charge": 0
+  },
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}
