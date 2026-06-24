@@ -2,13 +2,13 @@
   "name": "ethylene-glycol_conformer_search",
   "skill": "conformer-search",
   "xyz": "benchmarks/fidelity/conformer-search-validation/ethylene-glycol/ethylene_glycol.xyz",
-  "prompt": "Run the conformer-search task on ethylene glycol using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the conformer-search task on ethylene glycol in the gas phase (pass --method xtb, the canonical CLI token for this skill; note the conformer SAMPLER is Open Babel confab using the MMFF94 force field, which is what the engine reports as the method). Report the conformer ensemble found (how many conformers and the lowest-energy one) and state the method exactly as the tool reports it. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "xtb"
   ],
   "intended": {
-    "method": "xtb",
+    "method": "MMFF94 confab (Open Babel)",
     "charge": 0,
     "multiplicity": 1,
     "solvent": null

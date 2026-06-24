@@ -2,10 +2,11 @@
   "name": "ethylene_vibrational_analysis",
   "skill": "vibrational-analysis",
   "xyz": "benchmarks/fidelity/vibrational-analysis-validation/ethylene/ethylene.xyz",
-  "prompt": "Run the vibrational-analysis task on ethylene using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the vibrational-analysis task on ethylene using the GFN2-xTB method in the gas phase. Do NOT perform a pre-optimization \u2014 pass --no-preopt so the Hessian is taken on the supplied geometry as-is. Report the electronic energy in eV as the headline value (the vibrational-analysis task also returns the enthalpy and the Gibbs free energy, both in eV \u2014 do NOT report those as the headline value), and state the method used. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
-    "xtb"
+    "xtb",
+    "--no-preopt"
   ],
   "intended": {
     "method": "xtb",

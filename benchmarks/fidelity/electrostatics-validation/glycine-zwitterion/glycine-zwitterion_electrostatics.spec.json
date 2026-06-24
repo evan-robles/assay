@@ -2,7 +2,7 @@
   "name": "glycine-zwitterion_electrostatics",
   "skill": "electrostatics",
   "xyz": "benchmarks/fidelity/electrostatics-validation/glycine-zwitterion/glycine_zwitterion.xyz",
-  "prompt": "Run the electrostatics task on glycine zwitterion using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the electrostatics task on glycine zwitterion using the GFN2-xTB method in the gas phase. Report the dipole moment in Debye as the headline value (the electrostatics task also returns a total energy and partial charges \u2014 do NOT report those as the headline value), and state the method used. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "xtb"
