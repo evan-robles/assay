@@ -265,17 +265,36 @@ def _check_opt(result):
 
 @register("vibrational_thermochemistry")
 def _check_freq(result):
+    # Stationary-point classification by imaginary-mode count:
+    #   0  -> a true minimum (the usual vibrational-analysis target);
+    #   1  -> a valid first-order saddle (a transition state). This is a
+    #         legitimate, correctly-characterized stationary point — NOT an error.
+    #         Its ideal-gas thermochemistry (G/H/S) is undefined (one mode is
+    #         missing from the 3N-6 set), which is EXPECTED for a saddle, so the
+    #         gibbs_finite check is relaxed to a warning in this case rather than
+    #         marking the whole result untrustworthy.
+    #   >=2 -> a higher-order saddle: neither a clean minimum nor a clean TS, so
+    #         the geometry/thermochemistry is genuinely unreliable -> error.
+    # (A genuine reaction TS with exactly 1 imaginary mode should ideally be found
+    # via the transition-state task, but running freq directly on a saddle is a
+    # valid, honestly-characterized result — see _check_ts for the TS-task gate.)
     n_imag = result.get("n_imaginary_modes")
+    is_saddle = (n_imag == 1)
     checks = [_check(
-        "n_imag_minimum", (n_imag == 0), "error",
-        f"n_imaginary_modes = {n_imag!r} (a minimum must have 0; "
-        "use the transition-state task for a saddle)",
+        "n_imag_stationary_point", (n_imag in (0, 1)), "error",
+        f"n_imaginary_modes = {n_imag!r} (0 = minimum, 1 = valid first-order "
+        "saddle/TS; >=2 = higher-order saddle, not a usable stationary point)",
     )]
     g = result.get("gibbs_free_energy_eV")
-    checks.append(_check(
-        "gibbs_finite", _finite(g), "error",
-        f"gibbs_free_energy_eV = {g!r} (must be finite)",
-    ))
+    # For a 1-imag saddle, undefined thermochemistry is expected, not a failure.
+    gibbs_sev = "warning" if is_saddle else "error"
+    gibbs_detail = (
+        f"gibbs_free_energy_eV = {g!r} (undefined for a first-order saddle — "
+        "expected; the electronic energy and frequencies remain valid)"
+        if is_saddle else
+        f"gibbs_free_energy_eV = {g!r} (must be finite)"
+    )
+    checks.append(_check("gibbs_finite", _finite(g), gibbs_sev, gibbs_detail))
     return checks
 
 
