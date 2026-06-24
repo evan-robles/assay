@@ -41,6 +41,11 @@ benchmarks/fidelity/.env.local
 # default; promote chosen runs into the Zenodo/GitHub-release bundle for the paper.
 benchmarks/runs/
 
+# Local scratch from fidelity development: the driver's error dumps (large,
+# transient crash JSONs) and a personal progress-tracking note. Local only.
+benchmarks/error_dumps/
+benchmarks/fidelity/tested.txt
+
 # Safety net: keep committed example deliverables tracked.
 !skills/**/examples/**
 
