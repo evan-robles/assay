@@ -24,6 +24,6 @@
   "forward_status": "JOB ENDED NORMALLY",
   "reverse_status": "JOB ENDED NORMALLY",
   "distinct_endpoints": false,
-  "forward_trajectory_xyz": "/private/tmp/exwork/irc_nh3_forward.xyz",
-  "reverse_trajectory_xyz": "/private/tmp/exwork/irc_nh3_reverse.xyz"
+  "forward_trajectory": "/private/tmp/exwork/irc_nh3_forward.xyz",
+  "reverse_trajectory": "/private/tmp/exwork/irc_nh3_reverse.xyz"
 }

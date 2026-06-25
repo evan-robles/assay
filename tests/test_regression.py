@@ -705,8 +705,8 @@ def test_irc_hcn_walks_to_distinct_endpoints(tmp_run):
     d = _load(irc_out)
     assert d.get("forward_n_points") and d["forward_n_points"] > 1
     assert d.get("reverse_n_points") and d["reverse_n_points"] > 1
-    assert d.get("forward_trajectory_xyz") and os.path.isfile(d["forward_trajectory_xyz"])
-    assert d.get("reverse_trajectory_xyz") and os.path.isfile(d["reverse_trajectory_xyz"])
+    assert d.get("forward_trajectory") and os.path.isfile(d["forward_trajectory"])
+    assert d.get("reverse_trajectory") and os.path.isfile(d["reverse_trajectory"])
     # Both directions walked off the TS (negative drop). PM7's canonical IRC
     # (IRC=±1, no undocumented * suffix) produces tighter step convergence
     # than the legacy chemkit behavior, so the reverse drop here can be small

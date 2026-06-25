@@ -105,10 +105,10 @@ def run(
         rev_xyz = f"{out_stem}_reverse.xyz"
         if fwd_traj:
             _write_trajectory(fwd_xyz, fwd_traj)
-            result["forward_trajectory_xyz"] = os.path.abspath(fwd_xyz)
+            result["forward_trajectory"] = os.path.abspath(fwd_xyz)
         if rev_traj:
             _write_trajectory(rev_xyz, rev_traj)
-            result["reverse_trajectory_xyz"] = os.path.abspath(rev_xyz)
+            result["reverse_trajectory"] = os.path.abspath(rev_xyz)
 
     el_warns = element_warnings(symbols, method)
     if el_warns:

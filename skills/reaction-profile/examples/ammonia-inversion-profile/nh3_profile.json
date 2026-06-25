@@ -55,8 +55,8 @@
   "irc": {
     "performed": true,
     "method": "mopac",
-    "forward_trajectory_xyz": "/tmp/chemkit_profile_yaiie0hf/irc_forward.xyz",
-    "reverse_trajectory_xyz": "/tmp/chemkit_profile_yaiie0hf/irc_reverse.xyz",
+    "forward_trajectory": "/tmp/chemkit_profile_yaiie0hf/irc_forward.xyz",
+    "reverse_trajectory": "/tmp/chemkit_profile_yaiie0hf/irc_reverse.xyz",
     "rmsd_fwd_vs_R_A": 0.00207918069239627,
     "rmsd_fwd_vs_P_A": 0.2797124297525835,
     "rmsd_rev_vs_R_A": 0.27970826716050307,

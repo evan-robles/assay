@@ -43,8 +43,8 @@
       "max_angle_deg": 359.99999999999994,
       "max_energy_kcal_mol": -8570.042307496899,
       "barrier_kcal_mol": 4.926945460678326,
-      "trajectory_xyz": "scan_butane_dih1_2_3_4.xyz",
-      "plot_png": "scan_butane_dih1_2_3_4.png",
+      "trajectory": "scan_butane_dih1_2_3_4.xyz",
+      "plot": "scan_butane_dih1_2_3_4.png",
       "points": [
         {
           "step": 0,

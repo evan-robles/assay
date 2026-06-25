@@ -256,8 +256,8 @@ def run(
                 solvent=solvent, max_points=40, step=0.05, out_stem=irc_stem,
                 cli="(internal reaction_profile: IRC connectivity)",
             )
-            fwd_xyz = irc_res.get("forward_trajectory_xyz")
-            rev_xyz = irc_res.get("reverse_trajectory_xyz")
+            fwd_xyz = irc_res.get("forward_trajectory")
+            rev_xyz = irc_res.get("reverse_trajectory")
             # MOPAC's IRC=N takes small mass-weighted steps and stops after N
             # points — it doesn't walk to the minimum. To make the connectivity
             # check robust, relax each IRC endpoint with a regular opt before
@@ -289,8 +289,8 @@ def run(
             irc_info = {
                 "performed": True,
                 "method": method,
-                "forward_trajectory_xyz": fwd_xyz,
-                "reverse_trajectory_xyz": rev_xyz,
+                "forward_trajectory": fwd_xyz,
+                "reverse_trajectory": rev_xyz,
                 "rmsd_fwd_vs_R_A": rmsd_fwd_r,
                 "rmsd_fwd_vs_P_A": rmsd_fwd_p,
                 "rmsd_rev_vs_R_A": rmsd_rev_r,
