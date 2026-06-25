@@ -2,7 +2,7 @@
   "name": "12-difluoroethane_conformational_analysis",
   "skill": "conformational-analysis",
   "xyz": "benchmarks/fidelity/conformational-analysis-validation/12-difluoroethane/12-difluoroethane.xyz",
-  "prompt": "Run the conformational-analysis task on 12-difluoroethane using the GFN2-xTB method in the gas phase (auto-detect rotatable bonds). Report the rotation barrier(s) found (per scanned dihedral) and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the conformational-analysis task on 12-difluoroethane using the GFN2-xTB method in the gas phase. Pass only --method xtb and the .xyz file \u2014 the task auto-detects all rotatable bonds by default, so do NOT add any extra flag for that (there is no --auto/--rotors flag). Report the rotation barrier(s) found (per scanned dihedral) and state the method used. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "xtb"
