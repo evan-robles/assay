@@ -2,7 +2,7 @@
   "name": "anthraquinone_redox_potential",
   "skill": "redox-potential",
   "xyz": "benchmarks/fidelity/redox-potential-validation/anthraquinone/anthraquinone.xyz",
-  "prompt": "Run the redox-potential task on anthraquinone using the GFN2-xTB method in implicit water solvent, referenced to SHE, for the 0->-1 redox couple (oxidized charge 0 mult 1, reduced charge -1 mult 2). Report the standard redox potential in volts vs SHE as the headline value (the task also returns delta_E_redox in eV/kcal \u2014 do NOT report those as the headline value), and state the method, reference electrode, and charges used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the redox-potential task on anthraquinone using the GFN2-xTB method in implicit water solvent, referenced to SHE, for the 0->-1 redox couple (oxidized charge 0 mult 1, reduced charge -1 mult 2). Report the standard redox potential in volts vs SHE as the headline value (the task also returns delta_E_redox in eV/kcal \u2014 do NOT report those as the headline value), and state the method, reference electrode, and charges used. Note GFN2-xTB (semi-empirical) redox potentials are screening-grade, ~\u00b10.3-0.5 V; this is a screening estimate (same geometry for both states, implicit solvent only). Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "xtb",
