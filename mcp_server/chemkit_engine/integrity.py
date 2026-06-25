@@ -414,18 +414,37 @@ def _check_pka(result):
     checks = []
     species = result.get("species")
     if isinstance(species, dict):
-        bad = []
+        # A pKa species must be a true MINIMUM — but only a GENUINE (hard,
+        # |nu| > 50i) imaginary mode means it isn't one. The freq sub-task floors
+        # soft sub-50i rotor modes (floppy methyl/carboxylate torsions that
+        # finite-difference noise dips marginally negative) and treats them as
+        # real low-frequency vibrations, so they do NOT disqualify a minimum.
+        # Gate on the saddle count; fall back to the total only if the saddle
+        # count is unavailable (older species records).
+        hard_bad, soft_seen = [], []
         for label, blk in species.items():
             if not isinstance(blk, dict):
                 continue
-            n_imag = blk.get("n_imaginary_modes")
-            if n_imag not in (0, None):
-                bad.append(f"{label}={n_imag}")
+            n_saddle = blk.get("n_saddle_imaginary_modes")
+            n_total = blk.get("n_imaginary_modes")
+            n_hard = n_saddle if n_saddle is not None else n_total
+            if n_hard not in (0, None):
+                hard_bad.append(f"{label}={n_hard}")
+            elif (blk.get("n_soft_imaginary_modes") or 0) > 0:
+                soft_seen.append(label)
         checks.append(_check(
-            "species_converged", (len(bad) == 0), "error",
-            f"species with imaginary modes: {bad or 'none'} "
-            "(every pKa species must be a minimum)",
+            "species_converged", (len(hard_bad) == 0), "error",
+            f"species with genuine (saddle) imaginary modes: {hard_bad or 'none'} "
+            "(every pKa species must be a minimum; soft sub-50i rotor modes are "
+            "floored as real and do not count)",
         ))
+        if soft_seen:
+            checks.append(_check(
+                "species_soft_modes", True, "warning",
+                f"species with soft (floored, sub-50i) imaginary modes: {soft_seen} "
+                "— treated as floppy real low-frequency rotors, not saddles; the "
+                "pKa is fine but these soft modes add thermochemical uncertainty.",
+            ))
     pka = result.get("pKa")
     checks.append(_check(
         "pka_finite", _finite(pka), "error",

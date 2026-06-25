@@ -312,5 +312,11 @@ def _species_summary(xyz_path, freq_result, charge, mult) -> Dict[str, Any]:
         "E_kcal_mol": (freq_result.get("electronic_energy_eV") or 0.0) * EV_TO_KCAL,
         "ZPE_kcal_mol": freq_result.get("zpe_kcal_mol"),
         "n_imaginary_modes": freq_result.get("n_imaginary_modes"),
+        # n_saddle = genuine (hard, |nu| > 50i) imaginary modes. The total
+        # n_imaginary_modes also counts soft sub-50i rotor modes that the freq
+        # task floors as real low-frequency vibrations; those do NOT mean the
+        # species is a non-minimum, so the integrity gate keys on the saddle count.
+        "n_saddle_imaginary_modes": freq_result.get("n_saddle_imaginary_modes"),
+        "n_soft_imaginary_modes": freq_result.get("n_soft_imaginary_modes"),
         "optimized_xyz": (freq_result.get("preopt") or {}).get("optimized_xyz"),
     }
