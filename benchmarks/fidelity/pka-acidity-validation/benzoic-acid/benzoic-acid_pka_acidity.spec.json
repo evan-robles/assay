@@ -1,0 +1,34 @@
+{
+  "name": "benzoic-acid_pka_acidity",
+  "skill": "pka-acidity",
+  "input_kind": "none",
+  "inputs": [
+    {
+      "flag": "--ha",
+      "xyz": "benchmarks/fidelity/pka-acidity-validation/benzoic-acid/ha.xyz"
+    },
+    {
+      "flag": "--a-minus",
+      "xyz": "benchmarks/fidelity/pka-acidity-validation/benzoic-acid/a_minus.xyz"
+    }
+  ],
+  "prompt": "Run the pka-acidity task for benzoic acid using the GFN2-xTB method in implicit water (absolute mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note xtb absolute pKa is screening-grade. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb",
+    "--mode",
+    "absolute"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water"
+  },
+  "report_value_field": "pKa",
+  "value_tol": 2.0,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

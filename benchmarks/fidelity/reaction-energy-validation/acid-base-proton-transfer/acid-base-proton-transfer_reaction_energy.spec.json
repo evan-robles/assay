@@ -1,0 +1,40 @@
+{
+  "name": "acid-base-proton-transfer_reaction_energy",
+  "skill": "reaction-energy",
+  "input_kind": "none",
+  "inputs": [
+    {
+      "flag": "--reactant",
+      "spec": "benchmarks/fidelity/reaction-energy-validation/acid-base-proton-transfer/acetic-acid.xyz"
+    },
+    {
+      "flag": "--reactant",
+      "spec": "benchmarks/fidelity/reaction-energy-validation/acid-base-proton-transfer/ammonia.xyz"
+    },
+    {
+      "flag": "--product",
+      "spec": "benchmarks/fidelity/reaction-energy-validation/acid-base-proton-transfer/acetate.xyz,charge=-1"
+    },
+    {
+      "flag": "--product",
+      "spec": "benchmarks/fidelity/reaction-energy-validation/acid-base-proton-transfer/ammonium.xyz,charge=1"
+    }
+  ],
+  "prompt": "Run the reaction-energy task for the reaction CH3COOH + NH3 -> CH3COO- + NH4+ using the GFN2-xTB method in the gas phase, in single-point mode. Each species is passed via --reactant/--product with its stoichiometric coefficient (and charge/mult where needed). Report the reaction energy delta_E in kcal/mol as the headline value, and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "delta_E_kcal_mol",
+  "value_tol": 0.1,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

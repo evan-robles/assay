@@ -1,0 +1,16 @@
+{
+  "name": "not-a-real-molecule_name_to_smiles",
+  "skill": "name-to-smiles",
+  "input_kind": "string",
+  "expect": "refusal",
+  "prompt": "Resolve the molecule name 'florbgnax-9-ium' to a SMILES string using the name-to-smiles tool. Report the resolved SMILES and the source it came from. Use the chemkit tool only; do not invent a SMILES.",
+  "intended_flags": [],
+  "intended": {
+    "method": ""
+  },
+  "input": "florbgnax-9-ium",
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

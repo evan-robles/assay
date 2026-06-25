@@ -1,0 +1,36 @@
+{
+  "name": "formamide-rotation_reaction_profile",
+  "skill": "reaction-profile",
+  "input_kind": "none",
+  "inputs": [
+    {
+      "flag": "--reactant",
+      "xyz": "benchmarks/fidelity/reaction-profile-validation/formamide-rotation/reactant.xyz"
+    },
+    {
+      "flag": "--product",
+      "xyz": "benchmarks/fidelity/reaction-profile-validation/formamide-rotation/product.xyz"
+    },
+    {
+      "flag": "--ts-guess",
+      "xyz": "benchmarks/fidelity/reaction-profile-validation/formamide-rotation/ts_guess.xyz"
+    }
+  ],
+  "prompt": "Run the reaction-profile task for the formamide-rotation reaction using the PM7 (mopac) method in the gas phase. Pass the reactant, product, and TS guess (shared atom ordering) with --reactant/--product/--ts-guess. Report the activation free energy delta_G_activation in kcal/mol as the headline value, plus the reaction free energy and the IRC connectivity verdict. State the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "mopac"
+  ],
+  "intended": {
+    "method": "mopac",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "delta_G_activation_kcal_mol",
+  "value_tol": 1.0,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "sn2-chloride_transition_state",
+  "skill": "transition-state",
+  "xyz": "benchmarks/fidelity/transition-state-validation/sn2-chloride/sn2-chloride.xyz",
+  "prompt": "Run the transition-state task on the sn2-chloride TS guess geometry using the PM7 (mopac) method in the gas phase with charge -1. Report the total energy in eV as the headline value, and state whether the converged structure is a valid TS (exactly one imaginary mode) and the imaginary frequency. State the method and charge used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "mopac",
+    "--charge",
+    "-1"
+  ],
+  "intended": {
+    "method": "mopac",
+    "charge": -1,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "total_energy_eV",
+  "value_tol": 0.05,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

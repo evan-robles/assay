@@ -1,0 +1,16 @@
+{
+  "name": "acetic-acid_name_to_smiles",
+  "skill": "name-to-smiles",
+  "input_kind": "string",
+  "expect": "smiles",
+  "prompt": "Resolve the molecule name 'acetic acid' to a SMILES string using the name-to-smiles tool. Report the resolved SMILES (the headline) and the source it was resolved from. Use the chemkit tool only; do not guess the SMILES.",
+  "intended_flags": [],
+  "intended": {
+    "method": ""
+  },
+  "input": "acetic acid",
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

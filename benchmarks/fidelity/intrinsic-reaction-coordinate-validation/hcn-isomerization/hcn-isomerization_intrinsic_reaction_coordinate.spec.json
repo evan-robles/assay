@@ -1,0 +1,21 @@
+{
+  "name": "hcn-isomerization_irc",
+  "skill": "intrinsic-reaction-coordinate",
+  "xyz": "benchmarks/fidelity/intrinsic-reaction-coordinate-validation/hcn-isomerization/hcn-isomerization.xyz",
+  "prompt": "Run the intrinsic-reaction-coordinate task on the hcn-isomerization transition-state geometry using the PM7 (mopac) method in the gas phase. Report the forward and reverse endpoint energies, the energy drops in each direction, and whether the two endpoints are distinct. State the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "mopac"
+  ],
+  "intended": {
+    "method": "mopac",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": null,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

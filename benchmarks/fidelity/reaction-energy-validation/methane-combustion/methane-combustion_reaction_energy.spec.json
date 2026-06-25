@@ -1,0 +1,40 @@
+{
+  "name": "methane-combustion_reaction_energy",
+  "skill": "reaction-energy",
+  "input_kind": "none",
+  "inputs": [
+    {
+      "flag": "--reactant",
+      "spec": "benchmarks/fidelity/reaction-energy-validation/methane-combustion/ch4.xyz"
+    },
+    {
+      "flag": "--reactant",
+      "spec": "2*benchmarks/fidelity/reaction-energy-validation/methane-combustion/o2.xyz,mult=3"
+    },
+    {
+      "flag": "--product",
+      "spec": "benchmarks/fidelity/reaction-energy-validation/methane-combustion/co2.xyz"
+    },
+    {
+      "flag": "--product",
+      "spec": "2*benchmarks/fidelity/reaction-energy-validation/methane-combustion/h2o.xyz"
+    }
+  ],
+  "prompt": "Run the reaction-energy task for the reaction CH4 + 2 O2 -> CO2 + 2 H2O using the GFN2-xTB method in the gas phase, in single-point mode. Each species is passed via --reactant/--product with its stoichiometric coefficient (and charge/mult where needed). Report the reaction energy delta_E in kcal/mol as the headline value, and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "delta_E_kcal_mol",
+  "value_tol": 0.1,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

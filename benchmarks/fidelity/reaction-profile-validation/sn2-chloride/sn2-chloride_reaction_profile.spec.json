@@ -1,0 +1,38 @@
+{
+  "name": "sn2-chloride_reaction_profile",
+  "skill": "reaction-profile",
+  "input_kind": "none",
+  "inputs": [
+    {
+      "flag": "--reactant",
+      "xyz": "benchmarks/fidelity/reaction-profile-validation/sn2-chloride/reactant.xyz"
+    },
+    {
+      "flag": "--product",
+      "xyz": "benchmarks/fidelity/reaction-profile-validation/sn2-chloride/product.xyz"
+    },
+    {
+      "flag": "--ts-guess",
+      "xyz": "benchmarks/fidelity/reaction-profile-validation/sn2-chloride/ts_guess.xyz"
+    }
+  ],
+  "prompt": "Run the reaction-profile task for the sn2-chloride reaction using the PM7 (mopac) method in the gas phase with charge -1. Pass the reactant, product, and TS guess (shared atom ordering) with --reactant/--product/--ts-guess. Report the activation free energy delta_G_activation in kcal/mol as the headline value, plus the reaction free energy and the IRC connectivity verdict. State the method and charge used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "mopac",
+    "--charge",
+    "-1"
+  ],
+  "intended": {
+    "method": "mopac",
+    "charge": -1,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "delta_G_activation_kcal_mol",
+  "value_tol": 1.0,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

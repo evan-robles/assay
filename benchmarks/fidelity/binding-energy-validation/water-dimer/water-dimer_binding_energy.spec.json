@@ -1,0 +1,32 @@
+{
+  "name": "water-dimer_binding_energy",
+  "skill": "binding-energy",
+  "xyz": "benchmarks/fidelity/binding-energy-validation/water-dimer/complex.xyz",
+  "inputs": [
+    {
+      "flag": "--monomer",
+      "xyz": "benchmarks/fidelity/binding-energy-validation/water-dimer/monomer_1_water.xyz"
+    },
+    {
+      "flag": "--monomer",
+      "xyz": "benchmarks/fidelity/binding-energy-validation/water-dimer/monomer_2_water.xyz"
+    }
+  ],
+  "prompt": "Run the binding-energy task on the water dimer using the GFN2-xTB method in the gas phase. The complex geometry is the positional input; pass each monomer with --monomer. Report the binding (interaction) energy in eV as the headline value (negative = bound; the task also returns kcal/mol and hartree \u2014 report eV), and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "binding_energy_eV",
+  "value_tol": 0.01,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

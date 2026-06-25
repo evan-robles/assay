@@ -1,0 +1,36 @@
+{
+  "name": "haber_reaction_energy",
+  "skill": "reaction-energy",
+  "input_kind": "none",
+  "inputs": [
+    {
+      "flag": "--reactant",
+      "spec": "benchmarks/fidelity/reaction-energy-validation/haber/n2.xyz"
+    },
+    {
+      "flag": "--reactant",
+      "spec": "3*benchmarks/fidelity/reaction-energy-validation/haber/h2.xyz"
+    },
+    {
+      "flag": "--product",
+      "spec": "2*benchmarks/fidelity/reaction-energy-validation/haber/nh3.xyz"
+    }
+  ],
+  "prompt": "Run the reaction-energy task for the reaction N2 + 3 H2 -> 2 NH3 using the GFN2-xTB method in the gas phase, in single-point mode. Each species is passed via --reactant/--product with its stoichiometric coefficient (and charge/mult where needed). Report the reaction energy delta_E in kcal/mol as the headline value, and state the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "xtb"
+  ],
+  "intended": {
+    "method": "xtb",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "delta_E_kcal_mol",
+  "value_tol": 0.1,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

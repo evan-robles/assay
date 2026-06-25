@@ -1,0 +1,22 @@
+{
+  "name": "formic-acid-ze_transition_state",
+  "skill": "transition-state",
+  "xyz": "benchmarks/fidelity/transition-state-validation/formic-acid-ze/formic-acid-ze.xyz",
+  "prompt": "Run the transition-state task on the formic-acid-ze TS guess geometry using the PM7 (mopac) method in the gas phase. Report the total energy in eV as the headline value, and state whether the converged structure is a valid TS (exactly one imaginary mode) and the imaginary frequency. State the method used. Use the chemkit tools; do not guess the number.",
+  "intended_flags": [
+    "--method",
+    "mopac"
+  ],
+  "intended": {
+    "method": "mopac",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "total_energy_eV",
+  "value_tol": 0.05,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}
