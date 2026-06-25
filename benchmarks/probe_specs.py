@@ -61,11 +61,15 @@ def probe_suite(suite: Path) -> dict:
     flags = _engine_flags(d)
     rvf = d.get("report_value_field")
 
-    # positional input: xyz path or build string
+    # positional input: xyz path, build string, or NONE for positional-less
+    # multi-input skills (reaction-energy / pka / reaction-profile) whose every
+    # geometry arrives via the spec's `inputs` named flags (handled by _engine_flags).
     if "xyz" in d:
         positional = _resolve_xyz(d["xyz"])
+    elif "input" in d:
+        positional = d.get("input")
     else:
-        positional = d.get("input") or d.get("xyz")
+        positional = None
 
     with tempfile.TemporaryDirectory() as td:
         out = os.path.join(td, "probe.json")
