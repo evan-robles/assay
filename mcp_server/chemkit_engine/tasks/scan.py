@@ -34,6 +34,28 @@ from .confsearch import (
     _set_dihedral_about_bond,
 )
 
+# A measured dihedral sits on a circular axis where 0 deg == 360 deg. ASE's
+# get_dihedral returns a value in [0, 360), but floating-point noise near the
+# 0/360 branch cut can report the SAME physical angle as ~359.99999 on one run
+# and ~8.5e-7 on the next. That run-to-run flip is not real nondeterminism, yet
+# it makes the reported angle (and the determinism check) differ by ~360 deg.
+# Canonicalize every measured angle: wrap into [0, 360), then snap a value within
+# _ANGLE_SNAP_DEG of 360 down to exactly 0 so the branch cut is deterministic.
+# The tolerance (1e-3 deg) is far below any real relaxation difference (degrees)
+# and far above the float branch-cut noise (~1e-6 deg).
+_ANGLE_SNAP_DEG = 1e-3
+
+
+def _canonical_angle_deg(angle: Optional[float]) -> Optional[float]:
+    """Wrap a dihedral to a deterministic [0, 360) value, snapping the 0/360
+    branch cut so 359.9999997 and 8.5e-7 both become 0.0. None passes through."""
+    if angle is None:
+        return None
+    a = float(angle) % 360.0
+    if a >= 360.0 - _ANGLE_SNAP_DEG or a < _ANGLE_SNAP_DEG:
+        return 0.0
+    return a
+
 
 def _pdb_residue_labels(input_path: Optional[str], n_atoms: int) -> Optional[List[str]]:
     """For PDB inputs, return per-atom labels like 'ASP47.CA'. Returns None
@@ -606,7 +628,11 @@ def _scan_one_dihedral(
             continue
 
         try:
-            measured = float(opt_atoms.get_dihedral(i, a, b, l))
+            # Canonicalize to a deterministic [0, 360) value: the raw measured
+            # angle can flip between ~0 and ~360 across runs from branch-cut float
+            # noise, which would break the determinism check for the same physical
+            # geometry (see _canonical_angle_deg).
+            measured = _canonical_angle_deg(float(opt_atoms.get_dihedral(i, a, b, l)))
         except Exception:
             measured = None
 
