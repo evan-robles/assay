@@ -446,6 +446,38 @@ def _capture_artifacts(result: Dict[str, Any], keep_dir: Path, label: str) -> No
                 new[mo] = path_str
         result["cube_paths"] = new
 
+    # Per-item artifacts nested in a list: conformational-analysis (scan) writes
+    # one plot + one trajectory PER DIHEDRAL under result["dihedrals"][*], so the
+    # top-level loop above never sees them. Capture each entry's artifact keys,
+    # using the basename to keep per-dihedral files distinct (e.g.
+    # engine_reference_dih1_2_3_4.png). Without this, those PNGs/trajectories sit
+    # in the engine's --out temp dir and are deleted before reaching the run dir.
+    for list_key in ("dihedrals",):
+        items = result.get(list_key)
+        if not isinstance(items, list):
+            continue
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            for akey in ("plot", "trajectory"):
+                val = item.get(akey)
+                if not isinstance(val, str):
+                    continue
+                p = Path(val)
+                if not p.is_file():
+                    continue
+                # keep the engine's descriptive stem (e.g. truth_dih1_2_3_4) but
+                # prefix with the run label so it groups with the other artifacts.
+                stem = p.stem
+                # drop a leading "truth"/"run_a" engine stem to avoid double labels
+                for pre in ("truth_", "run_a_", "run_b_"):
+                    if stem.startswith(pre):
+                        stem = stem[len(pre):]
+                        break
+                dest = keep_dir / f"{label}_{stem}{p.suffix or ''}"
+                shutil.copyfile(str(p), str(dest))
+                item[akey] = str(dest)
+
 
 def _parse_out_log(stderr: str) -> Optional[str]:
     """Extract the live .out log path from the thin client's stderr."""
