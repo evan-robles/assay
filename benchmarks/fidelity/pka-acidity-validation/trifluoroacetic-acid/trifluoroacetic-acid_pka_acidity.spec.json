@@ -12,7 +12,7 @@
       "xyz": "benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz"
     }
   ],
-  "prompt": "Run the pka-acidity task for trifluoroacetic acid using the GFN2-xTB method in implicit water (absolute mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note xtb absolute pKa is screening-grade. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the pka-acidity task for trifluoroacetic acid using the GFN2-xTB method in implicit water (absolute mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note xtb absolute pKa is not quantitatively meaningful (screening only). Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "xtb",

@@ -12,15 +12,17 @@
       "xyz": "benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz"
     }
   ],
-  "prompt": "Run the pka-acidity task for hydrogen cyanide using the GFN2-xTB method in implicit water (absolute mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note xtb absolute pKa is screening-grade. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the pka-acidity task for hydrogen cyanide using the DFT (B3LYP/def2-TZVP, tier standard) method in implicit water (absolute mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note DFT absolute (standard tier) is ~\u00b13 units. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
-    "xtb",
+    "dft",
     "--mode",
-    "absolute"
+    "absolute",
+    "--tier",
+    "standard"
   ],
   "intended": {
-    "method": "xtb",
+    "method": "dft",
     "charge": 0,
     "multiplicity": 1,
     "solvent": "water"

@@ -12,15 +12,15 @@
       "xyz": "benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz"
     }
   ],
-  "prompt": "Run the pka-acidity task for methanol using the GFN2-xTB method in implicit water (absolute mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note xtb absolute pKa is screening-grade. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the pka-acidity task for methanol using the PM7 (MOPAC) method in implicit water (absolute mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note PM7 absolute pKa is screening-grade. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
-    "xtb",
+    "mopac",
     "--mode",
     "absolute"
   ],
   "intended": {
-    "method": "xtb",
+    "method": "mopac",
     "charge": 0,
     "multiplicity": 1,
     "solvent": "water"

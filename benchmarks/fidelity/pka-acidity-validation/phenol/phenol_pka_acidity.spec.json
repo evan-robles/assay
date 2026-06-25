@@ -10,14 +10,24 @@
     {
       "flag": "--a-minus",
       "xyz": "benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz"
+    },
+    {
+      "flag": "--ref-ha",
+      "xyz": "benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz"
+    },
+    {
+      "flag": "--ref-a-minus",
+      "xyz": "benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz"
     }
   ],
-  "prompt": "Run the pka-acidity task for phenol using the GFN2-xTB method in implicit water (absolute mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note xtb absolute pKa is screening-grade. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the pka-acidity task for phenol using the GFN2-xTB method in implicit water (reference mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Use reference mode anchored against acetic acid (experimental pKa 4.76): pass --ref-ha and --ref-a-minus for acetic acid/acetate and --pka-ref 4.76. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note xtb reference pKa is ~\u00b12 units. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "xtb",
     "--mode",
-    "absolute"
+    "reference",
+    "--pka-ref",
+    "4.76"
   ],
   "intended": {
     "method": "xtb",
