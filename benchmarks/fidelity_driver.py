@@ -159,6 +159,7 @@ _DETERMINISM_IGNORE = {
 _NO_TOPLEVEL_CHARGE_MULT = {
     "reaction-energy",   # --reactant/--product specs carry ,charge=/,mult=
     "pka-acidity",       # --ha-charge / --a-minus auto-charge
+    "redox-potential",   # --ox-charge/--red-charge + --ox-mult/--red-mult per state
     # reaction-profile DOES take a single top-level --charge/--mult (one value
     # shared across R/P/TS), and binding-energy takes --charge for the complex
     # plus --monomer-charge per monomer — so those keep the top-level emission.
