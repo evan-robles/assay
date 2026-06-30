@@ -42,7 +42,8 @@ def _find_spec(case_dir: Path) -> Optional[Path]:
 
 
 def run_suite(folder: Path, *, live: bool, agent_run_name: Optional[str],
-              out_dir: Optional[str], model: Optional[str] = None) -> List[dict]:
+              out_dir: Optional[str], model: Optional[str] = None,
+              refresh_engine: bool = False) -> List[dict]:
     results = []
     cases = sorted(p for p in folder.iterdir() if p.is_dir())
     for case_dir in cases:
@@ -50,6 +51,8 @@ def run_suite(folder: Path, *, live: bool, agent_run_name: Optional[str],
         if spec is None:
             continue  # not a case folder
         cmd = [sys.executable, str(_DRIVER), "--spec", str(spec)]
+        if refresh_engine:
+            cmd.append("--refresh-engine")
         if live:
             cmd.append("--live")
             if model:
@@ -84,6 +87,9 @@ def main() -> int:
                     help="agent model for --live runs, called via argo-proxy "
                          "(e.g. argo:o3, argo:claude-opus-4.7); pass-through to the "
                          "driver's --model. Each live run folder is tagged with it.")
+    ap.add_argument("--refresh-engine", action="store_true",
+                    help="pass-through to the driver's --refresh-engine: force a "
+                         "fresh per-molecule engine-reference/ even if cached.")
     ap.add_argument("--collect", action="store_true",
                     help="after running, collect results into a summary table + CSV")
     args = ap.parse_args()
@@ -105,7 +111,7 @@ def main() -> int:
 
     results = run_suite(folder, live=args.live,
                         agent_run_name=args.agent_run_name, out_dir=args.out_dir,
-                        model=args.model)
+                        model=args.model, refresh_engine=args.refresh_engine)
 
     ran = [r for r in results if r.get("ran")]
     passed = [r for r in ran if r.get("pass")]

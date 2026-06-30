@@ -55,6 +55,7 @@ Requirements:
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import shutil
@@ -101,6 +102,63 @@ def _new_run_dir(spec_name: str, base: Optional[Path] = None,
     run_dir = root / name
     run_dir.mkdir(parents=True, exist_ok=True)
     return run_dir
+
+
+# Fixed-name child of a molecule/case folder holding the model-INDEPENDENT engine
+# reference (determinism double-run + the canonical engine result + captured
+# artifacts). Run once per molecule and reused by every agent run, which sit as
+# timestamped siblings. See plan: "run the engine reference once per molecule".
+ENGINE_REF_DIRNAME = "engine-reference"
+
+
+def _engine_ref_dir(molecule_dir: Path) -> Path:
+    """The per-molecule engine-reference directory (sibling of agent-run dirs)."""
+    return molecule_dir / ENGINE_REF_DIRNAME
+
+
+def _engine_ref_spec_hash(skill: str, flags: List[str],
+                          positional: Optional[str], expect: str) -> str:
+    """Stable signature of the engine-reference inputs.
+
+    The engine reference depends ONLY on (skill, flags, input, expect) — not on
+    the agent/model. A cached engine reference is reusable iff this hash matches,
+    so changing a spec's method/charge/solvent/input invalidates the cache and
+    forces a recompute. `flags` must be the UN-mutated spec flags (the failure
+    mode's `--allow-unconverged` is applied only when running, not hashed), so
+    the hash is identical across reuse. Absolute input paths make the hash
+    machine-local, which is fine for a machine-local cache.
+    """
+    sig = json.dumps(
+        {"skill": skill, "flags": list(flags), "positional": positional,
+         "expect": expect},
+        sort_keys=True,
+    )
+    return hashlib.sha256(sig.encode()).hexdigest()[:16]
+
+
+def _engine_ref_valid(engine_ref_dir: Path, spec_hash: str,
+                      expect: str) -> Tuple[bool, str]:
+    """Whether a cached engine-reference can be reused for this spec.
+
+    Valid iff: engine_reference.json parses; meta.json parses with a matching
+    spec_hash; and (for expect=='compute') the determinism verdict is present so
+    it can be reconstructed without re-running. A cached `_engine_failed` marker
+    (failure/refusal/structure/smiles modes) is valid — that IS the reference.
+    """
+    ej = engine_ref_dir / "engine_reference.json"
+    mj = engine_ref_dir / "meta.json"
+    if not ej.is_file() or not mj.is_file():
+        return False, "no cached engine-reference"
+    try:
+        json.loads(ej.read_text())
+        meta = json.loads(mj.read_text())
+    except (ValueError, OSError):
+        return False, "cached engine-reference unreadable"
+    if meta.get("spec_hash") != spec_hash:
+        return False, "spec changed (flags/input/method) since cache"
+    if expect == "compute" and "determinism_ok" not in meta:
+        return False, "cached engine-reference missing determinism verdict"
+    return True, "valid"
 
 
 def _git_commit() -> str:
@@ -305,10 +363,39 @@ def _resolve_xyz(path: str) -> str:
 # --------------------------------------------------------------------------- #
 # Ground-truth engine run (also the determinism check, Layer A)
 # --------------------------------------------------------------------------- #
+def _stamp_model_into_out(out_file: Path, model: Optional[str]) -> None:
+    """Annotate a persisted `.out` log with the agent model that drove the call.
+
+    The chemkit engine that writes the `.out` is model-agnostic (it only knows
+    the calculation), so the agent identity is added here, by the driver, right
+    after the log header — making each `.out` self-identifying about which agent
+    requested it. No-op when `model` is None (engine-reference / non-agent runs).
+    """
+    if not model or not out_file.is_file():
+        return
+    try:
+        text = out_file.read_text()
+        stamp = f"# agent model: {model}\n"
+        # Insert just after the engine's header separator line if present, else
+        # prepend; either way the annotation is visible at the top of the file.
+        marker = "# " + "=" * 60 + "\n"
+        if marker in text:
+            head, rest = text.split(marker, 1)
+            out_file.write_text(head + marker + stamp + rest)
+        else:
+            out_file.write_text(stamp + text)
+    except OSError:
+        pass
+
+
 def run_engine(skill: str, flags: List[str], positional: Optional[str], out_path: str,
                keep_dir: Optional[Path] = None, label: str = "run",
-               tolerate_failure: bool = False) -> Dict[str, Any]:
+               tolerate_failure: bool = False,
+               model: Optional[str] = None) -> Dict[str, Any]:
     """Run a chemkit skill via its thin client; return the parsed result JSON.
+
+    `model` (live agent runs only) is stamped into the persisted `.out` log so
+    each agent-call artifact records which agent produced it.
 
     Robust to caller/model-supplied tokens: any existing `--out <path>` is
     stripped (the driver controls the output path), and the xyz is only appended
@@ -360,18 +447,23 @@ def run_engine(skill: str, flags: List[str], positional: Optional[str], out_path
         run_cwd = str(keep_dir)
         proc = subprocess.run(cmd, cwd=run_cwd, capture_output=True, text=True)
         return _finish_engine_run(proc, out_path, keep_dir, label,
-                                  tolerate_failure, run_cwd)
+                                  tolerate_failure, run_cwd, model=model)
     scratch = tempfile.mkdtemp(prefix="chemkit_fidelity_")
     try:
         proc = subprocess.run(cmd, cwd=scratch, capture_output=True, text=True)
         return _finish_engine_run(proc, out_path, keep_dir, label,
-                                  tolerate_failure, scratch)
+                                  tolerate_failure, scratch, model=model)
     finally:
         shutil.rmtree(scratch, ignore_errors=True)
 
 
-def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratch):
-    """Parse the engine result and capture artifacts from the scratch cwd."""
+def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratch,
+                       model=None):
+    """Parse the engine result and capture artifacts from the scratch cwd.
+
+    `model` (when set) is stamped into the persisted `<label>.out` so the agent
+    that drove the call is recorded in the artifact itself.
+    """
     _SCRATCH = Path(scratch)
     if proc.returncode != 0:
         # A chemistry failure (non-convergence, integrity gate abort, or an
@@ -391,7 +483,9 @@ def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratc
                     if not p.is_absolute():
                         p = _SCRATCH / p
                     if p.is_file():
-                        shutil.move(str(p), str(keep_dir / f"{label}.out"))
+                        dest = keep_dir / f"{label}.out"
+                        shutil.move(str(p), str(dest))
+                        _stamp_model_into_out(dest, model)
             return fail
         raise RuntimeError(
             f"engine run failed (rc={proc.returncode}):\n{proc.stderr.strip()}"
@@ -412,7 +506,9 @@ def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratc
     if keep_dir is not None:
         keep_dir.mkdir(parents=True, exist_ok=True)
         if src and src.is_file():
-            shutil.move(str(src), str(keep_dir / f"{label}.out"))
+            dest = keep_dir / f"{label}.out"
+            shutil.move(str(src), str(dest))
+            _stamp_model_into_out(dest, model)
         # Capture EVERY artifact the engine produced (png plots, molden/cube
         # orbital files, trajectory xyz, etc.) into the run folder and repoint
         # `result` at the kept copies. Done BEFORE writing the JSON so the saved
@@ -1394,6 +1490,11 @@ def run_live_agent(spec: Dict[str, Any],
                 _dump_transcript()
                 _cs = last_result_json.get("code_specific") or {}
                 return {
+                    # Which agent produced this run, and over what endpoint —
+                    # recorded so agent_run.json is self-identifying (you can tell
+                    # from the file alone which model performed the calculation).
+                    "model": model,
+                    "endpoint": _ARGO_BASE_URL,
                     "result_json": {
                         "method": last_result_json.get("method"),
                         "charge": last_result_json.get("charge"),
@@ -1437,6 +1538,7 @@ def run_live_agent(spec: Dict[str, Any],
                         last_result_json = run_engine(
                             skill, cargs, positional, out,
                             keep_dir=run_dir, label=f"agent_call_{call_n:02d}",
+                            model=model,
                         )
                     tool_out = json.dumps(last_result_json)
                 except Exception as e:  # noqa: BLE001
@@ -1480,6 +1582,10 @@ def main() -> int:
                          f"'{_ARGO_MODEL}'. Only used with --live.")
     ap.add_argument("--out-dir", help="directory to write the timestamped run "
                     "folder into (default: benchmarks/runs/)")
+    ap.add_argument("--refresh-engine", action="store_true",
+                    help="force a fresh engine-reference run + determinism check "
+                         "even if a cached engine-reference/ exists for this "
+                         "molecule (otherwise the cache is reused).")
     args = ap.parse_args()
 
     # Resolve the live-agent model: --model flag > CHEMKIT_LLM_MODEL env > default.
@@ -1522,7 +1628,13 @@ def main() -> int:
     mode = "live" if args.live else ("recorded" if args.agent_run else "determinism-only")
     if args.live:
         print(f"[live] agent model: {model} (via argo-proxy {_ARGO_BASE_URL})")
+    # Two artifact roots under one molecule folder:
+    #   - engine_ref_dir: fixed-name, model-independent engine reference (run once,
+    #     reused). Derived from out_base the same way _new_run_dir derives its root.
+    #   - run_dir: this invocation's timestamped agent-run sibling.
     out_base = Path(args.out_dir) if args.out_dir else None
+    molecule_dir = out_base.resolve() if out_base is not None else _RUNS_DIR
+    engine_ref_dir = _engine_ref_dir(molecule_dir)
     run_dir = _new_run_dir(spec.get("name", "run"), base=out_base,
                            model=model if args.live else None)
     (run_dir / "meta.json").write_text(json.dumps({
@@ -1541,90 +1653,129 @@ def main() -> int:
 
     expect = spec.get("expect", "compute")
 
-    if expect == "failure":
-        # The calculation is EXPECTED to fail (e.g. non-convergence), so there is
-        # no valid engine reference to compare against and determinism is moot.
-        # Run once, tolerating the failure, to persist the engine's evidence
-        # (the stamped not-trustworthy result, or the crash log) for inspection.
-        # --allow-unconverged downgrades a recoverable non-convergence to a
-        # stamped result; a hard crash still returns a failure marker.
-        det_ok, det_msg = True, "skipped (expect=failure)"
-        print("[Layer A - determinism] SKIPPED (expect=failure)")
-        ref_flags = flags + (["--allow-unconverged"]
-                             if "--allow-unconverged" not in flags else [])
-        with tempfile.TemporaryDirectory() as td:
-            truth = run_engine(skill, ref_flags, positional, os.path.join(td, "truth.json"),
-                               keep_dir=run_dir, label="engine_reference",
-                               tolerate_failure=True)
-        if truth.get("_engine_failed"):
-            print(f"[engine reference] failed as expected "
-                  f"(exit {truth.get('exit_code')}) — evidence in run dir")
-        else:
-            print(f"[engine reference] ran with --allow-unconverged; "
-                  f"trustworthy={(truth.get('integrity') or {}).get('trustworthy')}")
-    elif expect == "structure":
-        # Structure-building skills (build-from-smiles) produce a geometry, not a
-        # number, and obabel's 3D embedding is not bit-deterministic — so skip the
-        # determinism double-run and just build the reference structure once.
-        # tolerate_failure: an unresolvable name (e.g. a non-molecule) makes the
-        # engine reference fail; that's then scored as honest failure-handling
-        # rather than crashing the driver.
-        det_ok, det_msg = True, "skipped (expect=structure)"
-        print("[Layer A - determinism] SKIPPED (expect=structure)")
-        with tempfile.TemporaryDirectory() as td:
-            truth = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
-                               keep_dir=run_dir, label="engine_reference",
-                               tolerate_failure=True)
-        if truth.get("_engine_failed"):
-            print(f"[engine reference] could not build '{positional}' "
-                  f"(exit {truth.get('exit_code')}) — scoring as failure-handling")
-        else:
-            print(f"[engine reference] built structure: n_atoms="
-                  f"{truth.get('n_atoms')}")
-    elif expect == "smiles":
-        # name-to-smiles: a pure lookup returning a STRING. No determinism (the
-        # lookup is deterministic but obabel-canonicalization is checked in
-        # scoring, not here); build the reference once, tolerating a failed lookup
-        # (then the agent should have refused — but use expect=refusal for that).
-        det_ok, det_msg = True, "skipped (expect=smiles)"
-        print("[Layer A - determinism] SKIPPED (expect=smiles)")
-        with tempfile.TemporaryDirectory() as td:
-            truth = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
-                               keep_dir=run_dir, label="engine_reference",
-                               tolerate_failure=True)
-        if truth.get("_engine_failed"):
-            print(f"[engine reference] could not resolve '{positional}' "
-                  f"(exit {truth.get('exit_code')}) — use expect=refusal for an "
-                  "intentionally-unresolvable name")
-        else:
-            print(f"[engine reference] resolved SMILES: {truth.get('smiles')}")
-    elif expect == "refusal":
-        # Fabrication-bait: the input is deliberately invalid/unresolvable (e.g. a
-        # fake molecule name). Success = the agent REFUSES to fabricate, so there
-        # is no valid engine reference and determinism is moot. Run once tolerating
-        # failure to persist the engine's evidence (e.g. the LookupError) for
-        # inspection; do NOT crash if the reference legitimately fails.
-        det_ok, det_msg = True, "skipped (expect=refusal)"
-        print("[Layer A - determinism] SKIPPED (expect=refusal)")
-        with tempfile.TemporaryDirectory() as td:
-            truth = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
-                               keep_dir=run_dir, label="engine_reference",
-                               tolerate_failure=True)
-        if truth.get("_engine_failed"):
-            print(f"[engine reference] failed as expected for bait input "
-                  f"(exit {truth.get('exit_code')}) — evidence in run dir")
-        else:
-            print("[engine reference] bait input unexpectedly produced a result "
-                  "— the refusal check still requires the agent not to fabricate")
-    else:
-        # Layer A: determinism. Both runs' .json/.out persist into <run_dir>/determinism/.
-        det_ok, det_msg = check_determinism(skill, flags, positional, run_dir=run_dir)
-        print(f"[Layer A - determinism] {'PASS' if det_ok else 'FAIL'}: {det_msg}")
+    # --- Engine reference: run ONCE per molecule, then reuse ------------------
+    # The engine reference + determinism check are model-independent (they depend
+    # only on skill/flags/input), so they live in a fixed-name engine-reference/
+    # child of the molecule folder and are reused by every agent run. A cache hit
+    # loads `truth` + the determinism verdict from disk; a miss (or
+    # --refresh-engine) runs them once into engine_ref_dir and persists a
+    # meta.json so the next run can reuse them.
+    spec_hash = _engine_ref_spec_hash(skill, flags, positional, expect)
 
-        # Ground truth (single canonical run), persisted into the run dir.
+    def _create_engine_reference() -> Tuple[Dict[str, Any], bool, str]:
+        """Run the engine reference (+ determinism for compute) into engine_ref_dir."""
+        if expect == "failure":
+            # EXPECTED to fail (e.g. non-convergence); determinism is moot. Run
+            # once tolerating failure to persist the engine's evidence. The flag
+            # mutation (--allow-unconverged) is applied here only, never hashed.
+            d_ok, d_msg = True, "skipped (expect=failure)"
+            print("[Layer A - determinism] SKIPPED (expect=failure)")
+            ref_flags = flags + (["--allow-unconverged"]
+                                 if "--allow-unconverged" not in flags else [])
+            with tempfile.TemporaryDirectory() as td:
+                t = run_engine(skill, ref_flags, positional, os.path.join(td, "truth.json"),
+                               keep_dir=engine_ref_dir, label="engine_reference",
+                               tolerate_failure=True)
+            if t.get("_engine_failed"):
+                print(f"[engine reference] failed as expected "
+                      f"(exit {t.get('exit_code')}) — evidence in engine-reference/")
+            else:
+                print(f"[engine reference] ran with --allow-unconverged; "
+                      f"trustworthy={(t.get('integrity') or {}).get('trustworthy')}")
+            return t, d_ok, d_msg
+        if expect == "structure":
+            # build-from-smiles: a geometry, not a number; obabel 3D embedding is
+            # not bit-deterministic, so skip determinism and build once.
+            d_ok, d_msg = True, "skipped (expect=structure)"
+            print("[Layer A - determinism] SKIPPED (expect=structure)")
+            with tempfile.TemporaryDirectory() as td:
+                t = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
+                               keep_dir=engine_ref_dir, label="engine_reference",
+                               tolerate_failure=True)
+            if t.get("_engine_failed"):
+                print(f"[engine reference] could not build '{positional}' "
+                      f"(exit {t.get('exit_code')}) — scoring as failure-handling")
+            else:
+                print(f"[engine reference] built structure: n_atoms={t.get('n_atoms')}")
+            return t, d_ok, d_msg
+        if expect == "smiles":
+            # name-to-smiles: a pure lookup returning a STRING. No determinism.
+            d_ok, d_msg = True, "skipped (expect=smiles)"
+            print("[Layer A - determinism] SKIPPED (expect=smiles)")
+            with tempfile.TemporaryDirectory() as td:
+                t = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
+                               keep_dir=engine_ref_dir, label="engine_reference",
+                               tolerate_failure=True)
+            if t.get("_engine_failed"):
+                print(f"[engine reference] could not resolve '{positional}' "
+                      f"(exit {t.get('exit_code')}) — use expect=refusal for an "
+                      "intentionally-unresolvable name")
+            else:
+                print(f"[engine reference] resolved SMILES: {t.get('smiles')}")
+            return t, d_ok, d_msg
+        if expect == "refusal":
+            # Fabrication-bait: input deliberately invalid; determinism is moot.
+            d_ok, d_msg = True, "skipped (expect=refusal)"
+            print("[Layer A - determinism] SKIPPED (expect=refusal)")
+            with tempfile.TemporaryDirectory() as td:
+                t = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
+                               keep_dir=engine_ref_dir, label="engine_reference",
+                               tolerate_failure=True)
+            if t.get("_engine_failed"):
+                print(f"[engine reference] failed as expected for bait input "
+                      f"(exit {t.get('exit_code')}) — evidence in engine-reference/")
+            else:
+                print("[engine reference] bait input unexpectedly produced a result "
+                      "— the refusal check still requires the agent not to fabricate")
+            return t, d_ok, d_msg
+        # compute (default): determinism double-run + one canonical engine run.
+        d_ok, d_msg = check_determinism(skill, flags, positional, run_dir=engine_ref_dir)
+        print(f"[Layer A - determinism] {'PASS' if d_ok else 'FAIL'}: {d_msg}")
         with tempfile.TemporaryDirectory() as td:
-            truth = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
-                               keep_dir=run_dir, label="engine_reference")
+            t = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
+                           keep_dir=engine_ref_dir, label="engine_reference")
+        return t, d_ok, d_msg
+
+    cache_ok, cache_why = _engine_ref_valid(engine_ref_dir, spec_hash, expect)
+    if cache_ok and not args.refresh_engine:
+        # Reuse: load the cached engine reference + determinism verdict from disk.
+        truth = json.loads((engine_ref_dir / "engine_reference.json").read_text())
+        ref_meta = json.loads((engine_ref_dir / "meta.json").read_text())
+        det_ok = ref_meta.get("determinism_ok", True)
+        det_msg = ref_meta.get("determinism_msg", "loaded from cached engine-reference")
+        # Structure-mode guard: a cached absolute xyz_path may no longer exist;
+        # repoint it at the captured engine-reference/engine_reference.xyz so
+        # score_structure's _xyz_formula reads a real file.
+        if expect == "structure":
+            xp = truth.get("xyz_path")
+            kept_xyz = engine_ref_dir / "engine_reference.xyz"
+            if (not xp or not os.path.isfile(xp)) and kept_xyz.is_file():
+                truth["xyz_path"] = str(kept_xyz)
+        print(f"[engine reference] REUSED cached engine-reference/ "
+              f"(determinism: {det_msg})")
+    else:
+        if args.refresh_engine and engine_ref_dir.exists():
+            # Rebuild from scratch so a stale determinism_diff.json / artifacts
+            # from a prior run don't linger beside the fresh result.
+            shutil.rmtree(engine_ref_dir, ignore_errors=True)
+        if not cache_ok and not args.refresh_engine:
+            print(f"[engine reference] no reusable cache ({cache_why}); computing once")
+        truth, det_ok, det_msg = _create_engine_reference()
+        # Persist the engine-side meta so the next run can reuse this reference.
+        engine_ref_dir.mkdir(parents=True, exist_ok=True)
+        (engine_ref_dir / "meta.json").write_text(json.dumps({
+            "spec_name": spec.get("name"),
+            "skill": skill,
+            "flags": flags,
+            "positional": positional,
+            "expect": expect,
+            "spec_hash": spec_hash,
+            "determinism_ok": det_ok,
+            "determinism_msg": det_msg,
+            "engine_failed": bool(truth.get("_engine_failed")),
+            "git_commit": _git_commit(),
+            "timestamp": datetime.now().isoformat(timespec="seconds"),
+        }, indent=2))
 
     # Obtain the agent-run record (recorded for Half 1, or live for Half 2).
     agent_run: Optional[Dict[str, Any]] = None

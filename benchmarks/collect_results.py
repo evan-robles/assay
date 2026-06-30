@@ -31,6 +31,25 @@ from typing import Any, Dict, List, Optional
 _REPO = Path(__file__).resolve().parent.parent
 _DEFAULT_DIR = _REPO / "benchmarks" / "fidelity" / "single-point-validation"
 
+# Fixed-name engine-reference folder (sibling of agent-run folders under a
+# molecule). The engine reference moved here from inside each run folder; keep
+# the old in-run location as a fallback so pre-refactor runs still collect.
+ENGINE_REF_DIRNAME = "engine-reference"
+
+
+def _engine_reference_json(run: Path) -> Optional[Path]:
+    """Locate engine_reference.json for an agent-run folder.
+
+    New layout: a sibling engine-reference/ child of the molecule folder
+    (run.parent). Old layout: inside the run folder itself. Returns the first
+    that exists, else None.
+    """
+    sibling = run.parent / ENGINE_REF_DIRNAME / "engine_reference.json"
+    if sibling.is_file():
+        return sibling
+    legacy = run / "engine_reference.json"
+    return legacy if legacy.is_file() else None
+
 # Reuse the driver's method-string parser so collection and scoring agree on how
 # 'b3lyp/def2-tzvp' is split into functional/basis (frontier-orbitals & fukui
 # report the level of theory only as that combined string, not separate fields).
@@ -73,9 +92,13 @@ _FINDING_KEYS = ["layer_B_invocation", "layer_C_reporting",
 
 
 def _latest_run(case_dir: Path) -> Optional[Path]:
-    """Return the newest timestamped run subdir that has a result.json."""
+    """Return the newest timestamped agent-run subdir that has a result.json.
+
+    The engine-reference/ folder is skipped explicitly (it holds the shared
+    engine reference, not a scored agent run, and has no result.json anyway)."""
     runs = [d for d in case_dir.iterdir()
-            if d.is_dir() and (d / "result.json").is_file()]
+            if d.is_dir() and d.name != ENGINE_REF_DIRNAME
+            and (d / "result.json").is_file()]
     if not runs:
         return None
     return sorted(runs, key=lambda d: d.name)[-1]
@@ -102,8 +125,8 @@ def _lot_fields(run: Path, result: Dict[str, Any]) -> Dict[str, str]:
     of theory only that way. Empty string for a field that does not apply
     (e.g. solvent/functional on a gas-phase xtb run)."""
     src: Dict[str, Any] = {}
-    ref = run / "engine_reference.json"
-    if ref.is_file():
+    ref = _engine_reference_json(run)
+    if ref is not None:
         try:
             src = json.loads(ref.read_text())
         except Exception:
@@ -173,8 +196,8 @@ def _headline_fields(run: Path, spec: Dict[str, Any], result: Dict[str, Any],
 
     # Engine reference (truth) — the authoritative computed value.
     ref: Dict[str, Any] = {}
-    rp = run / "engine_reference.json"
-    if rp.is_file():
+    rp = _engine_reference_json(run)
+    if rp is not None:
         try:
             ref = json.loads(rp.read_text())
         except Exception:

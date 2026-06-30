@@ -134,24 +134,42 @@ The driver and suite are **skill-independent**: set each spec's `skill` and
 
 ## Run artifacts (persisted)
 
-Every invocation writes a timestamped directory under `runs/` (gitignored —
-promote chosen runs into the paper's Zenodo/GitHub-release bundle deliberately).
-The path is printed at the end of each run.
+Artifacts are split into **two roots** under each molecule/case folder, because
+the engine reference + determinism check are **model-independent** (they depend
+only on the spec's skill/flags/input, not on which agent ran):
+
+- **`engine-reference/`** — a fixed-name child, computed **once** per molecule
+  and **reused** by every agent run. Holds the determinism double-run, the
+  canonical engine result, and any captured engine artifacts.
+- **`<YYYYMMDD-HHMMSS>_<specname>[__<model>]/`** — one timestamped sibling **per
+  agent run** (the `__<model>` suffix records which agent produced it, live mode).
 
 ```
-runs/<YYYYMMDD-HHMMSS>_<specname>/
-├── meta.json              # spec, skill, xyz, mode, rule set, model, endpoint, git commit, timestamp
-├── determinism/           # the Layer-A double-run (always kept, for inspection)
-│   ├── run_a.json/.out     #   first run's result + live log
-│   ├── run_b.json/.out     #   second run's result + live log
-│   └── determinism_diff.json  # (only on FAIL) the chemistry fields that differ
-├── engine_reference.json  # what chemkit itself produced with the spec's intended flags
-├── engine_reference.out   # the engine's live log for that run
-├── agent_call_NN.json/.out  # (live mode) each chemkit tool call the agent made + its log
-├── transcript.json        # (live mode) the full message list: system+rules, task, tool calls, final report
-├── agent_run.json         # the scored agent-run record (result_json + reported + prose)
-└── result.json            # per-layer findings + overall PASS/FAIL + exit code
+<molecule>/
+├── engine-reference/          # run ONCE, reused (model-independent)
+│   ├── meta.json               #   skill, flags, input, expect, spec_hash, determinism verdict, git, ts
+│   ├── determinism/            #   the Layer-A double-run (always kept, for inspection)
+│   │   ├── run_a.json/.out      #     first run's result + live log
+│   │   ├── run_b.json/.out      #     second run's result + live log
+│   │   └── determinism_diff.json  # (only on FAIL) the chemistry fields that differ
+│   ├── engine_reference.json   #   what chemkit itself produced with the spec's intended flags
+│   ├── engine_reference.out    #   the engine's live log for that run
+│   └── engine_reference.xyz/.molden/.png/.cube/…  # captured engine artifacts (if any)
+│
+├── <ts>_<specname>__argo_o3/          # an agent run (sibling)
+│   ├── meta.json               #   spec, skill, input, mode, rule set, model, endpoint, git, ts
+│   ├── agent_call_NN.json/.out  #   (live mode) each chemkit tool call the agent made + its log
+│   ├── transcript.json         #   (live mode) full message list: system+rules, task, tool calls, report
+│   ├── agent_run.json          #   the scored agent-run record (model + result_json + reported + prose)
+│   └── result.json             #   per-layer findings + overall PASS/FAIL + exit code
+└── <ts>_<specname>__argo_claude-opus-4.7/   # another agent run, same engine-reference reused
 ```
+
+When no `--out-dir` is given, these roots are created under `runs/` (gitignored);
+`run_suite.py` writes them into each case folder. The engine reference is reused
+automatically on the next run for the same molecule **unless the spec's
+flags/input changed** (tracked via `spec_hash` in `engine-reference/meta.json`)
+or you pass **`--refresh-engine`** to force a fresh engine run + determinism check.
 
 Determinism compares numeric fields within a small absolute tolerance (1e-6),
 not bit-for-bit: two runs of a multithreaded QM engine can differ in the last
@@ -164,11 +182,12 @@ equality.
 > tolerance to account for thread-order floating-point variation in the
 > multithreaded backends.*
 
-When **Layer A (determinism) fails**, compare `determinism/run_a.out` against
-`run_b.out` to locate the source of nondeterminism, and read
-`determinism_diff.json` for the exact fields that differ beyond tolerance.
+When **Layer A (determinism) fails**, compare
+`engine-reference/determinism/run_a.out` against `run_b.out` to locate the source
+of nondeterminism, and read `engine-reference/determinism/determinism_diff.json`
+for the exact fields that differ beyond tolerance.
 
-`engine_reference.*` is the grading key for **agent fidelity** — what chemkit
+`engine-reference/engine_reference.*` is the grading key for **agent fidelity** — what chemkit
 produces when the driver runs it correctly. It is **not** a literature-validated
 "true" value; scientific accuracy is a separate comparison (the accuracy
 benchmark against verified reference data).
