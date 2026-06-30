@@ -1301,13 +1301,33 @@ def test_integrity_opt_zero_dof_vacuous():
 
 def test_integrity_freq_minimum_vs_imaginary():
     I = _integrity()
+    # 0 imaginary modes = a true minimum: every check passes at full severity.
     good = {"task": "vibrational_thermochemistry", "n_imaginary_modes": 0,
             "gibbs_free_energy_eV": -1.0}
-    assert all(c.ok for c in I.validate(good, "vibrational_thermochemistry"))
-    saddle = {"task": "vibrational_thermochemistry", "n_imaginary_modes": 1,
-              "gibbs_free_energy_eV": -1.0}
-    assert any(c.name == "n_imag_minimum" and not c.ok
-               for c in I.validate(saddle, "vibrational_thermochemistry"))
+    good_checks = I.validate(good, "vibrational_thermochemistry")
+    assert all(c.ok for c in good_checks)
+    assert any(c.name == "n_imag_stationary_point" and c.ok for c in good_checks)
+    # For a minimum, the thermochemistry-finite check is an ERROR-severity gate.
+    assert any(c.name == "gibbs_finite" and c.severity == "error" for c in good_checks)
+
+    # 1 imaginary mode = a valid first-order saddle/TS, NOT an error: the
+    # stationary-point check still passes, but the saddle is distinguished from a
+    # clean minimum by relaxing the gibbs_finite gate from error to warning
+    # (ideal-gas G is undefined for a saddle, which is expected).
+    saddle = I.validate(
+        {"task": "vibrational_thermochemistry", "n_imaginary_modes": 1,
+         "gibbs_free_energy_eV": -1.0},
+        "vibrational_thermochemistry")
+    assert any(c.name == "n_imag_stationary_point" and c.ok for c in saddle)
+    assert any(c.name == "gibbs_finite" and c.severity == "warning" for c in saddle)
+
+    # >=2 imaginary modes = a higher-order saddle: NOT a usable stationary point,
+    # so the stationary-point check fails at error severity.
+    higher = I.validate(
+        {"task": "vibrational_thermochemistry", "n_imaginary_modes": 2,
+         "gibbs_free_energy_eV": -1.0},
+        "vibrational_thermochemistry")
+    assert any(c.name == "n_imag_stationary_point" and not c.ok for c in higher)
 
 
 def test_integrity_ts_magnitude_band():
