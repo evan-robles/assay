@@ -7,11 +7,13 @@ calls a tool here.
 
 ## What it exposes
 
-One MCP tool per skill (19 total): `single_point_energy`, `geometry_optimize`,
-`vibrational_analysis`, `binding_energy`, `redox_potential`, `conformer_search`,
-`frontier_orbitals`, `electrostatics`, `solvation`, `logp`, `reaction_profile`,
-`pka`, `build_from_smiles`, `fukui`, `transition_state`, `irc`,
-`reaction_energy`, `conformational_analysis`, `visualize_orbitals`.
+One MCP tool per skill (20 total). Tool names are **kebab-case** (hyphens),
+matching the skill folder names: `single-point-energy`, `geometry-optimize`,
+`vibrational-analysis`, `binding-energy`, `redox-potential`, `conformer-search`,
+`frontier-orbitals`, `electrostatics`, `solvation`, `logp-partition`,
+`reaction-profile`, `pka-acidity`, `build-from-smiles`, `name-to-smiles`,
+`fukui-reactivity`, `transition-state`, `intrinsic-reaction-coordinate`,
+`reaction-energy`, `conformational-analysis`, `visualize-orbitals`.
 
 Each tool takes:
 - `args`: the chemkit CLI tokens for that task, e.g.
@@ -56,7 +58,7 @@ Or run it on demand with `uvx` (no install step):
 > (`conda install -c conda-forge xtb mopac openbabel`). `--method dft`/`hf`
 > additionally need the `[qm]` extra.
 
-Then call e.g. the `single_point_energy` tool with
+Then call e.g. the `single-point-energy` tool with
 `{"args": ["--method", "xtb", "mol.xyz"]}`.
 
 ### OpenAI Agents SDK
@@ -113,7 +115,7 @@ Equivalent forms (no install, or for scripting a specific skill):
 
 ```bash
 # the per-skill wrapper script (what agents invoke)
-python ../skills/single_point_energy/single_point_energy.py --method xtb mol.xyz
+python ../skills/single-point-energy/scripts/single-point-energy.py --method xtb mol.xyz
 # the engine module directly (no server, no live-log streaming)
 PYTHONPATH=. python -m chemkit_engine.cli sp --method xtb mol.xyz
 ```

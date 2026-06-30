@@ -42,7 +42,7 @@ def _find_spec(case_dir: Path) -> Optional[Path]:
 
 
 def run_suite(folder: Path, *, live: bool, agent_run_name: Optional[str],
-              out_dir: Optional[str]) -> List[dict]:
+              out_dir: Optional[str], model: Optional[str] = None) -> List[dict]:
     results = []
     cases = sorted(p for p in folder.iterdir() if p.is_dir())
     for case_dir in cases:
@@ -52,6 +52,8 @@ def run_suite(folder: Path, *, live: bool, agent_run_name: Optional[str],
         cmd = [sys.executable, str(_DRIVER), "--spec", str(spec)]
         if live:
             cmd.append("--live")
+            if model:
+                cmd += ["--model", model]
         elif agent_run_name:
             ar = case_dir / agent_run_name
             if not ar.is_file():
@@ -78,6 +80,10 @@ def main() -> int:
     ap.add_argument("--agent-run-name", default=None,
                     help="recorded agent-run record filename inside each case folder")
     ap.add_argument("--out-dir", default=None, help="pass-through --out-dir for runs")
+    ap.add_argument("--model", default=None,
+                    help="agent model for --live runs, called via argo-proxy "
+                         "(e.g. argo:o3, argo:claude-opus-4.7); pass-through to the "
+                         "driver's --model. Each live run folder is tagged with it.")
     ap.add_argument("--collect", action="store_true",
                     help="after running, collect results into a summary table + CSV")
     args = ap.parse_args()
@@ -98,7 +104,8 @@ def main() -> int:
         return 2
 
     results = run_suite(folder, live=args.live,
-                        agent_run_name=args.agent_run_name, out_dir=args.out_dir)
+                        agent_run_name=args.agent_run_name, out_dir=args.out_dir,
+                        model=args.model)
 
     ran = [r for r in results if r.get("ran")]
     passed = [r for r in ran if r.get("pass")]

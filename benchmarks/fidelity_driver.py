@@ -38,15 +38,19 @@ Usage:
         --agent-run benchmarks/fidelity/recorded_pass.json
 
     # Half 2 (live agent via argo-proxy; key is your Argonne username):
-    CHEMKIT_LLM_API_KEY=<argo-username> CHEMKIT_LLM_MODEL=argo:o3 \
+    #   The agent model is chosen with --model (preferred) or CHEMKIT_LLM_MODEL.
+    #   The live run folder is named <ts>_<spec>__<model>, e.g.
+    #   20260629-101500_h2o_sp_xtb__argo_claude-opus-4.7.
+    CHEMKIT_LLM_API_KEY=<argo-username> \
     python benchmarks/fidelity_driver.py \
-        --spec benchmarks/fidelity/h2o_sp_xtb.spec.json --live
+        --spec benchmarks/fidelity/h2o_sp_xtb.spec.json --live \
+        --model argo:claude-opus-4.7
 
 Requirements:
     - Conda environment: anl_env
     - xtb on PATH (for the engine-reference GFN2-xTB run)
     - Half 2 only: openai SDK + a reachable OpenAI-compatible endpoint
-      (CHEMKIT_LLM_BASE_URL, default http://0.0.0.0:51664/v1) + CHEMKIT_LLM_API_KEY
+      (CHEMKIT_LLM_BASE_URL, default http://0.0.0.0:60651/v1) + CHEMKIT_LLM_API_KEY
 """
 from __future__ import annotations
 
@@ -65,17 +69,36 @@ _REPO = Path(__file__).resolve().parent.parent
 _RUNS_DIR = _REPO / "benchmarks" / "runs"
 
 
-def _new_run_dir(spec_name: str, base: Optional[Path] = None) -> Path:
+def _fs_safe(text: str) -> str:
+    """Filesystem-safe slug: keep alnum/-/_/., map everything else to '_'.
+
+    Used for both the spec name and the model id, so a model like
+    ``argo:claude-opus-4.7`` becomes ``argo_claude-opus-4.7`` in a folder name
+    (the ``:`` -> ``_`` but the version ``.`` is preserved for readability).
+    """
+    return "".join(c if c.isalnum() or c in "-_." else "_" for c in text)
+
+
+def _new_run_dir(spec_name: str, base: Optional[Path] = None,
+                 model: Optional[str] = None) -> Path:
     """Create and return a fresh timestamped run directory.
 
     The timestamped subfolder is created inside `base` (the --out-dir value) if
     given, else under the default runs/ directory. A relative `base` is resolved
     against the current working directory.
+
+    When `model` is given (live agent runs), the model id is appended so the
+    folder records which agent produced the result, e.g.
+    ``20260629-101500_water_sp_xtb__argo_o3``. The model is omitted for
+    non-agent runs (recorded / determinism-only), where it would be meaningless.
     """
     root = base.resolve() if base is not None else _RUNS_DIR
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
-    safe = "".join(c if c.isalnum() or c in "-_" else "_" for c in spec_name)
-    run_dir = root / f"{ts}_{safe}"
+    safe = _fs_safe(spec_name)
+    name = f"{ts}_{safe}"
+    if model:
+        name += f"__{_fs_safe(model)}"
+    run_dir = root / name
     run_dir.mkdir(parents=True, exist_ok=True)
     return run_dir
 
@@ -1150,7 +1173,7 @@ def score_layer_b(
 # for a final STRUCTURED report so Layer B scores automatically.
 
 # argo-proxy defaults; override via env. The key here is the Argonne username.
-_ARGO_BASE_URL = os.environ.get("CHEMKIT_LLM_BASE_URL", "http://0.0.0.0:51664/v1")
+_ARGO_BASE_URL = os.environ.get("CHEMKIT_LLM_BASE_URL", "http://0.0.0.0:60651/v1")
 _ARGO_API_KEY = os.environ.get("CHEMKIT_LLM_API_KEY", "")  # set to your username
 _ARGO_MODEL = os.environ.get("CHEMKIT_LLM_MODEL", "argo:o3")
 
@@ -1265,13 +1288,19 @@ def load_rules(names: List[str]) -> str:
 
 
 def run_live_agent(spec: Dict[str, Any],
-                   run_dir: Optional[Path] = None) -> Optional[Dict[str, Any]]:
+                   run_dir: Optional[Path] = None,
+                   model: Optional[str] = None) -> Optional[Dict[str, Any]]:
     """Run a live agent over an OpenAI-compatible endpoint; return a record.
+
+    `model` selects the agent (e.g. ``argo:o3``, ``argo:claude-opus-4.7``); it
+    is resolved through the argo-proxy endpoint (`_ARGO_BASE_URL`). When None,
+    falls back to the `CHEMKIT_LLM_MODEL` default (`_ARGO_MODEL`).
 
     If `run_dir` is given, each chemkit tool call's outputs are persisted as
     `agent_call_NN.json/.out` and the full message transcript is written to
     `transcript.json`.
     """
+    model = model or _ARGO_MODEL
     vfield = spec.get("report_value_field", "total_energy_eV")
     try:
         from openai import OpenAI
@@ -1341,10 +1370,10 @@ def run_live_agent(spec: Dict[str, Any],
 
     last_result_json: Dict[str, Any] = {}
     call_n = 0
-    print(f"[live] {_ARGO_MODEL} via {_ARGO_BASE_URL}")
+    print(f"[live] model={model} via argo-proxy {_ARGO_BASE_URL}")
     for turn in range(8):
         resp = client.chat.completions.create(
-            model=_ARGO_MODEL, messages=messages, tools=tools, tool_choice="auto",
+            model=model, messages=messages, tools=tools, tool_choice="auto",
         )
         msg = resp.choices[0].message
         calls = msg.tool_calls or []
@@ -1444,9 +1473,18 @@ def main() -> int:
                     "(absolute, or relative to your cwd / the repo root)")
     ap.add_argument("--agent-run", help="recorded agent-run record JSON (Half 1)")
     ap.add_argument("--live", action="store_true", help="run a live OpenAI agent (Half 2)")
+    ap.add_argument("--model", default=None,
+                    help="agent model to drive the live run, called via argo-proxy "
+                         "(e.g. argo:o3, argo:gpt-4o, argo:claude-opus-4.7). "
+                         "Overrides CHEMKIT_LLM_MODEL; defaults to "
+                         f"'{_ARGO_MODEL}'. Only used with --live.")
     ap.add_argument("--out-dir", help="directory to write the timestamped run "
                     "folder into (default: benchmarks/runs/)")
     args = ap.parse_args()
+
+    # Resolve the live-agent model: --model flag > CHEMKIT_LLM_MODEL env > default.
+    # Only meaningful for --live; recorded/determinism-only runs have no agent.
+    model = args.model or _ARGO_MODEL
 
     spec = json.loads(Path(args.spec).read_text())
     skill = spec["skill"]
@@ -1478,10 +1516,15 @@ def main() -> int:
             return 2
         spec["xyz"] = positional  # canonical absolute path for downstream
 
-    # Persistent, timestamped run directory for all artifacts.
-    out_base = Path(args.out_dir) if args.out_dir else None
-    run_dir = _new_run_dir(spec.get("name", "run"), base=out_base)
+    # Persistent, timestamped run directory for all artifacts. For live runs the
+    # agent model is embedded in the folder name so the result records which
+    # agent produced it (e.g. ..._water_sp_xtb__argo_claude-opus-4.7).
     mode = "live" if args.live else ("recorded" if args.agent_run else "determinism-only")
+    if args.live:
+        print(f"[live] agent model: {model} (via argo-proxy {_ARGO_BASE_URL})")
+    out_base = Path(args.out_dir) if args.out_dir else None
+    run_dir = _new_run_dir(spec.get("name", "run"), base=out_base,
+                           model=model if args.live else None)
     (run_dir / "meta.json").write_text(json.dumps({
         "spec_name": spec.get("name"),
         "spec_path": str(Path(args.spec).resolve()),
@@ -1490,7 +1533,7 @@ def main() -> int:
         "input_kind": input_kind,
         "mode": mode,
         "rules": spec.get("rules", _DEFAULT_RULES),
-        "model": _ARGO_MODEL if args.live else None,
+        "model": model if args.live else None,
         "endpoint": _ARGO_BASE_URL if args.live else None,
         "git_commit": _git_commit(),
         "timestamp": datetime.now().isoformat(timespec="seconds"),
@@ -1586,7 +1629,7 @@ def main() -> int:
     # Obtain the agent-run record (recorded for Half 1, or live for Half 2).
     agent_run: Optional[Dict[str, Any]] = None
     if args.live:
-        agent_run = run_live_agent(spec, run_dir=run_dir)
+        agent_run = run_live_agent(spec, run_dir=run_dir, model=model)
     if agent_run is None and args.agent_run:
         agent_run = json.loads(Path(args.agent_run).read_text())
     if agent_run is None:
