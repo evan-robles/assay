@@ -24,7 +24,6 @@ from __future__ import annotations
 
 import argparse
 import re
-import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -100,7 +99,7 @@ def lint_skill(skill_dir: Path) -> List[str]:
                 f"category {bad} not in {sorted(_VALID_CATEGORIES)}")
 
     # required sections
-    if not re.search(rf"^#\s+\S", text, re.MULTILINE):
+    if not re.search(r"^#\s+\S", text, re.MULTILINE):
         problems.append("missing an H1 title (`# <Skill Name>`)")
     if not re.search(r"^##\s+Goal\b", text, re.MULTILINE):
         problems.append("missing `## Goal` section")

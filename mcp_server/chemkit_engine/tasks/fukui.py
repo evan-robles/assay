@@ -24,6 +24,7 @@ from typing import Any, Dict, List, Optional
 
 from . import electrostatics
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import base_result, element_warnings
 
 
@@ -169,7 +170,6 @@ def run(
         if os.path.isfile(png_path):
             result["plot"] = os.path.abspath(png_path)
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

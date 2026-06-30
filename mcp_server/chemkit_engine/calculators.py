@@ -229,6 +229,27 @@ def build_calculator(
     )
 
 
+def label_calculator(method: str, *, charge: int = 0, multiplicity: int = 1,
+                     solvent=None, tier=None, functional=None, basis=None,
+                     density_fit: bool = False, solvent_model: str = "ddcosmo"):
+    """Build a calculator ONLY for method/provenance labeling (method_label).
+
+    Several tasks (electrostatics/orbitals/frontier/ts/scan) need a calculator
+    object up-front purely so `method_label()` can report the resolved DFT/HF
+    level of theory (functional/basis/tier) — the actual single point may run via
+    a different path. Only dft/hf carry that provenance; xtb/mopac have none, so
+    this returns None for them. Consolidates a block that was byte-identical
+    across those tasks.
+    """
+    if method in ("dft", "hf"):
+        return build_calculator(
+            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+            tier=tier, functional=functional, basis=basis,
+            density_fit=density_fit, solvent_model=solvent_model,
+        )
+    return None
+
+
 def _build_pyscf(method, charge, multiplicity, solvent, workdir,
                  *, tier=None, functional=None, basis=None, density_fit=False,
                  solvent_model="ddcosmo"):

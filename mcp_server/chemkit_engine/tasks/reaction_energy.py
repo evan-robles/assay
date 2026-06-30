@@ -28,6 +28,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..calculators import program_label, method_label
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import base_result, EV_TO_HARTREE, EV_TO_KCAL
 from . import sp as sp_task
 from . import opt as opt_task
@@ -371,6 +372,5 @@ def run(
     if warns:
         result["warnings"] = warns
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)

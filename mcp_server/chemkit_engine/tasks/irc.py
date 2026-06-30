@@ -29,6 +29,7 @@ import numpy as np
 from ..calculators import (build_calculator, apply_calc_to_atoms,
                             mopac_chemistry_keywords, register_auto_tempdir)
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import base_result, element_warnings, EV_TO_KCAL
 from ._mopac_parsers import _find_with_ext
 
@@ -107,7 +108,6 @@ def run(
     if el_warns:
         result.setdefault("warnings", []).extend(el_warns)
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

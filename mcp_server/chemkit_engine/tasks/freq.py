@@ -30,6 +30,7 @@ from ..calculators import (
     method_label, program_label, mopac_chemistry_keywords, register_auto_tempdir,
 )
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import base_result, element_warnings, KCAL_TO_EV, CAL_TO_EV
 from ..constants import EV_PER_CM, CM_PER_EV
 from ._mopac_parsers import parse_mopac_extras, parse_mopac_force
@@ -286,7 +287,6 @@ def run(
     else:
         result["preopt"] = {"performed": False}
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

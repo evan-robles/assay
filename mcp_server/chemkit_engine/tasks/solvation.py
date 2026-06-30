@@ -24,6 +24,7 @@ from typing import Any, Dict, Optional
 from . import sp as sp_task
 from ..calculators import program_label
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import (
     base_result, EV_TO_HARTREE, EV_TO_KCAL, element_warnings,
     SINGLE_CONFORMER_WARNING,
@@ -106,6 +107,5 @@ def run(
     warns += element_warnings(symbols, method)
     result["warnings"] = warns
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)

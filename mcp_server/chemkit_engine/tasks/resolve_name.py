@@ -14,6 +14,8 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
+from ..integrity import finalize
+
 
 def run(
     name: str,
@@ -68,6 +70,5 @@ def run(
     if not result["warnings"]:
         del result["warnings"]
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)

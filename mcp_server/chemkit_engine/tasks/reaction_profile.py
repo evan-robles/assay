@@ -30,6 +30,7 @@ import numpy as np
 
 from ..calculators import program_label, method_label, build_calculator
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import base_result, EV_TO_KCAL
 from . import opt as opt_task
 from . import freq as freq_task
@@ -442,7 +443,6 @@ def run(
         result["warnings"] = warnings
     result["workdir"] = workdir
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

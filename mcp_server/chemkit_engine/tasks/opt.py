@@ -18,6 +18,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from ..calculators import mopac_chemistry_keywords
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import (
     base_result,
     energy_block_from_eV,
@@ -91,7 +92,6 @@ def run(
 
     # The .xyz was already written inside the sub-path, so evidence is on disk
     # before the gate can raise.
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

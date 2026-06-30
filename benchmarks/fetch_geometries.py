@@ -16,7 +16,7 @@ Usage:
     python benchmarks/fetch_geometries.py --dry-run  # just report what would happen
 """
 from __future__ import annotations
-import argparse, glob, json, os, subprocess, sys, urllib.parse, urllib.request
+import argparse, glob, json, os, subprocess, urllib.parse, urllib.request
 from datetime import date
 from pathlib import Path
 

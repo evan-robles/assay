@@ -27,6 +27,7 @@ import numpy as np
 from ase.io import write as ase_write
 
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import EV_TO_KCAL, base_result, element_warnings
 from .confsearch import (
     _detect_rotatable_bonds,
@@ -303,13 +304,12 @@ def run(
     if out_stem is None:
         out_stem = os.path.splitext(os.path.abspath(input_path))[0] + f"_scan_{method}"
 
-    from ..calculators import method_label as _ml, program_label as _pl, build_calculator as _bc
-    _calc_for_label = None
-    if method in ("dft", "hf"):
-        _calc_for_label = _bc(method, charge=charge, multiplicity=multiplicity,
-                              solvent=solvent, tier=tier, functional=functional,
-                              basis=basis, density_fit=density_fit,
-                              solvent_model=solvent_model)
+    from ..calculators import method_label as _ml, program_label as _pl, label_calculator
+    _calc_for_label = label_calculator(
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        solvent_model=solvent_model,
+    )
     result = base_result(
         task="conformational_analysis",
         method=_ml(method, _calc_for_label),
@@ -339,7 +339,6 @@ def run(
         result["dihedrals"] = []
         if warns:
             result["warnings"] = warns
-        from ..integrity import finalize
         return finalize(result, gate_integrity=gate_integrity,
                         allow_unconverged=allow_unconverged)
 
@@ -458,7 +457,6 @@ def run(
     if warns:
         result["warnings"] = warns
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

@@ -18,7 +18,7 @@ Usage:
     python benchmarks/probe_specs.py --all          # every *-validation suite
 """
 from __future__ import annotations
-import argparse, json, os, sys, glob, tempfile
+import argparse, json, os, sys, tempfile
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parent.parent

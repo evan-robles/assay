@@ -25,10 +25,11 @@ from typing import Any, Dict, Optional
 from ase.io import write as ase_write
 
 from ..calculators import (
-    build_calculator, apply_calc_to_atoms,
+    build_calculator, label_calculator, apply_calc_to_atoms,
     method_label, program_label, mopac_chemistry_keywords, register_auto_tempdir,
 )
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import base_result, energy_block_from_eV, element_warnings, KCAL_TO_EV
 from ._mopac_parsers import parse_mopac_extras, _find_with_ext
 from . import freq as freq_task
@@ -57,13 +58,11 @@ def run(
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
 
-    calc_for_label = None
-    if method in ("dft", "hf"):
-        calc_for_label = build_calculator(
-            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
-            solvent_model=solvent_model,
-        )
+    calc_for_label = label_calculator(
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        solvent_model=solvent_model,
+    )
 
     result = base_result(
         task="transition_state",
@@ -188,7 +187,6 @@ def run(
     if el_warns:
         result.setdefault("warnings", []).extend(el_warns)
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

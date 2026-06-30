@@ -34,12 +34,13 @@ import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..calculators import (
-    build_calculator, apply_calc_to_atoms,
+    label_calculator, apply_calc_to_atoms,
     method_label, program_label, mopac_chemistry_keywords,
     register_auto_tempdir,
     resolve_xtb_solvent,
 )
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import base_result, element_warnings
 from ..constants import HARTREE_TO_EV
 
@@ -80,13 +81,11 @@ def run(
     os.makedirs(os.path.dirname(out_stem) or ".", exist_ok=True)
 
     # Build calc up-front for label/extras consistency on dft/hf.
-    calc_for_label = None
-    if method in ("dft", "hf"):
-        calc_for_label = build_calculator(
-            method, charge=charge, multiplicity=multiplicity, solvent=solvent,
-            tier=tier, functional=functional, basis=basis, density_fit=density_fit,
-            solvent_model=solvent_model,
-        )
+    calc_for_label = label_calculator(
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        solvent_model=solvent_model,
+    )
 
     result = base_result(
         task="visualize_orbitals",
@@ -122,7 +121,6 @@ def run(
     if warns:
         result.setdefault("warnings", []).extend(warns)
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

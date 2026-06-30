@@ -25,6 +25,8 @@ import subprocess
 import tempfile
 from typing import Any, Dict, Optional
 
+from ..integrity import finalize
+
 
 # ---------------------------------------------------------------------------
 # Open Babel helpers
@@ -250,6 +252,5 @@ def run(
     if not result["warnings"]:
         del result["warnings"]
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)

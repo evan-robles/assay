@@ -19,6 +19,7 @@ import numpy as np
 from ase.io import read as ase_read, write as ase_write
 
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import base_result
 
 
@@ -139,7 +140,6 @@ def run(
     elif postopt != "none":
         raise ValueError(f"Unknown --postopt value: {postopt!r}")
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

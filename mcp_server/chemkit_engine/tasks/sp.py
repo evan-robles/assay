@@ -8,6 +8,7 @@ from ..calculators import (
     method_label, program_label, collect_calc_extras,
 )
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import (
     base_result, energy_block_from_eV, element_warnings,
     scf_convergence_warnings,
@@ -80,7 +81,6 @@ def run(
     if warns:
         result["warnings"] = warns
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 

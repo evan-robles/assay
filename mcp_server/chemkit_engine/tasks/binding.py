@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional
 from . import sp as sp_task
 from ..calculators import program_label
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import (
     base_result, EV_TO_HARTREE, EV_TO_KCAL, SINGLE_CONFORMER_WARNING,
 )
@@ -126,6 +127,5 @@ def run(
         SINGLE_CONFORMER_WARNING,
     ]
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)

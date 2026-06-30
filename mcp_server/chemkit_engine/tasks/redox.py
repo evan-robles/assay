@@ -40,6 +40,7 @@ from . import opt as opt_task
 from . import freq as freq_task
 from ..calculators import program_label
 from ..io import read_geometry
+from ..integrity import finalize
 from ..schema import base_result, EV_TO_KCAL, SINGLE_CONFORMER_WARNING
 
 VALID_MODES = ("adiabatic", "vertical", "freq")
@@ -263,7 +264,6 @@ def run(
         + ox_warns + red_warns
     )
 
-    from ..integrity import finalize
     return finalize(result, gate_integrity=gate_integrity,
                     allow_unconverged=allow_unconverged)
 
