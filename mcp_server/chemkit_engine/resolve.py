@@ -21,18 +21,54 @@ error, or empty result it returns ``None`` and the chain moves on.
 from __future__ import annotations
 
 import datetime
+import functools
 import json
 import os
 import shutil
 import subprocess
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 _TIMEOUT = 20  # seconds per request
 _USER_AGENT = "chemkit/1.0 (https://github.com/; molecule name resolver)"
+
+# Transient HTTP/network failures worth retrying with backoff. A 404 (name not
+# in this DB) is NOT transient — the resolver chain should move on immediately,
+# so _http_get treats it as a permanent miss (returns None, no retry).
+_RETRY_STATUS = {429, 500, 502, 503, 504}
+
+
+def _retry(tries: int = 3, base_delay: float = 0.5, backoff: float = 2.0):
+    """Retry the wrapped function on a transient network error, with capped
+    exponential backoff. The function signals "transient, retry me" by raising
+    _TransientHTTPError; any other exception (or a normal return) is passed
+    through unchanged. After `tries` attempts it returns None (the resolver
+    chain's "this source didn't answer" sentinel). Time-based, not random, so
+    behavior is deterministic (no Math.random/sleep jitter)."""
+    def deco(fn: Callable):
+        @functools.wraps(fn)
+        def wrapper(*args, **kwargs):
+            delay = base_delay
+            for attempt in range(1, tries + 1):
+                try:
+                    return fn(*args, **kwargs)
+                except _TransientHTTPError:
+                    if attempt == tries:
+                        return None
+                    time.sleep(delay)
+                    delay *= backoff
+            return None
+        return wrapper
+    return deco
+
+
+class _TransientHTTPError(Exception):
+    """Internal: a retryable network failure (timeout, connection reset, or a
+    5xx/429 status). Not raised to callers — consumed by the @_retry decorator."""
 
 # On-disk cache of name -> resolution so repeat runs reuse the FIRST successful
 # resolution. Without it, a transient outage of a higher-priority resolver
@@ -129,14 +165,29 @@ class Resolution:
 # small HTTP helper
 # ---------------------------------------------------------------------------
 
+@_retry(tries=3, base_delay=0.5)
 def _http_get(url: str) -> Optional[str]:
-    """GET a URL, following redirects. Returns the body text or None on error."""
+    """GET a URL, following redirects. Returns the body text, or None on a
+    permanent failure (e.g. 404 = name not in this DB). Transient failures
+    (timeout, connection reset, 5xx/429) raise _TransientHTTPError, which the
+    @_retry decorator retries with backoff before giving up (-> None). This
+    hardens name resolution against the transient PubChem/OPSIN outages that
+    would otherwise silently fall through to a lower-priority resolver."""
     req = urllib.request.Request(url, headers={"User-Agent": _USER_AGENT})
     try:
         with urllib.request.urlopen(req, timeout=_TIMEOUT) as resp:
             charset = resp.headers.get_content_charset() or "utf-8"
             return resp.read().decode(charset, errors="replace")
-    except (urllib.error.URLError, urllib.error.HTTPError, OSError, ValueError):
+    except urllib.error.HTTPError as e:
+        # 5xx/429 are transient (retry); 4xx (esp. 404) are permanent misses.
+        if e.code in _RETRY_STATUS:
+            raise _TransientHTTPError(str(e)) from e
+        return None
+    except (urllib.error.URLError, OSError) as e:
+        # Timeouts / DNS / connection resets are transient.
+        raise _TransientHTTPError(str(e)) from e
+    except ValueError:
+        # Malformed URL etc. — permanent.
         return None
 
 

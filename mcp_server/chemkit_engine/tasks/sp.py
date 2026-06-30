@@ -94,12 +94,12 @@ def _xtb_homo_lumo(atoms, calc) -> Dict[str, Any]:
     Kept here (rather than in calculators.py) to avoid importing xtb at
     module-load time on systems without xtb-python installed.
     """
+    import numpy as np
+    from ..calculators import import_xtb_python
     try:
-        import numpy as np
-        from xtb.interface import Calculator, Param
-        from xtb.libxtb import VERBOSITY_MUTED
+        Calculator, Param, VERBOSITY_MUTED = import_xtb_python()
     except ImportError:
-        return {}
+        return {}  # soft-fail: skip xtb HOMO/LUMO extraction if xtb-python absent
 
     numbers = np.array(atoms.get_atomic_numbers(), dtype=np.int32)
     positions_bohr = np.asarray(atoms.get_positions()) * ANGSTROM_TO_BOHR

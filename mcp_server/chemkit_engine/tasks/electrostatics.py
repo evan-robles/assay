@@ -34,7 +34,7 @@ from ..schema import (
     scf_convergence_warnings, KCAL_TO_EV,
 )
 from ._mopac_parsers import parse_mopac_extras, _parse_aux_array, _find_with_ext
-from ..constants import AU_TO_DEBYE, ANGSTROM_TO_BOHR, HARTREE_TO_EV
+from ..constants import AU_TO_DEBYE, HARTREE_TO_EV
 
 
 def run(
@@ -145,21 +145,17 @@ def _run_generic(atoms, *, calc, method) -> Dict[str, Any]:
 
 def _run_xtb(atoms, *, charge: int, multiplicity: int,
              solvent: Optional[str]) -> Dict[str, Any]:
+    from ..calculators import make_xtb_calculator, import_xtb_python
     try:
-        from xtb.interface import Calculator, Param
-        from xtb.libxtb import VERBOSITY_MUTED
+        import_xtb_python()
     except ImportError as e:
         raise RuntimeError(
             "xtb-python is required for `chemkit electrostatics --method xtb`. "
             "Install with `conda install -c conda-forge xtb-python` or `pip install xtb`."
         ) from e
 
-    numbers = np.array(atoms.get_atomic_numbers())
-    positions_bohr = atoms.get_positions() * ANGSTROM_TO_BOHR
-    uhf = max(0, multiplicity - 1)
-    calc = Calculator(Param.GFN2xTB, numbers, positions_bohr,
-                      charge=float(charge), uhf=uhf)
-    calc.set_verbosity(VERBOSITY_MUTED)
+    from xtb.interface import Param  # for set_solvent's Param arg below
+    calc = make_xtb_calculator(atoms, charge=charge, multiplicity=multiplicity)
     if solvent:
         from ..calculators import resolve_xtb_solvent
         sol = resolve_xtb_solvent(solvent)  # ALPB name; rejects numeric eps

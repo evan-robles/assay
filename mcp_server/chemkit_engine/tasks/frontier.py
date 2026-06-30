@@ -23,7 +23,7 @@ from ..schema import (
     scf_convergence_warnings,
 )
 from ._mopac_parsers import parse_mopac_extras
-from ..constants import HARTREE_TO_EV, ANGSTROM_TO_BOHR
+from ..constants import HARTREE_TO_EV
 
 NUM = r"[-+]?\d+\.\d+(?:[DdEe][-+]?\d+)?"
 
@@ -148,23 +148,17 @@ def _run_generic(atoms, *, calc, method, nfrontier) -> Dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 def _run_xtb(atoms, *, charge, multiplicity, solvent, nfrontier) -> Dict[str, Any]:
+    import numpy as np
+    from ..calculators import make_xtb_calculator, import_xtb_python
     try:
-        import numpy as np
-        from xtb.interface import Calculator, Param
-        from xtb.libxtb import VERBOSITY_MUTED
+        import_xtb_python()
     except ImportError as exc:
         raise RuntimeError(
             f"frontier (xtb) requires xtb-python ({exc}). "
             "Install: conda install -c conda-forge xtb-python"
         )
 
-    numbers = np.asarray(atoms.get_atomic_numbers(), dtype=np.int32)
-    positions_bohr = np.asarray(atoms.get_positions()) * ANGSTROM_TO_BOHR
-    uhf = max(0, multiplicity - 1)
-
-    xcalc = Calculator(Param.GFN2xTB, numbers, positions_bohr,
-                       charge=float(charge), uhf=uhf)
-    xcalc.set_verbosity(VERBOSITY_MUTED)
+    xcalc = make_xtb_calculator(atoms, charge=charge, multiplicity=multiplicity)
     solvent_dropped = False
     if solvent:
         try:

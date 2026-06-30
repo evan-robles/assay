@@ -11,7 +11,7 @@ import numpy as np
 # existing importers (`from ..calculators import MOPAC_SOLVENT_EPS, XTB_SOLVENT_MAP`)
 # keep working unchanged.
 from .schema import XTB_SOLVENT_MAP, MOPAC_SOLVENT_EPS  # noqa: F401 (re-export)
-from .constants import HARTREE_TO_EV
+from .constants import HARTREE_TO_EV, ANGSTROM_TO_BOHR
 
 # Solvents supported by the xtb CLI's --alpb flag but NOT by the xtb-python
 # Solvent enum exposed via the ASE wrapper. For these we must route through the
@@ -495,6 +495,38 @@ def collect_calc_extras(method: str, atoms, calc) -> dict:
         if threads is not None:
             extras["n_threads"] = threads
     return extras
+
+
+def import_xtb_python():
+    """Import the xtb-python API, returning (Calculator, Param, VERBOSITY_MUTED).
+
+    Raises ImportError if xtb-python is not installed; CALLERS choose the policy
+    (electrostatics/frontier re-raise as a RuntimeError with a task-specific
+    install hint; sp soft-returns to skip xtb HOMO/LUMO). Centralizes the import
+    so the three call sites don't each spell out the module paths.
+    """
+    from xtb.interface import Calculator, Param
+    from xtb.libxtb import VERBOSITY_MUTED
+    return Calculator, Param, VERBOSITY_MUTED
+
+
+def make_xtb_calculator(atoms, *, charge: int, multiplicity: int):
+    """Build a muted GFN2-xTB xtb-python Calculator for `atoms` at the given
+    charge/multiplicity — the core construction shared verbatim by the
+    electrostatics/frontier/sp xtb paths (atomic numbers, Å→Bohr positions, uhf
+    from multiplicity, muted verbosity). Solvent is applied by the CALLER, whose
+    handling genuinely differs (resolve_xtb_solvent vs xtb.utils.get_solvent,
+    and per-task solvent-drop reporting). Assumes xtb-python is importable —
+    call import_xtb_python() first under the caller's own error policy.
+    """
+    Calculator, Param, VERBOSITY_MUTED = import_xtb_python()
+    numbers = np.asarray(atoms.get_atomic_numbers(), dtype=np.int32)
+    positions_bohr = np.asarray(atoms.get_positions()) * ANGSTROM_TO_BOHR
+    uhf = max(0, int(multiplicity) - 1)
+    calc = Calculator(Param.GFN2xTB, numbers, positions_bohr,
+                      charge=float(charge), uhf=uhf)
+    calc.set_verbosity(VERBOSITY_MUTED)
+    return calc
 
 
 def _build_xtb(charge, multiplicity, solvent, workdir):
