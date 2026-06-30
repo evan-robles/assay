@@ -417,7 +417,14 @@ def _dispatch(args, parser, cli: str, pyscf_kwargs: dict):
         return None
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def build_parser() -> argparse.ArgumentParser:
+    """Construct the full chemkit engine argument parser.
+
+    Extracted from main() so the subcommand set is introspectable without
+    parsing argv — used by main(), by the TOOLS<->CLI consistency check
+    (subcommand_names / check_tools_cli_consistency), and by the typed MCP
+    input-schema derivation.
+    """
     parser = argparse.ArgumentParser(
         prog="chemkit",
         description="ASE-based computational chemistry suite (xtb, MOPAC).",
@@ -854,6 +861,44 @@ def main(argv: Optional[List[str]] = None) -> int:
              "120 for publication). Ignored when no --cubes are requested.",
     )
 
+    return parser
+
+
+def subcommand_names() -> List[str]:
+    """The engine's registered subcommands (e.g. 'sp', 'opt', ...), read from
+    the built parser's subparser map. Single source of truth for the CLI side
+    of the TOOLS<->CLI consistency check."""
+    parser = build_parser()
+    for action in parser._actions:
+        if isinstance(action, argparse._SubParsersAction):
+            return sorted(action.choices.keys())
+    return []
+
+
+def check_tools_cli_consistency(tools_subcommands) -> List[str]:
+    """Cross-check the server's TOOLS subcommand set against the engine's CLI
+    subparsers. Returns a list of human-readable mismatch messages ([] = OK).
+
+    `tools_subcommands` is the iterable of subcommands the MCP TOOLS dict maps
+    to (server.TOOLS values' [0]); passed in to avoid an engine->server import.
+    A TOOLS entry with no engine subparser would break `chemkit <tool>` and the
+    MCP tool silently; a CLI subcommand absent from TOOLS is simply unexposed.
+    """
+    cli = set(subcommand_names())
+    tools = set(tools_subcommands)
+    problems = []
+    for missing in sorted(tools - cli):
+        problems.append(
+            f"TOOLS subcommand {missing!r} has NO engine CLI subparser "
+            f"(chemkit {missing} would fail)")
+    for unexposed in sorted(cli - tools):
+        problems.append(
+            f"engine CLI subcommand {unexposed!r} is not exposed in server.TOOLS")
+    return problems
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = build_parser()
     args = parser.parse_args(argv)
 
     # ------------------------------------------------------------------

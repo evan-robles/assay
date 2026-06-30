@@ -129,15 +129,22 @@ def integrity_block(checks: List[IntegrityCheck]) -> Dict[str, Any]:
     }
 
 
-def gate(result: Dict[str, Any], task_name: str, *, allow_unconverged: bool = False) -> Dict[str, Any]:
+def gate(result: Dict[str, Any], task_name: str, *,
+         extra_checks: Optional[List[IntegrityCheck]] = None,
+         allow_unconverged: bool = False) -> Dict[str, Any]:
     """The single seam every task.run() calls at its end.
 
     Stamps result["integrity"] in place. If any severity=="error" check failed:
       - default: raise IntegrityError carrying the stamped result.
       - allow_unconverged: downgrade status failed->warning, trustworthy=False,
         gate_bypassed=True, and return without raising.
+
+    `extra_checks` are additional findings (e.g. the result-schema shape checks)
+    folded into the block alongside the registered correctness checks. They obey
+    the same severity rules — a severity=="error" extra check would gate too, but
+    the schema layer emits only "warning"s, so it records without aborting.
     """
-    checks = validate(result, task_name)
+    checks = validate(result, task_name) + list(extra_checks or [])
     block = integrity_block(checks)
     failed_errors = [c for c in checks if (not c.ok and c.severity == "error")]
 
@@ -180,6 +187,27 @@ def _promote_method_provenance(result: Dict[str, Any]) -> None:
             result[key] = cs[key]
 
 
+def _schema_checks(result: Dict[str, Any], task_name: str) -> List[IntegrityCheck]:
+    """Run the structural result-schema layer: additively canonicalize the
+    result (stable headline pointer + field aliases + schema_version) and return
+    its shape findings as IntegrityChecks to fold into the integrity block.
+
+    Kept defensive — a bug here must never crash a real calculation, mirroring
+    validate()'s own try/except. Lazy import avoids any import cycle and keeps
+    the schema layer optional.
+    """
+    try:
+        from . import result_schema
+        result_schema.canonicalize(result, task_name)
+        return [
+            _check(f["name"], f["ok"], f["severity"], f["detail"])
+            for f in result_schema.validate_result(result, task_name)
+        ]
+    except Exception as exc:  # pragma: no cover - defensive, like validate()
+        return [_check("schema_self_check", False, "warning",
+                       f"result-schema layer raised {type(exc).__name__}: {exc}")]
+
+
 def finalize(result: Dict[str, Any], *, gate_integrity: bool = True,
              allow_unconverged: bool = False) -> Dict[str, Any]:
     """Single end-of-run() seam for every task.
@@ -191,12 +219,20 @@ def finalize(result: Dict[str, Any], *, gate_integrity: bool = True,
     composite; the composite then runs its own gate over the aggregated result.
 
     The task name is read from result["task"] (set by schema.base_result).
+
+    Two additive seams run before the gate, neither of which can fail an existing
+    run: method-provenance promotion (functional/basis up from code_specific),
+    and the result-schema layer (canonical headline pointer + aliases +
+    warning-severity shape checks).
     """
     _promote_method_provenance(result)
     task_name = result.get("task", "")
+    schema_checks = _schema_checks(result, task_name)
     if gate_integrity:
-        return gate(result, task_name, allow_unconverged=allow_unconverged)
-    result["integrity"] = integrity_block(validate(result, task_name))
+        return gate(result, task_name, extra_checks=schema_checks,
+                    allow_unconverged=allow_unconverged)
+    result["integrity"] = integrity_block(
+        validate(result, task_name) + schema_checks)
     return result
 
 

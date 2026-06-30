@@ -1384,8 +1384,10 @@ def test_integrity_unknown_task_passes_vacuously():
     # A task name with no registered checks validates to [] (the gate is a no-op
     # for it). Every chemkit task IS now registered, so use a made-up name.
     assert I.validate({"task": "not_a_real_task"}, "not_a_real_task") == []
-    # finalize still stamps an integrity block (status ok) for uniformity.
-    r = {"task": "not_a_real_task"}
+    # finalize still stamps an integrity block (status ok) for uniformity. The
+    # result must carry the common header (task/method/program) the structural
+    # schema layer also checks; a well-formed unknown-task result stamps ok.
+    r = {"task": "not_a_real_task", "method": "xtb", "program": "xtb"}
     I.finalize(r, gate_integrity=True)
     assert r["integrity"]["status"] == "ok"
     assert r["integrity"]["trustworthy"] is True
@@ -1505,3 +1507,114 @@ def test_gate_binding_charge_mismatch_aborts(tmp_run):
     )
     assert rc != 0, "charge-mismatched binding must fail"
     assert "charge" in err.lower()
+
+
+# ===========================================================================
+# Result-schema layer (result_schema.py): canonical headline pointer, additive
+# field aliases, schema_version, and warning-severity shape validation. These
+# are pure-dict unit tests (no engine run), mirroring the integrity unit tests.
+# ===========================================================================
+def _result_schema():
+    return importlib.import_module("chemkit_engine.result_schema")
+
+
+def test_schema_canonicalize_stamps_headline_pointer():
+    S = _result_schema()
+    r = {"task": "single_point", "method": "xtb", "program": "xtb",
+         "total_energy_eV": -137.97}
+    S.canonicalize(r, "single_point")
+    assert r["schema_version"] == S.SCHEMA_VERSION
+    assert r["headline_field"] == "total_energy_eV"
+    assert r["headline_value"] == -137.97
+    assert r["headline_units"] == "eV"
+
+
+def test_schema_alias_is_additive_both_directions():
+    S = _result_schema()
+    # freq emits electronic_energy_eV; canonicalize must expose total_energy_eV too.
+    r = {"task": "vibrational_thermochemistry", "method": "xtb", "program": "xtb",
+         "electronic_energy_eV": -137.97}
+    S.canonicalize(r, "vibrational_thermochemistry")
+    assert r["total_energy_eV"] == -137.97          # alias added
+    assert r["electronic_energy_eV"] == -137.97     # original untouched
+    assert r["headline_field"] == "electronic_energy_eV"  # task's own headline
+
+
+def test_schema_canonicalize_never_overwrites_existing_key():
+    S = _result_schema()
+    # If both keys already present (and differ), neither is clobbered.
+    r = {"task": "single_point", "method": "xtb", "program": "xtb",
+         "total_energy_eV": -1.0, "electronic_energy_eV": -2.0}
+    S.canonicalize(r, "single_point")
+    assert r["total_energy_eV"] == -1.0
+    assert r["electronic_energy_eV"] == -2.0
+
+
+def test_schema_redox_dynamic_electrode_suffix():
+    S = _result_schema()
+    r = {"task": "redox_potential", "method": "dft", "program": "PySCF",
+         "redox_potential_V_vs_SHE": -0.41}
+    S.canonicalize(r, "redox_potential")
+    assert r["headline_field"] == "redox_potential_V_vs_SHE"
+    assert r["headline_value"] == -0.41
+    assert r["headline_units"] == "V"
+
+
+def test_schema_scalarless_task_has_no_headline():
+    S = _result_schema()
+    r = {"task": "fukui", "method": "xtb", "program": "xtb"}
+    S.canonicalize(r, "fukui")
+    assert "headline_field" not in r          # fukui has no single headline number
+    assert r["schema_version"] == S.SCHEMA_VERSION  # version still stamped
+
+
+def test_schema_validate_header_and_headline_are_warnings():
+    S = _result_schema()
+    # well-formed -> all schema findings ok, all warning severity
+    good = {"task": "single_point", "method": "xtb", "program": "xtb",
+            "total_energy_eV": -137.97}
+    findings = S.validate_result(good, "single_point")
+    assert findings and all(f["ok"] for f in findings)
+    assert all(f["severity"] == "warning" for f in findings)
+    # missing header keys -> schema_header NOT ok, but still only a warning
+    bad = {"task": "single_point"}
+    bf = S.validate_result(bad, "single_point")
+    hdr = [f for f in bf if f["name"] == "schema_header"][0]
+    assert hdr["ok"] is False and hdr["severity"] == "warning"
+
+
+def test_schema_headline_registry_covers_all_registered_tasks():
+    """Every integrity-registered task must have an explicit HEADLINE entry
+    (a field tuple or None) so no task silently lacks a canonical headline."""
+    S = _result_schema()
+    I = _integrity()
+    registered = set(I._REGISTRY)
+    # redox is resolved dynamically (electrode suffix), so it maps to None in
+    # the static table but is still explicitly present.
+    missing = registered - set(S.HEADLINE)
+    assert not missing, f"tasks with no HEADLINE registry entry: {missing}"
+
+
+# ===========================================================================
+# TOOLS <-> engine CLI consistency: every MCP-advertised tool must have a real
+# engine subparser, and vice-versa. Guards the silent-break gap where a TOOLS
+# entry without a cli.py subparser would make `chemkit <tool>` and the MCP tool
+# fail at runtime.
+# ===========================================================================
+def _server_tools():
+    return importlib.import_module("server").TOOLS
+
+
+def test_tools_cli_consistency():
+    cli = importlib.import_module("chemkit_engine.cli")
+    tools_subs = [sub for (sub, _folder) in _server_tools().values()]
+    problems = cli.check_tools_cli_consistency(tools_subs)
+    assert not problems, "TOOLS<->CLI mismatch:\n" + "\n".join(problems)
+
+
+def test_tools_cli_consistency_detects_a_phantom_tool():
+    cli = importlib.import_module("chemkit_engine.cli")
+    tools_subs = [sub for (sub, _folder) in _server_tools().values()]
+    # inject a subcommand the engine has no subparser for -> must be flagged
+    problems = cli.check_tools_cli_consistency(tools_subs + ["not_a_subcommand"])
+    assert any("not_a_subcommand" in p for p in problems)
