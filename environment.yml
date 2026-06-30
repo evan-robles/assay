@@ -1,0 +1,30 @@
+# Pinned conda environment that reproduces chemkit's validated results.
+#
+# These are the EXACT versions installed in the `anl_env` used to produce the
+# regression-test results and the fidelity/accuracy benchmarks. The pins are the
+# real reproducibility artifact for the paper — a reviewer (or future you) can
+# recreate the numbers with:
+#
+#     conda env create -f environment.yml
+#     conda activate chemkit
+#     pip install -e .            # installs chemkit-mcp (chemkit / chemkit-mcp)
+#
+# Loosen the pins only deliberately; the external binaries (xtb/mopac/openbabel)
+# are NOT pip-installable and must come from conda-forge, as below.
+name: chemkit
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.13
+  # External chemistry binaries (not pip-installable):
+  - xtb=6.7.1            # --method xtb (GFN2-xTB)
+  - mopac=23.2.5         # --method mopac (PM7)
+  - openbabel=3.1.0      # SMILES->3D, name resolution, confab conformers
+  - pip
+  - pip:
+      - mcp==1.27.2        # MCP server/client SDK (FastMCP)
+      - ase==3.28.0        # geometry I/O + optimizers
+      - numpy==2.4.6
+      - pyscf==2.13.1      # --method dft / --method hf
+      - matplotlib==3.10.9 # fukui / scan / reaction-profile plots
+      - pytest             # test runner (version-flexible; dev-only)

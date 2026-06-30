@@ -65,17 +65,27 @@ def energy_block_from_eV(energy_eV: float) -> Dict[str, float]:
 # Solvent tables — single documented home for all backends' solvent data.
 #
 # These are deliberately THREE DISTINCT tables, NOT one merged map, because the
-# backends model solvation differently and their per-solvent values genuinely
-# differ — merging would silently change results:
+# backends model solvation differently and their per-solvent values differ;
+# merging would silently change results:
 #   * xtb (ALPB) uses NAMED solvents, not a dielectric: XTB_SOLVENT_MAP maps a
 #     user alias -> the ALPB solvent name xtb understands.
-#   * MOPAC (COSMO) and PySCF (ddCOSMO/PCM) both take a numeric dielectric ε,
-#     but use different reference values for the same solvent (e.g. water 78.4
-#     vs 78.3553; acetonitrile 37.5 vs 35.688) — MOPAC's are rounded, PySCF's
-#     are higher-precision literature ε. Each backend keeps its own column.
-# The resolver (calculators.resolve_dielectric) already takes the table as a
-# parameter, so co-locating them here changes no behavior — it just gives the
-# next person adding a solvent one place to edit.
+#   * PySCF (ddCOSMO / PCM) takes a numeric static dielectric ε. The values in
+#     PYSCF_SOLVENT_EPS are the Gaussian SCRF/PCM default static dielectrics —
+#     every entry matches the Gaussian solvent list exactly (water 78.3553,
+#     acetonitrile 35.688, DMSO 46.826, THF 7.4257, ...). This is the
+#     authoritative, higher-precision source.
+#     Source: Gaussian SCRF solvent list, https://gaussian.com/scrf/
+#     [verified: page HTTP 200 + all 14 chemkit ε matched the listed values,
+#     2026-06-30]. Gaussian cautions ε is only one of several solvent
+#     parameters, but ε is what the continuum models here consume.
+#   * MOPAC (COSMO) takes ε too, but MOPAC_SOLVENT_EPS holds ROUNDED ~25 °C
+#     reference dielectrics (CRC-Handbook-style, e.g. water 78.4, acetonitrile
+#     37.5), NOT the Gaussian set. They are kept as-is to preserve historical
+#     MOPAC-solvated results; treat them as approximate. (A future change could
+#     align MOPAC to the verified Gaussian set, but that would shift existing
+#     MOPAC ΔG_solv numbers, so it is intentionally NOT done here.)
+# The resolver (calculators.resolve_dielectric) takes the table as a parameter,
+# so co-locating them here changes no behavior.
 # ---------------------------------------------------------------------------
 XTB_SOLVENT_MAP = {
     # ALPB solvents understood by xtb (alias -> ALPB name)

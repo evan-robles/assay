@@ -4,7 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chemkit-mcp"
-version = "1.0.0"
+# Single-sourced from chemkit_engine.__version__ (see [tool.setuptools.dynamic]).
+dynamic = ["version"]
 description = "chemkit: computational-chemistry MCP server (xtb, MOPAC, PySCF, Open Babel) over stdio"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -52,6 +53,11 @@ packages = ["mcp_server", "chemkit_engine", "chemkit_engine.tasks",
 
 [tool.setuptools.package-dir]
 "chemkit_engine" = "mcp_server/chemkit_engine"
+
+# Version is read from chemkit_engine/__init__.py::__version__ at build time, so
+# the package has ONE version source (no pyproject<->__init__ drift).
+[tool.setuptools.dynamic]
+version = { attr = "chemkit_engine.__version__" }
 
 [tool.pytest.ini_options]
 markers = [

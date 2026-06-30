@@ -1618,3 +1618,67 @@ def test_tools_cli_consistency_detects_a_phantom_tool():
     # inject a subcommand the engine has no subparser for -> must be flagged
     problems = cli.check_tools_cli_consistency(tools_subs + ["not_a_subcommand"])
     assert any("not_a_subcommand" in p for p in problems)
+
+
+# ===========================================================================
+# Quality-contract enforcement: the SKILL.md linter and the static fidelity-spec
+# validator. These mechanize rules/ checks so drift is caught, not assumed.
+# ===========================================================================
+def test_all_skills_pass_skillmd_lint():
+    """Every shipped skill's SKILL.md obeys the skill-standards contract
+    (frontmatter, name==folder, valid category, required sections, author)."""
+    import importlib.util
+    repo = Path(__file__).resolve().parent.parent
+    spec = importlib.util.spec_from_file_location("lint_skills", repo / "tools" / "lint_skills.py")
+    lint = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lint)
+    skills = sorted(d for d in (repo / "skills").iterdir()
+                    if d.is_dir() and not d.name.startswith("_"))
+    failures = {d.name: lint.lint_skill(d) for d in skills}
+    failures = {k: v for k, v in failures.items() if v}
+    assert not failures, f"SKILL.md lint failures: {failures}"
+
+
+def test_thin_client_scripts_match_generator():
+    """The 20 per-skill thin-client scripts are generated from one template
+    (tools/build_skill_folders.py). This guards against a hand-edit drifting a
+    script away from the generator — regenerating must yield no diff."""
+    import importlib.util
+    repo = Path(__file__).resolve().parent.parent
+    spec = importlib.util.spec_from_file_location(
+        "build_skill_folders", repo / "tools" / "build_skill_folders.py")
+    bsf = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(bsf)
+    drift = {}
+    for name in bsf.TOOLS:
+        p = repo / "skills" / name / "scripts" / f"{name}.py"
+        if not p.is_file():
+            drift[name] = "script missing (run tools/build_skill_folders.py)"
+        elif p.read_text() != bsf.CLIENT_TEMPLATE.format(name=name):
+            drift[name] = "differs from generator (run tools/build_skill_folders.py)"
+    assert not drift, f"thin-client drift: {drift}"
+
+
+def test_populated_specs_pass_static_schema():
+    """Every fidelity spec WHOSE INPUT FIXTURES EXIST is structurally valid
+    (shape, canonical headline field, real method). Specs missing fixture
+    geometries are a separate, known content gap and are excluded here so this
+    test guards shape/headline drift without coupling to fixture completeness."""
+    import importlib.util
+    repo = Path(__file__).resolve().parent.parent
+    spec_mod = importlib.util.spec_from_file_location(
+        "spec_schema", repo / "benchmarks" / "spec_schema.py")
+    ss = importlib.util.module_from_spec(spec_mod)
+    spec_mod.loader.exec_module(ss)
+    rs = importlib.import_module("chemkit_engine.result_schema")
+    skill_to_task = ss._skill_to_taskid()
+    headline = rs.HEADLINE
+    base = repo / "benchmarks" / "fidelity"
+    bad = {}
+    for sp in sorted(base.glob("*-validation/*/*.spec.json")):
+        problems = ss.validate_spec(sp, skill_to_task, headline)
+        # exclude the known missing-fixture gap; assert everything else is clean
+        non_fixture = [p for p in problems if "not found" not in p]
+        if non_fixture:
+            bad[str(sp.relative_to(repo))] = non_fixture
+    assert not bad, f"specs with shape/headline/method problems: {bad}"
