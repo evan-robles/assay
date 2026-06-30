@@ -380,8 +380,24 @@ def run(
             atom_labels=_res_label_cache,
         )
 
-        e_min = min(p["energy_kcal_mol"] for p in points if p["energy_kcal_mol"] is not None)
         valid = [p for p in points if p["energy_kcal_mol"] is not None]
+        if not valid:
+            # Every scan point failed (e.g. no working calculator backend, or
+            # all optimizations diverged). Emit an honest all-failed record
+            # rather than crashing on min() over an empty sequence; the
+            # integrity gate (scan_points_converged) then marks it not
+            # trustworthy. The next dihedral, if any, still runs.
+            dihedral_records.append({
+                "atoms_1based": [bond["i"]+1, bond["a"]+1, bond["b"]+1, bond["l"]+1],
+                "n_points": len(points),
+                "n_converged": 0,
+                "trajectory": traj_path,
+                "plot": None,
+                "points": [],
+                "note": "all scan points failed; no energies to profile",
+            })
+            continue
+        e_min = min(p["energy_kcal_mol"] for p in valid)
         for p in valid:
             p["delta_E_kcal_mol"] = p["energy_kcal_mol"] - e_min
         e_max_pt = max(valid, key=lambda p: p["energy_kcal_mol"])

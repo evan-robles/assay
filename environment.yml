@@ -17,7 +17,10 @@ channels:
 dependencies:
   - python=3.12
   # External chemistry binaries (not pip-installable):
-  - xtb>=6.7             # --method xtb (GFN2-xTB)
+  - xtb>=6.7             # --method xtb (GFN2-xTB) — the CLI binary
+  - xtb-python>=22       # the `import xtb` Python API chemkit drives for xtb
+                         # (forces/optimizer/frontier/electrostatics paths need
+                         #  it; the CLI-only fallback lacks get_forces()).
   - mopac>=22            # --method mopac (PM7)
   - openbabel>=3.1       # SMILES->3D, name resolution, confab conformers
   - pip
