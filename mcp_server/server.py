@@ -18,12 +18,14 @@ Run:  python mcp_server/server.py        # stdio MCP server
 from __future__ import annotations
 
 import datetime
+import functools
 import json
 import os
 import re
 import subprocess
 import sys
 import threading
+import time
 from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
@@ -92,10 +94,10 @@ def _description(skill_folder: str, subcommand: str) -> str:
     args_block = (f"\n\nArguments (chemkit `{subcommand}`):\n{arg_spec}"
                   if arg_spec else "")
     usage = (
-        f"\n\nInvoke by passing these as a list of CLI tokens in `args` "
-        f"(e.g. [\"--method\", \"xtb\", \"mol.xyz\"]). `cwd` sets the directory "
-        f"for relative input/output paths. Returns the result as JSON. (You can "
-        f"still run args=[\"--help\"] for the raw argparse help.)"
+        "\n\nInvoke by passing these as a list of CLI tokens in `args` "
+        "(e.g. [\"--method\", \"xtb\", \"mol.xyz\"]). `cwd` sets the directory "
+        "for relative input/output paths. Returns the result as JSON. (You can "
+        "still run args=[\"--help\"] for the raw argparse help.)"
     )
     return (desc or f"chemkit {subcommand}") + args_block + usage
 
@@ -129,7 +131,7 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
     out_path = os.path.join(run_cwd, f"{subcommand}_{stamp}.out")
 
     def _write_header(fh):
-        fh.write(f"# chemkit live log\n")
+        fh.write("# chemkit live log\n")
         fh.write(f"# subcommand : {subcommand}\n")
         fh.write(f"# args       : {' '.join(args)}\n")
         fh.write(f"# command    : {' '.join(cmd)}\n")
@@ -268,11 +270,96 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
         return json.dumps(wrapped)
 
 
+# ---------------------------------------------------------------------------
+# Cross-cutting tool decorators.
+#
+# FastMCP exposes no tool middleware / before-after hooks (the @mcp.tool
+# decorator is the only seam), so boundary concerns are added as decorators that
+# wrap the tool function INSIDE _make_tool — one place that covers all 20 tools
+# (and, transitively, the `chemkit` CLI, which routes through these same tools).
+# ---------------------------------------------------------------------------
+
+# Per-tool call logging is on by default but terse; set CHEMKIT_LOG_TOOLS=0 to
+# silence it on a quiet host (mirrors the FastMCP log_level="WARNING" restraint).
+_LOG_TOOLS = os.environ.get("CHEMKIT_LOG_TOOLS", "1") not in ("0", "", "false", "no")
+
+
+def _result_ok_tag(result: str) -> str:
+    """Classify a tool's JSON result as ok/fail for the log line, without
+    raising on non-JSON. 'fail' if it carries an `error` key or an integrity
+    block that is not trustworthy; 'ok' otherwise."""
+    try:
+        d = json.loads(result)
+    except (ValueError, TypeError):
+        return "ok"  # non-JSON (e.g. --help text) is not a failure
+    if not isinstance(d, dict):
+        return "ok"
+    if "error" in d:
+        return "fail"
+    integ = d.get("integrity")
+    if isinstance(integ, dict) and integ.get("trustworthy") is False:
+        return "fail"
+    return "ok"
+
+
+def log_tool_call(tool_name: str):
+    """Emit ONE structured stderr line per tool call (name, args, cwd, duration,
+    ok/fail) — the per-tool observability the server otherwise lacks. Times only
+    the work; never swallows the return value or raises. Gated by
+    CHEMKIT_LOG_TOOLS. stderr is the server's diagnostic channel (a stdio caller
+    sees it in the Bash result, like the existing live-log line)."""
+    def deco(fn):
+        @functools.wraps(fn)
+        def wrapper(args=None, cwd=None):
+            if not _LOG_TOOLS:
+                return fn(args=args, cwd=cwd)
+            t0 = time.perf_counter()
+            tag = "fail"
+            try:
+                result = fn(args=args, cwd=cwd)
+                tag = _result_ok_tag(result)
+                return result
+            finally:
+                dur_ms = int((time.perf_counter() - t0) * 1000)
+                arglist = ",".join(str(a) for a in (args or []))
+                sys.stderr.write(
+                    f"[chemkit] tool={tool_name} args=[{arglist}] "
+                    f"cwd={cwd or '.'} dur={dur_ms}ms {tag}\n"
+                )
+                sys.stderr.flush()
+        return wrapper
+    return deco
+
+
+def tool_error_envelope(subcommand: str):
+    """Outer safety net: guarantee a tool ALWAYS returns well-formed JSON, even
+    on an UNEXPECTED exception (a bug, or _run_engine raising before it can
+    format its own error). _run_engine's deliberate in-band error JSON (which
+    carries integrity verdicts) passes through untouched — this only catches what
+    would otherwise surface to the agent as an opaque MCP transport error."""
+    def deco(fn):
+        @functools.wraps(fn)
+        def wrapper(args=None, cwd=None):
+            try:
+                return fn(args=args, cwd=cwd)
+            except Exception as exc:  # noqa: BLE001 - never leak a raw transport error
+                return json.dumps({
+                    "error": f"chemkit {subcommand} failed: "
+                             f"{type(exc).__name__}: {exc}",
+                    "subcommand": subcommand,
+                    "args": list(args or []),
+                })
+        return wrapper
+    return deco
+
+
 def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
     """Register one MCP tool that dispatches to `subcommand`."""
     description = _description(skill_folder, subcommand)
 
     @mcp.tool(name=tool_name, description=description)
+    @tool_error_envelope(subcommand)
+    @log_tool_call(tool_name)
     def _tool(args: list[str] | None = None, cwd: str | None = None) -> str:
         """args: chemkit CLI tokens for this task. cwd: directory to resolve
         relative input/output paths against (the caller's working dir)."""
@@ -348,7 +435,6 @@ def cli_main(argv: list[str] | None = None) -> int:
     # exit. (We import the engine CLI lazily and let argparse's own --help action
     # print + SystemExit; we translate that exit code back to an int.)
     if "-h" in rest or "--help" in rest:
-        engine_dir = HERE / "chemkit_engine"
         if str(HERE) not in sys.path:
             sys.path.insert(0, str(HERE))
         try:
