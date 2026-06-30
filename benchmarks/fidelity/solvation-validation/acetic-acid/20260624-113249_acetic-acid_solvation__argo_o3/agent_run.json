@@ -1,0 +1,25 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "delta_G_solv_kcal_mol": -6.114559,
+    "n_atoms": null,
+    "warnings": [
+      "Electronic \u0394G_solv only \u2014 no cavitation, dispersion-repulsion, or thermal correction. This is an electronic-energy difference E(solv) \u2212 E(gas), not a thermodynamic free energy (no ZPE/entropy).",
+      "Standard-state caveat: the value is NOT corrected to the conventional \u0394G*_solv 1 M (gas) \u2192 1 M (solution) state; the experimental tables you may compare against include a ~1.9 kcal/mol (RT ln 24.46) term this number omits. Do not compare directly to tabulated \u0394G*_solv without adding it.",
+      "Semi-empirical implicit solvation is screening-grade; \u00b12\u20133 kcal/mol typical.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Solvation free energy (\u0394G_solv) of acetic acid \u2014 GFN2-xTB single-point in xtb with ALPB implicit water (continuum), charge 0, multiplicity 1. Geometry: user-supplied acetic_acid.xyz; no additional gas- or solution-phase optimization (single-point on that coordinate set, i.e. GFN2-xTB//input). Property is the electronic energy difference E(solv) \u2212 E(gas); no ZPE, entropy, cavitation, or standard-state correction. Software: xtb via chemkit (version as in runtime), SCF converged; integrity.status = ok (trustworthy = true). Live stdout/stderr was streamed to the solver\u2019s .out log announced at launch and is available for inspection.\n\nHeadline result\n\u0394G_solv = \u22126.114559 kcal mol\u207b\u00b9 (electronic, single-conformer)\n\nSee warnings above for method caveats and standard-state/thermal limitations."
+}

@@ -1,0 +1,70 @@
+# chemkit live log
+# subcommand : electrostatics
+# args       : --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/glycine-zwitterion/glycine_zwitterion.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpfhr16rjz/live.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli electrostatics --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/glycine-zwitterion/glycine_zwitterion.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpfhr16rjz/live.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/glycine-zwitterion/20260624-113154_glycine-zwitterion_electrostatics
+# started    : 20260624-113202
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpfhr16rjz/live.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "electrostatics",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/glycine-zwitterion/glycine_zwitterion.xyz",
+  "n_atoms": 10,
+  "atoms": [
+    "H",
+    "C",
+    "H",
+    "N",
+    "O",
+    "O",
+    "C",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/glycine-zwitterion/glycine_zwitterion.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpfhr16rjz/live.json",
+  "total_energy_eV": -485.07718216229557,
+  "total_energy_hartree": -17.82625764734567,
+  "total_energy_kcal_mol": -11186.14556079563,
+  "dipole_debye": 11.635852108922338,
+  "dipole_vector_debye": [
+    9.281830624277866,
+    0.5913785121582245,
+    6.992206090947802
+  ],
+  "partial_charges": [
+    0.07526097111279541,
+    -0.0557086611213322,
+    0.07410797725244907,
+    -0.1486187994175015,
+    -0.5751384115450379,
+    -0.49938009711124537,
+    0.3563466957014388,
+    0.2953810169297058,
+    0.24522168414844434,
+    0.23252762405030042
+  ],
+  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
+  "sum_of_charges": 1.6889267762110194e-14,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "charge_consistency",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum_of_charges = 1.6889267762110194e-14, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+      }
+    ]
+  }
+}

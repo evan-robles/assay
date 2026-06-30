@@ -1,0 +1,22 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "No rotatable dihedrals detected (or supplied) \u2014 nothing to scan. For rigid molecules use --dihedral i,j,k,l to force a scan."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Conformational analysis of hydrogen peroxide (H\u2013O\u2013O\u2013H) was attempted with the chemkit conformational-analysis skill at the GFN2-xTB level (GFN2-xTB tight-binding Hamiltonian; Bannwarth et al., JCTC 2019).\n\n\u2022 Property: relaxed dihedral scan \u2192 rotation barrier(s) per detected rotatable bond\n\u2022 Level of theory: GFN2-xTB (xtb backend as bundled with chemkit; no Gaussian basis)\n\u2022 Geometry provenance: the provided input geometry (/Users/evane/\u2026/hydrogen-peroxide.xyz) was taken as-is; no pre-optimization requested.\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\u2022 Charge 0, multiplicity 1 (closed-shell singlet).\n\u2022 Scan protocol: autodetected rotors (default), 24 steps over 360 \u00b0.\n\u2022 Software: xtb via chemkit MCP wrapper.\n\u2022 Convergence: not applicable \u2014 the engine detected no rotatable dihedrals and performed no scans.\n\u2022 Warnings (verbatim): \u201cNo rotatable dihedrals detected (or supplied) \u2014 nothing to scan. For rigid molecules use --dihedral i,j,k,l to force a scan.\u201d\n\u2022 Live log path: given in the cli_invocation, streamed during execution.\n\nResult: the engine\u2019s rotor detection classified hydrogen peroxide as having no rotatable bonds under default heuristics, so **no rotation barrier could be computed**. To obtain the H\u2013O\u2013O\u2013H torsional barrier, rerun specifying that dihedral explicitly (e.g. `--dihedral 3,1,2,4` using the atom indices from the .xyz file)."
+}

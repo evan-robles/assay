@@ -1,0 +1,23 @@
+{
+  "spec_name": "ammonia_solvation",
+  "skill": "solvation",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1",
+    "--solvent",
+    "water"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/ammonia/ammonia.xyz",
+  "expect": "compute",
+  "spec_hash": "ee88fb22d48a14eb",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-113418_ammonia_solvation__argo_o3"
+}

@@ -1,0 +1,22 @@
+{
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": null,
+    "n_atoms": null,
+    "warnings": [
+      "Could not resolve 'trp-page' to a SMILES from PubChem, OPSIN, or NIST WebBook. No structure built."
+    ],
+    "integrity_trustworthy": false,
+    "provenance": "computed"
+  },
+  "prose": "The build-from-smiles skill failed: the name \u201ctrp-page\u201d does not correspond to any compound recognized by PubChem, OPSIN, or NIST WebBook. Without a resolvable identifier, no 3-D structure or atom count can be produced. Please provide a valid SMILES string or an alternative registry-recognized name so the structure can be built reproducibly."
+}

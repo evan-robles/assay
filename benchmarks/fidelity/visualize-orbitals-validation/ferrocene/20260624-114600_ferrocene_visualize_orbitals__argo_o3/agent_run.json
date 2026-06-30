@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "null": 1.6123375,
+    "n_atoms": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block\nProperty: HOMO\u2013LUMO Koopmans-style orbital gap (energy difference between the frontier molecular orbitals)\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) using the xtb backend\nGeometry provenance: single-point calculation on the user-supplied ferrocene.xyz coordinates (no geometry relaxation)\nSolvent / environment: gas phase (no implicit solvent model applied)\nCharge / multiplicity: 0, 1 (closed-shell singlet)\nSoftware: xtb 6.5.1 via chemkit \u201cvisualize-orbitals\u201d skill\nConvergence & caveats: xtb SCF converged; no warnings were issued by the engine. The GFN2-xTB orbital energies are suitable for qualitative electronic-structure analysis but are not quantitatively comparable to ab-initio orbital energies.\nLive log: the run streamed to a live file created by chemkit at launch (named visualize-orbitals_<timestamp>.out in the current working directory); it contains the full xtb SCF transcript and can be inspected or tailed for details.\n\nResult\nHOMO energy = \u20138.3760111 eV, LUMO energy = \u20136.7636736 eV \u21d2 HOMO\u2013LUMO gap = 1.6123375 eV (value reported above).\n\nArtifact paths\n\u2022 Molden orbital file: /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ferrocene/20260624-114600_ferrocene_visualize_orbitals/agent_call_01_molden.molden\n\u2022 Result JSON: ferrocene_orbitals_xtb.json\n(Additional cube files were not requested so none were written.)"
+}

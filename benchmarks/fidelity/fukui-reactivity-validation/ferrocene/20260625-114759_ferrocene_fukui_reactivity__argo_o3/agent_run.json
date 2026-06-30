@@ -1,0 +1,23 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed Fukui reactivity indices for ferrocene using the chemkit `fukui-reactivity` skill at the GFN2-xTB level (xtb backend).  \n\nMethod provenance\n1. Property: Fukui functions f\u207a (electrophilic attack), f\u207b (nucleophilic attack), f\u2070 (radical attack) and dual descriptor for each of the 21 atoms; headline value reported here is the largest electrophilic Fukui index f\u207a found (on the Fe centre).\n2. Level of theory: GFN2-xTB (semi-empirical extended tight-binding); no Gaussian basis set; density-functional tight-binding formalism.\n3. Geometry provenance: single-point evaluation on the user-supplied ferrocene.xyz coordinates (no further optimization performed).\n4. Solvent / environment: gas phase (no implicit solvent).\n5. Charge 0, multiplicity 1 for the neutral reference; cation (+1, doublet) and anion (\u20131, doublet) states generated internally for finite-difference Fukui calculation.\n6. Software: `xtb` via chemkit backend (version as provided by chemkit environment).\n7. Convergence & warnings: xtb SCF cycles converged for N, N+1, and N\u20131 states. Engine issued two informational warnings about charge conservation (see below); integrity check marks result as trustworthy.\n\nReproducibility\n\u2022 Command executed (from result JSON):\n  /Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out <live>.json\n\u2022 Live engine log was streamed to a .out file announced at launch (path available in session history) and contains full SCF and numerical details.\n\u2022 Generated Fukui data and plot file: \u2026/20260625-114759_ferrocene_fukui_reactivity/agent_call_01_plot.png\n\nHeadline result\nMost electrophilic site (largest f\u207a): Fe atom (index 11) with f\u207a = 0.22885459"
+}

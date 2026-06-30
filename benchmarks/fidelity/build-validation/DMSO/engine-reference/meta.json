@@ -1,0 +1,17 @@
+{
+  "spec_name": "DMSO_build",
+  "skill": "build-from-smiles",
+  "flags": [
+    "--charge",
+    "0"
+  ],
+  "positional": "dimethyl sulfoxide",
+  "expect": "structure",
+  "spec_hash": "29bb7e07489f3fff",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260619-134509_DMSO_build__argo_o3"
+}

@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": -1,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": -385.48069,
+    "n_atoms": 7,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Property: total electronic energy (optimized)\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) in xtb 6.x\nGeometry provenance: starting coordinates from user-supplied acetate.xyz; optimized here with ASE BFGS until fmax \u2264 0.05 eV \u00c5\u207b\u00b9, 8 steps. This is therefore a fully relaxed GFN2-xTB structure.\nSolvent / environment: gas phase (no implicit solvent)\nCharge & multiplicity: \u22121, singlet (multiplicity 1)\nSoftware: xtb backend via chemkit (cli invocation recorded in result JSON)\nConvergence: converged = true; n_steps = 8; no engine warnings.\nReproducibility: live log was streamed to the caller\u2019s cwd during the run (\u2026/opt_YYYYMMDD-HHMMSS.out); optimized geometry written to acetate_xtb_opt.xyz and the full JSON result to live.json. Command: `chemkit opt --method xtb --charge -1 --multiplicity 1 acetate.xyz` (see cli_invocation field).\n\nHeadline result: total energy = \u2212385.48069 eV\n\nNo warnings were returned by the engine."
+}

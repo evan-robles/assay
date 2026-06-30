@@ -1,0 +1,58 @@
+{
+  "task": "electrostatics",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/glycine-zwitterion/glycine_zwitterion.xyz",
+  "n_atoms": 10,
+  "atoms": [
+    "H",
+    "C",
+    "H",
+    "N",
+    "O",
+    "O",
+    "C",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/glycine-zwitterion/glycine_zwitterion.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpgwnbesy9/a.json",
+  "total_energy_eV": -485.07718,
+  "total_energy_hartree": -17.826258,
+  "total_energy_kcal_mol": -11186.146,
+  "dipole_debye": 11.635852,
+  "dipole_vector_debye": [
+    9.2818306,
+    0.59137851,
+    6.9922061
+  ],
+  "partial_charges": [
+    0.075260971,
+    -0.055708661,
+    0.074107977,
+    -0.1486188,
+    -0.57513841,
+    -0.4993801,
+    0.3563467,
+    0.29538102,
+    0.24522168,
+    0.23252762
+  ],
+  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
+  "sum_of_charges": -2.2551405e-15,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "charge_consistency",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum_of_charges = -2.2551405187698492e-15, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+      }
+    ]
+  }
+}

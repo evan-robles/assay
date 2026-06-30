@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": -113.61348,
+    "n_atoms": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2010provenance block\nProperty: Total electronic energy (optimized structure), units eV\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) in xtb 6.x\nGeometry provenance: started from user-supplied methane.xyz; geometry optimized at the same level (GFN2-xTB) using the geometry-optimize skill (ASE/BFGS driver, fmax target 0.05 eV \u00c5\u207b\u00b9); 2 optimization steps, converged.\nSolvent / environment: gas phase (no implicit solvent)\nCharge & multiplicity: 0, 1 (closed-shell singlet)\nSoftware: xtb backend via chemkit geometry-optimize skill\nConvergence & caveats: converged=true; no warnings returned; GFN2-xTB gives reliable geometries and relative energies but absolute energies are semi-empirical (method accuracy \u2248 few kcal mol\u207b\u00b9).\n\nReproducibility artifacts\n\u2022 Optimized structure: /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/methane/20260624-114652_methane_geometry_optimize/methane_xtb_opt.xyz\n\u2022 Result JSON:   /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1tdaijes/live.json\n\u2022 Live .out log was announced mid-run (geometry-optimize_<timestamp>.out in the caller\u2019s working directory) and contains the full SCF/optimizer transcript.\n\nHeadline result\nTotal energy (GFN2-xTB, gas phase) = \u2011113.61348 eV"
+}

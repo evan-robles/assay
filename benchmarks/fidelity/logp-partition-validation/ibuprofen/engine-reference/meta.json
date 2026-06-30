@@ -1,0 +1,21 @@
+{
+  "spec_name": "ibuprofen_logp_partition",
+  "skill": "logp-partition",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/ibuprofen.xyz",
+  "expect": "compute",
+  "spec_hash": "5b4a8513a255345a",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-113216_ibuprofen_logp_partition__argo_o3"
+}

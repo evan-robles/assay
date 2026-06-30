@@ -1,0 +1,16 @@
+{
+  "spec_name": "ferrocene_geometry_optimize",
+  "spec_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ferrocene/ferrocene_geometry_optimize.spec.json",
+  "skill": "geometry-optimize",
+  "input": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ferrocene/ferrocene.xyz",
+  "input_kind": "xyz",
+  "mode": "live",
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ],
+  "model": "argo:o3",
+  "endpoint": "http://0.0.0.0:51664/v1",
+  "git_commit": "a875091",
+  "timestamp": "2026-06-24T11:45:29"
+}

@@ -1,0 +1,17 @@
+{
+  "spec_name": "aspirin_build",
+  "skill": "build-from-smiles",
+  "flags": [
+    "--charge",
+    "0"
+  ],
+  "positional": "aspirin",
+  "expect": "structure",
+  "spec_hash": "9fdaebc838e02c95",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260619-134534_aspirin_build__argo_o3"
+}

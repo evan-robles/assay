@@ -1,0 +1,21 @@
+{
+  "spec_name": "hydrogen-peroxide_conformational_analysis",
+  "skill": "conformational-analysis",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/hydrogen-peroxide/hydrogen-peroxide.xyz",
+  "expect": "compute",
+  "spec_hash": "1dcdce465b51ec39",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260625-115703_hydrogen-peroxide_conformational_analysis__argo_o3"
+}

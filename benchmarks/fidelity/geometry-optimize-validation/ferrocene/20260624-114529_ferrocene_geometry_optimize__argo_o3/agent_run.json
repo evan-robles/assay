@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": -805.0375,
+    "n_atoms": 21,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Property: total electronic energy of ferrocene after geometry optimization\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) using the xtb backend, gas phase\nGeometry provenance: starting coordinates from /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ferrocene/ferrocene.xyz; structure relaxed at the same level (GFN2-xTB) with the chemkit geometry-optimize skill (ASE BFGS), fmax target 0.05 eV \u00c5\u207b\u00b9, 17 optimization steps \u2192 converged\nSolvent / environment: gas phase (implicit none)\nCharge & multiplicity: 0, 1 (closed-shell singlet)\nSoftware: xtb via chemkit (program xtb); semi-empirical tight-binding, no Gaussian basis; density-fitting not applicable\nConvergence & caveats: converged = true; no engine warnings. Integrity check status OK, trustworthy = true\nFiles & reproducibility: optimized coordinates written to /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ferrocene/20260624-114529_ferrocene_geometry_optimize/ferrocene_xtb_opt.xyz. Full JSON result at same run directory; command recorded in cli_invocation field.\n\nHeadline result (GFN2-xTB//GFN2-xTB, gas phase): total energy = \u2013805.0375 eV"
+}

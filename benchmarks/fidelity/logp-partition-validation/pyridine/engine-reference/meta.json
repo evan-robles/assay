@@ -1,0 +1,21 @@
+{
+  "spec_name": "pyridine_logp_partition",
+  "skill": "logp-partition",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/pyridine/pyridine.xyz",
+  "expect": "compute",
+  "spec_hash": "443de53581bc5b61",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-113418_pyridine_logp_partition__argo_o3"
+}

@@ -1,0 +1,17 @@
+{
+  "spec_name": "acetate_build",
+  "skill": "build-from-smiles",
+  "flags": [
+    "--charge",
+    "-1"
+  ],
+  "positional": "acetate",
+  "expect": "structure",
+  "spec_hash": "6fc64d5146d836b4",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260619-134521_acetate_build__argo_o3"
+}

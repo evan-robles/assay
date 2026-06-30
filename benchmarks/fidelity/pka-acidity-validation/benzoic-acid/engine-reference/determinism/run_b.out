@@ -1,0 +1,134 @@
+# chemkit live log
+# subcommand : pka
+# args       : --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpg6zhaz04/b.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpg6zhaz04/b.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/20260625-141546_benzoic-acid_pka_acidity/determinism
+# started    : 20260625-141551
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpg6zhaz04/b.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "pka",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/ha.xyz",
+  "n_atoms": 15,
+  "atoms": [
+    "O",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpg6zhaz04/b.json",
+  "mode": "reference",
+  "temperature_K": 298.15,
+  "pressure_Pa": 101325.0,
+  "G_HA_kcal_mol": -16381.59765658124,
+  "G_A_minus_kcal_mol": -16265.443255958597,
+  "RT_ln10_kcal_mol": 1.3642470125942985,
+  "G_ref_HA_kcal_mol": -9059.874424382653,
+  "G_ref_A_minus_kcal_mol": -8943.58583734551,
+  "reference_pka": 4.76,
+  "delta_G_isodesmic_kcal_mol": -0.13418641449970892,
+  "pKa": 4.6616406755807835,
+  "species": {
+    "HA": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/ha.xyz",
+      "charge": 0,
+      "multiplicity": 1,
+      "G_kcal_mol": -16381.59765658124,
+      "H_kcal_mol": -16355.89594446235,
+      "E_kcal_mol": -16430.677304066816,
+      "ZPE_kcal_mol": 69.49967138430003,
+      "n_imaginary_modes": 0,
+      "n_saddle_imaginary_modes": 0,
+      "n_soft_imaginary_modes": 0,
+      "optimized_xyz": "/tmp/chemkit_optfreq_se9z3_bg/preopt.xyz"
+    },
+    "A_minus": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/a_minus.xyz",
+      "charge": -1,
+      "multiplicity": 1,
+      "G_kcal_mol": -16265.443255958597,
+      "H_kcal_mol": -16239.96769757638,
+      "E_kcal_mol": -16307.282988740017,
+      "ZPE_kcal_mol": 62.18387913567035,
+      "n_imaginary_modes": 0,
+      "n_saddle_imaginary_modes": 0,
+      "n_soft_imaginary_modes": 0,
+      "optimized_xyz": "/tmp/chemkit_optfreq_e0_tnpmd/preopt.xyz"
+    },
+    "ref_HA": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz",
+      "charge": 0,
+      "multiplicity": 1,
+      "G_kcal_mol": -9059.874424382653,
+      "H_kcal_mol": -9039.08062482967,
+      "E_kcal_mol": -9079.70978498061,
+      "ZPE_kcal_mol": 37.097170532178936,
+      "n_imaginary_modes": 1,
+      "n_saddle_imaginary_modes": 0,
+      "n_soft_imaginary_modes": 1,
+      "optimized_xyz": "/tmp/chemkit_optfreq_g1_01oyk/preopt.xyz"
+    },
+    "ref_A_minus": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz",
+      "charge": -1,
+      "multiplicity": 1,
+      "G_kcal_mol": -8943.58583734551,
+      "H_kcal_mol": -8923.060291439178,
+      "E_kcal_mol": -8956.346450190164,
+      "ZPE_kcal_mol": 29.91472552167532,
+      "n_imaginary_modes": 1,
+      "n_saddle_imaginary_modes": 0,
+      "n_soft_imaginary_modes": 1,
+      "optimized_xyz": "/tmp/chemkit_optfreq_uct2fq8m/preopt.xyz"
+    }
+  },
+  "warnings": [
+    "ref_HA: 1 imaginary mode(s) \u2014 not a true minimum; pKa is approximate.",
+    "ref_A_minus: 1 imaginary mode(s) \u2014 not a true minimum; pKa is approximate.",
+    "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+  ],
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "species_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "species with genuine (saddle) imaginary modes: none (every pKa species must be a minimum; soft sub-50i rotor modes are floored as real and do not count)"
+      },
+      {
+        "name": "species_soft_modes",
+        "ok": true,
+        "severity": "warning",
+        "detail": "species with soft (floored, sub-50i) imaginary modes: ['ref_HA', 'ref_A_minus'] \u2014 treated as floppy real low-frequency rotors, not saddles; the pKa is fine but these soft modes add thermochemical uncertainty."
+      },
+      {
+        "name": "pka_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "pKa = np.float64(4.6616406755807835) (must be finite)"
+      }
+    ]
+  }
+}

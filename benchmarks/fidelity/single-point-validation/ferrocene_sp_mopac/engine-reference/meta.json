@@ -1,0 +1,21 @@
+{
+  "spec_name": "ferrocene_sp_mopac",
+  "skill": "single-point-energy",
+  "flags": [
+    "--method",
+    "mopac",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/ferrocene_sp_mopac/ferrocene.xyz",
+  "expect": "compute",
+  "spec_hash": "934122b358e544fd",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260618-165423_ferrocene_sp_mopac__argo_o3"
+}

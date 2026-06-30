@@ -1,0 +1,41 @@
+{
+  "task": "visualize_orbitals",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ammonia/ammonia.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "N",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py orbitals --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ammonia/ammonia.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpblxozl08/b.json",
+  "molden_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ammonia/20260624-114151_ammonia_visualize_orbitals/determinism/run_b_molden.molden",
+  "cube_paths": {},
+  "n_orbitals": 7,
+  "grid_resolution": null,
+  "mo_summary": {
+    "unrestricted": false,
+    "homo_idx_1based": 4,
+    "homo_energy_eV": -10.615709,
+    "lumo_idx_1based": 5,
+    "lumo_energy_eV": 1.6650058
+  },
+  "xtb_workdir": "/tmp/chemkit_orb_xtb_pav285pt",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "molden_written",
+        "ok": true,
+        "severity": "error",
+        "detail": "molden_path = '/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpblxozl08/b.molden' (the orbital file must exist on disk)"
+      }
+    ]
+  }
+}

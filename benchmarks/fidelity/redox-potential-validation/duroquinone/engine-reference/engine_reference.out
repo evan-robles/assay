@@ -1,0 +1,108 @@
+# chemkit live log
+# subcommand : redox
+# args       : --method xtb --ox-charge 0 --red-charge -1 --ox-mult 1 --red-mult 2 --solvent water --ref SHE --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/duroquinone/duroquinone.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmps4w18gtx/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli redox --method xtb --ox-charge 0 --red-charge -1 --ox-mult 1 --red-mult 2 --solvent water --ref SHE --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/duroquinone/duroquinone.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmps4w18gtx/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/duroquinone/20260625-115434_duroquinone_redox_potential
+# started    : 20260625-115439
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmps4w18gtx/truth.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "redox_potential",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/duroquinone/duroquinone.xyz",
+  "n_atoms": 24,
+  "atoms": [
+    "O",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py redox --method xtb --ox-charge 0 --red-charge -1 --ox-mult 1 --red-mult 2 --solvent water --ref SHE --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/duroquinone/duroquinone.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmps4w18gtx/truth.json",
+  "mode": "adiabatic",
+  "energy_kind": "\u0394E (relaxed/adiabatic)",
+  "redox_potential_V_vs_SHE": 4.514805739842081,
+  "delta_E_redox_eV": -8.79580573984208,
+  "delta_E_redox_kcal_mol": -202.83609897246376,
+  "n_electrons": 1,
+  "reference_potential_V_abs": 4.281,
+  "e_abs_she_V": 4.281,
+  "reference_electrode": "SHE",
+  "oxidized_state": {
+    "charge": 0,
+    "multiplicity": 1,
+    "method": "GFN2-xTB",
+    "energy_eV": -969.7361566260959,
+    "geometry_source": "relaxed at this method",
+    "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/duroquinone/20260625-115434_duroquinone_redox_potential/duroquinone_xtb_opt.xyz",
+    "converged": true,
+    "n_atoms": 24
+  },
+  "reduced_state": {
+    "charge": -1,
+    "multiplicity": 2,
+    "method": "GFN2-xTB",
+    "energy_eV": -978.5319623659379,
+    "geometry_source": "relaxed at this method",
+    "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/duroquinone/20260625-115434_duroquinone_redox_potential/duroquinone_xtb_opt.xyz",
+    "converged": true,
+    "n_atoms": 24
+  },
+  "warnings": [
+    "mode=adiabatic: each oxidation state was geometry-optimized separately and the potential uses \u0394E between the relaxed geometries (includes reorganization). It does NOT include ZPE/thermal/entropy (\u0394E used in place of \u0394G); use mode=freq for a true \u0394G.",
+    "Solvation is implicit/continuum only (or gas phase) \u2014 no explicit solvent shell and no Born\u2013Haber solvation cycle. Semi-empirical redox potentials are screening-grade (\u2248\u00b10.3\u20130.5 V); even DFT here omits the explicit-solvation correction. Treat as a screening estimate.",
+    "E\u00b0(vs SHE) uses E_abs(SHE) = 4.281 V. The absolute SHE potential is convention-dependent (literature \u22484.28\u20134.44 V); this is a systematic offset on the reported potential. Override with --e-abs-she to match your reference convention.",
+    "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+  ],
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "oxidized_state_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "oxidized_state.converged = True (adiabatic mode)"
+      },
+      {
+        "name": "reduced_state_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "reduced_state.converged = True (adiabatic mode)"
+      },
+      {
+        "name": "potential_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "redox_potential_V_vs_SHE = 4.514805739842081 (must be finite)"
+      }
+    ]
+  }
+}

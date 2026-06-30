@@ -1,0 +1,17 @@
+{
+  "spec_name": "water_build",
+  "skill": "build-from-smiles",
+  "flags": [
+    "--charge",
+    "0"
+  ],
+  "positional": "water",
+  "expect": "structure",
+  "spec_hash": "63714e8a1af8694a",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260619-141414_water_build__argo_o3"
+}

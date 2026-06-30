@@ -1,0 +1,21 @@
+{
+  "spec_name": "carbon-dioxide_electrostatics",
+  "skill": "electrostatics",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/carbon-dioxide/carbon_dioxide.xyz",
+  "expect": "compute",
+  "spec_hash": "26cc6d57d1c60bb7",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-111729_carbon-dioxide_electrostatics__argo_o3"
+}

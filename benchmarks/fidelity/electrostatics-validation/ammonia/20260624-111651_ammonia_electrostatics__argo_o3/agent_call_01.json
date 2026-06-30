@@ -1,0 +1,46 @@
+{
+  "task": "electrostatics",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/ammonia/ammonia.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "N",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/ammonia/ammonia.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpjjtxez_8/live.json",
+  "total_energy_eV": -120.43847,
+  "total_energy_hartree": -4.4260321,
+  "total_energy_kcal_mol": -2777.3771,
+  "dipole_debye": 1.8774299,
+  "dipole_vector_debye": [
+    1.224802,
+    0.17480911,
+    1.4121065
+  ],
+  "partial_charges": [
+    -0.42539269,
+    0.14180092,
+    0.14179422,
+    0.14179755
+  ],
+  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
+  "sum_of_charges": 7.4940054e-16,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "charge_consistency",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum_of_charges = 7.494005416219807e-16, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+      }
+    ]
+  }
+}

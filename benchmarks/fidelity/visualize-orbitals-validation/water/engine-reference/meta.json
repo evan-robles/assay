@@ -1,0 +1,21 @@
+{
+  "spec_name": "water_visualize_orbitals",
+  "skill": "visualize-orbitals",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/water/water.xyz",
+  "expect": "compute",
+  "spec_hash": "6c7b1ce61b01ce2a",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-114903_water_visualize_orbitals__argo_o3"
+}

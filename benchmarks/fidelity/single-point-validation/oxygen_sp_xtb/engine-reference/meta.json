@@ -1,0 +1,21 @@
+{
+  "spec_name": "oxygen_sp_xtb",
+  "skill": "single-point-energy",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "3"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/oxygen_sp_xtb/oxygen.xyz",
+  "expect": "compute",
+  "spec_hash": "62c0f8849dba8ee6",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260618-161922_oxygen_sp_xtb__argo_o3"
+}

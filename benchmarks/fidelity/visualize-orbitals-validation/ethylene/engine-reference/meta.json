@@ -1,0 +1,21 @@
+{
+  "spec_name": "ethylene_visualize_orbitals",
+  "skill": "visualize-orbitals",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ethylene/ethylene.xyz",
+  "expect": "compute",
+  "spec_hash": "4a4bbcfeeb9f0954",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-114516_ethylene_visualize_orbitals__argo_o3"
+}

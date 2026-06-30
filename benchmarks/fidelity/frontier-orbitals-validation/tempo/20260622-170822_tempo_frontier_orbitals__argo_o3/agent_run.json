@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: Frontier molecular orbital energies and HOMO\u2013LUMO gap (electron-volt)\nLevel of theory: DFT, tier `standard` (B3LYP/def2-TZVP, RI) in PySCF\nGeometry provenance: user-supplied tempo.xyz; single-point only (no re-optimization)\nSolvent / environment: gas phase (no implicit solvation)\nCharge & multiplicity: charge 0, multiplicity 2 (doublet, UKS)\nSoftware: PySCF 2.x via chemkit frontier-orbitals skill\nConvergence & caveats: SCF converged in 12 cycles; no warnings reported; density-fitting (RI) approximation active by default.\n\nComputed frontier-orbital energies (eV):\n  HOMO  = \u20136.3375439\n  LUMO  = \u20132.4651235\n  HOMO\u2013LUMO gap = 3.8724203 eV  (headline value reported above)\n\nFiles & reproducibility: calculation executed via\n`chemkit frontier-orbitals --method dft --tier standard --mult 2 tempo.xyz`  \nLive PySCF log streamed during run (path was shown at start); result JSON recorded to the working directory with full details, including the SCF history.\n\nNo experimental comparison was requested. Result is a computed UKS orbital gap at B3LYP/def2-TZVP and should not be taken as an excitation energy.\n"
+}

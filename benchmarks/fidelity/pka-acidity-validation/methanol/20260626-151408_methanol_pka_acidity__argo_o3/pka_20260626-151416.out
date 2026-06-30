@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : pka
+# args       : --method mopac --solvent water --mode absolute --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/ha.xyz --ha-charge 1 --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz --a-minus-charge -1 --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpkomzt8as/live.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method mopac --solvent water --mode absolute --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/ha.xyz --ha-charge 1 --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz --a-minus-charge -1 --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpkomzt8as/live.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/20260626-151408_methanol_pka_acidity
+# started    : 20260626-151416
+# ============================================================
+usage: chemkit [-h] [--version]
+               {sp,opt,freq,binding,redox,confsearch,frontier,electrostatics,solvation,logp,profile,pka,build,resolve,fukui,ts,irc,rxn-energy,scan,orbitals}
+               ...
+chemkit: error: unrecognized arguments: --a-minus-charge -1
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

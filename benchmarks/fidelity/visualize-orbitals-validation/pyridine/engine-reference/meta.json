@@ -1,0 +1,21 @@
+{
+  "spec_name": "pyridine_visualize_orbitals",
+  "skill": "visualize-orbitals",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/pyridine/pyridine.xyz",
+  "expect": "compute",
+  "spec_hash": "f3b989154174ebc3",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-114803_pyridine_visualize_orbitals__argo_o3"
+}

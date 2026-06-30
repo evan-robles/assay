@@ -1,0 +1,26 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "redox_potential_V_vs_SHE": 4.0129061,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "mode=adiabatic: each oxidation state was geometry-optimized separately and the potential uses \u0394E between the relaxed geometries (includes reorganization). It does NOT include ZPE/thermal/entropy (\u0394E used in place of \u0394G); use mode=freq for a true \u0394G.",
+      "Solvation is implicit/continuum only (or gas phase) \u2014 no explicit solvent shell and no Born\u2013Haber solvation cycle. Semi-empirical redox potentials are screening-grade (\u2248\u00b10.3\u20130.5 V); even DFT here omits the explicit-solvation correction. Treat as a screening estimate.",
+      "E\u00b0(vs SHE) uses E_abs(SHE) = 4.281 V. The absolute SHE potential is convention-dependent (literature \u22484.28\u20134.44 V); this is a systematic offset on the reported potential. Override with --e-abs-she to match your reference convention.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Standard redox potential (E\u00b0) for the 0 \u2192 \u22121 couple of nitrobenzene \u2014 GFN2-xTB, adiabatic protocol, implicit water (ALPB continuum) in xtb, referenced to the standard hydrogen electrode (SHE).\n\nMethod provenance block\n\u2022 Property: 1-electron adiabatic redox potential, E\u00b0 vs SHE, units V\n\u2022 Level of theory: GFN2-xTB (semi-empirical tight-binding; no Gaussian basis)\n\u2022 Geometry provenance: both oxidized (charge 0, multiplicity 1) and reduced (charge \u22121, multiplicity 2) states were independently geometry-optimized at GFN2-xTB (xtb ASE BFGS), each converged; the potential is \u0394E between the two relaxed geometries (adiabatic, no thermochemistry)\n\u2022 Solvent / environment: implicit water via xtb\u2019s ALPB continuum (no explicit solvent) \u2014 gas-phase electronic energies with continuum reaction field\n\u2022 Charge & multiplicity: oxidized 0/1 (closed-shell singlet), reduced \u22121/2 (doublet)\n\u2022 Software: xtb through chemkit redox-potential skill (chemkit backend 2026-06-25 build; xtb v>6, density-dependent corrections active by default)\n\u2022 Convergence: both optimizations converged; engine marked integrity.status = ok\n\u2022 Live log: /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/nitrobenzene/20260625-115548_nitrobenzene_redox_potential/redox_20260625-115556.out (written live; contains SCF/geometry traces)\n\nHeadline result\nE\u00b0(nitrobenzene 0/\u22121, water, vs SHE) = 4.0129061 V\n\nCaveats\nDensity-functional/SE methods report electronic \u0394E; this adiabatic estimate lacks ZPE, thermal, and entropy corrections. Continuum ALPB omits explicit solvation and the systematic offset in the absolute SHE potential (E_abs = 4.281 V) propagates directly into E\u00b0. The result is therefore screening-grade (\u2248\u00b10.3\u20130.5 V). See warnings above for full engine notes."
+}

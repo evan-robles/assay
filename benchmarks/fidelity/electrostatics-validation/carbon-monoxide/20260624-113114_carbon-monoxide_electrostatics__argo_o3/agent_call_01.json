@@ -1,0 +1,42 @@
+{
+  "task": "electrostatics",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/carbon-monoxide/carbon_monoxide.xyz",
+  "n_atoms": 2,
+  "atoms": [
+    "O",
+    "C"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/carbon-monoxide/carbon_monoxide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpa29xuj2v/live.json",
+  "total_energy_eV": -166.218,
+  "total_energy_hartree": -6.1083988,
+  "total_energy_kcal_mol": -3833.0781,
+  "dipole_debye": 0.76350522,
+  "dipole_vector_debye": [
+    0.76350522,
+    -1.4794961e-15,
+    1.460128e-18
+  ],
+  "partial_charges": [
+    -0.034304897,
+    0.034304897
+  ],
+  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
+  "sum_of_charges": 4.4408921e-16,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "charge_consistency",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum_of_charges = 4.440892098500626e-16, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+      }
+    ]
+  }
+}

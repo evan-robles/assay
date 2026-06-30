@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "null": -10.909314,
+    "n_atoms": 12,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance block\nProperty: HOMO energy of benzene (eV) together with orbital file generation\nLevel of theory: GFN2-xTB (semi-empirical tight-binding)\nGeometry provenance: user-supplied benzene.xyz (no re-optimization; visualization single-point only)\nSolvent / environment: gas phase (no implicit solvation)\nCharge / multiplicity: 0, 1 (closed-shell)\nSoftware: xtb via chemkit visualize-orbitals skill\nConvergence: SCF converged; no warnings reported by engine.\n\nThe visualize-orbitals skill wrote a Molden orbital file containing 30 MOs; the highest-occupied molecular orbital (HOMO, index 15) energy is \u221210.909314 eV and the lowest-unoccupied (LUMO, index 16) energy is \u22126.0841954 eV, giving a frontier gap of \u2248 4.825 eV at this semi-empirical level.\n\nLive log & files: calculation ran in the xtb working directory /tmp/chemkit_orb_xtb_hsubp7g2 with live output streamed to the molden path reported above."
+}

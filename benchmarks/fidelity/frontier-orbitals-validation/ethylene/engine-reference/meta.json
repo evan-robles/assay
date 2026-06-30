@@ -1,0 +1,27 @@
+{
+  "spec_name": "ethylene_frontier_orbitals",
+  "skill": "frontier-orbitals",
+  "flags": [
+    "--method",
+    "dft",
+    "--charge",
+    "0",
+    "--mult",
+    "1",
+    "--tier",
+    "standard",
+    "--functional",
+    "b3lyp",
+    "--basis",
+    "def2-tzvp"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz",
+  "expect": "compute",
+  "spec_hash": "9fb1f9bcddf305ce",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260622-170353_ethylene_frontier_orbitals__argo_o3"
+}

@@ -1,0 +1,50 @@
+{
+  "task": "electrostatics",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/acetonitrile/acetonitrile.xyz",
+  "n_atoms": 6,
+  "atoms": [
+    "N",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/acetonitrile/acetonitrile.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpvks7ev95/a.json",
+  "total_energy_eV": -236.3839,
+  "total_energy_hartree": -8.686948,
+  "total_energy_kcal_mol": -5451.1422,
+  "dipole_debye": 3.87205,
+  "dipole_vector_debye": [
+    -3.87205,
+    6.0626651e-05,
+    1.4560583e-05
+  ],
+  "partial_charges": [
+    -0.23432266,
+    -0.10244422,
+    0.11497568,
+    0.073929463,
+    0.073934278,
+    0.073927457
+  ],
+  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
+  "sum_of_charges": 1.5959456e-15,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "charge_consistency",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum_of_charges = 1.5959455978986625e-15, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+      }
+    ]
+  }
+}

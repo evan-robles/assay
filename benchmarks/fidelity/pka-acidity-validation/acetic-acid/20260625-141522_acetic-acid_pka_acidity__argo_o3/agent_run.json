@@ -1,0 +1,24 @@
+{
+  "result_json": {
+    "method": "PM7",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "pKa": -267.14866,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "Absolute pKa is highly sensitive to the G(H+,aq) reference (~1.4 unit shift between Tissandier 1998 and Kelly 2006). Prefer mode='reference' against a known acid in the same family.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Aqueous pKa of acetic acid (screening grade)\n\nMethod provenance:\nProperty: Absolute pKa (HA \u2192 A\u207b + H\u207a) at 298 K, 1 atm.\nLevel of theory: PM7 semi-empirical Hamiltonian (MOPAC 22.1).\nGeometry provenance: user-supplied protonated and deprotonated .xyz files were each re-optimized and frequency-analyzed at PM7 within the pka-acidity workflow (native MOPAC EF optimizer, gradient norm < 5\u00d710\u207b\u00b3 kcal mol\u207b\u00b9 \u00c5\u207b\u00b9; no imaginary modes).\nSolvent/environment: MOPAC implicit water (COSMO-type) in absolute mode; no explicit solvent molecules.\nCharges & multiplicities: HA 0/1, A\u207b \u20131/1, H\u207a +1/1.\nSoftware: MOPAC 22.1 via chemkit pka-acidity skill.\nConvergence & caveats: both species optimized without SCF or geometry issues (integrity.trustworthy = true). Warnings from engine reproduced in full above. Single-conformer evaluation; PM7 absolute pKa is suitable only for rough screening, not quantitative prediction.\n\nLive log: a complete run transcript was streamed to the working directory during execution (path reported at run time via chemkit)."
+}

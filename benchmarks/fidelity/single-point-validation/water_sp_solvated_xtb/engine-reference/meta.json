@@ -1,0 +1,23 @@
+{
+  "spec_name": "water_sp_solvated_xtb",
+  "skill": "single-point-energy",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1",
+    "--solvent",
+    "water"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_solvated_xtb/water.xyz",
+  "expect": "compute",
+  "spec_hash": "f44608135799ecea",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260618-163332_water_sp_solvated_xtb__argo_o3"
+}

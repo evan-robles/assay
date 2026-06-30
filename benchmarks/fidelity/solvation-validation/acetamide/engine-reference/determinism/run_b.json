@@ -1,0 +1,46 @@
+{
+  "task": "solvation",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/acetamide/acetamide.xyz",
+  "n_atoms": 9,
+  "atoms": [
+    "O",
+    "N",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py solvation --method xtb --charge 0 --mult 1 --solvent water /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/acetamide/acetamide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpgbzeaqj5/b.json",
+  "delta_G_solv_eV": -0.31736297,
+  "delta_G_solv_hartree": -0.011662874,
+  "delta_G_solv_kcal_mol": -7.318564,
+  "energy_gas_eV": -375.98645,
+  "energy_solv_eV": -376.30381,
+  "geometry_note": "single-point on the supplied geometry; no separate gas/solvent opt",
+  "warnings": [
+    "Electronic \u0394G_solv only \u2014 no cavitation, dispersion-repulsion, or thermal correction. This is an electronic-energy difference E(solv) \u2212 E(gas), not a thermodynamic free energy (no ZPE/entropy).",
+    "Standard-state caveat: the value is NOT corrected to the conventional \u0394G*_solv 1 M (gas) \u2192 1 M (solution) state; the experimental tables you may compare against include a ~1.9 kcal/mol (RT ln 24.46) term this number omits. Do not compare directly to tabulated \u0394G*_solv without adding it.",
+    "Semi-empirical implicit solvation is screening-grade; \u00b12\u20133 kcal/mol typical.",
+    "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+  ],
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "dgsolv_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "delta_G_solv_eV = -0.3173629713948003 (must be finite)"
+      }
+    ]
+  }
+}

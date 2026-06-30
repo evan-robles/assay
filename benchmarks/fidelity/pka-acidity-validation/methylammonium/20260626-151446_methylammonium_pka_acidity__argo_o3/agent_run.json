@@ -1,0 +1,24 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 1,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "pKa": -117.62959350681938,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "Absolute pKa is highly sensitive to the G(H+,aq) reference (~1.4 unit shift between Tissandier 1998 and Kelly 2006). Prefer mode='reference' against a known acid in the same family.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: Aqueous acid dissociation constant pKa (HA \u21cc A\u207b + H\u207a)\nLevel of theory: GFN2-xTB semi-empirical tight-binding\nGeometry provenance: user-supplied protonated (HA) and deprotonated (A\u207b) methylammonium XYZ files, each re-optimized (opt-freq) at the same GFN2-xTB level in an implicit solvent field (no imaginary frequencies found; species judged minima)\nSolvent / environment: ALPB implicit water continuum (no explicit solvent)\nCharges / multiplicities: HA +1, singlet (1); A\u207b 0, singlet (1); H\u207a reference \u2212270.28 kcal mol\u207b\u00b9 (Tissandier 1998 standard)\nSoftware: xtb via chemkit pka-acidity skill (chemkit engine calling xtb; program tag \"xtb\")\nConvergence & caveats: All species converged; 0 genuine imaginary modes. Density fitting inherent to xTB. Warnings reproduced below. Single-conformer protocol; absolute pKa in xTB is suitable only for qualitative screening.\n\nHeadline result\nComputed absolute aqueous pKa (GFN2-xTB/ALPB, 298 K, 1 atm, single-conformer):\npKa = \u2212117.62959350681938\n\nLive log: see /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/20260626-151446_methylammonium_pka_acidity/pka_20260626-151507.out (written during run; contains full SCF and optimizer details)\n\nWarnings (verbatim):\n\u2022 Absolute pKa is highly sensitive to the G(H+,aq) reference (~1.4 unit shift between Tissandier 1998 and Kelly 2006). Prefer mode='reference' against a known acid in the same family.\n\u2022 Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry.\n\nNote: GFN2-xTB absolute pKa values are not quantitatively reliable; they are best used for relative trend screening rather than definitive prediction."
+}

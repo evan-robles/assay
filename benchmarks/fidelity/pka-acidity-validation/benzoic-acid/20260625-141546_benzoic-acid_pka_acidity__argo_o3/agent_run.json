@@ -1,0 +1,25 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "pKa": 4.6616407,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "ref_HA: 1 imaginary mode(s) \u2014 not a true minimum; pKa is approximate.",
+      "ref_A_minus: 1 imaginary mode(s) \u2014 not a true minimum; pKa is approximate.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Benzoic-acid aqueous acidity (pKa) \u2014 computed with the semi-empirical tight-binding method GFN2-xTB (xtb v\u27e8current\u27e9), reference-mode protocol in implicit water (ALPB continuum, \u03b5 \u2248 78.4) at 298.15 K and 1 atm. The four species (benzoic acid, benzoate, acetic acid, acetate) were each xtb-optimized and frequency-analysed at their input geometries (single-conformer treatment; no Boltzmann averaging). Reference anchoring used the experimental pKa of acetic acid (4.76) supplied via --pka-ref. Charges: HA 0, A\u207b \u22121, reference HA 0, reference A\u207b \u22121; all singlet multiplicities. SCF cycles and vibrational analyses converged; soft (< 50 i cm\u207b\u00b9) imaginary modes in the reference pair were treated as floppy rotors, adding uncertainty. Headline result (typical xtb reference accuracy \u00b1 \u22482 pKa units): pKa = 4.6616407 (dimensionless). Live engine log was written during execution to `pka_<timestamp>.out`; full JSON result stored at the path shown in that log."
+}

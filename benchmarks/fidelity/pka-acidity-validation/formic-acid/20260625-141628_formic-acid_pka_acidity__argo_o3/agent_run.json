@@ -1,0 +1,23 @@
+{
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "pKa": 2.0012309,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed aqueous pKa (acid dissociation) of formic acid via an isodesmic \u201creference\u2010mode\u201d calculation relative to acetic acid.\n\nMethod provenance block\nProperty: aqueous pKa (25 \u00b0C, 1 atm)\nLevel of theory: DFT, tier standard (B3LYP/def2-TZVP, RIJK) in PySCF 2.x\nGeometry provenance: user-supplied single conformers (formic acid/ate and acetic acid/ate) evaluated as provided; no re-optimization requested (single-conformer warning surfaced). This is a single-point thermochemistry evaluation on the input geometries.\nSolvent / environment: ddCOSMO implicit water (continuum only, no explicit H-bonding)\nCharge & multiplicity: HA 0/1, A\u207b \u22121/1; reference HA 0/1, reference A\u207b \u22121/1\nMode: reference (isodesmic) with experimental anchor pKa(acetic acid) = 4.76\nConvergence & caveats: all frequency jobs converged with zero genuine imaginary modes; see live *.out* logs for SCF/optimizer details. Density fitting (RIJK) used. Single-conformer approximation; DFT pKa estimates typically carry \u00b11 pKa-unit systematic uncertainty.\n\nHeadline result\npKa(formic acid, aqueous, 298 K) = 2.0012309\n\nLive logs & files\nEach species\u2019 opt/frequency run streamed live to files like /tmp/chemkit_optfreq_f3kflk78/preopt.out (accessible for inspection). Result JSON: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpb_b210fl/live.json. Optimized geometries are in the paths listed in the JSON."
+}

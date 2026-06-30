@@ -1,0 +1,17 @@
+{
+  "spec_name": "chemkit_build",
+  "skill": "build-from-smiles",
+  "flags": [
+    "--charge",
+    "0"
+  ],
+  "positional": "chemkit",
+  "expect": "refusal",
+  "spec_hash": "87c8720f18018f5a",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": true,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260619-134546_chemkit_build__argo_o3"
+}

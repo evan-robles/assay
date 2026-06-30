@@ -1,0 +1,23 @@
+{
+  "spec_name": "acetamide_solvation",
+  "skill": "solvation",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1",
+    "--solvent",
+    "water"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/acetamide/acetamide.xyz",
+  "expect": "compute",
+  "spec_hash": "9b4541e590359fea",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-112956_acetamide_solvation__argo_o3"
+}

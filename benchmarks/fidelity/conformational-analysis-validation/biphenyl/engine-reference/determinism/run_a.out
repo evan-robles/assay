@@ -1,0 +1,282 @@
+# chemkit live log
+# subcommand : scan
+# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/biphenyl/biphenyl.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmplphx4j_c/a.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli scan --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/biphenyl/biphenyl.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmplphx4j_c/a.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/biphenyl/20260625-115427_biphenyl_conformational_analysis/determinism
+# started    : 20260625-115428
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmplphx4j_c/a.json
+# trajectory: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmplphx4j_c/a_dih5_9_11_12.xyz
+# plot: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmplphx4j_c/a_dih5_9_11_12.png
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "conformational_analysis",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/biphenyl/biphenyl.xyz",
+  "n_atoms": 22,
+  "atoms": [
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py scan --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/biphenyl/biphenyl.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmplphx4j_c/a.json",
+  "scan_type": "relaxed_dihedral",
+  "constraint": "exact (ASE FixInternals)",
+  "steps_per_scan": 24,
+  "n_dihedrals_scanned": 1,
+  "dihedrals": [
+    {
+      "atoms_1based": [
+        5,
+        9,
+        11,
+        12
+      ],
+      "n_points": 24,
+      "n_converged": 24,
+      "min_angle_deg": 225.0,
+      "min_energy_kcal_mol": -19306.39910807446,
+      "max_angle_deg": 180.0,
+      "max_energy_kcal_mol": -19303.687729357483,
+      "barrier_kcal_mol": 2.711378716976469,
+      "barrier_grid_kcal_mol": 2.711378716976469,
+      "trajectory": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmplphx4j_c/a_dih5_9_11_12.xyz",
+      "plot": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmplphx4j_c/a_dih5_9_11_12.png",
+      "points": [
+        {
+          "step": 0,
+          "target_deg": 0.0,
+          "measured_deg": 0.0,
+          "energy_kcal_mol": -19303.742225158745,
+          "converged": true,
+          "delta_E_kcal_mol": 2.6568829157149594
+        },
+        {
+          "step": 1,
+          "target_deg": 15.0,
+          "measured_deg": 15.000000000000002,
+          "energy_kcal_mol": -19304.61757667022,
+          "converged": true,
+          "delta_E_kcal_mol": 1.7815314042381942
+        },
+        {
+          "step": 2,
+          "target_deg": 30.0,
+          "measured_deg": 30.000000000000025,
+          "energy_kcal_mol": -19305.928457038404,
+          "converged": true,
+          "delta_E_kcal_mol": 0.4706510360556422
+        },
+        {
+          "step": 3,
+          "target_deg": 45.0,
+          "measured_deg": 45.0,
+          "energy_kcal_mol": -19306.387959193293,
+          "converged": true,
+          "delta_E_kcal_mol": 0.011148881167173386
+        },
+        {
+          "step": 4,
+          "target_deg": 60.0,
+          "measured_deg": 60.00000000000001,
+          "energy_kcal_mol": -19305.768028479746,
+          "converged": true,
+          "delta_E_kcal_mol": 0.6310795947138104
+        },
+        {
+          "step": 5,
+          "target_deg": 75.0,
+          "measured_deg": 75.0,
+          "energy_kcal_mol": -19304.962986782783,
+          "converged": true,
+          "delta_E_kcal_mol": 1.4361212916774093
+        },
+        {
+          "step": 6,
+          "target_deg": 90.0,
+          "measured_deg": 90.0,
+          "energy_kcal_mol": -19304.66054424984,
+          "converged": true,
+          "delta_E_kcal_mol": 1.7385638246196322
+        },
+        {
+          "step": 7,
+          "target_deg": 105.0,
+          "measured_deg": 104.99999999999997,
+          "energy_kcal_mol": -19305.021347289643,
+          "converged": true,
+          "delta_E_kcal_mol": 1.3777607848169282
+        },
+        {
+          "step": 8,
+          "target_deg": 120.0,
+          "measured_deg": 120.00000000000001,
+          "energy_kcal_mol": -19305.845775835467,
+          "converged": true,
+          "delta_E_kcal_mol": 0.5533322389928799
+        },
+        {
+          "step": 9,
+          "target_deg": 135.0,
+          "measured_deg": 135.0,
+          "energy_kcal_mol": -19306.39291505083,
+          "converged": true,
+          "delta_E_kcal_mol": 0.006193023629748495
+        },
+        {
+          "step": 10,
+          "target_deg": 150.0,
+          "measured_deg": 150.0,
+          "energy_kcal_mol": -19305.955096338468,
+          "converged": true,
+          "delta_E_kcal_mol": 0.44401173599180765
+        },
+        {
+          "step": 11,
+          "target_deg": 165.0,
+          "measured_deg": 165.0,
+          "energy_kcal_mol": -19304.625688205517,
+          "converged": true,
+          "delta_E_kcal_mol": 1.773419868943165
+        },
+        {
+          "step": 12,
+          "target_deg": 180.0,
+          "measured_deg": 180.0,
+          "energy_kcal_mol": -19303.687729357483,
+          "converged": true,
+          "delta_E_kcal_mol": 2.711378716976469
+        },
+        {
+          "step": 13,
+          "target_deg": 195.0,
+          "measured_deg": 195.0,
+          "energy_kcal_mol": -19304.600915381732,
+          "converged": true,
+          "delta_E_kcal_mol": 1.7981926927277527
+        },
+        {
+          "step": 14,
+          "target_deg": 210.0,
+          "measured_deg": 210.0,
+          "energy_kcal_mol": -19305.99607163695,
+          "converged": true,
+          "delta_E_kcal_mol": 0.40303643751030904
+        },
+        {
+          "step": 15,
+          "target_deg": 225.0,
+          "measured_deg": 225.0,
+          "energy_kcal_mol": -19306.39910807446,
+          "converged": true,
+          "delta_E_kcal_mol": 0.0
+        },
+        {
+          "step": 16,
+          "target_deg": 240.0,
+          "measured_deg": 240.00000000000003,
+          "energy_kcal_mol": -19305.772200611165,
+          "converged": true,
+          "delta_E_kcal_mol": 0.6269074632946285
+        },
+        {
+          "step": 17,
+          "target_deg": 255.0,
+          "measured_deg": 255.00000000000003,
+          "energy_kcal_mol": -19304.983434567097,
+          "converged": true,
+          "delta_E_kcal_mol": 1.4156735073629534
+        },
+        {
+          "step": 18,
+          "target_deg": 270.0,
+          "measured_deg": 269.9999999999896,
+          "energy_kcal_mol": -19304.661149902782,
+          "converged": true,
+          "delta_E_kcal_mol": 1.7379581716777466
+        },
+        {
+          "step": 19,
+          "target_deg": 285.0,
+          "measured_deg": 285.0,
+          "energy_kcal_mol": -19305.03357558543,
+          "converged": true,
+          "delta_E_kcal_mol": 1.365532489031466
+        },
+        {
+          "step": 20,
+          "target_deg": 300.0,
+          "measured_deg": 299.99999999999994,
+          "energy_kcal_mol": -19305.84814598781,
+          "converged": true,
+          "delta_E_kcal_mol": 0.5509620866505429
+        },
+        {
+          "step": 21,
+          "target_deg": 315.0,
+          "measured_deg": 315.0,
+          "energy_kcal_mol": -19306.393341763745,
+          "converged": true,
+          "delta_E_kcal_mol": 0.005766310714534484
+        },
+        {
+          "step": 22,
+          "target_deg": 330.0,
+          "measured_deg": 330.0,
+          "energy_kcal_mol": -19305.98719901682,
+          "converged": true,
+          "delta_E_kcal_mol": 0.41190905763869523
+        },
+        {
+          "step": 23,
+          "target_deg": 345.0,
+          "measured_deg": 344.99999999999994,
+          "energy_kcal_mol": -19304.655739543152,
+          "converged": true,
+          "delta_E_kcal_mol": 1.7433685313080787
+        }
+      ],
+      "barrier_interpolated_kcal_mol": 2.689649535313947,
+      "max_angle_interpolated_deg": 180.12491325468426,
+      "min_angle_interpolated_deg": 222.34559333795974
+    }
+  ],
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "scan_points_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "dihedral(s) with ZERO converged points: none (every point of a scanned dihedral failed to optimize)"
+      }
+    ]
+  }
+}

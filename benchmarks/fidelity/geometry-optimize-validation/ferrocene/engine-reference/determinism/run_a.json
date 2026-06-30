@@ -1,0 +1,59 @@
+{
+  "task": "geometry_optimization",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ferrocene/ferrocene.xyz",
+  "n_atoms": 21,
+  "atoms": [
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "Fe",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py opt --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ferrocene/ferrocene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7y0dfuqk/a.json",
+  "total_energy_eV": -805.0375,
+  "total_energy_hartree": -29.584583,
+  "total_energy_kcal_mol": -18564.606,
+  "converged": true,
+  "n_steps": 17,
+  "fmax_target_eV_per_A": 0.05,
+  "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ferrocene/20260624-114529_ferrocene_geometry_optimize/determinism/ferrocene_xtb_opt.xyz",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "opt_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "converged = True"
+      },
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -805.0375015012322 (must be a finite number)"
+      }
+    ]
+  }
+}

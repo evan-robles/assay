@@ -1,0 +1,29 @@
+{
+  "spec_name": "anthraquinone_redox_potential",
+  "skill": "redox-potential",
+  "flags": [
+    "--method",
+    "xtb",
+    "--ox-charge",
+    "0",
+    "--red-charge",
+    "-1",
+    "--ox-mult",
+    "1",
+    "--red-mult",
+    "2",
+    "--solvent",
+    "water",
+    "--ref",
+    "SHE"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/anthraquinone/anthraquinone.xyz",
+  "expect": "compute",
+  "spec_hash": "d840d26d5de44778",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260625-115334_anthraquinone_redox_potential__argo_o3"
+}

@@ -1,0 +1,22 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "electronic_energy_eV": -804.80517,
+    "n_atoms": null,
+    "warnings": [
+      "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Property: electronic total energy (E_electronic) of ferrocene\nLevel of theory: GFN2-xTB (semi-empirical tight-binding)\nGeometry provenance: user-supplied ferrocene.xyz; no pre-optimization per --no-preopt, so the Hessian and energy were evaluated at that fixed geometry (single-point frequency calculation, i.e. vib-analysis//input geometry)\nSolvent / environment: gas phase (no implicit solvent)\nCharge & multiplicity: 0, 1 (closed-shell singlet)\nSoftware: xtb via chemkit vibrational-analysis skill (backend xtb 6.x)\nConvergence & caveats: Hessian diagonalization yielded 0 imaginary modes \u2192 stationary minimum; SCF cycles converged (status ok). Density-fitting inherently used by GFN2-xTB. Warning echoed verbatim below.\nLive log: the run streamed to a live .out file in the working directory while executing; path is reproduced in the CLI invocation recorded in the JSON.\n\nHeadline result (gas-phase E_electronic): \u2013804.80517 eV\n\nThe vibrational-analysis task also returns ZPE-corrected enthalpy (H) and Gibbs free energy (G), but per the user request only the electronic energy is reported as the headline value."
+}

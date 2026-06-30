@@ -1,0 +1,25 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "pKa": -131.20166,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "Absolute pKa is highly sensitive to the G(H+,aq) reference (~1.4 unit shift between Tissandier 1998 and Kelly 2006). Prefer mode='reference' against a known acid in the same family.",
+      "HA: 1 imaginary mode(s) \u2014 not a true minimum; pKa is approximate.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance and key details\nProperty: Aqueous pKa (acid dissociation constant, dimensionless, 298.15 K)\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) with ALPB implicit water (continuum) \nGeometry provenance: user-supplied Cartesian coordinates for the protonated (HA, neutral) and deprotonated (A\u207b, charge \u22121) forms of trifluoroacetic acid; each structure was pre-optimized and vibrationally analyzed at the same GFN2-xTB/ALPB level by chemkit\u2019s `pka-acidity` workflow (single-conformer, no additional conformer search).  HA shows one soft (<50 i cm\u207b\u00b9) imaginary mode, treated as a floppiness rather than a true saddle; A\u207b is a genuine minimum (0 imaginary modes).\nSolvent / environment: ALPB implicit water (continuum)\nCharge & multiplicity: HA 0/1, A\u207b \u22121/1 (both closed-shell singlets)\nSoftware: xtb (GFN2-xTB) through chemkit v\u27c2 (backend version not explicitly reported by engine)\nConvergence & caveats: Both species converged.  HA has one soft imaginary mode; see warnings below.  Absolute pKa mode relies on the Tissandier 1998 experimental hydration free energy of H\u207a (\u2212270.28 kcal mol\u207b\u00b9) and is suitable only for qualitative screening.\n\nResult\nGFN2-xTB absolute aqueous pKa (trifluoroacetic acid) = \u2212131.20166\n\nLive log & files\n\u2022 Result JSON written to /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp6fh07cwm/live.json  \n\u2022 The xtb run streamed verbosely to a live log (<pka_YYYYMMDD-HHMMSS>.out) in the working directory; you can inspect it or replay with the `cli_invocation` recorded in the JSON.\n\nCaveats\nxtb absolute pKa values are **not quantitatively accurate** (methodological uncertainty \u2265 ~20 pKa units) and should be used for trend screening only, not for direct comparison to experiment.\n\nWarnings (verbatim from engine)\n1. Absolute pKa is highly sensitive to the G(H+,aq) reference (~1.4 unit shift between Tissandier 1998 and Kelly 2006). Prefer mode='reference' against a known acid in the same family.\n2. HA: 1 imaginary mode(s) \u2014 not a true minimum; pKa is approximate.\n3. Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+}

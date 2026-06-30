@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "dipole_debye": 2.4870753,
+    "n_atoms": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Formaldehyde gas\u2010phase dipole moment\nProperty: dipole magnitude (Debye)\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) using the xtb backend\nGeometry provenance: supplied XYZ (no further optimization; single-point electrostatics)\nSolvent / environment: gas phase (no continuum model)\nCharge 0, multiplicity 1 (closed-shell)\nSoftware: xtb 6.x via chemkit electrostatics skill\nConvergence: SCF self-consistent; integrity check passed (partial charges sum to total charge within tolerance). No warnings were reported.\n\nHeadline result: \u03bc = 2.4870753 D\n\nLive log and result JSON were written during the run (available on request); the calculation command is recorded in the cli_invocation field above."
+}

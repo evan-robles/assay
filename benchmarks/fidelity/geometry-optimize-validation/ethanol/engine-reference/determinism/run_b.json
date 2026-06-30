@@ -1,0 +1,47 @@
+{
+  "task": "geometry_optimization",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ethanol/ethanol.xyz",
+  "n_atoms": 9,
+  "atoms": [
+    "O",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py opt --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ethanol/ethanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp29ih6455/b.json",
+  "total_energy_eV": -310.05515,
+  "total_energy_hartree": -11.394317,
+  "total_energy_kcal_mol": -7150.0416,
+  "converged": true,
+  "n_steps": 13,
+  "fmax_target_eV_per_A": 0.05,
+  "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ethanol/20260624-114456_ethanol_geometry_optimize/determinism/ethanol_xtb_opt.xyz",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "opt_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "converged = True"
+      },
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -310.05514963721396 (must be a finite number)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "spec_name": "hydrogen-cyanide_pka_acidity",
+  "skill": "pka-acidity",
+  "flags": [
+    "--method",
+    "dft",
+    "--mode",
+    "absolute",
+    "--tier",
+    "standard",
+    "--solvent",
+    "water",
+    "--accept-defaults",
+    "--ha",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/ha.xyz",
+    "--a-minus",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz"
+  ],
+  "positional": null,
+  "expect": "compute",
+  "spec_hash": "d2952c288dba802b",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260626-150418_hydrogen-cyanide_pka_acidity__argo_o3"
+}

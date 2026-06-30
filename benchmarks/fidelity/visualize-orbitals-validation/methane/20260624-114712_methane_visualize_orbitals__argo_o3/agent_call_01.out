@@ -1,0 +1,56 @@
+# chemkit live log
+# subcommand : orbitals
+# args       : --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/methane/methane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5c97bqdd/live.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli orbitals --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/methane/methane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5c97bqdd/live.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/methane/20260624-114712_methane_visualize_orbitals
+# started    : 20260624-114728
+# ============================================================
+Unknown section TITLE
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5c97bqdd/live.json
+# molden: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5c97bqdd/live.molden
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "visualize_orbitals",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/methane/methane.xyz",
+  "n_atoms": 5,
+  "atoms": [
+    "C",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py orbitals --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/methane/methane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5c97bqdd/live.json",
+  "molden_path": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5c97bqdd/live.molden",
+  "cube_paths": {},
+  "n_orbitals": 8,
+  "grid_resolution": null,
+  "mo_summary": {
+    "unrestricted": false,
+    "homo_idx_1based": 4,
+    "homo_energy_eV": -12.699914719338038,
+    "lumo_idx_1based": 5,
+    "lumo_energy_eV": 4.151107268219636
+  },
+  "xtb_workdir": "/tmp/chemkit_orb_xtb_ireizzga",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "molden_written",
+        "ok": true,
+        "severity": "error",
+        "detail": "molden_path = '/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5c97bqdd/live.molden' (the orbital file must exist on disk)"
+      }
+    ]
+  }
+}

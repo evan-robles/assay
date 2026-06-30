@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": -310.05515,
+    "n_atoms": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Property: Total electronic energy (E_total) of ethanol, units eV.\nLevel of theory: GFN2-xTB (semi-empirical tight-binding), no Gaussian basis.\nGeometry provenance: starting coordinates supplied in ethanol.xyz; fully relaxed at the same level using chemkit geometry-optimize (ASE BFGS, fmax 0.05 eV \u00c5\u207b\u00b9), 13 steps, converged.\nSolvent / environment: gas phase (no implicit solvation).\nCharge & multiplicity: 0 (neutral), 1 (closed-shell singlet).\nSoftware: xtb 6.x via chemkit backend.\nConvergence: converged = true, fmax criterion met; n_steps = 13. No engine warnings reported.\nLive log: written during run to the default chemkit .out file in the working directory (path echoed at job launch).\n\nThe calculation therefore gives a total electronic energy of \u2212310.05515 eV.\n\nThis value is a semi-empirical absolute energy; compare only with other GFN2-xTB energies, not with ab-initio totals whose zeros differ."
+}

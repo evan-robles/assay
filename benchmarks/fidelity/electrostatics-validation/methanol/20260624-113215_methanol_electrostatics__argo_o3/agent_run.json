@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "dipole_debye": 1.9872799,
+    "n_atoms": 6,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Property: Dipole moment (magnitude) in Debye.\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) using xtb 6.x backend, density-functional tight-binding, no Gaussian basis.\nGeometry provenance: single-point electrostatics evaluation on the fixed input coordinates provided in methanol.xyz; no geometry optimization performed.\nSolvent / environment: gas phase (no implicit solvent model).\nCharge & multiplicity: 0, 1 (assumed neutral singlet).\nSoftware: xtb via chemkit electrostatics skill.\nConvergence & caveats: electronic SCF converged; no warnings from engine. Density-fitting intrinsic to GFN2-xTB. Implicit-only environment; single-conformer calculation.\n\nHeadline result: Dipole(moment) = 1.9872799 D.\n\nLive log: the run wrote live output to a timestamped .out file in the caller\u2019s cwd (path was displayed when the calculation started).\n\nWarnings: none reported by the engine.\nIntegrity check: chemkit reports status ok, trustworthy true; charge-consistency check passed.\n\nThis value is computed; no experimental comparison has been attempted in this report."
+}

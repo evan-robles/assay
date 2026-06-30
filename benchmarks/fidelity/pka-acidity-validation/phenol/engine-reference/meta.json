@@ -1,0 +1,31 @@
+{
+  "spec_name": "phenol_pka_acidity",
+  "skill": "pka-acidity",
+  "flags": [
+    "--method",
+    "xtb",
+    "--mode",
+    "reference",
+    "--pka-ref",
+    "4.76",
+    "--solvent",
+    "water",
+    "--ha",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz",
+    "--a-minus",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz",
+    "--ref-ha",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz",
+    "--ref-a-minus",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz"
+  ],
+  "positional": null,
+  "expect": "compute",
+  "spec_hash": "33a7c6c6bb3421d8",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260626-151540_phenol_pka_acidity__argo_o3"
+}

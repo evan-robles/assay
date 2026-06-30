@@ -1,0 +1,27 @@
+{
+  "spec_name": "furan_fukui_reactivity",
+  "skill": "fukui-reactivity",
+  "flags": [
+    "--method",
+    "dft",
+    "--charge",
+    "0",
+    "--mult",
+    "1",
+    "--tier",
+    "standard",
+    "--functional",
+    "b3lyp",
+    "--basis",
+    "def2-tzvp"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz",
+  "expect": "compute",
+  "spec_hash": "642e0a1f79120fec",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260625-114923_furan_fukui_reactivity__argo_o3"
+}

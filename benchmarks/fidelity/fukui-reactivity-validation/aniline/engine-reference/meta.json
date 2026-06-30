@@ -1,0 +1,27 @@
+{
+  "spec_name": "aniline_fukui_reactivity",
+  "skill": "fukui-reactivity",
+  "flags": [
+    "--method",
+    "dft",
+    "--charge",
+    "0",
+    "--mult",
+    "1",
+    "--tier",
+    "standard",
+    "--functional",
+    "b3lyp",
+    "--basis",
+    "def2-tzvp"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz",
+  "expect": "compute",
+  "spec_hash": "af8fb10827558635",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_source": "ALCF cluster driver --refresh-engine (determinism double-run)"
+}

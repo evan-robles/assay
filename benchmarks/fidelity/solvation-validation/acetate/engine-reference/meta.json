@@ -1,0 +1,23 @@
+{
+  "spec_name": "acetate_solvation",
+  "skill": "solvation",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "-1",
+    "--mult",
+    "1",
+    "--solvent",
+    "water"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/acetate/acetate.xyz",
+  "expect": "compute",
+  "spec_hash": "d97f67710cc37d69",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-113055_acetate_solvation__argo_o3"
+}

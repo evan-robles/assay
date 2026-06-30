@@ -1,0 +1,21 @@
+{
+  "spec_name": "acetonitrile_electrostatics",
+  "skill": "electrostatics",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/acetonitrile/acetonitrile.xyz",
+  "expect": "compute",
+  "spec_hash": "36565827dddc2532",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-111547_acetonitrile_electrostatics__argo_o3"
+}

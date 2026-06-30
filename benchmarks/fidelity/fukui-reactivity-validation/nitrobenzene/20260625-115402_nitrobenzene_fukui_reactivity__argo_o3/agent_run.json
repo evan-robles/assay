@@ -1,0 +1,23 @@
+{
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: condensed Fukui f+ reactivity index of the most electrophilic atom in nitrobenzene (atom 4, C)\nLevel of theory: DFT tier `standard`  (B3LYP/def2-TZVP, density-fitted) in PySCF\nGeometry provenance: user-supplied xyz (\u2026/nitrobenzene.xyz); single-point charges on that fixed geometry (no re-optimization)\nEnvironment: gas phase (no implicit solvent)\nCharge 0, multiplicity 1 (cation/anion runs were at +1, 2 and \u20131, 2 to obtain N\u00b11 states)\nSoftware: chemkit fukui-reactivity skill \u2192 PySCF 2.x backend for DFT\nConvergence & caveats: SCF cycles for neutral, cation and anion all converged; no engine errors.  The integrity checker reports that \u03a3f+ = \u03a3f\u2013 = 1.0000 (expected \u2248 1), flagged only as warnings (see below).\n\nHeadline result\nMost electrophilic site (highest f+): atom 4 (C);  f+ = 0.49641784\n\nReproducibility\nCLI invocation recorded in result JSON:\n  /Users/evane/.../cli.py fukui --method dft --tier standard nitrobenzene.xyz --out \u2026/live.json\nThe engine\u2019s stdout/stderr was streamed live to the default fukui_<timestamp>.out log in the working directory; see that file for SCF and charge-analysis details.\n\nWarnings echoed verbatim\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+}

@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "null": -12.699915,
+    "n_atoms": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance block\nProperty: frontier orbital energies (HOMO and LUMO) of methane, eV\nLevel of theory: GFN2-xTB (semi-empirical tight-binding)\nGeometry provenance: user-supplied methane.xyz (5-atom fixed geometry); the visualize-orbitals run is a single-point calculation (no re-optimization).\nSolvent / environment: gas phase (no implicit solvation model)\nCharge, multiplicity: 0, 1 (closed-shell singlet)\nSoftware / version: xtb 6.x via chemkit visualize-orbitals skill\nConvergence / caveats: SCF and orbital generation completed; integrity.status = ok; no warnings; molden file written at /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/methane/20260624-114712_methane_visualize_orbitals/agent_call_01_molden.molden.\n\nHeadline result (copied exactly from tool): HOMO energy = \u221212.699915 eV (LUMO = 4.1511073 eV; 8 orbitals total).\n\nThe run used chemkit\u2019s visualize-orbitals skill with \u201c--method xtb\u201d, which invokes GFN2-xTB for the single-point calculation and writes a Molden orbital file for visualization.\n\n(provenance: computed)"
+}

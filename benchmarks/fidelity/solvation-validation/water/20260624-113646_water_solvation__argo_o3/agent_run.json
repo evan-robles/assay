@@ -1,0 +1,25 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "delta_G_solv_kcal_mol": -6.0614121,
+    "n_atoms": null,
+    "warnings": [
+      "Electronic \u0394G_solv only \u2014 no cavitation, dispersion-repulsion, or thermal correction. This is an electronic-energy difference E(solv) \u2212 E(gas), not a thermodynamic free energy (no ZPE/entropy).",
+      "Standard-state caveat: the value is NOT corrected to the conventional \u0394G*_solv 1 M (gas) \u2192 1 M (solution) state; the experimental tables you may compare against include a ~1.9 kcal/mol (RT ln 24.46) term this number omits. Do not compare directly to tabulated \u0394G*_solv without adding it.",
+      "Semi-empirical implicit solvation is screening-grade; \u00b12\u20133 kcal/mol typical.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Electronic solvation free energy (\u0394G_solv, E_solv \u2013 E_gas) for water.\nMethod provenance: GFN2-xTB semi-empirical tight-binding with ALPB implicit water in the xtb backend (no Gaussian basis). Geometry: single-point on the supplied water.xyz (no further optimization; calculation is GFN2-xTB//input). Environment: ALPB continuum water (implicit only, no explicit solvent). Charge 0, multiplicity 1. SCF converged.\nCommand: chemkit solvation --method xtb --solvent water water.xyz (see cli_invocation above); live JSON written to /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpiqdiyvwh/live.json (stdout/stderr logged to the matching .out file in the run directory).\nCaveats: semi-empirical accuracy (~\u00b12\u20133 kcal mol\u207b\u00b9); value lacks cavitation/dispersion-repulsion and RT ln 24.46 standard-state correction; single-conformer result.\nHeadline \u0394G_solv(kcal/mol) = -6.0614121"
+}

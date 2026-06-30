@@ -1,0 +1,17 @@
+{
+  "spec_name": "trp-page_build",
+  "skill": "build-from-smiles",
+  "flags": [
+    "--charge",
+    "0"
+  ],
+  "positional": "trp-page",
+  "expect": "refusal",
+  "spec_hash": "3d6998eae835e742",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": true,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260619-141424_trp-page_build__argo_o3"
+}

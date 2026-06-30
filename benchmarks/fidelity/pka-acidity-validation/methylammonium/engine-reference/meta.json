@@ -1,0 +1,27 @@
+{
+  "spec_name": "methylammonium_pka_acidity",
+  "skill": "pka-acidity",
+  "flags": [
+    "--method",
+    "xtb",
+    "--mode",
+    "absolute",
+    "--ha-charge",
+    "1",
+    "--solvent",
+    "water",
+    "--ha",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/ha.xyz",
+    "--a-minus",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/a_minus.xyz"
+  ],
+  "positional": null,
+  "expect": "compute",
+  "spec_hash": "a862cb480db52f22",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260626-151446_methylammonium_pka_acidity__argo_o3"
+}

@@ -1,0 +1,21 @@
+{
+  "spec_name": "ferrocene_fukui_reactivity",
+  "skill": "fukui-reactivity",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz",
+  "expect": "compute",
+  "spec_hash": "f64af750ee32ccc8",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260625-114759_ferrocene_fukui_reactivity__argo_o3"
+}

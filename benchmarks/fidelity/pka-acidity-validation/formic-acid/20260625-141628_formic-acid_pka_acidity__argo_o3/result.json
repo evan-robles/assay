@@ -1,0 +1,67 @@
+{
+  "mode": "live",
+  "expect": "compute",
+  "layer_A_determinism": true,
+  "layer_B_invocation": [
+    {
+      "check": "method",
+      "ok": true,
+      "severity": "error",
+      "intended": "dft",
+      "got": "b3lyp/def2-tzvp"
+    },
+    {
+      "check": "charge",
+      "ok": true,
+      "severity": "error",
+      "intended": 0,
+      "got": 0
+    },
+    {
+      "check": "multiplicity",
+      "ok": true,
+      "severity": "error",
+      "intended": 1,
+      "got": 1
+    },
+    {
+      "check": "solvent",
+      "ok": true,
+      "severity": "error",
+      "intended": "water",
+      "got": "water"
+    }
+  ],
+  "layer_C_reporting": [
+    {
+      "check": "reported pKa",
+      "ok": true,
+      "severity": "error",
+      "truth": 2.0012309,
+      "reported": 2.0012309,
+      "tol": 2.0
+    },
+    {
+      "check": "warnings preserved",
+      "ok": true,
+      "severity": "error",
+      "truth_count": 1,
+      "reported_count": 1
+    },
+    {
+      "check": "integrity verdict surfaced",
+      "ok": true,
+      "severity": "warning",
+      "truth": true,
+      "reported": true
+    },
+    {
+      "check": "provenance not mislabeled experimental",
+      "ok": true,
+      "severity": "error",
+      "got": "computed"
+    }
+  ],
+  "overall": "PASS",
+  "exit_code": 0
+}

@@ -1,0 +1,25 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "logp": 2.2994128,
+    "n_atoms": null,
+    "warnings": [
+      "logP from semi-empirical \u0394G_solv differences is screening-grade; \u00b11 log unit typical.",
+      "Each leg is an electronic-energy difference on a single frozen geometry \u2014 no ZPE/thermal/entropy and no per-phase relaxation. The reported delta_G_solv_* legs are electronic only; the 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference, so logP itself is insensitive to it, but the individual legs are not corrected \u0394G*_solv.",
+      "For chemoinformatic logP, also consider RDKit's Crippen/XLogP (group-contribution).",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance:\nProperty: octanol\u2013water logP (dimensionless partition coefficient)\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) implemented in xtb  (density-fit by construction; no Gaussian basis)\nGeometry provenance: fixed geometry taken directly from the user-supplied file /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/aniline/aniline.xyz; no further optimisation (single-conformer logP = logP//geometry)\nSolvent model: implicit ALPB/GBSA as implemented in xtb for water and for octanol; gas-phase reference explicitly noted; no explicit solvent molecules\nCharge / multiplicity: 0, 1 (neutral singlet)\nSoftware: chemkit logp-partition skill \u2192 xtb backend (version not reported in JSON)\nConvergence & caveats: SCF steps converged for each leg; see warnings echoed above. Single-conformer result, no Boltzmann averaging.\n\nReproducibility: command recorded in result JSON (see cli_invocation), output JSON written to aniline_logp_xtb.json; live engine stdout/stderr were streamed to the default logp_<timestamp>.out file in the working directory (tail \u2011f possible during run)."
+}

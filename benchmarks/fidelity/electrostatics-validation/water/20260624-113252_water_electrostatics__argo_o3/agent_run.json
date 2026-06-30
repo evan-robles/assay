@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "dipole_debye": 2.2870277,
+    "n_atoms": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary (all required fields)\nProperty: molecular dipole moment magnitude (Debye)\nLevel of theory: GFN2-xTB (Grimme\u2019s self-consistent tight-binding, no Gaussian basis)\nGeometry provenance: fixed geometry from user-supplied /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/water/water.xyz; no optimization was performed (single-point electrostatics).\nSolvent / environment: gas phase (no implicit solvent model applied)\nCharge & multiplicity: charge 0, multiplicity 1 (closed-shell singlet)\nSoftware/backend: xtb through chemkit electrostatics skill (version field not returned by engine)\nConvergence & caveats: SCF converged; integrity.status = ok; no warnings reported; partial charges sum to \u20137.2\u00d710\u207b\u00b9\u2076 e, satisfying charge-consistency check.\n\nReproducibility artifacts\n\u2022 Result JSON written to /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp8n9dwp2n/live.json (contains cli_invocation and full output).\n\u2022 A live engine log (.out) was streamed during the run; the file path is given in the engine\u2019s header and can be tailed for full SCF details.\n\nHeadline result\nDipole moment (|\u03bc|) = 2.2870277 Debye  (GFN2-xTB, gas phase, water single-point).\n\nNo experimental comparison is offered here (computed value only)."
+}

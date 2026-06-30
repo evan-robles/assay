@@ -1,0 +1,22 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "electronic_energy_eV": -137.9674,
+    "n_atoms": null,
+    "warnings": [
+      "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Electronic energy (total electronic energy) of water \u2014 GFN2-xTB (xtb v manual), gas phase, charge 0, multiplicity 1. Geometry: user-supplied water.xyz (no pre-optimization; Hessian taken at this fixed geometry). Calculation: chemkit vibrational-analysis skill with --method xtb --no-preopt. SCF converged; 0 imaginary modes. No solvent (gas phase). Warning from engine echoed above about symmetry number defaulting to 1 (may affect thermo quantities; electronic energy unaffected). Result file and live .out were streamed by the skill; electronic_energy_eV returned by chemkit JSON is reported exactly.\n"
+}

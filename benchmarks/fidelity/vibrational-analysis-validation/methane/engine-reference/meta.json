@@ -1,0 +1,22 @@
+{
+  "spec_name": "methane_vibrational_analysis",
+  "skill": "vibrational-analysis",
+  "flags": [
+    "--method",
+    "xtb",
+    "--no-preopt",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methane/methane.xyz",
+  "expect": "compute",
+  "spec_hash": "8445f3e05ff180e3",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-125933_methane_vibrational_analysis__argo_o3"
+}

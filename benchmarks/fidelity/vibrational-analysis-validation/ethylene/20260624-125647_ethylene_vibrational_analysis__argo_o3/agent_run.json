@@ -1,0 +1,22 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "electronic_energy_eV": -170.63026,
+    "n_atoms": null,
+    "warnings": [
+      "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block\nProperty: electronic total energy (E_elec) of ethylene, units eV\nLevel of theory: GFN2-xTB (semi-empirical self-consistent tight-binding)\nGeometry provenance: user-supplied Cartesian coordinates (ethylene.xyz, 6 atoms); vibrational-analysis run with --no-preopt so the Hessian and energy are evaluated on this fixed geometry (single-point energy, no geometry relaxation)\nSolvent / environment: gas phase (no implicit solvent)\nCharge & multiplicity: 0, 1 (closed-shell singlet)\nSoftware/backend: xtb via chemkit vibrational-analysis skill (cli: chemkit ... freq), version as bundled with chemkit\nConvergence & caveats: frequency analysis completed; 0 imaginary frequencies \u2192 stationary point is a minimum. 12 real vibrational modes expected for nonlinear six-atom molecule; obtained 12. The following engine warning was issued and is echoed verbatim:\n\u2022 symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group.\nNo SCF or Hessian convergence problems reported. integrity.trustworthy verdict: true.\n\nLive log & artifacts: the run streamed live to a file freq_<timestamp>.out in the working directory; the final structured result JSON is at /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp4hmpuphf/live.json.\n\nHeadline result\nElectronic energy (GFN2-xTB // supplied geometry, gas phase): -170.63026 eV\n\n(The enthalpy and Gibbs free energy also returned by the task are \u2212169.19439 eV and \u2212169.90801 eV respectively, but are not headline values here.)"
+}

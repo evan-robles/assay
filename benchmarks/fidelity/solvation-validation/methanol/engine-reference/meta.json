@@ -1,0 +1,23 @@
+{
+  "spec_name": "methanol_solvation",
+  "skill": "solvation",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1",
+    "--solvent",
+    "water"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/methanol.xyz",
+  "expect": "compute",
+  "spec_hash": "b47842f74bc0d237",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-113546_methanol_solvation__argo_o3"
+}

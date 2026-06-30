@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : pka
+# args       : --method dft --tier standard --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz --charge-ha 1 --charge-a-minus -1 --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5qcb3ai9/live.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method dft --tier standard --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz --charge-ha 1 --charge-a-minus -1 --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5qcb3ai9/live.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/20260626-150418_hydrogen-cyanide_pka_acidity
+# started    : 20260626-151133
+# ============================================================
+usage: chemkit [-h] [--version]
+               {sp,opt,freq,binding,redox,confsearch,frontier,electrostatics,solvation,logp,profile,pka,build,resolve,fukui,ts,irc,rxn-energy,scan,orbitals}
+               ...
+chemkit: error: unrecognized arguments: --charge-ha 1 --charge-a-minus -1
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

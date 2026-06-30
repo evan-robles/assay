@@ -1,0 +1,17 @@
+{
+  "spec_name": "cisplatin_build",
+  "skill": "build-from-smiles",
+  "flags": [
+    "--charge",
+    "0"
+  ],
+  "positional": "cisplatin",
+  "expect": "structure",
+  "spec_hash": "0a137eaa52e39dc2",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260619-134600_cisplatin_build__argo_o3"
+}

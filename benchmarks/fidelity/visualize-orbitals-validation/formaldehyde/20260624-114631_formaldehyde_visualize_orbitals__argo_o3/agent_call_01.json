@@ -1,0 +1,41 @@
+{
+  "task": "visualize_orbitals",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/formaldehyde/formaldehyde.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "O",
+    "C",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py orbitals --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpfgd_oait/live.json",
+  "molden_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/formaldehyde/20260624-114631_formaldehyde_visualize_orbitals/agent_call_01_molden.molden",
+  "cube_paths": {},
+  "n_orbitals": 10,
+  "grid_resolution": null,
+  "mo_summary": {
+    "unrestricted": false,
+    "homo_idx_1based": 6,
+    "homo_energy_eV": -11.601919,
+    "lumo_idx_1based": 7,
+    "lumo_energy_eV": -8.1920423
+  },
+  "xtb_workdir": "/tmp/chemkit_orb_xtb_zsksa_7o",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "molden_written",
+        "ok": true,
+        "severity": "error",
+        "detail": "molden_path = '/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpfgd_oait/live.molden' (the orbital file must exist on disk)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+case,expect,mode,model,method,solvent,functional,basis,tier,value_field,truth_value,reported_value,n_imaginary,zpe_eV,determinism,overall,failed_checks
+12-dichloroethane,compute,live,argo:o3,GFN2-xTB,,,,,,,,,,pass,PASS,
+12-difluoroethane,compute,live,argo:o3,GFN2-xTB,,,,,,,,,,pass,PASS,
+biphenyl,compute,live,argo:o3,GFN2-xTB,,,,,,,,,,pass,PASS,
+butane,compute,live,argo:o3,GFN2-xTB,,,,,,,,,,pass,PASS,
+ethane,compute,live,argo:o3,GFN2-xTB,,,,,,,,,,pass,PASS,
+ethylene-glycol,compute,live,argo:o3,GFN2-xTB,,,,,,,,,,pass,PASS,
+hydrogen-peroxide,compute,live,argo:o3,GFN2-xTB,,,,,,,,,,pass,PASS,
+propane,compute,live,argo:o3,GFN2-xTB,,,,,,,,,,pass,PASS,

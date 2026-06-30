@@ -1,0 +1,10 @@
+case,expect,mode,model,method,solvent,functional,basis,tier,value_field,truth_value,reported_value,n_imaginary,zpe_eV,determinism,overall,failed_checks
+acetonitrile,compute,live,argo:o3,GFN2-xTB,,,,,dipole_debye,3.87205,3.87205,,,pass,PASS,
+ammonia,compute,live,argo:o3,GFN2-xTB,,,,,dipole_debye,1.87743,1.87743,,,pass,PASS,
+carbon-dioxide,compute,live,argo:o3,GFN2-xTB,,,,,dipole_debye,8.07101e-15,8.07101e-15,,,pass,PASS,
+carbon-monoxide,compute,live,argo:o3,GFN2-xTB,,,,,dipole_debye,0.763505,0.763505,,,pass,PASS,
+formaldehyde,compute,live,argo:o3,GFN2-xTB,,,,,dipole_debye,2.48708,2.48708,,,pass,PASS,
+glycine-zwitterion,compute,live,argo:o3,GFN2-xTB,,,,,dipole_debye,11.6359,11.6359,,,pass,PASS,
+methanol,compute,live,argo:o3,GFN2-xTB,,,,,dipole_debye,1.98728,1.98728,,,pass,PASS,
+methylamine,compute,live,argo:o3,GFN2-xTB,,,,,dipole_debye,1.49452,1.49452,,,pass,PASS,
+water,compute,live,argo:o3,GFN2-xTB,,,,,dipole_debye,2.28703,2.28703,,,pass,PASS,

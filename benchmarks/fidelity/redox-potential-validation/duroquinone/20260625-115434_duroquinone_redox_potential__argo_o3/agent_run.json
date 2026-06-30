@@ -1,0 +1,26 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "redox_potential_V_vs_SHE": 4.5148057,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "mode=adiabatic: each oxidation state was geometry-optimized separately and the potential uses \u0394E between the relaxed geometries (includes reorganization). It does NOT include ZPE/thermal/entropy (\u0394E used in place of \u0394G); use mode=freq for a true \u0394G.",
+      "Solvation is implicit/continuum only (or gas phase) \u2014 no explicit solvent shell and no Born\u2013Haber solvation cycle. Semi-empirical redox potentials are screening-grade (\u2248\u00b10.3\u20130.5 V); even DFT here omits the explicit-solvation correction. Treat as a screening estimate.",
+      "E\u00b0(vs SHE) uses E_abs(SHE) = 4.281 V. The absolute SHE potential is convention-dependent (literature \u22484.28\u20134.44 V); this is a systematic offset on the reported potential. Override with --e-abs-she to match your reference convention.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Adiabatic standard redox potential (E\u00b0) for the duroquinone 0 / \u20131 couple, computed with the chemkit redox-potential skill.\n\nMethod provenance\n\u2022 Property: Adiabatic \u0394E-based standard redox potential, V vs SHE (no ZPE/thermal corrections)\n\u2022 Level of theory: GFN2-xTB (semi-empirical tight-binding)\n\u2022 Geometry: each oxidation state (charge 0 / multiplicity 1 and charge \u20131 / multiplicity 2) was individually geometry-optimized at the same GFN2-xTB level with xTB\u2019s built-in optimizer (both optimizations converged).\n\u2022 Solvent / environment: ALPB implicit water (continuum only, no explicit solvent).\n\u2022 Reference electrode: SHE, using |e|E_abs(SHE) = 4.281 V (chemkit default).\n\u2022 Charge / multiplicity: oxidized 0 / 1; reduced \u20131 / 2.\n\u2022 Software: xTB via chemkit (version as bundled in current chemkit backend).\n\u2022 Convergence: both optimizations converged; integrity check returned \u201ctrustworthy: true\u201d.\n\u2022 Live log: calculation streamed to redox_20260625-115446.out (path provided at run time).\n\nResult\nE\u00b0(GFN2-xTB, water, vs SHE) = 4.5148057 V\n\nCaveats and warnings: see list above \u2014 notably, this is a \u0394E (not \u0394G) single-conformer estimate using an implicit solvent model and a semi-empirical Hamiltonian, so treat as a screening-grade value (expected uncertainty \u22480.3\u20130.5 V)."
+}

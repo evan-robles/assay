@@ -1,0 +1,21 @@
+{
+  "spec_name": "benzene_logp_partition",
+  "skill": "logp-partition",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/benzene.xyz",
+  "expect": "compute",
+  "spec_hash": "06481f3a097d8cdd",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-113050_benzene_logp_partition__argo_o3"
+}

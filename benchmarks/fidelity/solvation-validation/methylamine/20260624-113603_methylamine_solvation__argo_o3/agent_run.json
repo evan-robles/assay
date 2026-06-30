@@ -1,0 +1,25 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "delta_G_solv_kcal_mol": -1.711871,
+    "n_atoms": null,
+    "warnings": [
+      "Electronic \u0394G_solv only \u2014 no cavitation, dispersion-repulsion, or thermal correction. This is an electronic-energy difference E(solv) \u2212 E(gas), not a thermodynamic free energy (no ZPE/entropy).",
+      "Standard-state caveat: the value is NOT corrected to the conventional \u0394G*_solv 1 M (gas) \u2192 1 M (solution) state; the experimental tables you may compare against include a ~1.9 kcal mol\u207b\u00b9 (RT ln 24.46) term this number omits. Do not compare directly to tabulated \u0394G*_solv without adding it.",
+      "Semi-empirical implicit solvation is screening-grade; \u00b12\u20133 kcal mol\u207b\u00b9 typical.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal mol\u207b\u00b9 \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Solvation free energy (\u0394G_solv) of methylamine \u2014 computed with GFN2-xTB (xtb v6.6) using the ALPB implicit-water model. Gas-phase and solvated single-point electronic energies were taken on the user-supplied geometry (`/\u2026/methylamine.xyz`); no additional geometry optimization was performed (GFN2-xTB//input_xyz). Charge 0, multiplicity 1. The result is an electronic \u0394E(solv) \u2011 \u0394E(gas); it does not include cavitation, dispersion-repulsion, thermal, or standard-state corrections. See warnings for scope and limitations. Live engine log and result JSON are located at the path given in `cli_invocation`."
+}

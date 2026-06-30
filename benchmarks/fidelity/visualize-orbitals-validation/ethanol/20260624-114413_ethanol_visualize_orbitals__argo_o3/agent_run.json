@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "null": -11.203363,
+    "n_atoms": 9,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block\nProperty: HOMO orbital energy (eV) for ethanol\nLevel of theory: GFN2-xTB (semi-empirical self-consistent tight-binding, no Gaussian basis)\nGeometry provenance: fixed user-supplied coordinates (ethanol.xyz at /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ethanol/ethanol.xyz); no re-optimization \u2013 single-point SCF for orbitals (notation: GFN2-xTB//user xyz)\nSolvent/environment: gas phase (implicit solvation off)\nCharge & multiplicity: 0, 1 (closed-shell singlet)\nSoftware/backend: xTB 6.6 (invoked via chemkit visualize-orbitals skill)\nConvergence & caveats: SCF finished; n_orbitals = 18; HOMO index 10; no warnings reported by the engine. Density-fitting not applicable to xTB. Implicit continuum only (none here).  \n\nHeadline result\nHOMO energy = \u201311.203363 eV (LUMO = +1.3203392 eV \u21d2 gap \u2248 12.52 eV).\n\nReproducibility\nCLI invocation: \n/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py orbitals --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ethanol/ethanol.xyz\nOrbital file: /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ethanol/20260624-114413_ethanol_visualize_orbitals/agent_call_01_molden.molden\nxtb workdir: /tmp/chemkit_orb_xtb_xtvruqjc\nThe live engine log was streamed to the caller\u2019s cwd during the run (path surfaced at launch)."
+}

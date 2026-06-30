@@ -1,0 +1,16 @@
+{
+  "spec_name": "benzaldehyde_fukui_reactivity",
+  "spec_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde_fukui_reactivity.spec.json",
+  "skill": "fukui-reactivity",
+  "input": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz",
+  "input_kind": "xyz",
+  "mode": "live",
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ],
+  "model": "argo:o3",
+  "endpoint": "http://0.0.0.0:51664/v1",
+  "git_commit": "4004060",
+  "timestamp": "2026-06-25T10:41:54"
+}

@@ -1,0 +1,21 @@
+{
+  "spec_name": "ethanol_geometry_optimize",
+  "skill": "geometry-optimize",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ethanol/ethanol.xyz",
+  "expect": "compute",
+  "spec_hash": "11cbd1a91d06fcf6",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-114456_ethanol_geometry_optimize__argo_o3"
+}

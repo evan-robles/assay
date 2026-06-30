@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "dipole_debye": 0.76350522,
+    "n_atoms": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block\n\nProperty: molecular dipole moment magnitude (|\u03bc|) and Mulliken partial charges.\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) as implemented in xtb (program label \"xtb\"; version not reported by engine). Density-fitting is intrinsic to GFN2-xTB (no Gaussian basis).\nGeometry provenance: user-supplied Cartesian coordinates in /Users/evane/Desktop/\u2026/carbon_monoxide.xyz; no further geometry optimization \u2013 this was a single-point electrostatics evaluation (GFN2-xTB//input xyz).\nSolvent / environment: gas phase (no implicit solvent; continuum models off).\nCharge & multiplicity: neutral singlet (charge 0, multiplicity 1).\nSoftware/backend: xtb via chemkit electrostatics skill (CLI shown below).\nConvergence & caveats: SCF self-consistent; integrity check passed (sum of partial charges within 4.4\u00d710\u207b\u00b9\u2076 e of 0). No warnings were issued by the engine.\n\nHeadline result\nDipole moment |\u03bc| = 0.76350522 D\nDipole vector (Debye): [ 0.76350522, \u22121.48\u00d710\u207b\u00b9\u2075, 1.46\u00d710\u207b\u00b9\u2078 ]\nMulliken partial charges (e): O \u22120.034304897, C +0.034304897 (sum \u2248 0 e).\n\nReproducibility\nCLI invocation: /Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/carbon_monoxide/carbon_monoxide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmph_81nym4/live.json\nThe live stdout/stderr log was streamed during the run to a .out file in the caller\u2019s working directory (same timestamped stem as the .json result). The result JSON is at /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmph_81nym4/live.json.\n\nNo experimental comparison is offered; ask if you would like one located and verified."
+}

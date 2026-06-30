@@ -1,0 +1,23 @@
+{
+  "spec_name": "acetic-acid_solvation",
+  "skill": "solvation",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1",
+    "--solvent",
+    "water"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/acetic-acid/acetic_acid.xyz",
+  "expect": "compute",
+  "spec_hash": "3ffc118dbfdfe643",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-113249_acetic-acid_solvation__argo_o3"
+}

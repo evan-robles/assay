@@ -1,0 +1,25 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "delta_G_solv_kcal_mol": -3.6506569,
+    "n_atoms": null,
+    "warnings": [
+      "Electronic \u0394G_solv only \u2014 no cavitation, dispersion-repulsion, or thermal correction. This is an electronic-energy difference E(solv) \u2212 E(gas), not a thermodynamic free energy (no ZPE/entropy).",
+      "Standard-state caveat: the value is NOT corrected to the conventional \u0394G*_solv 1 M (gas) \u2192 1 M (solution) state; the experimental tables you may compare against include a \u22481.9 kcal mol\u207b\u00b9 (RT ln 24.46) term this number omits. Do not compare directly to tabulated \u0394G*_solv without adding it.",
+      "Semi-empirical implicit solvation is screening-grade; \u00b12\u20133 kcal mol\u207b\u00b9 typical.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal mol\u207b\u00b9 \u2014 shifting pK_a by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Phenol electronic solvation free energy  \nProperty: \u0394G_solv (electronic) = \u20133.6506569 kcal mol\u207b\u00b9\n\nMethod provenance:  \n\u2022 Level of theory: GFN2-xTB semi-empirical tight-binding  \n\u2022 Geometry: single-point on the supplied phenol.xyz (no separate gas/solvent optimizations)  \n\u2022 Solvent model: ALPB implicit water (continuum); gas-phase reference explicitly stated  \n\u2022 Charge 0, multiplicity 1 (neutral singlet)  \n\u2022 Backend: xtb 6.x via chemkit solvation skill  \n\u2022 Convergence: SCF converged; result flagged trustworthy by chemkit integrity check  \n\u2022 Warnings surfaced verbatim above (electronic-only \u0394G_solv, standard-state and conformer caveats)\n\nLive log was written during execution to a timestamped .out file as per chemkit standards, along with the JSON result for full reproducibility."
+}

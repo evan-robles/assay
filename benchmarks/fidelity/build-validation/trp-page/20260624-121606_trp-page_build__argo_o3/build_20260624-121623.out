@@ -1,0 +1,29 @@
+# chemkit live log
+# subcommand : build
+# args       : trp-page --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpszf0jx1s/live.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli build trp-page --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpszf0jx1s/live.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/trp-page/20260624-121606_trp-page_build
+# started    : 20260624-121623
+# ============================================================
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py", line 1003, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py", line 936, in main
+    result = _dispatch(args, parser, cli, pyscf_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py", line 365, in _dispatch
+    return build_task.run(
+           ^^^^^^^^^^^^^^^
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/tasks/build.py", line 179, in run
+    resolution = resolve_name_to_smiles(molecule)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/resolve.py", line 369, in resolve_name_to_smiles
+    raise LookupError(
+LookupError: Could not resolve 'trp-page' to a SMILES from any reliable source. Tried: PubChem, OPSIN, NIST WebBook. Check the spelling, supply a SMILES string directly, or provide an .xyz file.
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

@@ -1,0 +1,25 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "logp": 1.5524782,
+    "n_atoms": null,
+    "warnings": [
+      "logP from semi-empirical \u0394G_solv differences is screening-grade; \u00b11 log unit typical.",
+      "Each leg is an electronic-energy difference on a single frozen geometry \u2014 no ZPE/thermal/entropy and no per-phase relaxation. The reported delta_G_solv_* legs are electronic only; the 1 atm\u21921 M standard-state term cancels in the water\u2013octanol difference, so logP itself is insensitive to it, but the individual legs are not corrected \u0394G*_solv.",
+      "For chemoinformatic logP, also consider RDKit's Crippen/XLogP (group-contribution).",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal mol\u207b\u00b9 \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance.\nProperty: Octanol\u2013water partition coefficient logP (dimensionless, base-10 logarithm of the concentration ratio C_octanol/C_water).\nLevel of theory: semi-empirical tight-binding GFN2-xTB (xtb), no Gaussian basis; implicit-solvation energies obtained with xtb\u2019s ALPB/GBSA continuum models.\nGeometry provenance: fixed input geometry from /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/diethyl-ether/diethyl_ether.xyz (single conformer supplied by the user), not re-optimized at xtb. The logP calculation is therefore a single-point electronic \u0394G_solv difference at that geometry (GFN2-xTB//input_xyz).\nEnvironment: implicit water and implicit 1-octanol for the two solvation legs; the reference gas-phase energy used xtb\u2019s gas-phase Hamiltonian. No explicit solvent molecules.\nCharge and multiplicity: 0, 1 (closed-shell singlet).\nSoftware/backend: xtb via chemkit logp-partition skill (xtb version as shipped with chemkit; version string not included in the JSON).\nConvergence & caveats: electronic single points converged; skill returned integrity.status \"ok\" (trustworthy=true). Engine warnings reproduced verbatim below. No geometry optimization or conformer averaging was performed.\nLive .out log: the run streamed to a file named logp_<timestamp>.out in the working directory; JSON results were written to /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpv08jh5nt/live.json (path from cli_invocation). You can inspect the full SCF cycles and solver messages there.\n\nHeadline result (GFN2-xTB, gas phase geometry, implicit-solvation difference):\nlogP = 1.5524782"
+}

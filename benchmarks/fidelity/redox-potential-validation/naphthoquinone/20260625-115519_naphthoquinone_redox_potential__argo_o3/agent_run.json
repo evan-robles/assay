@@ -1,0 +1,26 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": "water",
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "redox_potential_V_vs_SHE": 4.5884454,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "mode=adiabatic: each oxidation state was geometry-optimized separately and the potential uses \u0394E between the relaxed geometries (includes reorganization). It does NOT include ZPE/thermal/entropy (\u0394E used in place of \u0394G); use mode=freq for a true \u0394G.",
+      "Solvation is implicit/continuum only (or gas phase) \u2014 no explicit solvent shell and no Born\u2013Haber solvation cycle. Semi-empirical redox potentials are screening-grade (\u2248\u00b10.3\u20130.5 V); even DFT here omits the explicit-solvation correction. Treat as a screening estimate.",
+      "E\u00b0(vs SHE) uses E_abs(SHE) = 4.281 V. The absolute SHE potential is convention-dependent (literature \u22484.28\u20134.44 V); this is a systematic offset on the reported potential. Override with --e-abs-she to match your reference convention.",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Standard redox potential (0 \u2192 \u22121 couple) for naphthoquinone \u2014 GFN2-xTB in implicit water (ALPB), referenced to the standard hydrogen electrode (SHE).\n\nMethod provenance:\n1. Property: Standard redox potential, E\u00b0 (V vs SHE), adiabatic \u0394E (no vibrational/thermal correction).\n2. Level of theory: GFN2-xTB (semi-empirical tight-binding).\n3. Geometry provenance: Each oxidation state (oxidized charge 0 multiplicity 1; reduced charge \u22121 multiplicity 2) was independently geometry-optimized at GFN2-xTB (xtb/ASE BFGS optimizer, default fmax 0.05 eV \u00c5\u207b\u00b9). Both optimizations converged.\n4. Environment: implicit water (ALPB continuum); no explicit solvent.\n5. Charge/multiplicity: oxidized 0/1; reduced \u22121/2.\n6. Software: chemkit redox-potential skill (xtb backend v. as bundled), live log at\n   /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/20260625-115519_naphthoquinone_redox_potential/redox_20260625-115529.out (written during run).\n7. Convergence & caveats: Both optimizations converged; see warnings echoed above. Density-fitting is intrinsic to GFN2-xTB. Single-conformer, no ZPE/thermal corrections; screening-grade accuracy (~0.3\u20130.5 V).\n\nHeadline result (from chemkit JSON key redox_potential_V_vs_SHE): 4.5884454 V vs SHE.\n\nAll warnings from the engine are reproduced verbatim above. The calculation passed chemkit\u2019s integrity checks (integrity.status: ok; trustworthy: true)."
+}

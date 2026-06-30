@@ -1,0 +1,37 @@
+{
+  "task": "conformational_analysis",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/hydrogen-peroxide/hydrogen-peroxide.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "O",
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py scan --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/hydrogen-peroxide/hydrogen-peroxide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpv43rm_xy/a.json",
+  "scan_type": "relaxed_dihedral",
+  "constraint": "exact (ASE FixInternals)",
+  "steps_per_scan": 24,
+  "n_dihedrals_scanned": 0,
+  "dihedrals": [],
+  "warnings": [
+    "No rotatable dihedrals detected (or supplied) \u2014 nothing to scan. For rigid molecules use --dihedral i,j,k,l to force a scan."
+  ],
+  "integrity": {
+    "status": "warning",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "scan_has_dihedral",
+        "ok": false,
+        "severity": "warning",
+        "detail": "no dihedral was scanned (no rotatable bond found or supplied)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "spec_name": "acetate_geometry_optimize",
+  "skill": "geometry-optimize",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "-1",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/acetate/acetate.xyz",
+  "expect": "compute",
+  "spec_hash": "554e14b13139d162",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-114139_acetate_geometry_optimize__argo_o3"
+}

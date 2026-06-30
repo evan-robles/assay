@@ -1,0 +1,21 @@
+{
+  "spec_name": "carbon-monoxide_electrostatics",
+  "skill": "electrostatics",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/carbon-monoxide/carbon_monoxide.xyz",
+  "expect": "compute",
+  "spec_hash": "2468516785874b1a",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-111837_carbon-monoxide_electrostatics__argo_o3"
+}

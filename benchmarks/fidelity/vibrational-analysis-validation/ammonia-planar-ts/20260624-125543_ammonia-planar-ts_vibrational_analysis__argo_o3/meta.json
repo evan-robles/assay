@@ -1,0 +1,16 @@
+{
+  "spec_name": "ammonia-planar-ts_vibrational_analysis",
+  "spec_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/ammonia-planar-ts_vibrational_analysis.spec.json",
+  "skill": "vibrational-analysis",
+  "input": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/ammonia-planar-ts.xyz",
+  "input_kind": "xyz",
+  "mode": "live",
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ],
+  "model": "argo:o3",
+  "endpoint": "http://0.0.0.0:51664/v1",
+  "git_commit": "a875091",
+  "timestamp": "2026-06-24T12:55:43"
+}

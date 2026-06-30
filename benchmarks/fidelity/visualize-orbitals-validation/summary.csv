@@ -1,0 +1,10 @@
+case,expect,mode,model,method,solvent,functional,basis,tier,determinism,overall,failed_checks
+ammonia,compute,live,argo:o3,GFN2-xTB,,,,,pass,PASS,
+benzene,compute,live,argo:o3,GFN2-xTB,,,,,pass,PASS,
+ethanol,compute,live,argo:o3,GFN2-xTB,,,,,pass,PASS,
+ethylene,compute,live,argo:o3,GFN2-xTB,,,,,pass,PASS,
+ferrocene,compute,live,argo:o3,GFN2-xTB,,,,,pass,PASS,
+formaldehyde,compute,live,argo:o3,GFN2-xTB,,,,,pass,PASS,
+methane,compute,live,argo:o3,GFN2-xTB,,,,,pass,PASS,
+pyridine,compute,live,argo:o3,GFN2-xTB,,,,,pass,PASS,
+water,compute,live,argo:o3,GFN2-xTB,,,,,pass,PASS,

@@ -1,0 +1,58 @@
+# chemkit live log
+# subcommand : electrostatics
+# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/ammonia/ammonia.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7bw38oy_/a.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli electrostatics --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/ammonia/ammonia.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7bw38oy_/a.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/ammonia/20260624-111651_ammonia_electrostatics/determinism
+# started    : 20260624-111652
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7bw38oy_/a.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "electrostatics",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/ammonia/ammonia.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "N",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/ammonia/ammonia.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7bw38oy_/a.json",
+  "total_energy_eV": -120.43846963870868,
+  "total_energy_hartree": -4.426032123096886,
+  "total_energy_kcal_mol": -2777.3770897500276,
+  "dipole_debye": 1.8774298782057863,
+  "dipole_vector_debye": [
+    1.2248019646167976,
+    0.17480910642803135,
+    1.4121065368308654
+  ],
+  "partial_charges": [
+    -0.42539268820380555,
+    0.14180091888912807,
+    0.14179421703416484,
+    0.14179755228051338
+  ],
+  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
+  "sum_of_charges": 7.494005416219807e-16,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "charge_consistency",
+        "ok": true,
+        "severity": "error",
+        "detail": "sum_of_charges = 7.494005416219807e-16, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+      }
+    ]
+  }
+}

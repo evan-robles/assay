@@ -1,0 +1,21 @@
+{
+  "spec_name": "methylamine_electrostatics",
+  "skill": "electrostatics",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/methylamine/methylamine.xyz",
+  "expect": "compute",
+  "spec_hash": "d4d8bb06f378be6f",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260624-112312_methylamine_electrostatics__argo_o3"
+}

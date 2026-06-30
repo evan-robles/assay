@@ -1,0 +1,82 @@
+# chemkit live log
+# subcommand : freq
+# args       : --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1o8a_33_/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1o8a_33_/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/20260624-125834_formaldehyde_vibrational_analysis
+# started    : 20260624-125837
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1o8a_33_/truth.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "vibrational_thermochemistry",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/formaldehyde.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "O",
+    "C",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1o8a_33_/truth.json",
+  "electronic_energy_eV": -195.21817338730133,
+  "zpe_eV": 0.6716168671814057,
+  "zpe_kcal_mol": 15.48785288948731,
+  "enthalpy_eV": -194.4418436677241,
+  "entropy_eV_per_K": 0.002330566158413584,
+  "gibbs_free_energy_eV": -195.13670196785512,
+  "temperature_K": 298.15,
+  "pressure_Pa": 101325.0,
+  "geometry": "nonlinear",
+  "symmetry_number": 1,
+  "n_real_vib_modes": 6,
+  "n_imaginary_modes": 0,
+  "vibrational_frequencies_cm-1": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1019.523448539593,
+    1067.2845733307279,
+    1456.8207800208988,
+    1620.6098884827206,
+    2828.7826726619437,
+    2840.889342498114
+  ],
+  "n_soft_imaginary_modes": 0,
+  "n_saddle_imaginary_modes": 0,
+  "geometry_auto_detected": true,
+  "warnings": [
+    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+  ],
+  "preopt": {
+    "performed": false
+  },
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "n_imag_stationary_point",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_imaginary_modes = 0 (0 = minimum, 1 = valid first-order saddle/TS; >=2 = higher-order saddle, not a usable stationary point)"
+      },
+      {
+        "name": "gibbs_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "gibbs_free_energy_eV = np.float64(-195.13670196785512) (must be finite)"
+      }
+    ]
+  }
+}

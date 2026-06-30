@@ -1,0 +1,20 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Ethane C\u2013C torsional (H\u2013C\u2013C\u2013H) rotation barrier \u2014 semi-empirical tight-binding, GFN2-xTB (xtb backend) in the chemkit conformational-analysis skill, gas phase, charge 0, multiplicity 1.\n\nGeometry provenance: user-supplied ethane.xyz; a 24-point relaxed dihedral scan about atoms 3-1-2-6 was carried out at the same level (GFN2-xTB//GFN2-xTB). All scan points converged.\n\nRotation barrier (eclipsed \u2192 staggered): \u0394E\u2021 = 2.58599 kcal mol\u207b\u00b9.\n\nNo warnings were reported; integrity check marked the result trustworthy.\n\nCommand (see result JSON `cli_invocation`): `... scan --method xtb ethane.xyz`. Log and trajectory files were written alongside the result JSON (live `.out` path in run directory)."
+}

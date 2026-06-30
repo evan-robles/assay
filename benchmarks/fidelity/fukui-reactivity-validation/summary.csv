@@ -1,0 +1,10 @@
+case,expect,mode,model,method,solvent,functional,basis,tier,value_field,truth_value,reported_value,n_imaginary,zpe_eV,determinism,overall,failed_checks
+acrolein,compute,live,argo:o3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,,,,pass,PASS,
+aniline,compute,live,argo:o3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,,,pass,PASS,
+benzaldehyde,compute,live,argo:o3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,,,pass,PASS,
+ferrocene,compute,live,argo:o3,GFN2-xTB,,,,,n_atoms,21,,,,pass,PASS,
+formaldehyde,compute,live,argo:o3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,,,,pass,PASS,
+furan,compute,live,argo:o3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,,,,pass,PASS,
+nitrobenzene,compute,live,argo:o3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,,,pass,PASS,
+phenol,compute,live,argo:o3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,,,,pass,PASS,
+pyridine,compute,live,argo:o3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,,,,pass,PASS,

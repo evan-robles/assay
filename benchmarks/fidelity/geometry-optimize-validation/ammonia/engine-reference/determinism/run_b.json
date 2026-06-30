@@ -1,0 +1,42 @@
+{
+  "task": "geometry_optimization",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ammonia/ammonia.xyz",
+  "n_atoms": 4,
+  "atoms": [
+    "N",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py opt --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ammonia/ammonia.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpr0q045dl/b.json",
+  "total_energy_eV": -120.44421,
+  "total_energy_hartree": -4.4262431,
+  "total_energy_kcal_mol": -2777.5095,
+  "converged": true,
+  "n_steps": 4,
+  "fmax_target_eV_per_A": 0.05,
+  "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ammonia/20260624-114243_ammonia_geometry_optimize/determinism/ammonia_xtb_opt.xyz",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "opt_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "converged = True"
+      },
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -120.44421121838967 (must be a finite number)"
+      }
+    ]
+  }
+}

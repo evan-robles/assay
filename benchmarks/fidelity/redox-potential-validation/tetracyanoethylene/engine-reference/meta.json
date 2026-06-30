@@ -1,0 +1,32 @@
+{
+  "spec_name": "tetracyanoethylene_redox_potential",
+  "skill": "redox-potential",
+  "flags": [
+    "--method",
+    "dft",
+    "--ox-charge",
+    "0",
+    "--red-charge",
+    "-1",
+    "--ox-mult",
+    "1",
+    "--red-mult",
+    "2",
+    "--solvent",
+    "water",
+    "--ref",
+    "SHE",
+    "--tier",
+    "standard",
+    "--accept-defaults"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/tetracyanoethylene/tetracyanoethylene.xyz",
+  "expect": "compute",
+  "spec_hash": "e30412551be588c7",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260625-115621_tetracyanoethylene_redox_potential__argo_o3"
+}

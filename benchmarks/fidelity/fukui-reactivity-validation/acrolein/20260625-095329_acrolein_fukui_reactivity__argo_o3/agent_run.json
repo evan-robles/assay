@@ -1,0 +1,23 @@
+{
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary:\nProperty: largest electrophilic Fukui function f\u207a for acrolein (\u03b2-carbon)\nLevel of theory: DFT tier \u201cstandard\u201d = B3LYP/def2-TZVP with RI-JK density fitting (PySCF)\nGeometry provenance: single-point on user-supplied acrolein.xyz (no re-optimization)\nEnvironment: gas phase (no implicit solvent)\nCharge 0, multiplicity 1; N+1 cation (charge +1, mult 2) and N\u20131 anion (charge \u20131, mult 2) for Fukui \u00b1 calculations\nSoftware backend: chemkit fukui-reactivity skill \u2192 PySCF 2.x\nConvergence: all three SCFs converged; integrity checker marks charge conservation OK. Warnings echoed below.\n\nHeadline result\nMost electrophilic site: atom 4 (C)  f\u207a = 0.64232102 (dimensionless)\n\nWarnings from engine (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\nLive log was written during the run (fukui_<timestamp>.out); structured JSON at the path shown in the CLI invocation. All results are computed; no experimental values were used."
+}

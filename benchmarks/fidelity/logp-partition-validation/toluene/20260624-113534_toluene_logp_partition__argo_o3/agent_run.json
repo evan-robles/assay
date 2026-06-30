@@ -1,0 +1,25 @@
+{
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "logp": 2.3344329,
+    "n_atoms": null,
+    "warnings": [
+      "logP from semi-empirical \u0394G_solv differences is screening-grade; \u00b11 log unit typical.",
+      "Each leg is an electronic-energy difference on a single frozen geometry \u2014 no ZPE/thermal/entropy and no per-phase relaxation. The reported delta_G_solv_* legs are electronic only; the 1 atm\u21921 M standard-state term cancels in the water\u2013octanol difference, so logP itself is insensitive to it, but the individual legs are not corrected \u0394G*_solv.",
+      "For chemoinformatic logP, also consider RDKit's Crippen/XLogP (group-contribution).",
+      "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block:\nProperty: octanol\u2013water partition coefficient (log P, dimensionless)\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) as implemented in xtb (backend version not reported)\nGeometry provenance: supplied by user (toluene.xyz, 15 atoms); single-point energies on this fixed geometry (no optimization)\nSolvent/environment: implicit ALPB solvation models for water and for octanol; the gas-phase geometry was reused for both solvated single points (no per-phase relaxation). Charge 0, multiplicity 1.\nSoftware: xtb via chemkit logp skill; command recorded in result JSON (see cli_invocation)\nConvergence/caveats: not an optimization; single-point energies converged. The engine returned the warnings reproduced above; no additional issues flagged.\n\nHeadline result (GFN2-xTB, single-conformer): log P \u2248 2.3344329 (dimensionless).\n\nReproducibility: calculation was run through chemkit\u2019s logp skill; the full command is in cli_invocation and the live JSON at /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmprvp_ybv4/live.json captures every field returned by the engine."
+}

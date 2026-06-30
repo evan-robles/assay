@@ -1,0 +1,21 @@
+{
+  "spec_name": "biphenyl_conformational_analysis",
+  "skill": "conformational-analysis",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/biphenyl/biphenyl.xyz",
+  "expect": "compute",
+  "spec_hash": "f5e7ec2d75185006",
+  "determinism_ok": true,
+  "determinism_msg": "migrated; determinism PASS in original run",
+  "engine_failed": false,
+  "git_commit": "3428dfc",
+  "timestamp": "migrated",
+  "_migrated_from": "20260625-115427_biphenyl_conformational_analysis__argo_o3"
+}

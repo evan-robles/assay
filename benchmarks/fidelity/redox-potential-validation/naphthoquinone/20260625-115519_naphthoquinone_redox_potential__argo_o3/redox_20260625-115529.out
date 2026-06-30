@@ -1,0 +1,26 @@
+# chemkit live log
+# subcommand : redox
+# args       : --method xtb --solvent water --reference SHE --oxidized-charge 0 --oxidized-mult 1 --reduced-charge -1 --reduced-mult 2 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/naphthoquinone.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpyqh9_1l9/live.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli redox --method xtb --solvent water --reference SHE --oxidized-charge 0 --oxidized-mult 1 --reduced-charge -1 --reduced-mult 2 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/naphthoquinone.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpyqh9_1l9/live.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/20260625-115519_naphthoquinone_redox_potential
+# started    : 20260625-115529
+# ============================================================
+usage: chemkit redox [-h] --method {xtb,mopac,dft,hf} [--charge CHARGE]
+                     [--mult MULTIPLICITY] [--solvent SOLVENT]
+                     [--solvent-model {ddcosmo,cpcm,iefpcm}]
+                     [--tier {fast,standard,accurate}]
+                     [--functional FUNCTIONAL] [--basis BASIS] [--density-fit]
+                     [--out OUT] [--accept-defaults]
+                     [--stdout {json,path,none}] [--allow-unconverged]
+                     [--verbose VERBOSE] --ox-charge OX_CHARGE --red-charge
+                     RED_CHARGE [--ox-mult OX_MULT] [--red-mult RED_MULT]
+                     [--ref {SHE,Ag/AgCl,Fc+/Fc}] [--n-electrons N_ELECTRONS]
+                     [--mode {adiabatic,vertical,freq}] [--fmax FMAX]
+                     [--temperature TEMPERATURE] [--pressure PRESSURE]
+                     [--e-abs-she E_ABS_SHE]
+                     input
+chemkit redox: error: the following arguments are required: --ox-charge, --red-charge
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

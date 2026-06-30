@@ -1,0 +1,22 @@
+{
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "total_energy_eV": null,
+    "n_atoms": null,
+    "warnings": [
+      "Could not resolve 'chemkit' to a SMILES from any reliable source. Tried: PubChem, OPSIN, NIST WebBook. Check the spelling, supply a SMILES string directly, or provide an .xyz file."
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "Build attempt failed \u2014 the build-from-smiles skill could not resolve the name \u201cchemkit\u201d to any registered chemical identifier in PubChem, OPSIN, or the NIST WebBook, so no SMILES string and therefore no 3-D coordinates could be generated. Please provide the molecule\u2019s SMILES string or an existing structure file so I can proceed."
+}
