@@ -11,9 +11,6 @@ inputs gracefully.
 from __future__ import annotations
 import os
 import re
-import shutil
-import subprocess
-import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..calculators import mopac_chemistry_keywords
@@ -25,6 +22,7 @@ from ..schema import (
     element_warnings,
 )
 from ..constants import KCAL_TO_EV, EV_TO_KCAL
+from ._mopac_parsers import run_mopac
 
 
 KCAL_PER_MOL_TO_EV = KCAL_TO_EV  # eV per kcal/mol (single-sourced from constants)
@@ -157,29 +155,19 @@ def _run_mopac(
     *, input_path, atoms, symbols, charge, multiplicity, solvent,
     fmax, steps, out_xyz, cli,
 ) -> Dict[str, Any]:
-    mopac_exe = shutil.which("mopac")
-    if mopac_exe is None:
-        raise FileNotFoundError("mopac executable not found in PATH.")
-
-    workdir = tempfile.mkdtemp(prefix="chemkit_mopac_opt_")
-    mop_path = os.path.join(workdir, "mopac.mop")
-    out_path = os.path.join(workdir, "mopac.out")
-    arc_path = os.path.join(workdir, "mopac.arc")
-
     keywords = _mopac_opt_keywords(
         charge=charge, multiplicity=multiplicity, solvent=solvent,
         fmax=fmax, steps=steps,
     )
-    _write_mopac_input(mop_path, keywords, symbols, atoms.get_positions())
-
-    proc = subprocess.run(
-        [mopac_exe, "mopac.mop"],
-        cwd=workdir, capture_output=True, text=True, timeout=600,
+    workdir, proc, out_path = run_mopac(
+        keywords, atoms, symbols, title="chemkit geometry optimization",
+        stem="mopac", timeout=600,
     )
+    arc_path = os.path.join(workdir, "mopac.arc")
 
-    if not os.path.isfile(out_path):
+    if out_path is None or not os.path.isfile(out_path):
         raise RuntimeError(
-            f"mopac did not produce {out_path}.\n"
+            f"mopac did not produce a .out file in {workdir}.\n"
             f"stdout: {proc.stdout[-1000:]}\nstderr: {proc.stderr[-1000:]}"
         )
 
@@ -269,18 +257,6 @@ def _mopac_opt_keywords(
     kw += mopac_chemistry_keywords(charge, multiplicity, solvent)
     kw.append("THREADS=1")
     return kw
-
-
-def _write_mopac_input(
-    path: str, keywords: List[str], symbols: List[str], positions,
-) -> None:
-    lines = [" ".join(keywords), "chemkit geometry optimization", ""]
-    for sym, (x, y, z) in zip(symbols, positions):
-        lines.append(
-            f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1"
-        )
-    with open(path, "w") as f:
-        f.write("\n".join(lines) + "\n")
 
 
 _HOF_RE = re.compile(

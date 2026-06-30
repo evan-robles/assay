@@ -17,8 +17,6 @@ frequency, and a flag indicating whether the saddle is "good"
 from __future__ import annotations
 import os
 import re
-import shutil
-import subprocess
 import tempfile
 from typing import Any, Dict, Optional
 
@@ -31,7 +29,7 @@ from ..calculators import (
 from ..io import read_geometry
 from ..integrity import finalize
 from ..schema import base_result, energy_block_from_eV, element_warnings, KCAL_TO_EV
-from ._mopac_parsers import parse_mopac_extras, _find_with_ext
+from ._mopac_parsers import parse_mopac_extras, _find_with_ext, run_mopac
 from . import freq as freq_task
 
 
@@ -196,27 +194,13 @@ def run(
 # ---------------------------------------------------------------------------
 
 def _ts_mopac(atoms, symbols, *, charge, multiplicity, solvent, steps):
-    mopac_exe = shutil.which("mopac")
-    if mopac_exe is None:
-        raise FileNotFoundError("mopac executable not found in PATH.")
-
-    workdir = tempfile.mkdtemp(prefix="chemkit_ts_mopac_")
-    mop_path = os.path.join(workdir, "ts.mop")
-
     keywords = ["PM7", "TS", "AUX", "GEO-OK", f"CYCLES={steps}"]
     keywords += mopac_chemistry_keywords(charge, multiplicity, solvent)
     keywords.append("THREADS=1")
 
-    with open(mop_path, "w") as f:
-        f.write(" ".join(keywords) + "\n")
-        f.write("chemkit TS search\n\n")
-        for sym, (x, y, z) in zip(symbols, atoms.get_positions()):
-            f.write(f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1\n")
+    workdir, _proc, out_path = run_mopac(
+        keywords, atoms, symbols, title="chemkit TS search", stem="ts_mopac")
 
-    subprocess.run([mopac_exe, "ts.mop"], cwd=workdir,
-                   capture_output=True, text=True, timeout=3600)
-
-    out_path = _find_with_ext(workdir, ".out")
     arc_path = _find_with_ext(workdir, ".arc")
 
     # Pull final geometry: prefer .arc's FINAL GEOMETRY OBTAINED block

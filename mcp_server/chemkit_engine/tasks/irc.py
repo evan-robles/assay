@@ -19,8 +19,6 @@ Output:
 from __future__ import annotations
 import os
 import re
-import shutil
-import subprocess
 import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -31,7 +29,7 @@ from ..calculators import (build_calculator, apply_calc_to_atoms,
 from ..io import read_geometry
 from ..integrity import finalize
 from ..schema import base_result, element_warnings, EV_TO_KCAL
-from ._mopac_parsers import _find_with_ext
+from ._mopac_parsers import _find_with_ext, run_mopac
 
 
 def run(
@@ -127,10 +125,6 @@ def _write_trajectory(path: str, traj: List[Tuple[List[str], np.ndarray, float]]
 # ---------------------------------------------------------------------------
 
 def _irc_mopac(atoms, symbols, *, charge, multiplicity, solvent, max_points):
-    mopac_exe = shutil.which("mopac")
-    if mopac_exe is None:
-        raise FileNotFoundError("mopac executable not found in PATH.")
-
     fwd_traj, fwd_msg = _run_one_irc_direction(
         atoms, symbols, +1, charge, multiplicity, solvent, max_points,
     )
@@ -170,10 +164,6 @@ def _irc_mopac(atoms, symbols, *, charge, multiplicity, solvent, max_points):
 def _run_one_irc_direction(atoms, symbols, direction, charge, multiplicity,
                             solvent, max_points):
     """direction = +1 (forward) or -1 (reverse)."""
-    mopac_exe = shutil.which("mopac")
-    workdir = tempfile.mkdtemp(prefix=f"chemkit_irc_{('fwd' if direction>0 else 'rev')}_")
-    mop_path = os.path.join(workdir, "irc.mop")
-
     # MOPAC IRC=N runs the IRC in direction N (+1 forward, -1 reverse).
     # Trailing '*' is NOT valid syntax — that turns IRC=N into a different keyword.
     irc_key = f"IRC={direction}"
@@ -181,16 +171,10 @@ def _run_one_irc_direction(atoms, symbols, direction, charge, multiplicity,
     keywords += mopac_chemistry_keywords(charge, multiplicity, solvent)
     keywords += ["THREADS=1", "T=3600"]
 
-    with open(mop_path, "w") as f:
-        f.write(" ".join(keywords) + "\n")
-        f.write(f"chemkit IRC {'forward' if direction>0 else 'reverse'}\n\n")
-        for sym, (x, y, z) in zip(symbols, atoms.get_positions()):
-            f.write(f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1\n")
+    title = f"chemkit IRC {'forward' if direction>0 else 'reverse'}"
+    workdir, _proc, out_path = run_mopac(
+        keywords, atoms, symbols, title=title, stem="irc", timeout=3600)
 
-    subprocess.run([mopac_exe, "irc.mop"], cwd=workdir,
-                   capture_output=True, text=True, timeout=3600)
-
-    out_path = _find_with_ext(workdir, ".out")
     aux_path = _find_with_ext(workdir, ".aux")
     traj = _parse_mopac_irc_trajectory(out_path, aux_path, symbols, max_points)
 

@@ -15,8 +15,6 @@ MOPAC backend (PM7):
 from __future__ import annotations
 import os
 import re
-import shutil
-import subprocess
 import tempfile
 from typing import Any, Dict, List, Optional
 
@@ -33,7 +31,9 @@ from ..schema import (
     base_result, energy_block_from_eV, element_warnings,
     scf_convergence_warnings, KCAL_TO_EV,
 )
-from ._mopac_parsers import parse_mopac_extras, _parse_aux_array, _find_with_ext
+from ._mopac_parsers import (
+    parse_mopac_extras, _parse_aux_array, _find_with_ext, run_mopac,
+)
 from ..constants import AU_TO_DEBYE, HARTREE_TO_EV
 
 
@@ -204,25 +204,16 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
 
 def _run_mopac(atoms, symbols, *, charge: int, multiplicity: int,
                solvent: Optional[str]) -> Dict[str, Any]:
-    mopac_exe = shutil.which("mopac")
-    if mopac_exe is None:
-        raise FileNotFoundError("mopac executable not found in PATH.")
-
     workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_elst_"))
-    mop_path = os.path.join(workdir, "mopac.mop")
 
     keywords = ["PM7", "1SCF", "AUX", "GEO-OK"]
     keywords += mopac_chemistry_keywords(charge, multiplicity, solvent)
     keywords += ["MULLIK", "THREADS=1"]
 
-    with open(mop_path, "w") as f:
-        f.write(" ".join(keywords) + "\n")
-        f.write("chemkit electrostatics\n\n")
-        for sym, (x, y, z) in zip(symbols, atoms.get_positions()):
-            f.write(f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1\n")
-
-    proc = subprocess.run([mopac_exe, "mopac.mop"], cwd=workdir,
-                          capture_output=True, text=True, timeout=600)
+    workdir, proc, _out_path = run_mopac(
+        keywords, atoms, symbols, title="chemkit electrostatics",
+        workdir=workdir, stem="mopac", timeout=600,
+    )
 
     # MOPAC can fail (bad geometry, missing PM7 parameters, license) and still
     # leave a partial/stale .out/.aux that parses into garbage or None. Detect

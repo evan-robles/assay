@@ -1,14 +1,60 @@
-"""MOPAC .out / .aux scrapers for properties ASE doesn't surface."""
+"""MOPAC .out / .aux scrapers + the shared MOPAC run/input plumbing.
+
+The scrapers pull properties ASE doesn't surface; write_mop() / run_mopac()
+consolidate the input-file write + subprocess invocation that every MOPAC task
+(opt/ts/irc/scan/electrostatics/freq) otherwise repeats verbatim.
+"""
 from __future__ import annotations
 import os
 import re
-from typing import Any, Dict, List, Optional
+import shutil
+import subprocess
+import tempfile
+from typing import Any, Dict, List, Optional, Sequence
 
 NUM = r"[-+]?\d+\.\d+(?:[DdEe][-+]?\d+)?"
 
 
 def _ff(s: str) -> float:
     return float(s.replace("D", "E").replace("d", "e"))
+
+
+# ---------------------------------------------------------------------------
+# Shared MOPAC input/run plumbing (consolidates the per-task boilerplate)
+# ---------------------------------------------------------------------------
+
+def write_mop(mop_path: str, keywords: Sequence[str], atoms, symbols,
+              title: str = "chemkit") -> None:
+    """Write a MOPAC .mop input: keyword line, title, then the Cartesian block
+    with every coordinate flagged optimizable ('1'). This geometry-loop format
+    was duplicated byte-for-byte across every MOPAC task."""
+    with open(mop_path, "w") as f:
+        f.write(" ".join(keywords) + "\n")
+        f.write(f"{title}\n\n")
+        for sym, (x, y, z) in zip(symbols, atoms.get_positions()):
+            f.write(f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1\n")
+
+
+def run_mopac(keywords: Sequence[str], atoms, symbols, *, title: str = "chemkit",
+              workdir: Optional[str] = None, stem: str = "mopac",
+              timeout: int = 3600):
+    """Run MOPAC end-to-end: locate the binary, make a workdir if needed, write
+    <stem>.mop (via write_mop), invoke mopac, and return (workdir, proc, out_path).
+
+    Callers parse out_path / .aux / .arc themselves (each task reads different
+    blocks) and decide their own success policy from `proc` + the .out text.
+    Raises FileNotFoundError if the mopac binary isn't on PATH.
+    """
+    mopac_exe = shutil.which("mopac")
+    if mopac_exe is None:
+        raise FileNotFoundError("mopac executable not found in PATH.")
+    if workdir is None:
+        workdir = tempfile.mkdtemp(prefix=f"chemkit_{stem}_")
+    mop_name = f"{stem}.mop"
+    write_mop(os.path.join(workdir, mop_name), keywords, atoms, symbols, title)
+    proc = subprocess.run([mopac_exe, mop_name], cwd=workdir,
+                          capture_output=True, text=True, timeout=timeout)
+    return workdir, proc, _find_with_ext(workdir, ".out")
 
 
 def parse_mopac_extras(workdir: str) -> Dict[str, Any]:
