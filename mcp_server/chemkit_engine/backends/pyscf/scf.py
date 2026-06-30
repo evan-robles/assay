@@ -9,26 +9,11 @@ from __future__ import annotations
 import sys
 from typing import Any, Dict, Optional
 
-
-# Maps chemkit's friendly solvent names to PySCF's solvent presets.
-# PySCF's pcm/ddCOSMO module knows these directly via `.eps = ...`; we keep
-# a dielectric table here so the interface mirrors the xtb/MOPAC backends.
-PYSCF_SOLVENT_EPS = {
-    "water": 78.3553, "h2o": 78.3553,
-    "methanol": 32.613, "meoh": 32.613,
-    "ethanol": 24.852, "etoh": 24.852,
-    "acetone": 20.493,
-    "acetonitrile": 35.688, "mecn": 35.688,
-    "dmso": 46.826,
-    "thf": 7.4257,
-    "dcm": 8.93, "ch2cl2": 8.93,
-    "chloroform": 4.7113, "chcl3": 4.7113,
-    "toluene": 2.3741,
-    "benzene": 2.2706,
-    "hexane": 1.8819,
-    "ether": 4.2400,
-    "octanol": 9.8629, "1-octanol": 9.8629,
-}
+# PySCF's per-solvent dielectric table lives in schema.py (the single home for
+# all backends' solvent data). Re-exported here so existing references to
+# PYSCF_SOLVENT_EPS in this module keep working. PySCF's pcm/ddCOSMO module
+# consumes the ε via `.eps = ...`.
+from ...schema import PYSCF_SOLVENT_EPS  # noqa: F401 (re-export)
 
 
 def _functional_needs_exact_exchange(xc: str) -> bool:

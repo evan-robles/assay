@@ -7,24 +7,10 @@ from typing import Optional
 
 import numpy as np
 
-
-XTB_SOLVENT_MAP = {
-    # ALPB solvents understood by xtb
-    "water": "water", "h2o": "water",
-    "methanol": "methanol", "meoh": "methanol",
-    "ethanol": "ethanol", "etoh": "ethanol",
-    "acetone": "acetone",
-    "acetonitrile": "acetonitrile", "mecn": "acetonitrile",
-    "dmso": "dmso",
-    "thf": "thf",
-    "dcm": "ch2cl2", "ch2cl2": "ch2cl2",
-    "chloroform": "chcl3", "chcl3": "chcl3",
-    "toluene": "toluene",
-    "benzene": "benzene",
-    "hexane": "hexane",
-    "ether": "ether",
-    "octanol": "octanol", "1-octanol": "octanol",
-}
+# Solvent tables live in schema.py (single documented home). Re-exported here so
+# existing importers (`from ..calculators import MOPAC_SOLVENT_EPS, XTB_SOLVENT_MAP`)
+# keep working unchanged.
+from .schema import XTB_SOLVENT_MAP, MOPAC_SOLVENT_EPS  # noqa: F401 (re-export)
 
 # Solvents supported by the xtb CLI's --alpb flag but NOT by the xtb-python
 # Solvent enum exposed via the ASE wrapper. For these we must route through the
@@ -54,24 +40,6 @@ def mopac_spin_keyword(multiplicity: int) -> str:
             f"Known: {sorted(_MOPAC_SPIN_NAMES)}."
         )
     return name
-
-
-MOPAC_SOLVENT_EPS = {
-    "water": 78.4, "h2o": 78.4,
-    "methanol": 32.6, "meoh": 32.6,
-    "ethanol": 24.5, "etoh": 24.5,
-    "acetone": 20.7,
-    "acetonitrile": 37.5, "mecn": 37.5,
-    "dmso": 46.7,
-    "thf": 7.58,
-    "dcm": 8.93, "ch2cl2": 8.93,
-    "chloroform": 4.81, "chcl3": 4.81,
-    "toluene": 2.38,
-    "benzene": 2.27,
-    "hexane": 1.88,
-    "ether": 4.33,
-    "octanol": 10.30, "1-octanol": 10.30,  # 1-octanol, ε at 25 °C
-}
 
 
 def resolve_dielectric(solvent, eps_table, *, backend: str = "") -> float:
