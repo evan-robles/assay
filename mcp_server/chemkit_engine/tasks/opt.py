@@ -22,10 +22,12 @@ from ..schema import (
     base_result,
     energy_block_from_eV,
     element_warnings,
+    KCAL_TO_EV,
+    EV_TO_KCAL,
 )
 
 
-KCAL_PER_MOL_TO_EV = 1.0 / 23.060547830619026  # eV per kcal/mol
+KCAL_PER_MOL_TO_EV = KCAL_TO_EV  # eV per kcal/mol (single-sourced from schema)
 
 
 def run(
@@ -258,7 +260,7 @@ def _mopac_opt_keywords(
     # GNORM is in kcal/(mol·Å); convert and convert per-atom-component fmax
     # roughly into a system gradient norm threshold by scaling by sqrt(3N).
     # 1 eV/Å ≈ 23.06 kcal/(mol·Å)
-    gnorm = max(0.01, fmax * 23.060547830619026)
+    gnorm = max(0.01, fmax * EV_TO_KCAL)
     kw = [
         "PM7",
         f"GNORM={gnorm:.3f}",

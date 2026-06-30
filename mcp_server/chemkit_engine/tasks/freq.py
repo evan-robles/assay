@@ -31,14 +31,9 @@ from ..calculators import (
     resolve_dielectric,
 )
 from ..io import read_geometry
-from ..schema import base_result, element_warnings
+from ..schema import base_result, element_warnings, KCAL_TO_EV, CAL_TO_EV
 from ._mopac_parsers import parse_mopac_extras, parse_mopac_force
 from . import opt as opt_task
-
-
-# 1 cal/mol = 4.184 J/mol; 1 eV = 23.060547830619026 kcal/mol
-KCAL_TO_EV = 1.0 / 23.060547830619026
-CAL_TO_EV = KCAL_TO_EV / 1000.0
 
 
 def _gas_phase_entropy_warning(solvent: Optional[str]) -> List[str]:

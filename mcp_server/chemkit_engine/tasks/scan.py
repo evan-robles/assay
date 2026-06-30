@@ -740,7 +740,7 @@ def _opt_with_mopac_relaxation(
         return None, None, False
 
     opt_atoms = ase_read(out_xyz)
-    energy_eV = hof_kcal / 23.060547830619026  # kcal/mol -> eV
+    energy_eV = hof_kcal / EV_TO_KCAL  # kcal/mol -> eV
     return opt_atoms, energy_eV, bool(res.get("converged"))
 
 

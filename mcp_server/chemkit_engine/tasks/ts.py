@@ -30,7 +30,7 @@ from ..calculators import (
     resolve_dielectric,
 )
 from ..io import read_geometry
-from ..schema import base_result, energy_block_from_eV, element_warnings
+from ..schema import base_result, energy_block_from_eV, element_warnings, KCAL_TO_EV
 from ._mopac_parsers import parse_mopac_extras, _find_with_ext
 from . import freq as freq_task
 
@@ -276,7 +276,7 @@ def _ts_mopac(atoms, symbols, *, charge, multiplicity, solvent, steps):
 
     extras = parse_mopac_extras(workdir)
     hof = extras.get("heat_of_formation_kcal_mol")
-    energy_eV = hof / 23.060547830619026 if hof is not None else None
+    energy_eV = hof * KCAL_TO_EV if hof is not None else None
 
     body: Dict[str, Any] = {}
     if energy_eV is not None:

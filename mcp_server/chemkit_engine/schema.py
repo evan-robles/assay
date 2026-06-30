@@ -14,7 +14,13 @@ from typing import Any, Dict, List, Optional
 HARTREE_TO_EV = 27.211386245981
 HARTREE_TO_KCAL = 627.5094740629
 EV_TO_HARTREE = 1.0 / HARTREE_TO_EV
-EV_TO_KCAL = HARTREE_TO_KCAL / HARTREE_TO_EV
+EV_TO_KCAL = HARTREE_TO_KCAL / HARTREE_TO_EV   # ≈ 23.0605478... kcal/mol per eV
+KCAL_TO_EV = 1.0 / EV_TO_KCAL                  # eV per kcal/mol
+CAL_TO_EV = KCAL_TO_EV / 1000.0                # eV per cal/mol
+# These are the SINGLE definitions of the energy-unit conversions. Every task
+# imports them from here — never redefine `1/23.0605...` locally (that path
+# diverges from the CODATA-derived value at ~1e-13 and reintroduces two
+# constants for one quantity in a reproducibility-focused engine).
 
 
 def base_result(
@@ -53,6 +59,75 @@ def energy_block_from_eV(energy_eV: float) -> Dict[str, float]:
         "total_energy_hartree": energy_eV * EV_TO_HARTREE,
         "total_energy_kcal_mol": energy_eV * EV_TO_KCAL,
     }
+
+
+# ---------------------------------------------------------------------------
+# Solvent tables — single documented home for all backends' solvent data.
+#
+# These are deliberately THREE DISTINCT tables, NOT one merged map, because the
+# backends model solvation differently and their per-solvent values genuinely
+# differ — merging would silently change results:
+#   * xtb (ALPB) uses NAMED solvents, not a dielectric: XTB_SOLVENT_MAP maps a
+#     user alias -> the ALPB solvent name xtb understands.
+#   * MOPAC (COSMO) and PySCF (ddCOSMO/PCM) both take a numeric dielectric ε,
+#     but use different reference values for the same solvent (e.g. water 78.4
+#     vs 78.3553; acetonitrile 37.5 vs 35.688) — MOPAC's are rounded, PySCF's
+#     are higher-precision literature ε. Each backend keeps its own column.
+# The resolver (calculators.resolve_dielectric) already takes the table as a
+# parameter, so co-locating them here changes no behavior — it just gives the
+# next person adding a solvent one place to edit.
+# ---------------------------------------------------------------------------
+XTB_SOLVENT_MAP = {
+    # ALPB solvents understood by xtb (alias -> ALPB name)
+    "water": "water", "h2o": "water",
+    "methanol": "methanol", "meoh": "methanol",
+    "ethanol": "ethanol", "etoh": "ethanol",
+    "acetone": "acetone",
+    "acetonitrile": "acetonitrile", "mecn": "acetonitrile",
+    "dmso": "dmso",
+    "thf": "thf",
+    "dcm": "ch2cl2", "ch2cl2": "ch2cl2",
+    "chloroform": "chcl3", "chcl3": "chcl3",
+    "toluene": "toluene",
+    "benzene": "benzene",
+    "hexane": "hexane",
+    "ether": "ether",
+    "octanol": "octanol", "1-octanol": "octanol",
+}
+
+MOPAC_SOLVENT_EPS = {
+    "water": 78.4, "h2o": 78.4,
+    "methanol": 32.6, "meoh": 32.6,
+    "ethanol": 24.5, "etoh": 24.5,
+    "acetone": 20.7,
+    "acetonitrile": 37.5, "mecn": 37.5,
+    "dmso": 46.7,
+    "thf": 7.58,
+    "dcm": 8.93, "ch2cl2": 8.93,
+    "chloroform": 4.81, "chcl3": 4.81,
+    "toluene": 2.38,
+    "benzene": 2.27,
+    "hexane": 1.88,
+    "ether": 4.33,
+    "octanol": 10.30, "1-octanol": 10.30,  # 1-octanol, ε at 25 °C
+}
+
+PYSCF_SOLVENT_EPS = {
+    "water": 78.3553, "h2o": 78.3553,
+    "methanol": 32.613, "meoh": 32.613,
+    "ethanol": 24.852, "etoh": 24.852,
+    "acetone": 20.493,
+    "acetonitrile": 35.688, "mecn": 35.688,
+    "dmso": 46.826,
+    "thf": 7.4257,
+    "dcm": 8.93, "ch2cl2": 8.93,
+    "chloroform": 4.7113, "chcl3": 4.7113,
+    "toluene": 2.3741,
+    "benzene": 2.2706,
+    "hexane": 1.8819,
+    "ether": 4.2400,
+    "octanol": 9.8629, "1-octanol": 9.8629,
+}
 
 
 # Element coverage warnings — flag transition metals etc. that semi-empiricals

@@ -30,7 +30,7 @@ from ..calculators import (
 from ..io import read_geometry
 from ..schema import (
     base_result, energy_block_from_eV, element_warnings,
-    scf_convergence_warnings,
+    scf_convergence_warnings, KCAL_TO_EV,
 )
 from ._mopac_parsers import parse_mopac_extras, _parse_aux_array, _find_with_ext
 
@@ -268,7 +268,7 @@ def _run_mopac(atoms, symbols, *, charge: int, multiplicity: int,
     extras = parse_mopac_extras(workdir)
     # Energy: PM7 reports HoF (kcal/mol); convert
     hof = extras.get("heat_of_formation_kcal_mol")
-    energy_eV = hof / 23.060547830619026 if hof is not None else None
+    energy_eV = hof * KCAL_TO_EV if hof is not None else None
 
     # Pull partial charges from AUX (ATOM_CHARGES[N])
     aux_path = _find_with_ext(workdir, ".aux")
