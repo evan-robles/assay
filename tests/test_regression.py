@@ -1639,6 +1639,22 @@ def test_all_skills_pass_skillmd_lint():
     assert not failures, f"SKILL.md lint failures: {failures}"
 
 
+def test_tool_descriptions_advertise_arg_spec():
+    """Every MCP tool description embeds its derived argument spec (flags, types,
+    choices) so an agent can call correctly without a `--help` round-trip."""
+    server = importlib.import_module("server")
+    cli = importlib.import_module("chemkit_engine.cli")
+    for tool_name, (sub, folder) in server.TOOLS.items():
+        spec = cli.describe_subcommand(sub)
+        assert spec, f"{sub}: empty arg spec"
+        desc = server._description(folder, sub)
+        assert f"Arguments (chemkit `{sub}`)" in desc, f"{tool_name}: no args block"
+    # spot-check that choices/types are surfaced for a representative subcommand
+    sp_desc = server._description("single-point-energy", "sp")
+    assert "{xtb|mopac|dft|hf}" in sp_desc
+    assert "--charge (optional, int)" in sp_desc
+
+
 def test_thin_client_scripts_match_generator():
     """The 20 per-skill thin-client scripts are generated from one template
     (tools/build_skill_folders.py). This guards against a hand-edit drifting a

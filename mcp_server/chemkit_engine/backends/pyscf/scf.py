@@ -14,6 +14,7 @@ from typing import Any, Dict, Optional
 # PYSCF_SOLVENT_EPS in this module keep working. PySCF's pcm/ddCOSMO module
 # consumes the ε via `.eps = ...`.
 from ...schema import PYSCF_SOLVENT_EPS  # noqa: F401 (re-export)
+from ...constants import HARTREE_TO_EV
 
 
 def _functional_needs_exact_exchange(xc: str) -> bool:
@@ -153,11 +154,6 @@ def pack_scf_result(mf) -> Dict[str, Any]:
     wraps this in `base_result` + `energy_block_from_eV`.
     """
     import numpy as np
-
-    # CODATA 2022: Hartree energy in eV = 27.211 386 245 981(30) eV.
-    # Ref: Mohr, Tiesinga, Newell, Taylor, CODATA 2022, NIST,
-    # https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
-    HARTREE_TO_EV = 27.211386245981
 
     out: Dict[str, Any] = {
         "scf_converged": bool(getattr(mf, "converged", False)),

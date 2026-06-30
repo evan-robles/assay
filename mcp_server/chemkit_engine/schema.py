@@ -2,25 +2,14 @@
 from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
-
-# Physical-constant conversions — CODATA 2022 recommended values.
-#   Hartree energy in eV       : 27.211 386 245 981(30) eV
-#   Hartree energy in kJ/mol   : 2625.499 639 5(40) kJ/mol  -> /4.184 = kcal/mol
-# Ref: Mohr, P. J.; Tiesinga, E.; Newell, D. B.; Taylor, B. N. CODATA Recommended
-#   Values of the Fundamental Physical Constants: 2022. National Institute of
-#   Standards and Technology. https://physics.nist.gov/cuu/Constants/
-#   (accessed 2026-06-15). [verified: NIST allascii.txt 200 via curl, values read]
-# (1 thermochemical calorie = 4.184 J exactly, by definition.)
-HARTREE_TO_EV = 27.211386245981
-HARTREE_TO_KCAL = 627.5094740629
-EV_TO_HARTREE = 1.0 / HARTREE_TO_EV
-EV_TO_KCAL = HARTREE_TO_KCAL / HARTREE_TO_EV   # ≈ 23.0605478... kcal/mol per eV
-KCAL_TO_EV = 1.0 / EV_TO_KCAL                  # eV per kcal/mol
-CAL_TO_EV = KCAL_TO_EV / 1000.0                # eV per cal/mol
-# These are the SINGLE definitions of the energy-unit conversions. Every task
-# imports them from here — never redefine `1/23.0605...` locally (that path
-# diverges from the CODATA-derived value at ~1e-13 and reintroduces two
-# constants for one quantity in a reproducibility-focused engine).
+# Physical-constant conversions are single-sourced in constants.py (with full
+# CODATA 2022 provenance). Re-exported here so existing `from ..schema import
+# KCAL_TO_EV` / etc. keep working — but constants.py is the one home; never
+# redefine a conversion locally.
+from .constants import (  # noqa: F401 (re-export)
+    HARTREE_TO_EV, HARTREE_TO_KCAL, EV_TO_HARTREE, EV_TO_KCAL,
+    KCAL_TO_EV, CAL_TO_EV, PM7_WEAK_ELEMENTS,
+)
 
 
 def base_result(
@@ -140,13 +129,7 @@ PYSCF_SOLVENT_EPS = {
 }
 
 
-# Element coverage warnings — flag transition metals etc. that semi-empiricals
-# treat marginally. GFN2-xTB covers Z=1..86 with no PM7-style gaps, so only
-# the MOPAC/PM7 set is needed here.
-PM7_WEAK_ELEMENTS = {"Fe", "Ru", "Os", "Co", "Rh", "Ir", "Mn", "Tc", "Re",
-                     "Cr", "Mo", "W", "V", "Nb", "Ta", "Sc", "Y"}
-
-
+# PM7_WEAK_ELEMENTS is single-sourced in constants.py (re-exported above).
 def element_warnings(symbols: List[str], method: str) -> List[str]:
     warns = []
     s = set(symbols)

@@ -875,6 +875,68 @@ def subcommand_names() -> List[str]:
     return []
 
 
+def describe_subcommand(subcommand: str) -> List[dict]:
+    """Return a structured argument spec for one engine subcommand, derived from
+    its argparse subparser. Each entry: {name, flag, required, positional, type,
+    choices, default, help}. Used to enrich the MCP tool descriptions so an agent
+    can see the exact valid arguments WITHOUT a `--help` round-trip.
+    """
+    parser = build_parser()
+    sub = None
+    for action in parser._actions:
+        if isinstance(action, argparse._SubParsersAction):
+            sub = action.choices.get(subcommand)
+            break
+    if sub is None:
+        return []
+    spec: List[dict] = []
+    for a in sub._actions:
+        if a.dest in ("help",):
+            continue
+        positional = not a.option_strings
+        # store_true/store_false flags take no value -> type "flag"
+        is_flag = a.nargs == 0 or a.__class__.__name__ in (
+            "_StoreTrueAction", "_StoreFalseAction")
+        typename = ("flag" if is_flag
+                    else getattr(a.type, "__name__", None) or "str")
+        spec.append({
+            "name": a.dest,
+            "flag": (a.option_strings[0] if a.option_strings else None),
+            "positional": positional,
+            "required": bool(a.required) or positional,
+            "type": typename,
+            "choices": list(a.choices) if a.choices else None,
+            "default": a.default,
+            "help": (a.help or "").strip(),
+        })
+    return spec
+
+
+def format_subcommand_args(subcommand: str) -> str:
+    """Render describe_subcommand() as a compact human/agent-readable arg list
+    for embedding in an MCP tool description."""
+    spec = describe_subcommand(subcommand)
+    if not spec:
+        return ""
+    lines = []
+    for s in spec:
+        label = s["name"] if s["positional"] else s["flag"]
+        bits = []
+        if s["positional"]:
+            bits.append("positional")
+        bits.append("required" if s["required"] else "optional")
+        if s["type"] and s["type"] != "str":
+            bits.append(s["type"])
+        if s["choices"]:
+            bits.append("{" + "|".join(map(str, s["choices"])) + "}")
+        if not s["required"] and s["default"] not in (None, False):
+            bits.append(f"default={s['default']}")
+        meta = ", ".join(bits)
+        help_txt = (" — " + s["help"]) if s["help"] else ""
+        lines.append(f"  {label} ({meta}){help_txt}")
+    return "\n".join(lines)
+
+
 def check_tools_cli_consistency(tools_subcommands) -> List[str]:
     """Cross-check the server's TOOLS subcommand set against the engine's CLI
     subparsers. Returns a list of human-readable mismatch messages ([] = OK).

@@ -26,12 +26,12 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 
 from ..calculators import (
-    build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-    method_label, program_label, mopac_spin_keyword, register_auto_tempdir,
-    resolve_dielectric,
+    build_calculator, apply_calc_to_atoms,
+    method_label, program_label, mopac_chemistry_keywords, register_auto_tempdir,
 )
 from ..io import read_geometry
 from ..schema import base_result, element_warnings, KCAL_TO_EV, CAL_TO_EV
+from ..constants import EV_PER_CM, CM_PER_EV
 from ._mopac_parsers import parse_mopac_extras, parse_mopac_force
 from . import opt as opt_task
 
@@ -423,11 +423,6 @@ def _run_ase(
     # molecules with low torsional modes. A warning is emitted when any mode is
     # clamped so the approximation is visible (calculation-reporting-standards #5/§7).
     NEAR_ZERO_CM = 50.0
-    # eV per cm^-1. CODATA 2022 (exact): inverse meter-electron volt relationship
-    # = 1.239 841 984e-6 eV/m^-1; ×100 m^-1/cm^-1 = 1.239 841 984e-4 eV/cm^-1.
-    # Ref: Mohr, Tiesinga, Newell, Taylor, CODATA 2022, NIST,
-    # https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
-    EV_PER_CM = 1.239841984e-4
     FLOOR_eV = NEAR_ZERO_CM * EV_PER_CM
     # An imaginary mode whose MAGNITUDE is at/below the soft-mode floor is, on a
     # structure meant to be a minimum, almost always a floppy low-frequency real
@@ -783,14 +778,7 @@ def _mopac_freq_keywords(
     *, charge, multiplicity, solvent, temperature_K, symmetrynumber,
 ) -> List[str]:
     kw = ["PM7", "FORCE", "THERMO", "AUX", "LET", "GEO-OK"]
-    if charge != 0:
-        kw.append(f"CHARGE={charge}")
-    if multiplicity > 1:
-        kw.append(mopac_spin_keyword(multiplicity))
-        kw.append("UHF")
-    if solvent:
-        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
-        kw.append(f"EPS={eps}")
+    kw += mopac_chemistry_keywords(charge, multiplicity, solvent)
     # ROT=σ enters S_rot = R(ln(q_rot) - ln σ); σ=1 over-estimates S for any
     # molecule with rotational symmetry.
     kw.append(f"ROT={int(symmetrynumber)}")
@@ -903,7 +891,6 @@ def _project_trans_rot_and_diagonalize(vib, atoms, geometry):
     # Use the same conversion as ase.vibrations.Vibrations.get_energies:
     s = units._hbar * 1e10 / np.sqrt(units._e * units._amu)
     # s has units such that energy_eV = s * sqrt(eigval_in_eV/A^2/amu)
-    EV_TO_CM = 1.0 / 1.239841984e-4
 
     def _ev_from_eig(ev):
         if ev >= 0:
@@ -913,7 +900,7 @@ def _project_trans_rot_and_diagonalize(vib, atoms, geometry):
 
     def _cm_from_eig(ev):
         e = _ev_from_eig(ev)
-        return e.real * EV_TO_CM if e.imag == 0 else 1j * abs(e.imag) * EV_TO_CM
+        return e.real * CM_PER_EV if e.imag == 0 else 1j * abs(e.imag) * CM_PER_EV
 
     # Sanity-check the dropped modes: they should be ~0 cm^-1. A large residual
     # means the Eckart projection did not cleanly separate trans/rot from

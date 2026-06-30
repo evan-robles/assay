@@ -26,9 +26,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 
-from ..calculators import (build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-                            mopac_spin_keyword, register_auto_tempdir,
-                            resolve_dielectric)
+from ..calculators import (build_calculator, apply_calc_to_atoms,
+                            mopac_chemistry_keywords, register_auto_tempdir)
 from ..io import read_geometry
 from ..schema import base_result, element_warnings, EV_TO_KCAL
 from ._mopac_parsers import _find_with_ext
@@ -179,14 +178,7 @@ def _run_one_irc_direction(atoms, symbols, direction, charge, multiplicity,
     # Trailing '*' is NOT valid syntax — that turns IRC=N into a different keyword.
     irc_key = f"IRC={direction}"
     keywords = ["PM7", irc_key, "AUX", "GEO-OK", "X-PRIORITY=0.0"]
-    if charge != 0:
-        keywords.append(f"CHARGE={charge}")
-    if multiplicity > 1:
-        keywords.append(mopac_spin_keyword(multiplicity))
-        keywords.append("UHF")
-    if solvent:
-        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
-        keywords.append(f"EPS={eps}")
+    keywords += mopac_chemistry_keywords(charge, multiplicity, solvent)
     keywords += ["THREADS=1", "T=3600"]
 
     with open(mop_path, "w") as f:

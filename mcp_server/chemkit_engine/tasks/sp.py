@@ -12,6 +12,7 @@ from ..schema import (
     base_result, energy_block_from_eV, element_warnings,
     scf_convergence_warnings,
 )
+from ..constants import HARTREE_TO_EV, ANGSTROM_TO_BOHR
 
 
 def run(
@@ -99,12 +100,6 @@ def _xtb_homo_lumo(atoms, calc) -> Dict[str, Any]:
         from xtb.libxtb import VERBOSITY_MUTED
     except ImportError:
         return {}
-
-    # CODATA 2022 (NIST, https://physics.nist.gov/cuu/Constants/, accessed
-    # 2026-06-15): Hartree energy = 27.211 386 245 981(30) eV; Bohr radius =
-    # 0.529 177 210 544(82) Å -> ANGSTROM_TO_BOHR = 1/0.529177210544.
-    HARTREE_TO_EV = 27.211386245981
-    ANGSTROM_TO_BOHR = 1.8897261259078
 
     numbers = np.array(atoms.get_atomic_numbers(), dtype=np.int32)
     positions_bohr = np.asarray(atoms.get_positions()) * ANGSTROM_TO_BOHR

@@ -23,9 +23,9 @@ from typing import Any, Dict, List, Optional
 import numpy as np
 
 from ..calculators import (
-    build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-    method_label, program_label, collect_calc_extras, mopac_spin_keyword,
-    register_auto_tempdir, resolve_dielectric,
+    build_calculator, apply_calc_to_atoms,
+    method_label, program_label, collect_calc_extras, mopac_chemistry_keywords,
+    register_auto_tempdir,
 )
 from ..io import read_geometry
 from ..schema import (
@@ -33,13 +33,7 @@ from ..schema import (
     scf_convergence_warnings, KCAL_TO_EV,
 )
 from ._mopac_parsers import parse_mopac_extras, _parse_aux_array, _find_with_ext
-
-# Atomic unit of electric dipole moment (ea0) -> Debye.
-# CODATA 2022: ea0 = 8.478 353 6198(13)e-30 C·m; 1 D = 1e-21/c C·m
-# (c = 299 792 458 m/s exact) -> ea0/D = 2.541 746 471.
-# Ref: Mohr, Tiesinga, Newell, Taylor, CODATA 2022, NIST,
-# https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
-AU_TO_DEBYE = 2.541746471
+from ..constants import AU_TO_DEBYE, ANGSTROM_TO_BOHR, HARTREE_TO_EV
 
 
 def run(
@@ -163,7 +157,7 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
         ) from e
 
     numbers = np.array(atoms.get_atomic_numbers())
-    positions_bohr = atoms.get_positions() * 1.8897259886
+    positions_bohr = atoms.get_positions() * ANGSTROM_TO_BOHR
     uhf = max(0, multiplicity - 1)
     calc = Calculator(Param.GFN2xTB, numbers, positions_bohr,
                       charge=float(charge), uhf=uhf)
@@ -183,9 +177,8 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
         solvent_applied = None  # gas phase requested; nothing to apply
 
     res = calc.singlepoint()
-    # Hartree -> eV, CODATA 2022 (27.211386245981 eV). NIST,
-    # https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
-    energy_eV = res.get_energy() * 27.211386245981
+    # Hartree -> eV.
+    energy_eV = res.get_energy() * HARTREE_TO_EV
     charges = res.get_charges().tolist()
     dipole_au = res.get_dipole()
     dipole_debye_vec = (dipole_au * AU_TO_DEBYE).tolist()
@@ -225,14 +218,7 @@ def _run_mopac(atoms, symbols, *, charge: int, multiplicity: int,
     mop_path = os.path.join(workdir, "mopac.mop")
 
     keywords = ["PM7", "1SCF", "AUX", "GEO-OK"]
-    if charge != 0:
-        keywords.append(f"CHARGE={charge}")
-    if multiplicity > 1:
-        keywords.append(mopac_spin_keyword(multiplicity))
-        keywords.append("UHF")
-    if solvent:
-        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
-        keywords.append(f"EPS={eps}")
+    keywords += mopac_chemistry_keywords(charge, multiplicity, solvent)
     keywords += ["MULLIK", "THREADS=1"]
 
     with open(mop_path, "w") as f:

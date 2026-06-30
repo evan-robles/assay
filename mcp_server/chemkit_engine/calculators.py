@@ -11,6 +11,7 @@ import numpy as np
 # existing importers (`from ..calculators import MOPAC_SOLVENT_EPS, XTB_SOLVENT_MAP`)
 # keep working unchanged.
 from .schema import XTB_SOLVENT_MAP, MOPAC_SOLVENT_EPS  # noqa: F401 (re-export)
+from .constants import HARTREE_TO_EV
 
 # Solvents supported by the xtb CLI's --alpb flag but NOT by the xtb-python
 # Solvent enum exposed via the ASE wrapper. For these we must route through the
@@ -81,6 +82,29 @@ def resolve_dielectric(solvent, eps_table, *, backend: str = "") -> float:
             f"Pass a real solvent eps, e.g. --solvent 2.0."
         )
     return val
+
+
+def mopac_chemistry_keywords(charge: int, multiplicity: int,
+                             solvent: Optional[str] = None) -> list:
+    """Build the standard MOPAC chemistry keywords shared by every MOPAC task:
+    CHARGE (if nonzero), the spin keyword + UHF (if open-shell), and EPS (if a
+    solvent is set). Returns a list to extend a task's keyword list with.
+
+    This consolidates a block that was copy-pasted identically across 7 task
+    modules (opt/freq/ts/irc/orbitals/electrostatics/frontier) — so MOPAC's
+    charge/spin/solvent handling has one definition, not seven. Task-specific
+    keywords (PM7, FORCE, IRC=, MULLIK, THREADS, T=, ...) stay in each task.
+    """
+    kw: list = []
+    if charge != 0:
+        kw.append(f"CHARGE={charge}")
+    if multiplicity > 1:
+        kw.append(mopac_spin_keyword(multiplicity))
+        kw.append("UHF")
+    if solvent:
+        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
+        kw.append(f"EPS={eps}")
+    return kw
 
 
 def resolve_xtb_solvent(solvent) -> str:
@@ -570,9 +594,7 @@ class _XtbCliCalculator:
         if not m:
             raise RuntimeError("xtb CLI: could not parse total energy.\n" + res.stdout[-2000:])
         # Convert Hartree -> eV to match ASE convention.
-        # CODATA 2022: 27.211386245981 eV. NIST,
-        # https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
-        energy_eV = float(m.group(1)) * 27.211386245981
+        energy_eV = float(m.group(1)) * HARTREE_TO_EV
         self.results["energy"] = energy_eV
         return energy_eV
 

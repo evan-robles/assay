@@ -25,9 +25,8 @@ from typing import Any, Dict, Optional
 from ase.io import write as ase_write
 
 from ..calculators import (
-    build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-    method_label, program_label, mopac_spin_keyword, register_auto_tempdir,
-    resolve_dielectric,
+    build_calculator, apply_calc_to_atoms,
+    method_label, program_label, mopac_chemistry_keywords, register_auto_tempdir,
 )
 from ..io import read_geometry
 from ..schema import base_result, energy_block_from_eV, element_warnings, KCAL_TO_EV
@@ -207,14 +206,7 @@ def _ts_mopac(atoms, symbols, *, charge, multiplicity, solvent, steps):
     mop_path = os.path.join(workdir, "ts.mop")
 
     keywords = ["PM7", "TS", "AUX", "GEO-OK", f"CYCLES={steps}"]
-    if charge != 0:
-        keywords.append(f"CHARGE={charge}")
-    if multiplicity > 1:
-        keywords.append(mopac_spin_keyword(multiplicity))
-        keywords.append("UHF")
-    if solvent:
-        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
-        keywords.append(f"EPS={eps}")
+    keywords += mopac_chemistry_keywords(charge, multiplicity, solvent)
     keywords.append("THREADS=1")
 
     with open(mop_path, "w") as f:

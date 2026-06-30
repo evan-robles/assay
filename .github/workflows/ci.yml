@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Fast, no-chemistry checks: the static validators + lints. These need only
+  # Python + the package importable, so they run without the conda binaries and
+  # gate every push in seconds.
+  static-checks:
+    name: static checks (validators + lints)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package (no QM extras)
+        run: pip install -e .
+      - name: SKILL.md lint
+        run: python tools/lint_skills.py
+      - name: Thin-client generator drift check
+        run: |
+          python tools/build_skill_folders.py
+          git diff --exit-code skills/ \
+            || (echo "::error::thin-client scripts drifted from the generator; run tools/build_skill_folders.py" && exit 1)
+      - name: Static fidelity-spec schema (shape/headline/method)
+        # Exit 1 only on non-fixture problems; missing fixtures are a known gap.
+        run: |
+          python - <<'PY'
+          import subprocess, sys
+          out = subprocess.run([sys.executable, "benchmarks/spec_schema.py"],
+                               capture_output=True, text=True)
+          print(out.stdout); print(out.stderr, file=sys.stderr)
+          bad = [l for l in out.stdout.splitlines()
+                 if l.strip().startswith("- ") and "not found" not in l]
+          if bad:
+              print("::error::specs with shape/headline/method problems:")
+              print("\n".join(bad)); sys.exit(1)
+          PY
+      - name: TOOLS <-> CLI consistency
+        run: |
+          python - <<'PY'
+          import sys; sys.path.insert(0, "mcp_server")
+          from chemkit_engine import cli
+          from server import TOOLS
+          problems = cli.check_tools_cli_consistency([s for s,_ in TOOLS.values()])
+          if problems:
+              print("::error::TOOLS<->CLI mismatch:\n" + "\n".join(problems)); sys.exit(1)
+          print("TOOLS and CLI agree")
+          PY
+
+  # Full engine: conda-provisioned env with the external binaries (xtb/mopac/
+  # openbabel) + pyscf, running the non-slow regression suite and an xtb-only
+  # fidelity smoke. Heavier, so it runs after the static gate.
+  engine-tests:
+    name: engine tests + fidelity smoke
+    runs-on: ubuntu-latest
+    needs: static-checks
+    defaults:
+      run:
+        shell: bash -el {0}   # login shell so `conda activate` works
+    steps:
+      - uses: actions/checkout@v4
+      - name: Provision conda env (xtb/mopac/openbabel + pyscf)
+        uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-file: environment.yml
+          cache-environment: true
+      - name: Install chemkit + dev deps
+        run: |
+          pip install -e ".[qm]"
+          pip install pytest pytest-cov
+      - name: Regression suite (non-slow) with coverage
+        run: |
+          pytest tests/test_regression.py -m "not slow" -q \
+            --cov=chemkit_engine --cov-report=term-missing:skip-covered
+      - name: Fidelity smoke (xtb single point, recorded — no API key)
+        run: |
+          python benchmarks/fidelity_driver.py \
+            --spec benchmarks/fidelity/h2o_sp_xtb.spec.json \
+            --agent-run benchmarks/fidelity/recorded_pass.json
+      - name: Spec pre-flight probe (xtb suites only — fast)
+        run: |
+          python benchmarks/probe_specs.py benchmarks/fidelity/single-point-validation || true

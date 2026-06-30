@@ -65,9 +65,22 @@ TOOLS = {
 mcp = FastMCP("chemkit", log_level="WARNING")
 
 
+def _arg_spec(subcommand: str) -> str:
+    """Derive the subcommand's argument spec from the engine CLI so the tool
+    description advertises exact args (flags, types, choices, required) — letting
+    an agent call correctly WITHOUT a `--help` round-trip. Best-effort: returns
+    "" if the engine can't be imported (description still works without it)."""
+    try:
+        from chemkit_engine.cli import format_subcommand_args
+        return format_subcommand_args(subcommand)
+    except Exception:  # pragma: no cover - never break tool registration
+        return ""
+
+
 def _description(skill_folder: str, subcommand: str) -> str:
-    """Build a tool description from the skill's SKILL.md frontmatter + a usage
-    line, so an AI knows what the tool does and how to pass `args`."""
+    """Build a tool description from the skill's SKILL.md frontmatter + the
+    derived argument spec, so an AI knows what the tool does AND the exact valid
+    arguments without needing to round-trip `args=["--help"]`."""
     md = SKILLS_DIR / skill_folder / "SKILL.md"
     desc = ""
     if md.is_file():
@@ -75,13 +88,16 @@ def _description(skill_folder: str, subcommand: str) -> str:
         m = re.search(r"^description:\s*(.+?)\s*$", text, re.MULTILINE)
         if m:
             desc = m.group(1).strip()
+    arg_spec = _arg_spec(subcommand)
+    args_block = (f"\n\nArguments (chemkit `{subcommand}`):\n{arg_spec}"
+                  if arg_spec else "")
     usage = (
-        f"\n\nInvoke by passing the chemkit `{subcommand}` arguments as a list "
-        f"of CLI tokens in `args` (e.g. [\"--method\", \"xtb\", \"mol.xyz\"]). "
-        f"Run with args=[\"--help\"] to see the full argument list. Returns the "
-        f"result as JSON."
+        f"\n\nInvoke by passing these as a list of CLI tokens in `args` "
+        f"(e.g. [\"--method\", \"xtb\", \"mol.xyz\"]). `cwd` sets the directory "
+        f"for relative input/output paths. Returns the result as JSON. (You can "
+        f"still run args=[\"--help\"] for the raw argparse help.)"
     )
-    return (desc or f"chemkit {subcommand}") + usage
+    return (desc or f"chemkit {subcommand}") + args_block + usage
 
 
 def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str:

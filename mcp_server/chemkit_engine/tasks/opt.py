@@ -16,18 +16,17 @@ import subprocess
 import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..calculators import MOPAC_SOLVENT_EPS, mopac_spin_keyword, resolve_dielectric
+from ..calculators import mopac_chemistry_keywords
 from ..io import read_geometry
 from ..schema import (
     base_result,
     energy_block_from_eV,
     element_warnings,
-    KCAL_TO_EV,
-    EV_TO_KCAL,
 )
+from ..constants import KCAL_TO_EV, EV_TO_KCAL
 
 
-KCAL_PER_MOL_TO_EV = KCAL_TO_EV  # eV per kcal/mol (single-sourced from schema)
+KCAL_PER_MOL_TO_EV = KCAL_TO_EV  # eV per kcal/mol (single-sourced from constants)
 
 
 def run(
@@ -267,14 +266,7 @@ def _mopac_opt_keywords(
         "AUX",
         "GEO-OK",
     ]
-    if charge != 0:
-        kw.append(f"CHARGE={charge}")
-    if multiplicity > 1:
-        kw.append(mopac_spin_keyword(multiplicity))
-        kw.append("UHF")
-    if solvent:
-        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
-        kw.append(f"EPS={eps}")
+    kw += mopac_chemistry_keywords(charge, multiplicity, solvent)
     kw.append("THREADS=1")
     return kw
 

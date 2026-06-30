@@ -34,20 +34,14 @@ import tempfile
 from typing import Any, Dict, List, Optional, Tuple
 
 from ..calculators import (
-    build_calculator, apply_calc_to_atoms, MOPAC_SOLVENT_EPS,
-    method_label, program_label, mopac_spin_keyword,
-    register_auto_tempdir, XTB_SOLVENT_MAP,
-    resolve_dielectric, resolve_xtb_solvent,
+    build_calculator, apply_calc_to_atoms,
+    method_label, program_label, mopac_chemistry_keywords,
+    register_auto_tempdir,
+    resolve_xtb_solvent,
 )
 from ..io import read_geometry
 from ..schema import base_result, element_warnings
-
-# CODATA 2022: Hartree energy = 27.211 386 245 981(30) eV; Bohr radius =
-# 0.529 177 210 544(82) Å, so ANGSTROM_TO_BOHR = 1/0.529177210544.
-# Ref: Mohr, Tiesinga, Newell, Taylor, CODATA 2022, NIST,
-# https://physics.nist.gov/cuu/Constants/ (accessed 2026-06-15).
-HARTREE_TO_EV = 27.211386245981
-ANGSTROM_TO_BOHR = 1.8897261259078
+from ..constants import HARTREE_TO_EV
 
 
 # ---------------------------------------------------------------------------
@@ -431,14 +425,7 @@ def _run_mopac(atoms, *, charge: int, multiplicity: int,
 
     keywords = ["PM7", "1SCF", "GRAPHF", "AUX",
                 "LARGE=-1", "THREADS=1", "GEO-OK"]
-    if charge != 0:
-        keywords.append(f"CHARGE={charge}")
-    if multiplicity > 1:
-        keywords.append(mopac_spin_keyword(multiplicity))
-        keywords.append("UHF")
-    if solvent:
-        eps = resolve_dielectric(solvent, MOPAC_SOLVENT_EPS, backend="mopac")
-        keywords.append(f"EPS={eps}")
+    keywords += mopac_chemistry_keywords(charge, multiplicity, solvent)
 
     workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_orb_mopac_"))
     calc = MOPAC(label=os.path.join(workdir, "mopac"),
