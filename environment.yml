@@ -1,30 +1,38 @@
-# Pinned conda environment that reproduces chemkit's validated results.
-#
-# These are the EXACT versions installed in the `anl_env` used to produce the
-# regression-test results and the fidelity/accuracy benchmarks. The pins are the
-# real reproducibility artifact for the paper — a reviewer (or future you) can
-# recreate the numbers with:
+# Conda environment for chemkit. Solves on linux-64 / osx-64 / osx-arm64.
 #
 #     conda env create -f environment.yml
 #     conda activate chemkit
-#     pip install -e .            # installs chemkit-mcp (chemkit / chemkit-mcp)
+#     pip install -e ".[qm]"      # installs chemkit-mcp (chemkit / chemkit-mcp)
 #
-# Loosen the pins only deliberately; the external binaries (xtb/mopac/openbabel)
-# are NOT pip-installable and must come from conda-forge, as below.
+# The external binaries (xtb / mopac / openbabel) are NOT pip-installable and
+# must come from conda-forge, as below.
+#
+# Pins are minor-version FLOORS, not exact patch pins, so the solver finds a
+# compatible build on every platform (an exact osx-arm64 lock does not resolve
+# on the linux-64 CI runner). The EXACT versions that produced the validated
+# results are recorded for reproducibility at the bottom of this file.
 name: chemkit
 channels:
   - conda-forge
 dependencies:
-  - python=3.12.13
+  - python=3.12
   # External chemistry binaries (not pip-installable):
-  - xtb=6.7.1            # --method xtb (GFN2-xTB)
-  - mopac=23.2.5         # --method mopac (PM7)
-  - openbabel=3.1.0      # SMILES->3D, name resolution, confab conformers
+  - xtb>=6.7             # --method xtb (GFN2-xTB)
+  - mopac>=22            # --method mopac (PM7)
+  - openbabel>=3.1       # SMILES->3D, name resolution, confab conformers
   - pip
   - pip:
-      - mcp==1.27.2        # MCP server/client SDK (FastMCP)
-      - ase==3.28.0        # geometry I/O + optimizers
-      - numpy==2.4.6
-      - pyscf==2.13.1      # --method dft / --method hf
-      - matplotlib==3.10.9 # fukui / scan / reaction-profile plots
-      - pytest             # test runner (version-flexible; dev-only)
+      - mcp>=1.2           # MCP server/client SDK (FastMCP)
+      - ase>=3.25          # geometry I/O + optimizers
+      - numpy>=2.0
+      - pyscf>=2.5         # --method dft / --method hf
+      - matplotlib>=3.8    # fukui / scan / reaction-profile plots
+      - pytest>=8          # test runner (dev-only)
+
+# ---------------------------------------------------------------------------
+# Reproducibility record — the EXACT versions used to produce the committed
+# regression-test and fidelity results (captured on osx-arm64, 2026-06-30):
+#   python 3.12.13 · xtb 6.7.1 · mopac 23.2.5 · openbabel 3.1.0
+#   mcp 1.27.2 · ase 3.28.0 · numpy 2.4.6 · pyscf 2.13.1 · matplotlib 3.10.9
+# To reproduce those exactly on the same platform, pin these patch versions.
+# ---------------------------------------------------------------------------
