@@ -1,11 +1,14 @@
 # Conda environment for chemkit. Solves on linux-64 / osx-64 / osx-arm64.
+# ONE command installs EVERYTHING (all backends + all Python deps, no extras):
 #
 #     conda env create -f environment.yml
 #     conda activate chemkit
-#     pip install -e ".[qm]"      # installs chemkit-mcp (chemkit / chemkit-mcp)
 #
-# The external binaries (xtb / mopac / openbabel) are NOT pip-installable and
-# must come from conda-forge, as below.
+# The conda-only pieces below (xtb, xtb-python, mopac, openbabel) CANNOT be
+# pip-installed and must come from conda-forge. Everything pip-installable is a
+# CORE dependency of the package (see pyproject.toml [project.dependencies]) and
+# is pulled in automatically by the `-e .` line at the bottom of this file — so
+# there are no optional extras to remember.
 #
 # Pins are minor-version FLOORS, not exact patch pins, so the solver finds a
 # compatible build on every platform (an exact osx-arm64 lock does not resolve
@@ -23,14 +26,16 @@ dependencies:
                          #  it; the CLI-only fallback lacks get_forces()).
   - mopac>=22            # --method mopac (PM7)
   - openbabel>=3.1       # SMILES->3D, name resolution, confab conformers
+  - rdkit>=2023.3        # structure handling (tasks/scan.py + benchmark driver);
+                         # conda-forge is the reliable source (esp. on Aurora)
+  - pytest>=8            # test runner (dev-only)
   - pip
   - pip:
-      - mcp>=1.2           # MCP server/client SDK (FastMCP)
-      - ase>=3.25          # geometry I/O + optimizers
-      - numpy>=2.0
-      - pyscf>=2.5         # --method dft / --method hf
-      - matplotlib>=3.8    # fukui / scan / reaction-profile plots
-      - pytest>=8          # test runner (dev-only)
+      # Install the chemkit package itself in editable mode. This pulls in ALL
+      # pip-installable runtime deps declared in pyproject.toml — mcp, ase, numpy,
+      # pyscf, matplotlib, sella, rdkit, openai — so there is nothing to add here
+      # by hand and no extras to select. One env = everything.
+      - -e .
 
 # ---------------------------------------------------------------------------
 # Reproducibility record — the EXACT versions used to produce the committed

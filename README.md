@@ -1,4 +1,9 @@
-# chem-skills / chemkit
+# ASSAY
+
+**A**gentic **S**imulation **S**uite for **A**utomated chemistr**Y**
+
+*(formerly `chemkit` — the internal package/command names still use `chemkit`
+during the transition; the project is ASSAY.)*
 
 Computational chemistry suite powered by **xtb** (GFN2), **MOPAC** (PM7), and
 **PySCF** (DFT / HF), with optional implicit solvation (ALPB / COSMO / PCM).
@@ -113,11 +118,16 @@ the xtb/dft/hf backends (MOPAC has a native TS optimizer).
 ## Install & run
 
 ```bash
-# 1. Install chemkit once. It ships a `chemkit-mcp` console command:
-pip install chemkit-mcp            # core (xtb/mopac); add [qm] for pyscf DFT/HF + plots
-pip install "chemkit-mcp[qm]"
-#   from a checkout instead:  pip install -e ".[qm]"
-conda install -c conda-forge xtb mopac openbabel    # external binaries (not pip-installable)
+# 1. Install EVERYTHING in one shot from the checkout (all backends + all Python
+#    deps, no optional extras to choose). This is the recommended path:
+conda env create -f environment.yml   # xtb, xtb-python, mopac, openbabel, rdkit,
+conda activate chemkit                #   pytest + `pip install -e .` (pyscf,
+                                      #   matplotlib, sella, openai, mcp, ase, numpy)
+
+#    ...or, if you manage Python deps with pip yourself, the conda-only binaries
+#    still MUST come from conda-forge (none are pip-installable):
+#      conda install -c conda-forge xtb xtb-python mopac openbabel
+#      pip install chemkit-mcp        # pulls all pip deps (pyscf/sella/rdkit/openai/…)
 
 # 2a. Run a skill from the shell (the thin client spawns/uses the server):
 python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water mol.xyz
@@ -129,12 +139,14 @@ chemkit-mcp                        # stdio MCP server
 #   see mcp_server/README.md for uvx, OpenAI Agents SDK, and run-from-checkout forms.
 ```
 
-External binaries are NOT pip-installable — install separately (above):
-`xtb` for `--method xtb`; `mopac` for `--method mopac` / PM7 post-opt;
-`openbabel` provides `obabel`/`obenergy` for SMILES→3D, name lookup, and
-conformer search. `pyscf` (in the server requirements) enables
-`--method dft`/`--method hf`; `sella` enables transition-state searches on the
-xtb/dft/hf backends.
+Conda-only pieces (NOT pip-installable — from conda-forge, handled by
+`environment.yml`): `xtb` + `xtb-python` for `--method xtb`; `mopac` for
+`--method mopac` / PM7 post-opt; `openbabel` (`obabel`/`obenergy`) for SMILES→3D,
+name lookup, and conformer search; `rdkit` for structure handling. Everything
+else is a core pip dependency and installs automatically: `pyscf`
+(`--method dft`/`--method hf`), `matplotlib` (plots), `sella` (transition-state
+searches on the xtb/dft/hf backends), `openai` (live agent scoring in the
+fidelity benchmark harness).
 
 Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to point the thin clients at
 a specific server.

@@ -19,15 +19,27 @@ classifiers = [
   "Operating System :: OS Independent",
   "Topic :: Scientific/Engineering :: Chemistry",
 ]
-# Pure-pip runtime deps the server + engine I/O layer always need. pyscf/matplotlib
-# are deliberately NOT core (pyscf is heavy/awkward to pip-install and is only needed
-# for --method dft/hf + a few plots; the engine imports them lazily). External binaries
-# (xtb, mopac, openbabel) are NOT pip-installable — see README (conda).
-dependencies = ["mcp", "ase>=3.22", "numpy"]
-
-[project.optional-dependencies]
-qm  = ["pyscf", "matplotlib"]   # pip install "chemkit-mcp[qm]" -> DFT/HF + plots
-all = ["pyscf", "matplotlib"]
+# ALL pip-installable runtime deps — no extras, everything installs by default.
+#   pyscf/matplotlib : --method dft/hf + plots
+#   sella            : transition-state saddle search (tasks/ts.py)
+#   rdkit            : structure handling (tasks/scan.py + benchmark driver)
+#   openai           : live agent scoring in the fidelity benchmark harness
+# The engine imports the heavy ones lazily, so importing chemkit stays cheap even
+# though they're all declared here.
+#
+# NOT listed (cannot be pip-installed — install from conda-forge via environment.yml):
+# the external binaries xtb / mopac / openbabel, AND `xtb-python` (the `import xtb`
+# API; there is NO PyPI wheel for it).
+dependencies = [
+  "mcp",
+  "ase>=3.22",
+  "numpy",
+  "pyscf",
+  "matplotlib",
+  "sella",
+  "rdkit",
+  "openai",
+]
 
 [project.scripts]
 # chemkit       : human-facing CLI — runs ONE calculation through the MCP server
@@ -39,8 +51,8 @@ chemkit     = "mcp_server.server:cli_main"
 chemkit-mcp = "mcp_server.server:main"
 
 [project.urls]
-Homepage   = "https://github.com/evan-robles/chemkit"
-Repository = "https://github.com/evan-robles/chemkit"
+Homepage   = "https://github.com/evan-robles/assay"
+Repository = "https://github.com/evan-robles/assay"
 
 [tool.setuptools]
 # Two top-level installs: mcp_server (server; entry target) and chemkit_engine (the
