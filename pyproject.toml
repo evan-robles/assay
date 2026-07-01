@@ -39,6 +39,7 @@ dependencies = [
   "sella",
   "rdkit",
   "openai",
+  "pyyaml",     # config read/write for tools/aurora_submit.py + input_configs.yaml
 ]
 
 [project.scripts]

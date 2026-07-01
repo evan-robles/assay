@@ -1,0 +1,53 @@
+# Aurora (ALCF) PBS defaults for tools/aurora_submit.py
+#
+# Copy this to ~/.assay/aurora.yaml and edit `project` (and `repo_path` if the
+# checkout on Aurora is not where this tool lives). CLI flags override any value
+# here per-run (e.g. --queue debug-scaling --walltime 00:20:00).
+#
+#   cp tools/aurora.example.yaml ~/.assay/aurora.yaml
+#   $EDITOR ~/.assay/aurora.yaml
+#
+# Every key below is shown with its default. Only `project` is REQUIRED (there is
+# no safe default for an allocation; the tool refuses to guess one).
+
+# REQUIRED: your ALCF allocation name (becomes `qsub -A <project>`).
+project: CHANGE_ME
+
+# PBS queue. debug = 1-2 nodes / 1h; debug-scaling = 2-256 nodes / 1h;
+# prod = production (routing queue). (default: debug)
+queue: debug
+
+# Wall-clock limit HH:MM:SS. (default: 01:00:00)
+walltime: "01:00:00"
+
+# Number of nodes (qsub -l select=<nodes>). (default: 1)
+nodes: 1
+
+# Filesystems the job needs -- MUST be declared or the job will not run.
+# (default: flare). Add others colon-separated, e.g. "flare:home".
+filesystems: flare
+
+# Node placement. scatter = one chunk per node. (default: scatter)
+place: scatter
+
+# Conda environment to activate on the compute node. (default: chemkit)
+env: chemkit
+
+# Module setup run before `conda activate`. (defaults shown.)
+module_use: /soft/modulefiles
+module_load: frameworks
+
+# Absolute path to the ASSAY checkout ON AURORA. The generated script cd's here
+# (project space -- never $HOME, which kills the job). PBS .o/.e output and the
+# generated .pbs / config / submission record are written relative to this.
+# (default: the repo this tool lives in)
+repo_path: /lus/flare/projects/CHANGE_ME/USERNAME/chem-skills
+
+# Your project space root. Derived from `project` if omitted
+# (/lus/flare/projects/<project>).
+# project_root: /lus/flare/projects/CHANGE_ME
+
+# Inject the ALCF HTTP proxy (proxy.alcf.anl.gov:3128) into the job so a compute
+# node can reach the internet. Needed for `--live` benchmark runs (the model
+# endpoint); harmless otherwise. (default: false)
+proxy: false
