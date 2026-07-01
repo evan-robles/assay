@@ -11,6 +11,39 @@ helpers, **not** chemistry skills or MCP tools — run them directly with `pytho
 
 ---
 
+## Remote engine execution (`CHEMKIT_REMOTE_HOST`)
+
+For the **interactive agentic** setup on a cluster where the agent + MCP server
+must run on a LOGIN node (e.g. so a login-node argo tunnel is reachable) but the
+chemistry must run on a COMPUTE node (login nodes lack compute, and on Aurora a
+login-node filesystem quirk breaks the engine's nested `mkdir`):
+
+Set `CHEMKIT_REMOTE_HOST` and the MCP server will run each engine call on that
+host via `ssh` instead of locally.
+
+```bash
+# 1. hold a compute node (separate shell); note its hostname from $PBS_NODEFILE
+qsub -I -l select=1 -l walltime=01:00:00 -l filesystems=flare -A <project> -q debug
+
+# 2. in your agent/server shell on the LOGIN node:
+export CHEMKIT_REMOTE_HOST=<compute-node-hostname>   # e.g. x4303c1s3b0n0
+# optional extra ssh flags (batch mode, key, etc.):
+export CHEMKIT_REMOTE_SSH_OPTS="-o BatchMode=yes"
+
+# 3. run the agent / suite as usual — every engine call now executes on the
+#    compute node; argo stays local to the login node where your tunnel lands.
+```
+
+**Assumes a shared `$HOME`/filesystem** (true on Aurora: `$HOME` is mounted on
+compute nodes), so `cwd`, input paths, and `--out` resolve identically on both
+sides — no file copy-back needed. The result JSON returns on ssh stdout; the
+live `.out` log is written locally. The `.out` header records the full
+`ssh … ` command so the run is reproducible.
+
+Unset `CHEMKIT_REMOTE_HOST` to go back to running the engine locally.
+
+---
+
 ## aurora_submit.py — run ASSAY on Aurora (PBS Pro)
 
 A standalone orchestration tool. A PBS job is **asynchronous** (submit now,

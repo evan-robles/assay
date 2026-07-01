@@ -22,6 +22,7 @@ import functools
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import threading
@@ -120,6 +121,29 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
     ).rstrip(os.pathsep)
     run_cwd = cwd if (cwd and os.path.isdir(cwd)) else str(HERE)
     cmd = [sys.executable, "-m", "chemkit_engine.cli", subcommand, *args]
+
+    # --- Optional remote execution (CHEMKIT_REMOTE_HOST) -----------------------
+    # On clusters (e.g. Aurora) the agent + this server can run on a LOGIN node
+    # while the actual chemistry must run on a COMPUTE node (login nodes may lack
+    # compute resources or, on Aurora, have an fs quirk that breaks the engine's
+    # nested mkdir). If CHEMKIT_REMOTE_HOST is set, run the engine on that host
+    # via ssh. This ASSUMES a SHARED $HOME/filesystem so `cd run_cwd` and all
+    # input/--out paths resolve identically on both sides (true on Aurora, where
+    # $HOME is mounted on compute nodes). The result JSON still comes back on the
+    # ssh stdout, and the live `.out` is written locally from the tee'd stderr,
+    # so no file copy-back is needed under a shared filesystem.
+    remote_host = os.environ.get("CHEMKIT_REMOTE_HOST", "").strip()
+    if remote_host:
+        # Reproduce cwd + PYTHONPATH on the remote side, then run the same cmd.
+        # shlex.quote every piece so paths/args with spaces or shell metachars
+        # survive the single remote shell string ssh runs.
+        remote_inner = "cd {cwd} && PYTHONPATH={pp} {run}".format(
+            cwd=shlex.quote(run_cwd),
+            pp=shlex.quote(env["PYTHONPATH"]),
+            run=" ".join(shlex.quote(c) for c in cmd),
+        )
+        ssh_opts = shlex.split(os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", ""))
+        cmd = ["ssh", *ssh_opts, remote_host, remote_inner]
 
     # Live `.out` log the user can `tail -f` while the calculation runs.
     # Written in the CALLER's cwd so it sits next to their inputs/outputs.
