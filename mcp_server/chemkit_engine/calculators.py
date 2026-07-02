@@ -275,14 +275,28 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
     # finite-difference Hessian — the most expensive backend. Default to all cores
     # (override via CHEMKIT_PYSCF_THREADS) BEFORE importing pyscf, and record the
     # effective count on the calculator for reproducibility.
+    # Safety ceiling for the AUTO (cpu_count) default only. Many conda-forge
+    # OpenBLAS builds are compiled for a maximum of 128 threads; on very-large
+    # nodes (e.g. Aurora login/compute nodes report os.cpu_count() == 208),
+    # letting PySCF pin its OpenMP pool to the full core count drives OpenBLAS
+    # past that compiled ceiling and it aborts the process ("precompiled
+    # NUM_THREADS exceeded" -> segfault / "double free or corruption"). Cap the
+    # auto-default well under 128 so a fresh run never crashes on such a node.
+    # An explicit CHEMKIT_PYSCF_THREADS is always honoured verbatim (the user
+    # opting into a higher count owns that choice); this cap applies ONLY when
+    # we fall back to cpu_count. Override the cap itself via CHEMKIT_PYSCF_MAX_AUTO_THREADS.
+    try:
+        _auto_cap = max(1, int(os.environ.get("CHEMKIT_PYSCF_MAX_AUTO_THREADS", "64")))
+    except ValueError:
+        _auto_cap = 64
     n_threads_env = os.environ.get("CHEMKIT_PYSCF_THREADS")
     if n_threads_env:
         try:
-            n_threads = max(1, int(n_threads_env))
+            n_threads = max(1, int(n_threads_env))  # explicit request: honoured as-is
         except ValueError:
-            n_threads = os.cpu_count() or 1
+            n_threads = min(os.cpu_count() or 1, _auto_cap)
     else:
-        n_threads = os.cpu_count() or 1
+        n_threads = min(os.cpu_count() or 1, _auto_cap)
     # Set OMP/MKL env vars only if not already pinned by the user, so an explicit
     # external setting is respected.
     for var in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
