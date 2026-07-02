@@ -244,5 +244,4 @@ value is prohibited.
 
 - **PM7 transition-metal parameters have limited coverage** — the schema flags this in `warnings` when relevant.
 - **Redox potentials and conformer search are screening-grade**, not publication-grade; the skill output states this.
-- **xtb and MOPAC energy zeros are not comparable** — an xtb energy must never be subtracted from a MOPAC energy.
 - **Literature values must be verified** — see [`rules/research-standards.md`](rules/research-standards.md).
