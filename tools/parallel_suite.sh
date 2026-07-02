@@ -99,10 +99,16 @@ echo "[parallel] STEP 2: parallel fan-out…"
 # touching the next, leaving the other nodes idle. Interleaving units keeps all
 # nodes busy from the start.) Each unit is assigned to a node round-robin; a
 # per-node PID map enforces a strict PER_NODE_JOBS cap on each node independently.
+# Interleave so ALL models make progress from the start. rep is the OUTER loop
+# and model the MIDDLE: the first units queued are (rep 1: mol0×modelA, mol0×modelB,
+# …, mol1×modelA, …), so every model appears near the front instead of one model's
+# entire batch draining before the next begins. Without this (molecule→model→rep),
+# the concurrency window fills with only the first model and the others look like
+# they "never run" until much later.
 WORK=()
-for idx in "${!SPECS[@]}"; do
+for rep in $(seq 1 "$REPEAT"); do
   for model in "${MODELS[@]}"; do
-    for rep in $(seq 1 "$REPEAT"); do
+    for idx in "${!SPECS[@]}"; do
       WORK+=("$idx|$model|$rep")
     done
   done
