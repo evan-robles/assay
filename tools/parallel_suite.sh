@@ -47,6 +47,23 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 DRIVER="$REPO/benchmarks/fidelity_driver.py"
 cd "$REPO"
 
+# --- Ensure the LAUNCHER shell has python (the agent side runs here) -----------
+# The driver + the STEP 3 collector are invoked as bare `python`. If this shell
+# has no conda env active (e.g. launched via nohup/ssh where ~/.bashrc does not
+# auto-activate), every run dies "python: command not found" and the sweep
+# "completes" having run nothing. Activate the env here so the launcher is
+# self-sufficient. Skips silently if python is already available.
+if ! command -v python >/dev/null 2>&1; then
+    module use /soft/modulefiles >/dev/null 2>&1 || true
+    module load frameworks       >/dev/null 2>&1 || true
+    conda activate "${ASSAY_ENV:-assay_env}" >/dev/null 2>&1 || true
+fi
+command -v python >/dev/null 2>&1 || {
+    echo "FATAL: no python on PATH after env activation — cannot run the driver."
+    echo "  Activate assay_env (module load frameworks && conda activate assay_env) first."
+    exit 1
+}
+
 # --- Resolve the compute-node list --------------------------------------------
 # In a PBS job, $PBS_NODEFILE lists one line per node (with repeats per rank).
 if [ -n "${PBS_NODEFILE:-}" ] && [ -f "$PBS_NODEFILE" ]; then
