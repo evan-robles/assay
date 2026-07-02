@@ -67,19 +67,27 @@ mapfile -t SPECS < <(ls "$SUITE"/*/*.spec.json 2>/dev/null | sort)
 echo "[parallel] ${#SPECS[@]} molecule spec(s)"
 
 # --- STEP 1: warm engine-references serially (no race) -------------------------
-# One driver per molecule on its assigned node, ONE model, no repeat. This
-# populates every engine-reference/ so the parallel fan-out only reads them.
-echo "[parallel] STEP 1: warming engine references (serial)…"
-for idx in "${!SPECS[@]}"; do
-  spec="${SPECS[$idx]}"
-  node="${NODES[$(( idx % NNODES ))]}"
-  echo "  warm $(basename "$(dirname "$spec")") on $node"
-  CHEMKIT_REMOTE_HOST="$node" \
-    python "$DRIVER" --spec "$spec" --live --model "${MODELS[0]}" \
-    > "/tmp/warm_$(basename "$(dirname "$spec")").log" 2>&1 || \
-    echo "    (warm run exited nonzero — check /tmp/warm_*.log; continuing)"
-done
-echo "[parallel] STEP 1 done."
+# One driver per molecule on its assigned node — WITHOUT --live, so it only
+# builds/validates the engine-reference/ and exits (NO agent/LLM call). This
+# populates the cache so the parallel fan-out only reads it (no recompute race).
+# If a reference is already cached+valid, this is near-instant (a cache-load);
+# only an uncached molecule pays the real engine cost. Skip entirely with
+# SKIP_WARMUP=1 when you know every reference is already cached.
+if [ "${SKIP_WARMUP:-0}" = "1" ]; then
+  echo "[parallel] STEP 1: SKIPPED (SKIP_WARMUP=1) — assuming references cached."
+else
+  echo "[parallel] STEP 1: warming engine references (serial, no agent call)…"
+  for idx in "${!SPECS[@]}"; do
+    spec="${SPECS[$idx]}"
+    node="${NODES[$(( idx % NNODES ))]}"
+    echo "  warm $(basename "$(dirname "$spec")") on $node"
+    CHEMKIT_REMOTE_HOST="$node" \
+      python "$DRIVER" --spec "$spec" \
+      > "/tmp/warm_$(basename "$(dirname "$spec")").log" 2>&1 || \
+      echo "    (warm run exited nonzero — check /tmp/warm_*.log; continuing)"
+  done
+  echo "[parallel] STEP 1 done."
+fi
 
 # --- STEP 2: fan out (molecule × model × repeat) across nodes -----------------
 echo "[parallel] STEP 2: parallel fan-out…"
