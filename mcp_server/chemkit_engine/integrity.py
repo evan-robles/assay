@@ -164,27 +164,68 @@ def gate(result: Dict[str, Any], task_name: str, *,
 # Method-provenance fields that the calculation-reporting standard wants in the
 # top-level method block, but which the PySCF backend only stashes under
 # `code_specific`. We copy them up (additively) so any consumer can read
-# result["basis"] / result["functional"] without reaching into the per-backend
-# block. solvent is NOT listed: schema.base_result already sets it top-level
-# (gas phase = None is its real value), so promoting would risk clobbering it.
-_PROMOTE_FROM_CODE_SPECIFIC = ("functional", "basis")
+# result["basis"] / result["functional"] / result["tier"] without reaching into
+# the per-backend block. solvent is NOT listed: schema.base_result already sets
+# it top-level (gas phase = None is its real value), so promoting would risk
+# clobbering it.
+_PROMOTE_FROM_CODE_SPECIFIC = ("functional", "basis", "tier")
+
+
+def _parse_method_provenance(method: Any) -> Dict[str, Any]:
+    """Best-effort split of a `method` label into (functional, basis).
+
+    Every task sets result["method"] via calculators.method_label, which for
+    ab-initio backends encodes the level of theory as a string:
+      DFT -> "<functional>/<basis>"   (e.g. "b3lyp/def2-tzvp")
+      HF  -> "HF/<basis>"             (functional is None -- HF has none)
+    Semi-empirical labels carry no basis and must yield nothing:
+      xtb -> "GFN2-xTB",  mopac -> "PM7"   (no "/" -> {} )
+    Also ignore the tier-only fallbacks ("DFT[standard]", "DFT", "HF").
+    This lets tasks that never populated code_specific still surface
+    functional/basis top-level, so invocation-fidelity checks have real values.
+    """
+    if not isinstance(method, str) or "/" not in method:
+        return {}
+    left, _, right = method.partition("/")
+    left, right = left.strip(), right.strip()
+    if not right:
+        return {}
+    if left.upper() == "HF":
+        return {"basis": right}            # HF: basis only, functional stays None
+    if not left:
+        return {}
+    return {"functional": left, "basis": right}
 
 
 def _promote_method_provenance(result: Dict[str, Any]) -> None:
-    """Additively copy method-provenance fields from code_specific to top level.
+    """Additively surface method-provenance fields (functional/basis/tier) at the
+    top level of the result.
 
-    Idempotent and non-destructive: a key is promoted ONLY when it is absent or
-    None at top level, so an authoritative top-level value is never overwritten.
-    Semi-empirical backends (xtb/PM7) carry no functional/basis in
-    code_specific, so nothing is promoted for them -- correct, since they have
-    no basis set. Never raises; a malformed code_specific is simply skipped.
+    Two sources, in priority order, applied only when the top-level key is absent
+    or None (never overwrites an authoritative value; idempotent):
+      1. result["code_specific"] -- where sp/freq/frontier stash them.
+      2. the result["method"] string parsed by _parse_method_provenance -- the
+         fallback that fixes the ~14 tasks (fukui, electrostatics, opt, pka,
+         redox, ...) which call finalize() but never build a code_specific block,
+         so functional/basis/tier would otherwise stay None top-level and fail
+         every invocation-fidelity check identically across all agents.
+
+    Semi-empirical backends (xtb/PM7) have no "/" in their method label and no
+    functional/basis in code_specific, so nothing is promoted -- correct, they
+    have no basis set. Never raises; malformed inputs are skipped.
     """
     cs = result.get("code_specific")
-    if not isinstance(cs, dict):
-        return
-    for key in _PROMOTE_FROM_CODE_SPECIFIC:
-        if result.get(key) is None and cs.get(key) is not None:
-            result[key] = cs[key]
+    if isinstance(cs, dict):
+        for key in _PROMOTE_FROM_CODE_SPECIFIC:
+            if result.get(key) is None and cs.get(key) is not None:
+                result[key] = cs[key]
+    # Fallback: recover functional/basis from the method string for tasks with
+    # no code_specific block. (tier is not encoded in the method string, so it
+    # can only come from code_specific above.)
+    parsed = _parse_method_provenance(result.get("method"))
+    for key in ("functional", "basis"):
+        if result.get(key) is None and parsed.get(key) is not None:
+            result[key] = parsed[key]
 
 
 def _schema_checks(result: Dict[str, Any], task_name: str) -> List[IntegrityCheck]:
