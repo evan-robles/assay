@@ -13,8 +13,8 @@
     "multiplicity": 1,
     "solvent": null
   },
-  "report_value_field": "final_heat_of_formation_kcal_mol",
-  "value_tol": 0.01,
+  "report_value_field": "total_energy_eV",
+  "energy_tol_eV": 0.001,
   "rules": [
     "calculation-reporting-standards",
     "research-standards"
