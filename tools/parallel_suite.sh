@@ -80,10 +80,12 @@ else
   for idx in "${!SPECS[@]}"; do
     spec="${SPECS[$idx]}"
     node="${NODES[$(( idx % NNODES ))]}"
-    echo "  warm $(basename "$(dirname "$spec")") on $node"
+    moldir="$(dirname "$spec")"   # write into the molecule's OWN folder (and its
+                                  # engine-reference/ cache lives there too)
+    echo "  warm $(basename "$moldir") on $node"
     CHEMKIT_REMOTE_HOST="$node" \
-      python "$DRIVER" --spec "$spec" \
-      > "/tmp/warm_$(basename "$(dirname "$spec")").log" 2>&1 || \
+      python "$DRIVER" --spec "$spec" --out-dir "$moldir" \
+      > "/tmp/warm_$(basename "$moldir").log" 2>&1 || \
       echo "    (warm run exited nonzero — check /tmp/warm_*.log; continuing)"
   done
   echo "[parallel] STEP 1 done."
@@ -130,10 +132,14 @@ for unit in "${WORK[@]}"; do
   # wait until THIS node has a free slot (strict per-node cap)
   while [ "$(_running_on "$ni")" -ge "$PER_NODE_JOBS" ]; do sleep 1; done
   spec="${SPECS[$idx]}"
-  mol="$(basename "$(dirname "$spec")")"
+  moldir="$(dirname "$spec")"          # the molecule's own folder
+  mol="$(basename "$moldir")"
   msafe="${model//[:\/]/_}"
+  # --out-dir places the run under <molecule>/<model>/<timestamp>/ (matching
+  # run_suite.py) and points the engine-reference cache at the molecule folder —
+  # without it the driver defaults to benchmarks/runs/ and also misses the cache.
   CHEMKIT_REMOTE_HOST="$node" \
-    python "$DRIVER" --spec "$spec" --live --model "$model" \
+    python "$DRIVER" --spec "$spec" --live --model "$model" --out-dir "$moldir" \
     > "/tmp/run_${mol}_${msafe}_${rep}.log" 2>&1 &
   NODE_PIDS[$ni]="${NODE_PIDS[$ni]}$! "
 done
