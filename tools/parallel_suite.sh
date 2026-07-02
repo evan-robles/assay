@@ -103,8 +103,22 @@ fi
 echo "[parallel] STEP 2: ${#MODELS[@]} model worker(s), each serial over"
 echo "           ${#SPECS[@]} molecule(s) × $REPEAT repeat(s); models run in parallel."
 
+# Count COMPLETED runs for a (molecule-dir, model): timestamped run folders under
+# <moldir>/<model_slug>/ that contain a result.json. Used for RESUME so a re-run
+# after a killed/expired job only fills the shortfall toward REPEAT instead of
+# redoing (or piling on top of) work already done. An ERRORED result.json still
+# counts as "attempted" here — it occupies a rep slot; use FORCE=1 to ignore
+# existing runs and always run the full REPEAT afresh.
+_completed_runs() {  # $1 = moldir, $2 = model_slug  -> integer count
+  local moldir="$1" mslug="$2" n=0 d
+  for d in "$moldir/$mslug"/*/; do
+    [ -f "${d}result.json" ] && n=$((n+1))
+  done
+  echo "$n"
+}
+
 run_model_serial() {  # $1 = model, $2 = node — process all molecules×repeats serially
-  local model="$1" node="$2" msafe spec moldir mol rep
+  local model="$1" node="$2" msafe spec moldir mol rep have need r
   msafe="${model//[:\/]/_}"
   # DEPTH-FIRST: complete all REPEAT reps of one molecule before moving to the
   # next (molecule outer, rep inner). This yields complete per-molecule data
@@ -115,7 +129,22 @@ run_model_serial() {  # $1 = model, $2 = node — process all molecules×repeats
     spec="${SPECS[$idx]}"
     moldir="$(dirname "$spec")"
     mol="$(basename "$moldir")"
-    for rep in $(seq 1 "$REPEAT"); do
+    # RESUME: run only the missing reps (REPEAT minus already-completed), unless
+    # FORCE=1. This makes the sweep survive across multiple <=walltime jobs — just
+    # re-submit the same command and it continues where it left off.
+    if [ "${FORCE:-0}" = "1" ]; then
+      have=0
+    else
+      have="$(_completed_runs "$moldir" "$msafe")"
+    fi
+    need=$(( REPEAT - have ))
+    if [ "$need" -le 0 ]; then
+      echo "[parallel]   $mol [$model]: already have $have/$REPEAT — skipping"
+      continue
+    fi
+    [ "$have" -gt 0 ] && echo "[parallel]   $mol [$model]: resuming, $have/$REPEAT done, running $need more"
+    for r in $(seq 1 "$need"); do
+      rep=$(( have + r ))   # label continues from what exists (for the /tmp log name)
       # --out-dir places the run under <molecule>/<model>/<timestamp>/ (matching
       # run_suite.py) and points the engine-reference cache at the molecule folder.
       CHEMKIT_REMOTE_HOST="$node" \
