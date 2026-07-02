@@ -91,30 +91,51 @@ fi
 
 # --- STEP 2: fan out (molecule × model × repeat) across nodes -----------------
 echo "[parallel] STEP 2: parallel fan-out…"
-# Track running jobs per node so we can throttle each node independently.
-declare -A NODE_JOBS
-for n in "${NODES[@]}"; do NODE_JOBS["$n"]=0; done
-
-throttle_node() {  # wait until node $1 has a free slot
-  local node="$1"
-  while [ "$(jobs -rp | wc -l)" -ge "$(( PER_NODE_JOBS * NNODES ))" ]; do
-    sleep 2
-  done
-}
-
+# Build the FLAT work-list of every (spec, model, rep) unit first, so we can
+# distribute individual UNITS across nodes — not whole molecules. (A
+# molecule-outer loop would pile a molecule's entire batch onto one node before
+# touching the next, leaving the other nodes idle. Interleaving units keeps all
+# nodes busy from the start.) Each unit is assigned to a node round-robin; a
+# per-node PID map enforces a strict PER_NODE_JOBS cap on each node independently.
+WORK=()
 for idx in "${!SPECS[@]}"; do
-  spec="${SPECS[$idx]}"
-  node="${NODES[$(( idx % NNODES ))]}"
-  mol="$(basename "$(dirname "$spec")")"
   for model in "${MODELS[@]}"; do
     for rep in $(seq 1 "$REPEAT"); do
-      throttle_node "$node"
-      msafe="${model//[:\/]/_}"
-      CHEMKIT_REMOTE_HOST="$node" \
-        python "$DRIVER" --spec "$spec" --live --model "$model" \
-        > "/tmp/run_${mol}_${msafe}_${rep}.log" 2>&1 &
+      WORK+=("$idx|$model|$rep")
     done
   done
+done
+echo "[parallel] ${#WORK[@]} run units across $NNODES node(s), ${PER_NODE_JOBS}/node"
+
+# Track running PIDs per node by node INDEX using plain indexed arrays
+# (portable to bash 3.2+; avoids `declare -A`, which needs bash 4). NODE_PIDS[i]
+# holds a space-separated PID list for NODES[i].
+NODE_PIDS=()
+for i in "${!NODES[@]}"; do NODE_PIDS[$i]=""; done
+
+_running_on() {  # count live PIDs on node index $1; prune dead ones in place
+  local ni="$1" pid cnt=0 alive=""
+  for pid in ${NODE_PIDS[$ni]}; do
+    if kill -0 "$pid" 2>/dev/null; then alive+="$pid "; cnt=$((cnt+1)); fi
+  done
+  NODE_PIDS[$ni]="$alive"
+  echo "$cnt"
+}
+
+wi=0
+for unit in "${WORK[@]}"; do
+  IFS='|' read -r idx model rep <<< "$unit"
+  # round-robin the UNIT across nodes (by index)
+  ni=$(( wi % NNODES )); node="${NODES[$ni]}"; wi=$((wi+1))
+  # wait until THIS node has a free slot (strict per-node cap)
+  while [ "$(_running_on "$ni")" -ge "$PER_NODE_JOBS" ]; do sleep 1; done
+  spec="${SPECS[$idx]}"
+  mol="$(basename "$(dirname "$spec")")"
+  msafe="${model//[:\/]/_}"
+  CHEMKIT_REMOTE_HOST="$node" \
+    python "$DRIVER" --spec "$spec" --live --model "$model" \
+    > "/tmp/run_${mol}_${msafe}_${rep}.log" 2>&1 &
+  NODE_PIDS[$ni]="${NODE_PIDS[$ni]}$! "
 done
 wait
 echo "[parallel] STEP 2 done — all runs complete."
