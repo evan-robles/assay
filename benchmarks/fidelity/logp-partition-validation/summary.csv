@@ -1,10 +1,22 @@
-case,expect,mode,model,determinism,overall,failed_checks
-aniline,compute,live,argo:o3,pass,PASS,
-benzene,compute,live,argo:o3,pass,PASS,
-diethyl-ether,compute,live,argo:o3,pass,PASS,
-ethanol,compute,live,argo:o3,pass,PASS,
-ibuprofen,compute,live,argo:o3,pass,PASS,
-methanol,compute,live,argo:o3,pass,PASS,
-phenol,compute,live,argo:o3,pass,PASS,
-pyridine,compute,live,argo:o3,pass,PASS,
-toluene,compute,live,argo:o3,pass,PASS,
+case,model,expect,mode,n_pass,n_error,n_runs,pass_rate,modal_verdict,fail_tally,method,solvent,functional,basis,tier,value_field,truth_value,reported_value_latest
+model: argo:claude-opus-4.8
+aniline,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941
+benzene,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.03145,2.03145
+diethyl-ether,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248
+ethanol,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216
+ibuprofen,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313
+methanol,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,0.72354,0.72354
+phenol,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083
+pyridine,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282
+toluene,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443
+
+model: argo:o3
+aniline,argo:o3,compute,live,9,1,10,0.9,PASS,ERRORED (data corruption in transit) x1,GFN2-xTB,,,,,logp,2.29941,2.29941
+benzene,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.03145,2.03145
+diethyl-ether,argo:o3,compute,live,9,1,10,0.9,PASS,ERRORED (data corruption in transit) x1,GFN2-xTB,,,,,logp,1.55248,1.55248
+ethanol,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216
+ibuprofen,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313
+methanol,argo:o3,compute,live,8,2,10,0.8,PASS,ERRORED (data corruption in transit) x2,GFN2-xTB,,,,,logp,0.72354,0.72354
+phenol,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083
+pyridine,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282
+toluene,argo:o3,compute,live,8,2,10,0.8,PASS,ERRORED (data corruption in transit) x2,GFN2-xTB,,,,,logp,2.33443,2.33443

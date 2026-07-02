@@ -83,7 +83,7 @@ reference, feeds the JSON back, and requires the model to submit a structured
 `final_report`, so **Layer B scores automatically** (no manual prose mapping).
 
 ```bash
-# argo-proxy must be running (default http://0.0.0.0:51664/v1).
+# argo-proxy must be running (default http://0.0.0.0:60639/v1).
 # The API key is your Argonne username.
 CHEMKIT_LLM_API_KEY=<your-argo-username> \
 CHEMKIT_LLM_MODEL=argo:o3 \
@@ -96,7 +96,7 @@ Env vars (all optional except the key):
 | Var | Default | Meaning |
 |-----|---------|---------|
 | `CHEMKIT_LLM_API_KEY` | _(unset)_ | argo username / endpoint key. Required for `--live`. |
-| `CHEMKIT_LLM_BASE_URL` | `http://0.0.0.0:51664/v1` | OpenAI-compatible endpoint. |
+| `CHEMKIT_LLM_BASE_URL` | `http://0.0.0.0:60639/v1` | OpenAI-compatible endpoint. `0.0.0.0` = same host as the proxy; for a multi-node/shard run use the proxy host's real hostname (e.g. `http://<proxy-host>:60639/v1`). |
 | `CHEMKIT_LLM_MODEL` | `argo:o3` | model id (e.g. `argo:gpt-4o`, `argo:o4-mini`). |
 
 If the `openai` SDK is missing or no key is set, the live path skips cleanly

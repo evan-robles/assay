@@ -1,7 +1,0 @@
-case,expect,mode,model,method,solvent,functional,basis,tier,value_field,truth_value,reported_value,n_imaginary,zpe_eV,determinism,overall,failed_checks
-anthraquinone,compute,live,argo:o3,GFN2-xTB,water,,,,redox_potential_V_vs_SHE,4.24417,4.24417,,,pass,PASS,
-benzoquinone,compute,live,argo:o3,GFN2-xTB,water,,,,redox_potential_V_vs_SHE,4.90458,4.90458,,,pass,PASS,
-duroquinone,compute,live,argo:o3,GFN2-xTB,water,,,,redox_potential_V_vs_SHE,4.51481,4.51481,,,pass,PASS,
-naphthoquinone,compute,live,argo:o3,GFN2-xTB,water,,,,redox_potential_V_vs_SHE,4.58845,4.58845,,,pass,PASS,
-nitrobenzene,compute,live,argo:o3,GFN2-xTB,water,,,,redox_potential_V_vs_SHE,4.01291,4.01291,,,pass,PASS,
-tetracyanoethylene,compute,live,argo:o3,GFN2-xTB,water,,,,redox_potential_V_vs_SHE,5.54795,5.54795,,,pass,PASS,

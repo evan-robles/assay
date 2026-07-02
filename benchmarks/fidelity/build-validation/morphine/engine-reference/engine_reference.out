@@ -1,0 +1,55 @@
+# chemkit live log
+# subcommand : build
+# args       : --charge 0 morphine --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpxebpi6fh/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli build --charge 0 morphine --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpxebpi6fh/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/morphine/engine-reference
+# started    : 20260630-170802
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpxebpi6fh/truth.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "build_from_smiles",
+  "program": "openbabel",
+  "input": "morphine",
+  "smiles_input": "CN1CC[C@]23[C@@H]4[C@H]1CC5=C2C(=C(C=C5)O)O[C@H]3[C@H](C=C4)O",
+  "n_atoms": 40,
+  "build": {
+    "method": "obabel --gen3d",
+    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_ytp78tsh.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/morphine/engine-reference/morphine.xyz --title chemkit build: morphine"
+  },
+  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/morphine/engine-reference/morphine.xyz",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build --charge 0 morphine --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpxebpi6fh/truth.json",
+  "smiles_source": {
+    "smiles": "CN1CC[C@]23[C@@H]4[C@H]1CC5=C2C(=C(C=C5)O)O[C@H]3[C@H](C=C4)O",
+    "name_input": "morphine",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 5288826, Morphine. https://pubchem.ncbi.nlm.nih.gov/compound/5288826 (accessed 2026-06-24).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5288826",
+    "identifier": "CID 5288826",
+    "from_cache": true,
+    "warnings": []
+  },
+  "schema_version": 1,
+  "integrity": {
+    "status": "warning",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "structure_built",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_atoms = 40 (3D embedding must yield at least one atom)"
+      },
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
+      }
+    ]
+  }
+}

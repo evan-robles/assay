@@ -1,0 +1,16 @@
+{
+  "spec_name": "morphine_build",
+  "skill": "build-from-smiles",
+  "flags": [
+    "--charge",
+    "0"
+  ],
+  "positional": "morphine",
+  "expect": "structure",
+  "spec_hash": "0ab6028c4a0b65cb",
+  "determinism_ok": true,
+  "determinism_msg": "skipped (expect=structure)",
+  "engine_failed": false,
+  "git_commit": "b9e73d6",
+  "timestamp": "2026-06-30T17:08:05"
+}

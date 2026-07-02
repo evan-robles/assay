@@ -40,13 +40,16 @@ ENGINE_REF_DIRNAME = "engine-reference"
 def _engine_reference_json(run: Path) -> Optional[Path]:
     """Locate engine_reference.json for an agent-run folder.
 
-    New layout: a sibling engine-reference/ child of the molecule folder
-    (run.parent). Old layout: inside the run folder itself. Returns the first
-    that exists, else None.
+    The engine-reference/ lives directly under the CASE folder. A run may be:
+      * nested (agent runs): <case>/<model>/<ts>/  -> case is run.parent.parent
+      * flat (recorded/determinism): <case>/<ts>/ -> case is run.parent
+    so we look for engine-reference/ under BOTH candidate case dirs. Oldest
+    layout kept the reference inside the run folder itself — checked last.
     """
-    sibling = run.parent / ENGINE_REF_DIRNAME / "engine_reference.json"
-    if sibling.is_file():
-        return sibling
+    for case_dir in (run.parent, run.parent.parent):
+        cand = case_dir / ENGINE_REF_DIRNAME / "engine_reference.json"
+        if cand.is_file():
+            return cand
     legacy = run / "engine_reference.json"
     return legacy if legacy.is_file() else None
 
@@ -91,17 +94,98 @@ _FINDING_KEYS = ["layer_B_invocation", "layer_C_reporting",
                  "refusal_fidelity", "failure_handling"]
 
 
-def _latest_run(case_dir: Path) -> Optional[Path]:
-    """Return the newest timestamped agent-run subdir that has a result.json.
+def _is_run_dir(d: Path) -> bool:
+    """A run folder is any dir that has a meta.json (written at run start, before
+    scoring). This is what distinguishes a real run — completed OR crashed — from
+    a per-model grouping dir or the engine-reference/ folder."""
+    return d.is_dir() and (d / "meta.json").is_file()
 
-    The engine-reference/ folder is skipped explicitly (it holds the shared
-    engine reference, not a scored agent run, and has no result.json anyway)."""
-    runs = [d for d in case_dir.iterdir()
-            if d.is_dir() and d.name != ENGINE_REF_DIRNAME
-            and (d / "result.json").is_file()]
+
+def _run_crashed(run: Path) -> bool:
+    """True if a run started (has meta.json) but never produced a result.json —
+    i.e. it crashed/errored before scoring. Such runs MUST be surfaced, not
+    silently skipped: 'no result' is a real, reportable outcome, not absence."""
+    return not (run / "result.json").is_file()
+
+
+def _all_runs(case_dir: Path) -> List[Path]:
+    """Every run folder of a case — COMPLETED and CRASHED alike — identified by
+    meta.json. Includes both flat runs (``<case>/<ts>/``, model=None) and nested
+    per-model runs (``<case>/<model>/<ts>/``). engine-reference/ is excluded."""
+    runs: List[Path] = []
+    for child in case_dir.iterdir():
+        if not child.is_dir() or child.name == ENGINE_REF_DIRNAME:
+            continue
+        if _is_run_dir(child):
+            runs.append(child)                     # flat run (completed or crashed)
+        else:
+            # a per-model subfolder: its children are the runs
+            for grandchild in child.iterdir():
+                if _is_run_dir(grandchild):
+                    runs.append(grandchild)
+    return runs
+
+
+def _scored_runs(case_dir: Path) -> List[Path]:
+    """Run folders that completed scoring (have a result.json). This is
+    _all_runs minus the crashed ones. Used by the single-run collectors; the
+    repeat collector uses _all_runs so crashes are counted, not dropped."""
+    return [r for r in _all_runs(case_dir) if not _run_crashed(r)]
+
+
+def _latest_run(case_dir: Path) -> Optional[Path]:
+    """Return the newest timestamped agent-run subdir that has a result.json."""
+    runs = _scored_runs(case_dir)
     if not runs:
         return None
     return sorted(runs, key=lambda d: d.name)[-1]
+
+
+def _run_model(run: Path) -> str:
+    """The model a run folder was produced with, from its meta.json 'model'
+    field (authoritative — the driver writes it there). Falls back to '(default)'
+    for runs with no model (the driver default / recorded mode, model=None)."""
+    mj = run / "meta.json"
+    if mj.is_file():
+        try:
+            m = (json.loads(mj.read_text()) or {}).get("model")
+            if m:
+                return str(m)
+        except Exception:
+            pass
+    return "(default)"
+
+
+def _latest_run_per_model(case_dir: Path) -> Dict[str, Path]:
+    """Map each model -> its NEWEST scored run folder for this case.
+
+    A multi-model sweep nests runs under a per-model subfolder
+    (<case>/<fs_safe(model)>/<ts>/); the old _latest_run() kept only the single
+    newest across ALL models, silently
+    dropping every other model. This keeps the latest run for EACH model so all
+    models appear in the summary. Runs are grouped by meta.json['model']."""
+    latest: Dict[str, Path] = {}
+    for run in sorted(_scored_runs(case_dir), key=lambda d: d.name):
+        # sorted ascending by timestamped name -> later iterations overwrite,
+        # so each model ends up mapped to its newest run.
+        latest[_run_model(run)] = run
+    return latest
+
+
+def _runs_per_model(case_dir: Path, n: Optional[int] = None) -> Dict[str, List[Path]]:
+    """Map each model -> ALL its run folders for this case, newest first,
+    INCLUDING crashed runs (meta.json but no result.json). Crashes are counted as
+    errored outcomes by the repeat aggregator, never silently dropped.
+
+    If `n` is given, keep only the n NEWEST runs per model (the fresh batch a
+    --repeat N invocation just produced). Runs are grouped by meta.json['model']
+    and sorted by their timestamped folder name (descending = newest first)."""
+    by_model: Dict[str, List[Path]] = {}
+    for run in sorted(_all_runs(case_dir), key=lambda d: d.name, reverse=True):
+        by_model.setdefault(_run_model(run), []).append(run)
+    if n is not None:
+        by_model = {m: runs[:n] for m, runs in by_model.items()}
+    return by_model
 
 
 def _findings(result: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -228,63 +312,192 @@ def _headline_fields(run: Path, spec: Dict[str, Any], result: Dict[str, Any],
     return out
 
 
+def _row_for_run(case_dir: Path, run: Path) -> Dict[str, Any]:
+    """Build one summary row from a single scored run folder."""
+    result = json.loads((run / "result.json").read_text())
+    meta = {}
+    if (run / "meta.json").is_file():
+        meta = json.loads((run / "meta.json").read_text())
+
+    findings = _findings(result)
+    failed = [f.get("check") for f in findings if not f.get("ok")]
+    lot = _lot_fields(run, result)
+
+    # Per-skill headline scientific result needs the spec (report_value_field,
+    # skill). Read it from the case folder; tolerate its absence.
+    spec: Dict[str, Any] = {}
+    specs = sorted(case_dir.glob("*.spec.json"))
+    agent_run: Dict[str, Any] = {}
+    if specs:
+        try:
+            spec = json.loads(specs[0].read_text())
+        except Exception:
+            spec = {}
+    if (run / "agent_run.json").is_file():
+        try:
+            agent_run = json.loads((run / "agent_run.json").read_text())
+        except Exception:
+            agent_run = {}
+    head = _headline_fields(run, spec, result, agent_run)
+
+    return {
+        "case": case_dir.name,
+        "expect": result.get("expect", "compute"),
+        "mode": result.get("mode", meta.get("mode", "")),
+        "model": meta.get("model") or "(default)",
+        # Level of theory actually run (method / solvent / functional / basis
+        # / tier). Empty where a field does not apply (e.g. functional on xtb,
+        # solvent in gas phase). See _lot_fields for the source order.
+        "method": lot["method"],
+        "solvent": lot["solvent"],
+        "functional": lot["functional"],
+        "basis": lot["basis"],
+        "tier": lot["tier"],
+        # Per-skill headline scientific result: the field name, the engine's
+        # (truth) value, and the agent's reported value, side by side. Plus
+        # vibrational-only extras (n_imaginary, zpe_eV). See _headline_fields.
+        "value_field": head["value_field"],
+        "truth_value": head["truth_value"],
+        "reported_value": head["reported_value"],
+        "n_imaginary": head["n_imaginary"],
+        "zpe_eV": head["zpe_eV"],
+        "determinism": "pass" if result.get("layer_A_determinism") else "FAIL",
+        "overall": result.get("overall", "?"),
+        "failed_checks": "; ".join(c for c in failed if c) or "",
+    }
+
+
 def collect(base: Path) -> List[Dict[str, Any]]:
+    """Legacy single-row-per-case collect (newest run across all models).
+
+    Retained for callers that want one representative row per case. For a
+    model-aware, complete view (one row per (case, model)), use collect_all()."""
     rows: List[Dict[str, Any]] = []
     for case_dir in sorted(p for p in base.iterdir() if p.is_dir()):
         run = _latest_run(case_dir)
         if run is None:
             continue
-        result = json.loads((run / "result.json").read_text())
-        meta = {}
-        if (run / "meta.json").is_file():
-            meta = json.loads((run / "meta.json").read_text())
+        rows.append(_row_for_run(case_dir, run))
+    return rows
 
-        findings = _findings(result)
-        failed = [f.get("check") for f in findings if not f.get("ok")]
-        lot = _lot_fields(run, result)
 
-        # Per-skill headline scientific result needs the spec (report_value_field,
-        # skill). Read it from the case folder; tolerate its absence.
-        spec: Dict[str, Any] = {}
-        specs = sorted(case_dir.glob("*.spec.json"))
-        agent_run: Dict[str, Any] = {}
-        if specs:
-            try:
-                spec = json.loads(specs[0].read_text())
-            except Exception:
-                spec = {}
-        if (run / "agent_run.json").is_file():
-            try:
-                agent_run = json.loads((run / "agent_run.json").read_text())
-            except Exception:
-                agent_run = {}
-        head = _headline_fields(run, spec, result, agent_run)
+def collect_all(base: Path) -> List[Dict[str, Any]]:
+    """One row per (case, model): for every case, the newest run of EACH model.
 
-        rows.append({
-            "case": case_dir.name,
-            "expect": result.get("expect", "compute"),
-            "mode": result.get("mode", meta.get("mode", "")),
-            "model": meta.get("model") or "",
-            # Level of theory actually run (method / solvent / functional / basis
-            # / tier). Empty where a field does not apply (e.g. functional on xtb,
-            # solvent in gas phase). See _lot_fields for the source order.
-            "method": lot["method"],
-            "solvent": lot["solvent"],
-            "functional": lot["functional"],
-            "basis": lot["basis"],
-            "tier": lot["tier"],
-            # Per-skill headline scientific result: the field name, the engine's
-            # (truth) value, and the agent's reported value, side by side. Plus
-            # vibrational-only extras (n_imaginary, zpe_eV). See _headline_fields.
-            "value_field": head["value_field"],
-            "truth_value": head["truth_value"],
-            "reported_value": head["reported_value"],
-            "n_imaginary": head["n_imaginary"],
-            "zpe_eV": head["zpe_eV"],
-            "determinism": "pass" if result.get("layer_A_determinism") else "FAIL",
-            "overall": result.get("overall", "?"),
-            "failed_checks": "; ".join(c for c in failed if c) or "",
-        })
+    Fixes the silent-drop bug where a multi-model sweep only surfaced the single
+    newest model per case. Rows are returned grouped by model (models sorted,
+    then cases within each model) so the combined summary reads as per-model
+    sections."""
+    by_model: Dict[str, List[Dict[str, Any]]] = {}
+    for case_dir in sorted(p for p in base.iterdir() if p.is_dir()):
+        for model, run in _latest_run_per_model(case_dir).items():
+            by_model.setdefault(model, []).append(_row_for_run(case_dir, run))
+    rows: List[Dict[str, Any]] = []
+    for model in sorted(by_model):
+        rows.extend(sorted(by_model[model], key=lambda r: r["case"]))
+    return rows
+
+
+def _aggregate_repeat(case_dir: Path, model: str,
+                      runs: List[Path]) -> Dict[str, Any]:
+    """Aggregate N runs of one (case, model) into a single pass-rate row.
+
+    CRASHED runs (started but no result.json — the driver errored before scoring)
+    are counted, NOT dropped: they add to n_runs, count as non-pass (lowering the
+    rate), contribute 'ERRORED (crash, no result.json) xN' to the failed-check
+    tally, and register an 'ERROR' verdict in the modal tally. This keeps the
+    summary honest — an errored run is a real, reportable outcome, and a
+    (case,model) whose runs ALL crashed still appears (n_pass=0, modal=ERROR)
+    instead of silently vanishing.
+
+    Reports: n_pass / n_runs / n_error / pass_rate; the MODAL overall verdict
+    (PASS/FAIL/ERROR, most common across the N runs); and a failed-check TALLY,
+    most-frequent first (e.g. 'warnings preserved x4; ERRORED (crash) x1'). LoT /
+    headline fields come from a representative COMPLETED run where one exists."""
+    from collections import Counter
+    # Two kinds of errored run, both excluded from fidelity pass/fail:
+    #   * CRASHED  — no result.json (driver died before scoring).
+    #   * INTEGRITY-ERROR — result.json has overall=="ERROR" (data corruption in
+    #     transit, e.g. malformed Unicode escapes — see fidelity_driver
+    #     _has_encoding_corruption). These have a result.json but were NOT scored
+    #     on fidelity; blaming the model would be wrong.
+    crashed = [r for r in runs if _run_crashed(r)]
+    scored = [r for r in runs if not _run_crashed(r)]
+    scored_rows = [_row_for_run(case_dir, r) for r in scored]
+    integrity_rows = [row for row in scored_rows if row["overall"] == "ERROR"]
+    graded_rows = [row for row in scored_rows if row["overall"] != "ERROR"]
+
+    n_runs = len(runs)
+    n_error = len(crashed) + len(integrity_rows)
+    n_pass = sum(1 for r in graded_rows if r["overall"] == "PASS")
+    pass_rate = round(n_pass / n_runs, 3) if n_runs else 0.0
+
+    # Modal overall verdict across ALL N runs (both error kinds register 'ERROR').
+    verdicts = Counter([r["overall"] for r in graded_rows] + ["ERROR"] * n_error)
+    modal_verdict = verdicts.most_common(1)[0][0] if verdicts else "?"
+
+    # Failed-check tally: how many of the N runs each check failed in, PLUS
+    # dedicated entries for the two error kinds so they are visible/attributable.
+    check_counter: Counter = Counter()
+    for r in graded_rows:
+        for chk in (r["failed_checks"].split("; ") if r["failed_checks"] else []):
+            if chk:
+                check_counter[chk] += 1
+    if crashed:
+        check_counter["ERRORED (crash, no result.json)"] = len(crashed)
+    if integrity_rows:
+        check_counter["ERRORED (data corruption in transit)"] = len(integrity_rows)
+    fail_tally = "; ".join(f"{chk} x{cnt}"
+                           for chk, cnt in check_counter.most_common()) or ""
+
+    # Representative row: prefer a GRADED run (carries method/LoT/value_field/
+    # truth_value). If every run errored, fall back to empty invariant fields so
+    # the (case,model) still appears as all-errored.
+    rep = graded_rows[0] if graded_rows else {
+        "expect": "", "mode": "", "method": "", "solvent": "",
+        "functional": "", "basis": "", "tier": "",
+        "value_field": "", "truth_value": "", "reported_value": "",
+    }
+    return {
+        "case": case_dir.name,
+        "model": model,
+        "expect": rep["expect"],
+        "mode": rep["mode"],
+        "n_pass": n_pass,
+        "n_error": n_error,
+        "n_runs": n_runs,
+        "pass_rate": pass_rate,
+        "modal_verdict": modal_verdict,
+        "fail_tally": fail_tally,
+        "method": rep["method"],
+        "solvent": rep["solvent"],
+        "functional": rep["functional"],
+        "basis": rep["basis"],
+        "tier": rep["tier"],
+        "value_field": rep["value_field"],
+        "truth_value": rep["truth_value"],
+        "reported_value_latest": rep["reported_value"],
+    }
+
+
+def collect_repeats(base: Path, n: Optional[int] = None) -> List[Dict[str, Any]]:
+    """One aggregated row per (case, model) over the n NEWEST runs each.
+
+    For a --repeat N sweep: for every case and every model, take that model's n
+    most-recent scored runs and aggregate them into pass_rate + modal verdict +
+    failed-check tally (see _aggregate_repeat). Rows are grouped by model (models
+    sorted, cases within each) exactly like collect_all, so the same grouped-CSV
+    writer applies. If n is None, aggregates ALL scored runs per (case, model)."""
+    by_model: Dict[str, List[Dict[str, Any]]] = {}
+    for case_dir in sorted(p for p in base.iterdir() if p.is_dir()):
+        for model, runs in _runs_per_model(case_dir, n=n).items():
+            if not runs:
+                continue
+            by_model.setdefault(model, []).append(
+                _aggregate_repeat(case_dir, model, runs))
+    rows: List[Dict[str, Any]] = []
+    for model in sorted(by_model):
+        rows.extend(sorted(by_model[model], key=lambda r: r["case"]))
     return rows
 
 
@@ -292,17 +505,115 @@ def _print_table(rows: List[Dict[str, Any]]) -> None:
     # method shown inline plus the headline value comparison (truth vs reported)
     # and the imaginary-mode count (populated for vibrational analysis; blank
     # elsewhere); functional/basis/tier/solvent/zpe stay in the CSV to keep the
-    # console narrow.
+    # console narrow. Rows are printed in per-model sections (a `model: <name>`
+    # banner before each group) to mirror the grouped summary.csv.
     cols = ["case", "expect", "overall", "method",
             "value_field", "truth_value", "reported_value", "n_imaginary"]
     widths = {c: max(len(c), *(len(str(r[c])) for r in rows)) for c in cols} if rows else {}
     header = "  ".join(c.ljust(widths[c]) for c in cols)
-    print(header)
-    print("-" * len(header))
+    current: Optional[str] = None
     for r in rows:
+        m = r.get("model") or "(default)"
+        if m != current:
+            print()
+            print(f"model: {m}")
+            print(header)
+            print("-" * len(header))
+            current = m
         print("  ".join(str(r[c]).ljust(widths[c]) for c in cols))
     n_pass = sum(1 for r in rows if r["overall"] == "PASS")
-    print(f"\n{n_pass}/{len(rows)} cases PASS")
+    print(f"\n{n_pass}/{len(rows)} (case,model) rows PASS")
+
+
+def _print_repeat_table(rows: List[Dict[str, Any]]) -> None:
+    """Console table for --repeat aggregation: pass rate + modal verdict +
+    n_error + the failed-check tally, in per-model sections (mirrors the grouped
+    summary.csv). n_error surfaces crashed runs so they are never hidden."""
+    cols = ["case", "n_pass", "n_error", "n_runs", "pass_rate", "modal_verdict",
+            "method", "value_field", "truth_value", "fail_tally"]
+    widths = {c: max(len(c), *(len(str(r.get(c, ""))) for r in rows)) for c in cols} if rows else {}
+    header = "  ".join(c.ljust(widths[c]) for c in cols)
+    current: Optional[str] = None
+    for r in rows:
+        m = r.get("model") or "(default)"
+        if m != current:
+            print()
+            print(f"model: {m}")
+            print(header)
+            print("-" * len(header))
+            current = m
+        print("  ".join(str(r.get(c, "")).ljust(widths[c]) for c in cols))
+    # Aggregate over all (case,model) rows: mean pass rate, fully-reliable count,
+    # and total errored runs — so a crashed sweep is loud, not silent.
+    if rows:
+        mean_rate = round(sum(r["pass_rate"] for r in rows) / len(rows), 3)
+        perfect = sum(1 for r in rows if r["pass_rate"] == 1.0)
+        total_err = sum(r.get("n_error", 0) for r in rows)
+        err_note = f"; {total_err} ERRORED run(s) across all pairs" if total_err else ""
+        print(f"\n{perfect}/{len(rows)} (case,model) pairs are 100% reliable; "
+              f"mean pass_rate = {mean_rate}{err_note}")
+
+
+def write_grouped_csv(rows: List[Dict[str, Any]], csv_path: Path) -> None:
+    """Write a human-oriented, model-grouped summary CSV.
+
+    Layout: a header row of column names, then for each model a banner row
+    ``model: <name>`` followed by that model's case rows, with a blank line
+    between model sections. Each data row STILL carries the ``model`` column, so
+    the file is also recoverable programmatically by skipping lines whose first
+    cell starts with ``model:`` or is empty. `rows` is expected pre-grouped by
+    model (as collect_all returns).
+
+    Note: the banner rows make this NOT directly loadable by pandas.read_csv
+    without filtering; it is a report, not a tidy CSV. That is intentional per
+    the chosen layout."""
+    fieldnames = list(rows[0].keys()) if rows else ["case"]
+    with open(csv_path, "w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(fieldnames)  # top column header
+        current: Optional[str] = None
+        dict_w = csv.DictWriter(fh, fieldnames=fieldnames)
+        for r in rows:
+            m = r.get("model") or "(default)"
+            if m != current:
+                if current is not None:
+                    w.writerow([])            # blank line between model sections
+                w.writerow([f"model: {m}"])   # banner/subtitle row
+                current = m
+            dict_w.writerow(r)
+
+
+def _rescore_all(base: Path) -> None:
+    """Re-score every run under `base` in place using the CURRENT scorer, without
+    re-invoking the model. Walks the same run folders collect_repeats reads
+    (_all_runs), captures each run's old overall verdict, calls
+    fidelity_driver.rescore_run(), and reports how many changed / were skipped."""
+    import fidelity_driver as _fd  # local import (heavy module)
+
+    def _old_overall(run: Path):
+        rj = run / "result.json"
+        if not rj.is_file():
+            return None
+        try:
+            return json.loads(rj.read_text()).get("overall")
+        except (OSError, ValueError):
+            return None
+
+    rescored = changed = skipped = 0
+    for case_dir in sorted(p for p in base.iterdir() if p.is_dir()):
+        for run in _all_runs(case_dir):
+            before = _old_overall(run)
+            rec = _fd.rescore_run(run)
+            if rec is None:
+                skipped += 1  # crashed/unscorable — left untouched
+                continue
+            rescored += 1
+            if before is not None and rec.get("overall") != before:
+                changed += 1
+                print(f"  re-scored {case_dir.name}/{run.name}: "
+                      f"{before} -> {rec.get('overall')}")
+    print(f"[rescore] {rescored} run(s) re-scored, {changed} changed verdict, "
+          f"{skipped} skipped (crashed/unscorable)")
 
 
 def main() -> int:
@@ -310,24 +621,47 @@ def main() -> int:
     ap.add_argument("--dir", default=str(_DEFAULT_DIR),
                     help="validation directory of case folders")
     ap.add_argument("--csv", default=None, help="CSV output path (default: <dir>/summary.csv)")
+    ap.add_argument("--flat", action="store_true",
+                    help="legacy flat CSV: one representative row per case (newest "
+                         "run across all models), no per-model grouping. Default is "
+                         "the model-grouped report (one row per (case,model)).")
+    ap.add_argument("--rescore", action="store_true",
+                    help="RE-SCORE every existing run in place before collecting: "
+                         "recompute each result.json from its stored agent_run.json "
+                         "+ engine-reference + spec using the CURRENT scorer (no "
+                         "model calls). Use after a scoring-logic change to update "
+                         "old runs without re-running the agent. Rewrites result.json "
+                         "files — opt-in only.")
     args = ap.parse_args()
 
     base = Path(args.dir)
     if not base.is_dir():
         print(f"error: not a directory: {base}")
         return 2
-    rows = collect(base)
-    if not rows:
-        print(f"No scored runs found under {base}")
-        return 1
 
-    _print_table(rows)
+    if args.rescore:
+        _rescore_all(base)
 
     csv_path = Path(args.csv) if args.csv else base / "summary.csv"
-    with open(csv_path, "w", newline="") as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
-        w.writeheader()
-        w.writerows(rows)
+
+    if args.flat:
+        rows = collect(base)
+        if not rows:
+            print(f"No scored runs found under {base}")
+            return 1
+        _print_table(rows)
+        with open(csv_path, "w", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+            w.writeheader()
+            w.writerows(rows)
+    else:
+        rows = collect_all(base)
+        if not rows:
+            print(f"No scored runs found under {base}")
+            return 1
+        _print_table(rows)
+        write_grouped_csv(rows, csv_path)
+
     print(f"\nCSV written: {csv_path}")
     return 0
 

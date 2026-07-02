@@ -1,9 +1,0 @@
-case,expect,mode,model,method,solvent,functional,basis,tier,value_field,truth_value,reported_value,n_imaginary,zpe_eV,determinism,overall,failed_checks
-acetic-acid,compute,live,argo:o3,PM7,water,,,,pKa,-267.149,-267.149,,,pass,PASS,
-benzoic-acid,compute,live,argo:o3,GFN2-xTB,water,,,,pKa,4.66164,4.66164,,,pass,PASS,
-formic-acid,compute,live,argo:o3,b3lyp/def2-tzvp,water,b3lyp,def2-tzvp,,pKa,2.00123,2.00123,,,pass,PASS,
-hydrogen-cyanide,compute,live,argo:o3,b3lyp/def2-tzvp,water,b3lyp,def2-tzvp,,pKa,13.8242,13.8242,,,pass,PASS,
-methanol,compute,live,argo:o3,PM7,water,,,,pKa,-247.21,-247.21,,,pass,PASS,
-methylammonium,compute,live,argo:o3,GFN2-xTB,water,,,,pKa,-117.63,-117.63,,,pass,PASS,
-phenol,compute,live,argo:o3,GFN2-xTB,water,,,,pKa,16.6553,16.6553,,,pass,PASS,
-trifluoroacetic-acid,compute,live,argo:o3,GFN2-xTB,water,,,,pKa,-131.202,-131.202,,,pass,PASS,
