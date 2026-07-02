@@ -37,6 +37,7 @@ python skills/binding-energy/scripts/binding-energy.py --method <xtb|mopac|dft|h
    - **Binding energy** in eV, kcal/mol, and Hartree (negative = stable complex).
    - E(complex), E(monomer1), E(monomer2), ...
    - Warning: no BSSE correction; geometries are used as-supplied.
+   - Every warning from the result JSON, reproduced verbatim — none dropped, summarized, or paraphrased; if there are no warnings, say so.
    - The saved JSON path (`--out`, default `<complex-stem>_binding_<method>.json`).
 
 

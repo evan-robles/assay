@@ -40,6 +40,7 @@ python skills/vibrational-analysis/scripts/vibrational-analysis.py --method <xtb
    - Number of real / imaginary modes — **warn loudly** if any imaginary modes remain after the pre-opt.
    - Frequency list (cm⁻¹) — top 10 + lowest 10 if there are many.
    - If imaginary modes remain after pre-opt, the geometry is a true saddle point (TS or higher-order); suggest exploring along the imaginary normal mode or searching for a nearby minimum.
+   - Every warning from the result JSON (including those in the `preopt` block), reproduced verbatim — none dropped, summarized, or paraphrased; if there are no warnings, say so.
 
 
 > **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).

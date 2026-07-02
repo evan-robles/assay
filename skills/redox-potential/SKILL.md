@@ -38,6 +38,7 @@ python skills/redox-potential/scripts/redox-potential.py --method <xtb|mopac|dft
    - ΔE_redox (eV, kcal/mol).
    - Energies of the oxidized and reduced states.
    - **Warn explicitly**: semi-empirical methods give ±0.3–0.5 V at best; the calculation uses the same geometry for both states (no reorganization energy); solvation correction is implicit-only.
+   - Every warning from the result JSON, reproduced verbatim — none dropped, summarized, or paraphrased; if there are no warnings, say so.
    - The saved JSON path (`--out`, default `<stem>_redox_<method>.json`).
 
 

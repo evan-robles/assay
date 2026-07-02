@@ -44,10 +44,12 @@ Argument:
 Then read the JSON and **report**: the resolved `smiles` (headline), the
 `smiles_source.source` (which source answered), the `smiles_source.smiles_kind`
 (`isomeric` / `connectivity` / `unspecified`), the `smiles_source.identifier`
-(e.g. a PubChem CID), and the `smiles_source.citation` (ACS). If a lower-priority
+(e.g. a PubChem CID), and the `smiles_source.citation` (ACS). Also report every
+warning from the result JSON, reproduced verbatim — none dropped, summarized, or
+paraphrased; if there are no warnings, say so. In particular, if a lower-priority
 source answered because a higher one timed out, a provenance **warning** is
-surfaced in `warnings` — pass it on (the stereochemistry may differ from the
-preferred source).
+surfaced in `warnings` (the stereochemistry may differ from the preferred
+source) — pass it on like any other.
 
 Next step: hand the SMILES to [build-from-smiles](../build-from-smiles/SKILL.md)
 to generate a 3D `.xyz` for downstream calculations.

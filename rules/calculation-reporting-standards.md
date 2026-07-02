@@ -261,8 +261,14 @@ affected value:
   For MOPAC: `mopac_status` and `mopac_gradient_norm_kcal_per_A` (no `n_steps`).
   If **not converged**, still deliver the last geometry/energy but flag
   `converged: false` **prominently** — do not bury it.
-- **Engine warnings.** Echo every entry in the result JSON's `warnings` array
-  **verbatim**. They are there for a reason.
+- **Engine warnings.** Echo **every** entry in the result JSON's `warnings`
+  array **verbatim** — every item, none omitted, summarized, paraphrased, or
+  silently merged. Dropping or condensing even a single warning is a reporting
+  failure, and a correct headline number does **not** excuse it: the warning
+  travels *with* the value it qualifies. If the `warnings` array is empty, say so
+  explicitly ("no warnings reported") rather than staying silent, so the reader
+  can tell "clean run" apart from "warnings not checked." They are there for a
+  reason.
 - **Fallbacks that fired.** e.g. PySCF DM warm-start falling back to a cold SCF
   on shape mismatch or non-convergence; a tier downgrade; an xtb-then-DFT
   pre-optimization. The protocol that actually ran is the one to report — not the

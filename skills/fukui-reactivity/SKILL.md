@@ -46,7 +46,7 @@ Arguments:
 
 If the `.xyz` is missing → stop and ask. If `--method` is missing, ask.
 
-Then read the JSON and report: the most electrophilic atom (largest $f^+$ — symbol, 1-based index, value); the most nucleophilic atom (largest $f^-$); the full per-atom table (index, symbol, $f^+$, $f^-$, dual — sort by $|\mathrm{dual}|$ descending if compact); the PNG path (if plotting was on); the partial-charge scheme (Mulliken for both backends); and any warning, especially the "Σ f± ≠ 1.0" charge-conservation drift, which usually indicates an SCF problem in an N±1 state.
+Then read the JSON and report: the most electrophilic atom (largest $f^+$ — symbol, 1-based index, value); the most nucleophilic atom (largest $f^-$); the full per-atom table (index, symbol, $f^+$, $f^-$, dual — sort by $|\mathrm{dual}|$ descending if compact); the PNG path (if plotting was on); the partial-charge scheme (Mulliken for both backends); and every warning from the result JSON, reproduced verbatim — none dropped, summarized, or paraphrased; if there are no warnings, say so. Pay particular attention to the "Σ f± ≠ 1.0" charge-conservation drift, which usually indicates an SCF problem in an N±1 state.
 
 For open-shell parents (radicals) set `--mult 2` and pick `--cation-mult`/`--anion-mult` so each adds/removes a single electron with the right total spin.
 
