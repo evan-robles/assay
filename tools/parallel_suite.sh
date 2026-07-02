@@ -91,63 +91,43 @@ else
   echo "[parallel] STEP 1 done."
 fi
 
-# --- STEP 2: fan out (molecule × model × repeat) across nodes -----------------
-echo "[parallel] STEP 2: parallel fan-out…"
-# Build the FLAT work-list of every (spec, model, rep) unit first, so we can
-# distribute individual UNITS across nodes — not whole molecules. (A
-# molecule-outer loop would pile a molecule's entire batch onto one node before
-# touching the next, leaving the other nodes idle. Interleaving units keeps all
-# nodes busy from the start.) Each unit is assigned to a node round-robin; a
-# per-node PID map enforces a strict PER_NODE_JOBS cap on each node independently.
-# Interleave so ALL models make progress from the start. rep is the OUTER loop
-# and model the MIDDLE: the first units queued are (rep 1: mol0×modelA, mol0×modelB,
-# …, mol1×modelA, …), so every model appears near the front instead of one model's
-# entire batch draining before the next begins. Without this (molecule→model→rep),
-# the concurrency window fills with only the first model and the others look like
-# they "never run" until much later.
-WORK=()
-for rep in $(seq 1 "$REPEAT"); do
-  for model in "${MODELS[@]}"; do
+# --- STEP 2: one SERIAL worker per model, models running in PARALLEL ----------
+# The single argo tunnel cannot serve many concurrent agent calls — firing a wide
+# pool of workers oversubscribes it and every run stalls at the agent call (only
+# meta.json is written, nothing computes). So the concurrency unit is the MODEL,
+# not the run: each model gets ONE worker that processes its (molecule × repeat)
+# list strictly SERIALLY (one agent call at a time), and the workers for different
+# models run in parallel. This bounds concurrent argo calls to #models — enough to
+# use the cluster, not enough to overwhelm the proxy. Each model's engine work is
+# pinned to its own compute node (round-robin), so nodes are still used in parallel.
+echo "[parallel] STEP 2: ${#MODELS[@]} model worker(s), each serial over"
+echo "           ${#SPECS[@]} molecule(s) × $REPEAT repeat(s); models run in parallel."
+
+run_model_serial() {  # $1 = model, $2 = node — process all molecules×repeats serially
+  local model="$1" node="$2" msafe spec moldir mol rep
+  msafe="${model//[:\/]/_}"
+  for rep in $(seq 1 "$REPEAT"); do
     for idx in "${!SPECS[@]}"; do
-      WORK+=("$idx|$model|$rep")
+      spec="${SPECS[$idx]}"
+      moldir="$(dirname "$spec")"
+      mol="$(basename "$moldir")"
+      # --out-dir places the run under <molecule>/<model>/<timestamp>/ (matching
+      # run_suite.py) and points the engine-reference cache at the molecule folder.
+      # No trailing '&' here: this loop is deliberately SERIAL per model.
+      CHEMKIT_REMOTE_HOST="$node" \
+        python "$DRIVER" --spec "$spec" --live --model "$model" --out-dir "$moldir" \
+        > "/tmp/run_${mol}_${msafe}_${rep}.log" 2>&1
     done
   done
-done
-echo "[parallel] ${#WORK[@]} run units across $NNODES node(s), ${PER_NODE_JOBS}/node"
-
-# Track running PIDs per node by node INDEX using plain indexed arrays
-# (portable to bash 3.2+; avoids `declare -A`, which needs bash 4). NODE_PIDS[i]
-# holds a space-separated PID list for NODES[i].
-NODE_PIDS=()
-for i in "${!NODES[@]}"; do NODE_PIDS[$i]=""; done
-
-_running_on() {  # count live PIDs on node index $1; prune dead ones in place
-  local ni="$1" pid cnt=0 alive=""
-  for pid in ${NODE_PIDS[$ni]}; do
-    if kill -0 "$pid" 2>/dev/null; then alive+="$pid "; cnt=$((cnt+1)); fi
-  done
-  NODE_PIDS[$ni]="$alive"
-  echo "$cnt"
+  echo "[parallel]   model $model done."
 }
 
-wi=0
-for unit in "${WORK[@]}"; do
-  IFS='|' read -r idx model rep <<< "$unit"
-  # round-robin the UNIT across nodes (by index)
-  ni=$(( wi % NNODES )); node="${NODES[$ni]}"; wi=$((wi+1))
-  # wait until THIS node has a free slot (strict per-node cap)
-  while [ "$(_running_on "$ni")" -ge "$PER_NODE_JOBS" ]; do sleep 1; done
-  spec="${SPECS[$idx]}"
-  moldir="$(dirname "$spec")"          # the molecule's own folder
-  mol="$(basename "$moldir")"
-  msafe="${model//[:\/]/_}"
-  # --out-dir places the run under <molecule>/<model>/<timestamp>/ (matching
-  # run_suite.py) and points the engine-reference cache at the molecule folder —
-  # without it the driver defaults to benchmarks/runs/ and also misses the cache.
-  CHEMKIT_REMOTE_HOST="$node" \
-    python "$DRIVER" --spec "$spec" --live --model "$model" --out-dir "$moldir" \
-    > "/tmp/run_${mol}_${msafe}_${rep}.log" 2>&1 &
-  NODE_PIDS[$ni]="${NODE_PIDS[$ni]}$! "
+# Launch one serial worker per model, each pinned to its own node (round-robin).
+for mi in "${!MODELS[@]}"; do
+  model="${MODELS[$mi]}"
+  node="${NODES[$(( mi % NNODES ))]}"
+  echo "[parallel]   model $model -> node $node (serial)"
+  run_model_serial "$model" "$node" &
 done
 wait
 echo "[parallel] STEP 2 done — all runs complete."
