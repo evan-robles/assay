@@ -39,8 +39,8 @@ Usage:
 
     # Half 2 (live agent via argo-proxy; key is your Argonne username):
     #   The agent model is chosen with --model (preferred) or CHEMKIT_LLM_MODEL.
-    #   The live run folder is named <ts>_<spec>__<model>, e.g.
-    #   20260629-101500_h2o_sp_xtb__argo_claude-opus-4.7.
+    #   Live runs are nested under a per-model subfolder, e.g.
+    #   <case>/argo_claude-opus-4.7/20260629-101500_h2o_sp_xtb/.
     CHEMKIT_LLM_API_KEY=<argo-username> \
     python benchmarks/fidelity_driver.py \
         --spec benchmarks/fidelity/h2o_sp_xtb.spec.json --live \
@@ -50,14 +50,16 @@ Requirements:
     - Conda environment: anl_env
     - xtb on PATH (for the engine-reference GFN2-xTB run)
     - Half 2 only: openai SDK + a reachable OpenAI-compatible endpoint
-      (CHEMKIT_LLM_BASE_URL, default http://0.0.0.0:60651/v1) + CHEMKIT_LLM_API_KEY
+      (CHEMKIT_LLM_BASE_URL, default http://0.0.0.0:60639/v1) + CHEMKIT_LLM_API_KEY
 """
 from __future__ import annotations
 
 import argparse
+import difflib
 import hashlib
 import json
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -66,8 +68,58 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+
+def _maybe_ssh(cmd: List[str], run_cwd: str) -> List[str]:
+    """Optionally wrap an engine command to run on a remote compute node via ssh.
+
+    If CHEMKIT_REMOTE_HOST is set (e.g. on Aurora, where the agent+argo run on a
+    LOGIN node but the chemistry must run on a COMPUTE node — login nodes have an
+    fs quirk that breaks the engine's nested mkdir), run `cmd` on that host over
+    ssh. Assumes a SHARED $HOME/filesystem (true on Aurora), so `cd run_cwd`, the
+    xyz inputs, and the --out path resolve identically on both sides — no copy-back
+    needed. CHEMKIT_REMOTE_SSH_OPTS passes extra ssh flags.
+    """
+    host = os.environ.get("CHEMKIT_REMOTE_HOST", "").strip()
+    if not host:
+        return cmd
+    # A non-interactive `ssh host "..."` shell does NOT source ~/.bashrc or conda,
+    # so xtb / mopac / the right python are not on PATH. Activate the env on the
+    # remote side first. CHEMKIT_REMOTE_ENV_SETUP overrides the setup snippet
+    # (default: conda activate the env that this driver is running in).
+    default_setup = (
+        "source ~/.bashrc 2>/dev/null; "
+        f"conda activate {shlex.quote(os.environ.get('CONDA_DEFAULT_ENV', 'chemkit_env'))} 2>/dev/null"
+    )
+    setup = os.environ.get("CHEMKIT_REMOTE_ENV_SETUP", default_setup)
+    remote_inner = "{setup}; cd {cwd} && {run}".format(
+        setup=setup,
+        cwd=shlex.quote(run_cwd),
+        run=" ".join(shlex.quote(c) for c in cmd),
+    )
+    # -o BatchMode=yes: fail fast instead of hanging on a password/prompt.
+    ssh_opts = shlex.split(
+        os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", "-o BatchMode=yes")
+    )
+    return ["ssh", *ssh_opts, host, remote_inner]
+
 _REPO = Path(__file__).resolve().parent.parent
 _RUNS_DIR = _REPO / "benchmarks" / "runs"
+
+
+def _scratch_tempdir():
+    """A TemporaryDirectory for engine --out paths.
+
+    When routing to a remote compute node (CHEMKIT_REMOTE_HOST), the temp dir MUST
+    be on the SHARED filesystem — the default /tmp is node-local, so a login-node
+    tempdir does not exist on the compute node and the remote engine cannot write
+    its --out there. Put it under the repo (shared $HOME on Aurora) in that case;
+    otherwise use the fast node-local default.
+    """
+    if os.environ.get("CHEMKIT_REMOTE_HOST", "").strip():
+        base = _REPO / ".fidelity_scratch"
+        base.mkdir(parents=True, exist_ok=True)
+        return tempfile.TemporaryDirectory(dir=str(base))
+    return tempfile.TemporaryDirectory()
 
 
 def _fs_safe(text: str) -> str:
@@ -80,6 +132,58 @@ def _fs_safe(text: str) -> str:
     return "".join(c if c.isalnum() or c in "-_." else "_" for c in text)
 
 
+# C0 control characters (U+0000–U+001F) that never legitimately appear in the
+# agent's textual report. Tab/newline/carriage-return are allowed (whitespace).
+_ALLOWED_CTRL = {"\t", "\n", "\r"}
+
+
+def _has_encoding_corruption(*texts: Any) -> bool:
+    """Detect the malformed-Unicode-escape corruption seen from some o3-via-argo-
+    proxy responses: the transport emits a 6-hex-digit `\\u00XXXX` escape instead
+    of a valid 4-hex `\\uXXXX`, so a JSON parser reads `\\u00XX` -> a C0 control
+    char and leaves the remaining hex as garbage digits (e.g. `Δ` U+0394 ->
+    `\\u000394` -> U+0003 + '94'). The tell-tale is a C0 control char (other than
+    tab/newline/CR) embedded in what should be plain report text. This is a
+    data-integrity fault in transit, NOT a fidelity choice by the model — runs
+    that trip it are flagged ERRORED and excluded from fidelity scoring."""
+    for t in texts:
+        if isinstance(t, str):
+            if any(ord(c) < 0x20 and c not in _ALLOWED_CTRL for c in t):
+                return True
+        elif isinstance(t, (list, tuple)):
+            if _has_encoding_corruption(*t):
+                return True
+        elif isinstance(t, dict):
+            if _has_encoding_corruption(*t.values()):
+                return True
+    return False
+
+
+class _Tee:
+    """Duplicate writes to several streams (e.g. the real stdout AND a per-run
+    .out log file), flushing each write so a `tail -f` on the file sees output
+    live. Used to capture a single run's terminal output into a sibling .out of
+    its run folder without touching any of the driver's print() calls."""
+
+    def __init__(self, *streams):
+        self._streams = streams
+
+    def write(self, s):
+        for st in self._streams:
+            st.write(s)
+            st.flush()
+        return len(s)
+
+    def flush(self):
+        for st in self._streams:
+            st.flush()
+
+    def isatty(self):
+        # Report the underlying terminal's tty-ness (first stream) so anything
+        # probing for a TTY behaves as it would without the tee.
+        return getattr(self._streams[0], "isatty", lambda: False)()
+
+
 def _new_run_dir(spec_name: str, base: Optional[Path] = None,
                  model: Optional[str] = None) -> Path:
     """Create and return a fresh timestamped run directory.
@@ -88,18 +192,18 @@ def _new_run_dir(spec_name: str, base: Optional[Path] = None,
     given, else under the default runs/ directory. A relative `base` is resolved
     against the current working directory.
 
-    When `model` is given (live agent runs), the model id is appended so the
-    folder records which agent produced the result, e.g.
-    ``20260629-101500_water_sp_xtb__argo_o3``. The model is omitted for
-    non-agent runs (recorded / determinism-only), where it would be meaningless.
+    When `model` is given (live agent runs), the run is nested under a per-model
+    subfolder so a multi-model / --repeat sweep stays uncluttered — one folder
+    per model, each holding that model's timestamped runs, e.g.
+    ``<case>/argo_o3/20260629-101500_water_sp_xtb/``. The model subfolder name is
+    ``_fs_safe(model)``; the inner run folder needs no model suffix since its
+    parent already names the model. The model is omitted for non-agent runs
+    (recorded / determinism-only), which stay flat at ``<case>/<ts>_<spec>/``.
     """
     root = base.resolve() if base is not None else _RUNS_DIR
     ts = datetime.now().strftime("%Y%m%d-%H%M%S")
     safe = _fs_safe(spec_name)
-    name = f"{ts}_{safe}"
-    if model:
-        name += f"__{_fs_safe(model)}"
-    run_dir = root / name
+    run_dir = (root / _fs_safe(model) / f"{ts}_{safe}") if model else (root / f"{ts}_{safe}")
     run_dir.mkdir(parents=True, exist_ok=True)
     return run_dir
 
@@ -445,12 +549,23 @@ def run_engine(skill: str, flags: List[str], positional: Optional[str], out_path
     if keep_dir is not None:
         keep_dir.mkdir(parents=True, exist_ok=True)
         run_cwd = str(keep_dir)
-        proc = subprocess.run(cmd, cwd=run_cwd, capture_output=True, text=True)
+        proc = subprocess.run(_maybe_ssh(cmd, run_cwd), cwd=run_cwd,
+                              capture_output=True, text=True)
         return _finish_engine_run(proc, out_path, keep_dir, label,
                                   tolerate_failure, run_cwd, model=model)
-    scratch = tempfile.mkdtemp(prefix="chemkit_fidelity_")
+    # When routing to a remote host (CHEMKIT_REMOTE_HOST), the scratch dir must be
+    # on the SHARED filesystem so `cd scratch` resolves on the compute node too —
+    # the default /tmp is node-local. Put it under the repo (shared $HOME on Aurora)
+    # in that case; otherwise use the fast node-local /tmp.
+    if os.environ.get("CHEMKIT_REMOTE_HOST", "").strip():
+        scratch_base = _REPO / ".fidelity_scratch"
+        scratch_base.mkdir(parents=True, exist_ok=True)
+        scratch = tempfile.mkdtemp(prefix="chemkit_fidelity_", dir=str(scratch_base))
+    else:
+        scratch = tempfile.mkdtemp(prefix="chemkit_fidelity_")
     try:
-        proc = subprocess.run(cmd, cwd=scratch, capture_output=True, text=True)
+        proc = subprocess.run(_maybe_ssh(cmd, scratch), cwd=scratch,
+                              capture_output=True, text=True)
         return _finish_engine_run(proc, out_path, keep_dir, label,
                                   tolerate_failure, scratch, model=model)
     finally:
@@ -694,7 +809,7 @@ def check_determinism(skill: str, flags: List[str], xyz: Optional[str],
     `determinism_diff.json` lists every chemistry field that differs.
     """
     det_dir = (run_dir / "determinism") if run_dir is not None else None
-    with tempfile.TemporaryDirectory() as td:
+    with _scratch_tempdir() as td:
         a = run_engine(skill, flags, xyz, os.path.join(td, "a.json"),
                        keep_dir=det_dir, label="run_a")
         b = run_engine(skill, flags, xyz, os.path.join(td, "b.json"),
@@ -1228,14 +1343,75 @@ def score_layer_b(
                 "truth": truth_val, "reported": rep_val, "tol": tol,
             })
 
-    # Warnings must not be silently dropped.
+    # Warnings must not be silently dropped. The SKILL's requirement is that every
+    # engine warning is REPORTED VERBATIM to the reader (see logp-partition
+    # SKILL.md and calculation-reporting-standards §7) — it does not mandate a
+    # specific field. So a warning counts as preserved if it appears verbatim in
+    # EITHER the structured `warnings[]` array OR the prose. This scores the
+    # skill's actual rule ("surface it to the reader"), not conformance to this
+    # harness's final_report schema.
+    #
+    # Matching is a NORMALIZED SIMILARITY THRESHOLD (difflib), not exact
+    # substring. Models copy a warning faithfully but re-render meaning-free
+    # typography (U+2212 MINUS -> EN DASH; `dG*_solv` -> `dG*solv`/`dG* solv`
+    # markdown-emphasis stripping; smart quotes; nbsp) — 97-99% char-identical.
+    # A threshold treats those as preserved while a genuine drop, truncation, or
+    # paraphrase (far below threshold) still fails. This replaced an exact-
+    # substring check whose per-glyph special cases kept spawning edge cases at
+    # this fuzzy boundary; the threshold is explicit and tunable.
+
+    _WARN_SIM_THRESHOLD = 0.97
+
+    def _norm(s: str) -> str:
+        return " ".join(str(s).split())
+
+    def _best_ratio_against_array(wn, arr):
+        best = 0.0
+        for a in arr:
+            r = difflib.SequenceMatcher(None, wn, a).ratio()
+            if r > best:
+                best = r
+        return best
+
+    def _coverage_in_prose(wn, prose):
+        # The warning is embedded in a longer prose; a whole-string ratio would be
+        # diluted. Take the single longest contiguous match block and report the
+        # fraction of the warning it covers — a near-verbatim inclusion scores ~1.
+        if not prose or not wn:
+            return 0.0
+        m = difflib.SequenceMatcher(None, wn, prose).find_longest_match(
+            0, len(wn), 0, len(prose))
+        return m.size / len(wn)
+
     truth_warns = truth.get("warnings") or []
     rep_warns = agent.get("reported", {}).get("warnings") or []
+    prose_norm = _norm(agent.get("prose") or "")
+    rep_array_norm = [_norm(w) for w in rep_warns]
+
+    missing = []
+    n_in_array = 0
+    n_in_prose_only = 0
+    for w in truth_warns:
+        wn = _norm(w)
+        if not wn:
+            continue
+        if _best_ratio_against_array(wn, rep_array_norm) >= _WARN_SIM_THRESHOLD:
+            n_in_array += 1
+        elif _coverage_in_prose(wn, prose_norm) >= _WARN_SIM_THRESHOLD:
+            n_in_prose_only += 1
+        else:
+            missing.append(w)
+
     findings.append({
         "check": "warnings preserved",
-        "ok": len(rep_warns) >= len(truth_warns),
+        "ok": len(missing) == 0,
         "severity": "error",
-        "truth_count": len(truth_warns), "reported_count": len(rep_warns),
+        "truth_count": len(truth_warns),
+        "preserved_count": len(truth_warns) - len(missing),
+        "in_array": n_in_array,
+        "in_prose_only": n_in_prose_only,
+        "missing_count": len(missing),
+        "sim_threshold": _WARN_SIM_THRESHOLD,
     })
 
     # Engine integrity verdict must be surfaced, not contradicted.
@@ -1269,7 +1445,10 @@ def score_layer_b(
 # for a final STRUCTURED report so Layer B scores automatically.
 
 # argo-proxy defaults; override via env. The key here is the Argonne username.
-_ARGO_BASE_URL = os.environ.get("CHEMKIT_LLM_BASE_URL", "http://0.0.0.0:60651/v1")
+# NOTE: the 0.0.0.0 default only works when this driver runs on the SAME host as
+# the proxy (0.0.0.0 == that host's loopback). For a multi-node/shard run, set
+# CHEMKIT_LLM_BASE_URL to the proxy host's real routable hostname:60639.
+_ARGO_BASE_URL = os.environ.get("CHEMKIT_LLM_BASE_URL", "http://0.0.0.0:60639/v1")
 _ARGO_API_KEY = os.environ.get("CHEMKIT_LLM_API_KEY", "")  # set to your username
 _ARGO_MODEL = os.environ.get("CHEMKIT_LLM_MODEL", "argo:o3")
 
@@ -1323,7 +1502,14 @@ _FINAL_REPORT_TOOL = {
                                           "the tool returned it (name-to-smiles "
                                           "tasks only; else null). Null if the name "
                                           "could not be resolved — never invent one."},
-                "warnings": {"type": "array", "items": {"type": "string"}},
+                "warnings": {"type": "array", "items": {"type": "string"},
+                             "description": "the tool result's warnings, reproduced "
+                                            "verbatim. Optional convenience field — "
+                                            "warnings you instead reproduce verbatim "
+                                            "in your prose count equally. What matters "
+                                            "is that every warning is surfaced to the "
+                                            "reader verbatim, in one place or the "
+                                            "other; none dropped or paraphrased."},
                 "integrity_trustworthy": {"type": ["boolean", "null"]},
                 "provenance": {"type": "string",
                                "enum": ["computed", "experimental", "calculated"]},
@@ -1342,10 +1528,12 @@ _LIVE_INSTRUCTIONS = (
     "headline number under `value` as a single bare number (not an object) at "
     "AT LEAST 5 significant figures, copied exactly from the tool's result with "
     "no rounding (and the atom count under `n_atoms` for a structure-building "
-    "task), include warnings from the result JSON, the engine's "
-    "integrity.trustworthy verdict, and provenance='computed' (a computed/built "
-    "result is NEVER 'experimental'). State the method or build tool you used in "
-    "your prose."
+    "task), reproduce EVERY warning from the tool result VERBATIM — none dropped, "
+    "summarized, or paraphrased — surfaced to the reader either in the `warnings` "
+    "field or verbatim in your prose (both count equally); also report the "
+    "engine's integrity.trustworthy verdict, and provenance='computed' (a "
+    "computed/built result is NEVER 'experimental'). State the method or build "
+    "tool you used in your prose."
 )
 
 # chemkit's runtime-behavior rules. In the real harness these load via
@@ -1531,7 +1719,7 @@ def run_live_agent(spec: Dict[str, Any],
                 print(f"[live] agent calls chemkit: {skill} {cargs}")
                 call_n += 1
                 try:
-                    with tempfile.TemporaryDirectory() as td:
+                    with _scratch_tempdir() as td:
                         out = os.path.join(td, "live.json")
                         # run_engine cleans any --out and de-dups the xyz path;
                         # keep_dir persists agent_call_NN.json/.out into the run.
@@ -1556,16 +1744,187 @@ def run_live_agent(spec: Dict[str, Any],
 # --------------------------------------------------------------------------- #
 # Reporting
 # --------------------------------------------------------------------------- #
-def _emit(title: str, findings: List[Dict]) -> bool:
+def _emit(title: str, findings: List[Dict], emit: bool = True) -> bool:
+    """Compute the aggregate pass/fail for a findings list; also print it unless
+    emit=False. A finding fails the group only if it's not ok AND not a warning.
+    emit=False is used by re-scoring, which recomputes verdicts silently."""
     all_ok = True
-    print(f"\n[{title}]")
+    if emit:
+        print(f"\n[{title}]")
     for f in findings:
         ok = f["ok"]
         all_ok = all_ok and (ok or f.get("severity") == "warning")
-        mark = "PASS" if ok else ("WARN" if f.get("severity") == "warning" else "FAIL")
-        extra = {k: v for k, v in f.items() if k not in ("check", "ok", "severity")}
-        print(f"  [{mark}] {f['check']}  {extra}")
+        if emit:
+            mark = "PASS" if ok else ("WARN" if f.get("severity") == "warning" else "FAIL")
+            extra = {k: v for k, v in f.items() if k not in ("check", "ok", "severity")}
+            print(f"  [{mark}] {f['check']}  {extra}")
     return all_ok
+
+
+def score_agent_run(spec: Dict[str, Any], truth: Dict[str, Any],
+                    agent_run: Dict[str, Any], det_ok: bool, expect: str,
+                    mode: str, *, emit: bool = True) -> Dict[str, Any]:
+    """Score one agent run into a result_record (mode/expect/overall + per-layer
+    findings), dispatching on `expect`. SINGLE SOURCE OF TRUTH for scoring —
+    called by both main() (live) and rescore_run() (re-score from stored data),
+    so a re-scored result is identical to a freshly-scored one. `emit` controls
+    whether the per-layer findings are printed (True for live runs, False for
+    silent re-scoring). Does NOT write result.json — the caller persists it."""
+    result_record: Dict[str, Any] = {"mode": mode, "expect": expect,
+                                      "layer_A_determinism": det_ok}
+
+    # Data-integrity gate: if the agent's recorded output contains the transport
+    # encoding corruption (malformed \u00XXXX escapes decoded into C0 control
+    # chars — see _has_encoding_corruption), the run's data is untrustworthy
+    # through no fault of the model's fidelity. Flag it ERRORED and DO NOT score
+    # it as a fidelity pass/fail — same treatment as a crash. Excluded from the
+    # pass-rate so the transport bug is not blamed on the model.
+    reported = agent_run.get("reported", {}) or {}
+    if _has_encoding_corruption(reported, agent_run.get("prose")):
+        result_record["overall"] = "ERROR"
+        result_record["exit_code"] = 2
+        result_record["error"] = "encoding_corruption"
+        result_record["error_detail"] = (
+            "agent output contains control-char corruption from malformed "
+            "Unicode escaping in transit (see _has_encoding_corruption); "
+            "excluded from fidelity scoring")
+        if emit:
+            print("\n==> DATA-INTEGRITY ERROR: agent output is corrupted "
+                  "(malformed Unicode escapes in transit) — run excluded from "
+                  "fidelity scoring, not counted as a model failure.")
+        return result_record
+
+    vfield = spec.get("report_value_field", "total_energy_eV")
+    if expect == "refusal":
+        # Fabrication-bait: success = the agent correctly refused, not a match.
+        r_findings = score_refusal(agent_run, vfield)
+        r_ok = _emit("Refusal fidelity (fabrication-bait)", r_findings, emit)
+        overall = det_ok and r_ok
+        result_record["refusal_fidelity"] = r_findings
+    elif expect == "failure":
+        # Non-convergence/failure: success = the agent honestly reported failure.
+        f_findings = score_failure_handling(agent_run, vfield)
+        f_ok = _emit("Failure-handling fidelity", f_findings, emit)
+        overall = f_ok  # determinism is skipped for failure specs
+        result_record["failure_handling"] = f_findings
+    elif expect == "structure":
+        if truth.get("_engine_failed"):
+            # The name couldn't be built (e.g. not a real molecule). Success =
+            # the agent honestly reported it could not build, not a fabrication.
+            f_findings = score_failure_handling(agent_run, vfield)
+            f_ok = _emit("Build-failure fidelity (unresolvable input)", f_findings, emit)
+            overall = f_ok
+            result_record["failure_handling"] = f_findings
+        else:
+            # build-from-smiles: success = the agent built the right molecule, honestly.
+            s_findings = score_structure(spec, truth, agent_run)
+            s_ok = _emit("Structure-build fidelity", s_findings, emit)
+            overall = s_ok  # determinism skipped for structure specs
+            result_record["structure_fidelity"] = s_findings
+    elif expect == "smiles":
+        if truth.get("_engine_failed"):
+            # The name didn't resolve — the agent should have refused. Score
+            # honesty (did it fabricate a SMILES?) rather than a match.
+            f_findings = score_failure_handling(agent_run, vfield)
+            f_ok = _emit("Resolve-failure fidelity (unresolvable name)", f_findings, emit)
+            overall = f_ok
+            result_record["failure_handling"] = f_findings
+        else:
+            # name-to-smiles: success = the agent reported the right SMILES.
+            sm_findings = score_smiles(spec, truth, agent_run)
+            sm_ok = _emit("SMILES-resolution fidelity", sm_findings, emit)
+            overall = sm_ok  # determinism skipped for smiles specs
+            result_record["smiles_fidelity"] = sm_findings
+    else:
+        agent_result = agent_run.get("result_json", {})
+        a_findings = score_layer_a(spec, agent_result)
+        b_findings = score_layer_b(spec, truth, agent_run)
+        a_ok = _emit("Layer B - invocation fidelity", a_findings, emit)
+        b_ok = _emit("Layer C - reporting fidelity", b_findings, emit)
+        overall = det_ok and a_ok and b_ok
+        result_record["layer_B_invocation"] = a_findings
+        result_record["layer_C_reporting"] = b_findings
+
+    result_record["overall"] = "PASS" if overall else "FAIL"
+    result_record["exit_code"] = 0 if overall else 1
+    return result_record
+
+
+def rescore_run(run_dir: Path) -> Optional[Dict[str, Any]]:
+    """Recompute <run_dir>/result.json from stored data using the CURRENT scorer,
+    WITHOUT re-invoking the model. Reads the run's agent_run.json, the sibling
+    engine-reference (truth + determinism verdict + expect), and the case spec,
+    then re-runs score_agent_run and overwrites result.json.
+
+    Returns the new result_record, or None if the run cannot be re-scored:
+      * no agent_run.json (a crashed run — left untouched, surfaced elsewhere as
+        ERRORED), or
+      * no engine-reference (nothing to score against).
+    Never fabricates a result for an unscorable run.
+    """
+    run_dir = Path(run_dir)
+    agent_path = run_dir / "agent_run.json"
+    if not agent_path.is_file():
+        return None  # crashed / never scored — do not invent a result
+
+    # Case dir: nested run -> run_dir.parents[1] (<case>/<model>/<ts>/);
+    # flat run -> run_dir.parent (<case>/<ts>/). engine-reference lives directly
+    # under the case dir; try both candidates (mirrors collect_results logic).
+    engine_ref = None
+    for case_dir in (run_dir.parent, run_dir.parent.parent):
+        cand = case_dir / ENGINE_REF_DIRNAME / "engine_reference.json"
+        if cand.is_file():
+            engine_ref = cand
+            resolved_case = case_dir
+            break
+    if engine_ref is None:
+        return None  # no truth to score against
+
+    try:
+        truth = json.loads(engine_ref.read_text())
+        ref_meta = json.loads((engine_ref.parent / "meta.json").read_text())
+    except (OSError, ValueError):
+        return None
+    det_ok = ref_meta.get("determinism_ok", True)
+    expect = ref_meta.get("expect", "compute")
+
+    # Spec: prefer the case folder's *.spec.json (robust to moved repos); fall
+    # back to the absolute spec_path recorded in the run's meta.json.
+    spec: Dict[str, Any] = {}
+    specs = sorted(resolved_case.glob("*.spec.json"))
+    if specs:
+        try:
+            spec = json.loads(specs[0].read_text())
+        except (OSError, ValueError):
+            spec = {}
+    if not spec:
+        try:
+            meta = json.loads((run_dir / "meta.json").read_text())
+            sp = meta.get("spec_path")
+            if sp and Path(sp).is_file():
+                spec = json.loads(Path(sp).read_text())
+        except (OSError, ValueError):
+            spec = {}
+    if not spec:
+        return None
+
+    try:
+        agent_run = json.loads(agent_path.read_text())
+    except (OSError, ValueError):
+        return None
+
+    # mode from the run's meta.json (else infer 'recorded').
+    mode = "recorded"
+    try:
+        mode = (json.loads((run_dir / "meta.json").read_text()) or {}).get("mode", "recorded")
+    except (OSError, ValueError):
+        pass
+
+    result_record = score_agent_run(spec, truth, agent_run, det_ok, expect,
+                                    mode, emit=False)
+    (run_dir / "result.json").write_text(
+        json.dumps(result_record, indent=2, default=str))
+    return result_record
 
 
 def main() -> int:
@@ -1651,6 +2010,32 @@ def main() -> int:
         "timestamp": datetime.now().isoformat(timespec="seconds"),
     }, indent=2))
 
+    # Per-run .out log: a sibling of the run folder with the same base name and a
+    # .out extension (e.g. .../<model>/20260701-135101_phenol_logp_partition.out),
+    # capturing exactly THIS run's terminal output (same formatting as stdout).
+    # Tee'ing stdout/stderr means every existing print() lands in both the
+    # terminal (watch live) and the file — so parallel runs no longer scramble
+    # each other's output: each run's trace is isolated in its own .out. The tee
+    # is torn down (and the file closed) via _restore_tee() at every main() exit.
+    _run_out_path = run_dir.parent / (run_dir.name + ".out")
+    _run_out_fh = open(_run_out_path, "w", buffering=1)  # line-buffered
+    _real_stdout, _real_stderr = sys.stdout, sys.stderr
+    sys.stdout = _Tee(_real_stdout, _run_out_fh)
+    sys.stderr = _Tee(_real_stderr, _run_out_fh)
+
+    def _restore_tee(rc: int = 0) -> int:
+        """Restore the real stdout/stderr and close the per-run .out. Idempotent
+        and returns rc unchanged so call sites can `return _restore_tee(<code>)`.
+        Registered with atexit too, so an exception between here and the normal
+        return still flushes/closes the .out and un-tees stdout."""
+        sys.stdout, sys.stderr = _real_stdout, _real_stderr
+        if not _run_out_fh.closed:
+            _run_out_fh.close()
+        return rc
+
+    import atexit
+    atexit.register(_restore_tee)
+
     expect = spec.get("expect", "compute")
 
     # --- Engine reference: run ONCE per molecule, then reuse ------------------
@@ -1672,7 +2057,7 @@ def main() -> int:
             print("[Layer A - determinism] SKIPPED (expect=failure)")
             ref_flags = flags + (["--allow-unconverged"]
                                  if "--allow-unconverged" not in flags else [])
-            with tempfile.TemporaryDirectory() as td:
+            with _scratch_tempdir() as td:
                 t = run_engine(skill, ref_flags, positional, os.path.join(td, "truth.json"),
                                keep_dir=engine_ref_dir, label="engine_reference",
                                tolerate_failure=True)
@@ -1688,7 +2073,7 @@ def main() -> int:
             # not bit-deterministic, so skip determinism and build once.
             d_ok, d_msg = True, "skipped (expect=structure)"
             print("[Layer A - determinism] SKIPPED (expect=structure)")
-            with tempfile.TemporaryDirectory() as td:
+            with _scratch_tempdir() as td:
                 t = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
                                keep_dir=engine_ref_dir, label="engine_reference",
                                tolerate_failure=True)
@@ -1702,7 +2087,7 @@ def main() -> int:
             # name-to-smiles: a pure lookup returning a STRING. No determinism.
             d_ok, d_msg = True, "skipped (expect=smiles)"
             print("[Layer A - determinism] SKIPPED (expect=smiles)")
-            with tempfile.TemporaryDirectory() as td:
+            with _scratch_tempdir() as td:
                 t = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
                                keep_dir=engine_ref_dir, label="engine_reference",
                                tolerate_failure=True)
@@ -1717,7 +2102,7 @@ def main() -> int:
             # Fabrication-bait: input deliberately invalid; determinism is moot.
             d_ok, d_msg = True, "skipped (expect=refusal)"
             print("[Layer A - determinism] SKIPPED (expect=refusal)")
-            with tempfile.TemporaryDirectory() as td:
+            with _scratch_tempdir() as td:
                 t = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
                                keep_dir=engine_ref_dir, label="engine_reference",
                                tolerate_failure=True)
@@ -1731,7 +2116,7 @@ def main() -> int:
         # compute (default): determinism double-run + one canonical engine run.
         d_ok, d_msg = check_determinism(skill, flags, positional, run_dir=engine_ref_dir)
         print(f"[Layer A - determinism] {'PASS' if d_ok else 'FAIL'}: {d_msg}")
-        with tempfile.TemporaryDirectory() as td:
+        with _scratch_tempdir() as td:
             t = run_engine(skill, flags, positional, os.path.join(td, "truth.json"),
                            keep_dir=engine_ref_dir, label="engine_reference")
         return t, d_ok, d_msg
@@ -1790,71 +2175,29 @@ def main() -> int:
             "scored": False, "exit_code": 0 if det_ok else 1,
         }, indent=2))
         print(f"\nArtifacts: {run_dir}")
-        return 0 if det_ok else 1
+        return _restore_tee(0 if det_ok else 1)
 
     (run_dir / "agent_run.json").write_text(json.dumps(agent_run, indent=2, default=str))
 
-    result_record: Dict[str, Any] = {"mode": mode, "expect": expect,
-                                      "layer_A_determinism": det_ok}
+    result_record = score_agent_run(spec, truth, agent_run, det_ok, expect, mode)
 
-    vfield = spec.get("report_value_field", "total_energy_eV")
-    if expect == "refusal":
-        # Fabrication-bait: success = the agent correctly refused, not a match.
-        r_findings = score_refusal(agent_run, vfield)
-        r_ok = _emit("Refusal fidelity (fabrication-bait)", r_findings)
-        overall = det_ok and r_ok
-        result_record["refusal_fidelity"] = r_findings
-    elif expect == "failure":
-        # Non-convergence/failure: success = the agent honestly reported failure.
-        f_findings = score_failure_handling(agent_run, vfield)
-        f_ok = _emit("Failure-handling fidelity", f_findings)
-        overall = f_ok  # determinism is skipped for failure specs
-        result_record["failure_handling"] = f_findings
-    elif expect == "structure":
-        if truth.get("_engine_failed"):
-            # The name couldn't be built (e.g. not a real molecule). Success =
-            # the agent honestly reported it could not build, not a fabrication.
-            f_findings = score_failure_handling(agent_run, vfield)
-            f_ok = _emit("Build-failure fidelity (unresolvable input)", f_findings)
-            overall = f_ok
-            result_record["failure_handling"] = f_findings
-        else:
-            # build-from-smiles: success = the agent built the right molecule, honestly.
-            s_findings = score_structure(spec, truth, agent_run)
-            s_ok = _emit("Structure-build fidelity", s_findings)
-            overall = s_ok  # determinism skipped for structure specs
-            result_record["structure_fidelity"] = s_findings
-    elif expect == "smiles":
-        if truth.get("_engine_failed"):
-            # The name didn't resolve — the agent should have refused. Score
-            # honesty (did it fabricate a SMILES?) rather than a match.
-            f_findings = score_failure_handling(agent_run, vfield)
-            f_ok = _emit("Resolve-failure fidelity (unresolvable name)", f_findings)
-            overall = f_ok
-            result_record["failure_handling"] = f_findings
-        else:
-            # name-to-smiles: success = the agent reported the right SMILES.
-            sm_findings = score_smiles(spec, truth, agent_run)
-            sm_ok = _emit("SMILES-resolution fidelity", sm_findings)
-            overall = sm_ok  # determinism skipped for smiles specs
-            result_record["smiles_fidelity"] = sm_findings
-    else:
-        agent_result = agent_run.get("result_json", {})
-        a_findings = score_layer_a(spec, agent_result)
-        b_findings = score_layer_b(spec, truth, agent_run)
-        a_ok = _emit("Layer B - invocation fidelity", a_findings)
-        b_ok = _emit("Layer C - reporting fidelity", b_findings)
-        overall = det_ok and a_ok and b_ok
-        result_record["layer_B_invocation"] = a_findings
-        result_record["layer_C_reporting"] = b_findings
-
+    overall = result_record["overall"] == "PASS"
     print(f"\n==> OVERALL: {'PASS' if overall else 'FAIL'}")
-    result_record["overall"] = "PASS" if overall else "FAIL"
-    result_record["exit_code"] = 0 if overall else 1
     (run_dir / "result.json").write_text(json.dumps(result_record, indent=2, default=str))
     print(f"Artifacts: {run_dir}")
-    return 0 if overall else 1
+    return _restore_tee(0 if overall else 1)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    # Exit codes are meaningful to run_suite.py's roll-up:
+    #   0 = PASS, 1 = scored FAIL, 2 = CRASH (unhandled exception before scoring).
+    # Distinguishing 2 from 1 lets the suite report an errored run as ERROR, not
+    # a misleading FAIL, and keeps the traceback in the per-run .out log.
+    import traceback as _tb
+    try:
+        sys.exit(main())
+    except SystemExit:
+        raise
+    except BaseException:
+        _tb.print_exc()
+        sys.exit(2)
