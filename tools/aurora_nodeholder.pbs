@@ -1,0 +1,44 @@
+#!/bin/bash
+#PBS -N assay-nodeholder
+#PBS -l select=4
+#PBS -l place=scatter
+#PBS -l walltime=01:00:00
+#PBS -l filesystems=home:flare
+#PBS -q debug-scaling
+#PBS -A AgenticChem
+#PBS -j oe
+#PBS -o assay_nodeholder.log
+# ══════════════════════════════════════════════════════════════════════════════
+# assay-nodeholder — a DUMB node-holder for the fidelity sweep.
+#
+# This batch job's ONLY job is to allocate the compute nodes and keep them alive
+# for the walltime. It does NOT run the agent sweep — the agent loop needs the
+# login-node argo tunnel, which a compute node cannot reach. The sweep itself is
+# driven from OUTSIDE (the Mac controller, via ControlMaster) which reads the
+# node list this job publishes and runs parallel_suite.sh ON the login node.
+#
+# It writes the allocated node list to a well-known shared-FS file, then sleeps.
+# ══════════════════════════════════════════════════════════════════════════════
+set -o pipefail
+cd "${PBS_O_WORKDIR:-$HOME/chem-skills}"
+
+NODES_FILE="${PBS_O_WORKDIR:-$HOME/chem-skills}/.sweep_nodes"
+READY_FILE="${PBS_O_WORKDIR:-$HOME/chem-skills}/.sweep_ready"
+
+# Publish the unique allocated compute-node hostnames for the external controller.
+sort -u "$PBS_NODEFILE" > "$NODES_FILE"
+echo "$PBS_JOBID" > "$READY_FILE"
+
+echo "════════════════════════════════════════════════════════════════════"
+echo "  assay node-holder"
+echo "  PBS_JOBID : ${PBS_JOBID:-?}"
+echo "  nodes     : $(wc -l < "$NODES_FILE")"
+cat "$NODES_FILE" | sed 's/^/    /'
+echo "  published : $NODES_FILE"
+echo "  Holding nodes for the walltime; the external controller drives the sweep."
+echo "════════════════════════════════════════════════════════════════════"
+
+# Keep the job (and thus the node allocation) alive for the full walltime.
+# PBS will SIGTERM/SIGKILL at walltime; the controller detects the job ending
+# via qstat and resubmits.
+sleep infinity
