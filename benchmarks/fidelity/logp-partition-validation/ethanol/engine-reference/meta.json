@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ethanol/ethanol.xyz",
   "expect": "compute",
-  "spec_hash": "32c0b5d3f4c1bb0a",
+  "spec_hash": "48e8118b36c83b37",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

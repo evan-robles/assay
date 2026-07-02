@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/methanol/methanol.xyz",
   "expect": "compute",
-  "spec_hash": "3e0890217b714fe1",
+  "spec_hash": "614afe379ab92bdf",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

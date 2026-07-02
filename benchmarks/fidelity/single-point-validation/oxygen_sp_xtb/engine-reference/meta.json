@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/oxygen_sp_xtb/oxygen.xyz",
   "expect": "compute",
-  "spec_hash": "62c0f8849dba8ee6",
+  "spec_hash": "42fed774327cc357",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

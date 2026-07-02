@@ -12,7 +12,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ethylene/ethylene.xyz",
   "expect": "compute",
-  "spec_hash": "b11ceba86c291be1",
+  "spec_hash": "beeab2966608d507",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

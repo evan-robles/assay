@@ -12,7 +12,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/formaldehyde.xyz",
   "expect": "compute",
-  "spec_hash": "090afd62b382dd14",
+  "spec_hash": "3d1cf3df3a486e0e",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

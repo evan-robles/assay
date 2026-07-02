@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/ferrocene_sp_mopac/ferrocene.xyz",
   "expect": "compute",
-  "spec_hash": "934122b358e544fd",
+  "spec_hash": "2a388705b2451b16",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

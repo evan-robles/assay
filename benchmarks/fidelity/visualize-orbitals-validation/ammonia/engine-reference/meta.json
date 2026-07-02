@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ammonia/ammonia.xyz",
   "expect": "compute",
-  "spec_hash": "a97c9007f0cbc486",
+  "spec_hash": "b2ebf702f97f4b50",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

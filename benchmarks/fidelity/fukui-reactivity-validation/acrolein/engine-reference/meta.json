@@ -17,7 +17,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz",
   "expect": "compute",
-  "spec_hash": "d8e4722637f08888",
+  "spec_hash": "e5cb660c3b271181",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

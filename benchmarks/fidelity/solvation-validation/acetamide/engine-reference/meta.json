@@ -13,7 +13,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/acetamide/acetamide.xyz",
   "expect": "compute",
-  "spec_hash": "9b4541e590359fea",
+  "spec_hash": "ba2a7dfcb24aba72",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/methylamine/methylamine.xyz",
   "expect": "compute",
-  "spec_hash": "d4d8bb06f378be6f",
+  "spec_hash": "200a9d454f2b32cc",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

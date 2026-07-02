@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/formaldehyde/formaldehyde.xyz",
   "expect": "compute",
-  "spec_hash": "7337b7edb5d0e7f0",
+  "spec_hash": "ca37c29dc0af03fd",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

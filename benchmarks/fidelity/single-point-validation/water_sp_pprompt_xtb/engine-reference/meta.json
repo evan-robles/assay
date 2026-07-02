@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_pprompt_xtb/water.xyz",
   "expect": "refusal",
-  "spec_hash": "fb93b6c977a00f49",
+  "spec_hash": "a3c0c704db7f6f27",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

@@ -17,7 +17,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz",
   "expect": "compute",
-  "spec_hash": "9559f4e2c820638a",
+  "spec_hash": "9e8a8a0262547f1c",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

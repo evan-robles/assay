@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/acetonitrile/acetonitrile.xyz",
   "expect": "compute",
-  "spec_hash": "36565827dddc2532",
+  "spec_hash": "7cb2ad81680149c1",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

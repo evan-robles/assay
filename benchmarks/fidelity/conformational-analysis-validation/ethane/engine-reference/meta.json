@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/ethane.xyz",
   "expect": "compute",
-  "spec_hash": "c06ce4b4612e11a3",
+  "spec_hash": "73f6f80febd9a8a3",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

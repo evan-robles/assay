@@ -229,11 +229,20 @@ def _engine_ref_spec_hash(skill: str, flags: List[str],
     so changing a spec's method/charge/solvent/input invalidates the cache and
     forces a recompute. `flags` must be the UN-mutated spec flags (the failure
     mode's `--allow-unconverged` is applied only when running, not hashed), so
-    the hash is identical across reuse. Absolute input paths make the hash
-    machine-local, which is fine for a machine-local cache.
+    the hash is identical across reuse. The input path is normalized to a
+    repo-root-RELATIVE path before hashing, so a cached engine-reference stays
+    valid when the repo is moved or copied between machines (e.g. an
+    engine-reference/ rsync'd from a laptop to a cluster) — an absolute path
+    would tie the cache to one filesystem layout and force a needless recompute.
     """
+    rel_positional = positional
+    if positional:
+        try:
+            rel_positional = os.path.relpath(os.path.abspath(positional), str(_REPO))
+        except (ValueError, OSError):
+            rel_positional = positional  # cross-drive / unresolvable: fall back
     sig = json.dumps(
-        {"skill": skill, "flags": list(flags), "positional": positional,
+        {"skill": skill, "flags": list(flags), "positional": rel_positional,
          "expect": expect},
         sort_keys=True,
     )

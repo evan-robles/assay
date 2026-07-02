@@ -13,7 +13,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_solvated_xtb/water.xyz",
   "expect": "compute",
-  "spec_hash": "f44608135799ecea",
+  "spec_hash": "4cb30e4c2c7ad5e2",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

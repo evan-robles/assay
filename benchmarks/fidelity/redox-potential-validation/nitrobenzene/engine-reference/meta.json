@@ -22,7 +22,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/nitrobenzene/nitrobenzene.xyz",
   "expect": "compute",
-  "spec_hash": "5b8ef6b98014e083",
+  "spec_hash": "33d123ded8286377",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

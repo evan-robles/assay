@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz",
   "expect": "compute",
-  "spec_hash": "049c54ba6c46e522",
+  "spec_hash": "6c47d2308712baf3",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

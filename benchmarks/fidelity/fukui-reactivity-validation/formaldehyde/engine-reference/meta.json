@@ -17,7 +17,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz",
   "expect": "compute",
-  "spec_hash": "22b9f8c57533b153",
+  "spec_hash": "ff54609386c4c3af",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

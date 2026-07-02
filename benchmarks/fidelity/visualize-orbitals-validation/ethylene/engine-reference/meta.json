@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/ethylene/ethylene.xyz",
   "expect": "compute",
-  "spec_hash": "4a4bbcfeeb9f0954",
+  "spec_hash": "baaea068a359feba",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

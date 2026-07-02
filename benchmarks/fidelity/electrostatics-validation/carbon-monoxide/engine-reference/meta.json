@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/carbon-monoxide/carbon_monoxide.xyz",
   "expect": "compute",
-  "spec_hash": "2468516785874b1a",
+  "spec_hash": "4ab5d8f0d7481605",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

@@ -15,7 +15,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/benzene_sp_dft/benzene.xyz",
   "expect": "compute",
-  "spec_hash": "9b512efd75357c8b",
+  "spec_hash": "2dc2d601eefc3910",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

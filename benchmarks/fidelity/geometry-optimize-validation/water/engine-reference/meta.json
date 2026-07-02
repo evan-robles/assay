@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/water/water.xyz",
   "expect": "compute",
-  "spec_hash": "1ac9fc6fb3ef3fc7",
+  "spec_hash": "891bc40b4a6d02ae",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

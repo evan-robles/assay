@@ -12,7 +12,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/carbon-dioxide/carbon_dioxide.xyz",
   "expect": "compute",
-  "spec_hash": "04d9ab0ea766d885",
+  "spec_hash": "c8e2cc7b46235d52",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

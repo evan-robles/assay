@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/butane/butane.xyz",
   "expect": "compute",
-  "spec_hash": "04bc5fa9cba18e37",
+  "spec_hash": "3b6aebf04a859c71",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

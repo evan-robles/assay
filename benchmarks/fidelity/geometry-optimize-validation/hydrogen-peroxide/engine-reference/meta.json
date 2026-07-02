@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/hydrogen-peroxide/hydrogen_peroxide.xyz",
   "expect": "compute",
-  "spec_hash": "f113cf0b6ee9c951",
+  "spec_hash": "4d71194502116413",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

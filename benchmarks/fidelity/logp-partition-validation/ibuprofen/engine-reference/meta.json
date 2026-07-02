@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/ibuprofen.xyz",
   "expect": "compute",
-  "spec_hash": "5b4a8513a255345a",
+  "spec_hash": "1167d51c885a4466",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/pyridine/pyridine.xyz",
   "expect": "compute",
-  "spec_hash": "f3b989154174ebc3",
+  "spec_hash": "dc72c53521f43bc9",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

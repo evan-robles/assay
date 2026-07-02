@@ -13,7 +13,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methylamine/methylamine.xyz",
   "expect": "compute",
-  "spec_hash": "5337065aea38d935",
+  "spec_hash": "d4fac738470a122c",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

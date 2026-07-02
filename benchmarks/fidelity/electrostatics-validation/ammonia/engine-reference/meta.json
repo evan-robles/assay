@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/ammonia/ammonia.xyz",
   "expect": "compute",
-  "spec_hash": "bf617a2ac53a2440",
+  "spec_hash": "93e3faab03b8e4fa",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

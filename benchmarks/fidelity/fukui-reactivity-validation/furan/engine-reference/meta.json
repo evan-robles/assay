@@ -17,7 +17,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz",
   "expect": "compute",
-  "spec_hash": "642e0a1f79120fec",
+  "spec_hash": "1147b4e2af063e6d",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

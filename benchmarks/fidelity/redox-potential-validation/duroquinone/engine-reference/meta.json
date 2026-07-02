@@ -19,7 +19,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/duroquinone/duroquinone.xyz",
   "expect": "compute",
-  "spec_hash": "e52d52d516d25c61",
+  "spec_hash": "b17cd6cc913092ea",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

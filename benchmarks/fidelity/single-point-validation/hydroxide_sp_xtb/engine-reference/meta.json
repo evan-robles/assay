@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/hydroxide_sp_xtb/hydroxide.xyz",
   "expect": "compute",
-  "spec_hash": "e1400954b365c836",
+  "spec_hash": "ac8486eb2604b29b",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

@@ -19,7 +19,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/naphthoquinone.xyz",
   "expect": "compute",
-  "spec_hash": "22c3182c8e6cdfbe",
+  "spec_hash": "ff6350960eaf8638",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

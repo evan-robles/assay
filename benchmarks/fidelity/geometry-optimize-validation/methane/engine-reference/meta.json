@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/methane/methane.xyz",
   "expect": "compute",
-  "spec_hash": "ef96dd099c7cf608",
+  "spec_hash": "9efb04aa60d57777",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

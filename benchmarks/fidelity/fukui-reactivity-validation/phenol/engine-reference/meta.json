@@ -17,7 +17,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz",
   "expect": "compute",
-  "spec_hash": "ac6ca0d85572edc2",
+  "spec_hash": "3f8bf8d0c32c54e4",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

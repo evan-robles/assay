@@ -19,7 +19,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/anthraquinone/anthraquinone.xyz",
   "expect": "compute",
-  "spec_hash": "d840d26d5de44778",
+  "spec_hash": "a8ebe22ead4c4216",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

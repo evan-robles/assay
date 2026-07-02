@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/phenol/phenol.xyz",
   "expect": "compute",
-  "spec_hash": "f6e4eea1c2c00cb3",
+  "spec_hash": "92ce2a72832fe2a6",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

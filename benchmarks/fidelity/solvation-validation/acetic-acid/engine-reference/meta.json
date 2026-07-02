@@ -13,7 +13,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/acetic-acid/acetic_acid.xyz",
   "expect": "compute",
-  "spec_hash": "3ffc118dbfdfe643",
+  "spec_hash": "855fa24513af30f5",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

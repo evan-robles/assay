@@ -12,7 +12,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ferrocene/ferrocene.xyz",
   "expect": "compute",
-  "spec_hash": "877f48f4c57abc82",
+  "spec_hash": "ad206720d6c842af",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

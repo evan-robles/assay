@@ -13,7 +13,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/acetate/acetate.xyz",
   "expect": "compute",
-  "spec_hash": "d97f67710cc37d69",
+  "spec_hash": "4ca424c07eb126ce",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

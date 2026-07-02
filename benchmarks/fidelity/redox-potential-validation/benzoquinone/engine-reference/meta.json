@@ -19,7 +19,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/benzoquinone/benzoquinone.xyz",
   "expect": "compute",
-  "spec_hash": "90cbce7bace70e2d",
+  "spec_hash": "9e75a0b799e7b2d0",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

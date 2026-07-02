@@ -13,7 +13,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/ammonia/ammonia.xyz",
   "expect": "compute",
-  "spec_hash": "ee88fb22d48a14eb",
+  "spec_hash": "52ecf22e3a276dec",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

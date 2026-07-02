@@ -13,7 +13,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/methanol.xyz",
   "expect": "compute",
-  "spec_hash": "b47842f74bc0d237",
+  "spec_hash": "016a9d2909ca4fc9",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/water/water.xyz",
   "expect": "compute",
-  "spec_hash": "6c7b1ce61b01ce2a",
+  "spec_hash": "3fa4e163a73767c8",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

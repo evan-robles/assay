@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethylene-glycol/ethylene-glycol.xyz",
   "expect": "compute",
-  "spec_hash": "3859a06c46a3abb4",
+  "spec_hash": "e154a18c55114129",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

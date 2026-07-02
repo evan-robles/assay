@@ -22,7 +22,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/tetracyanoethylene/tetracyanoethylene.xyz",
   "expect": "compute",
-  "spec_hash": "e30412551be588c7",
+  "spec_hash": "60db3954292672c9",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

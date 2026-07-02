@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ferrocene/ferrocene.xyz",
   "expect": "compute",
-  "spec_hash": "7506bb50748ecdab",
+  "spec_hash": "0571f40be7168edc",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

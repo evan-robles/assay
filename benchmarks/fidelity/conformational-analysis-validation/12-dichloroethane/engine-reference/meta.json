@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/12-dichloroethane/12-dichloroethane.xyz",
   "expect": "compute",
-  "spec_hash": "42c54e9a431c591c",
+  "spec_hash": "2dadcd8c80cfd615",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/visualize-orbitals-validation/benzene/benzene.xyz",
   "expect": "compute",
-  "spec_hash": "3a8b1a6ce2e0d9ca",
+  "spec_hash": "249e3f1e460d3fb9",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

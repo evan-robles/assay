@@ -12,7 +12,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/water.xyz",
   "expect": "compute",
-  "spec_hash": "41074e75f5647d2c",
+  "spec_hash": "e30b772d089e9304",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

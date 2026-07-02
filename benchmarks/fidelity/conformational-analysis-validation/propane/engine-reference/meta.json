@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/propane/propane.xyz",
   "expect": "compute",
-  "spec_hash": "a44c594a0cf9b519",
+  "spec_hash": "cc477487c2526e7d",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

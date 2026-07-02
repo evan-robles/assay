@@ -17,7 +17,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz",
   "expect": "compute",
-  "spec_hash": "e8fec88c36021f2d",
+  "spec_hash": "8c24edb5a0d5b089",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

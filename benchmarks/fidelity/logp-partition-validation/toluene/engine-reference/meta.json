@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/toluene/toluene.xyz",
   "expect": "compute",
-  "spec_hash": "bf89f2ad26411862",
+  "spec_hash": "bde711bdbf64d598",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

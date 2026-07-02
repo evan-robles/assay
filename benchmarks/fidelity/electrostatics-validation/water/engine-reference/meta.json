@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/water/water.xyz",
   "expect": "compute",
-  "spec_hash": "c6da4d32a3fe7661",
+  "spec_hash": "e3ca34b69e3ed698",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

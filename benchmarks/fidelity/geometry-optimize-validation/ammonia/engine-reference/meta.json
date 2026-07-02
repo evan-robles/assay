@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ammonia/ammonia.xyz",
   "expect": "compute",
-  "spec_hash": "da7637de9b2eb067",
+  "spec_hash": "d421cf9c3f10a3fb",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

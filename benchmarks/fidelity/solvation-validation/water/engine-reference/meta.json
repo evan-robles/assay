@@ -13,7 +13,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/water/water.xyz",
   "expect": "compute",
-  "spec_hash": "c376c6a0b3ea282a",
+  "spec_hash": "1dcdded3d9ffdb19",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

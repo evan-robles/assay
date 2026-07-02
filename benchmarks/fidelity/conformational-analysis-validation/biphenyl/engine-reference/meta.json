@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/biphenyl/biphenyl.xyz",
   "expect": "compute",
-  "spec_hash": "f5e7ec2d75185006",
+  "spec_hash": "ae565cce46345402",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

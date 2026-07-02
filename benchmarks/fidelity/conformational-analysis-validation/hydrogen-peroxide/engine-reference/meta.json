@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/hydrogen-peroxide/hydrogen-peroxide.xyz",
   "expect": "compute",
-  "spec_hash": "1dcdce465b51ec39",
+  "spec_hash": "2ad4dfe0a99fc719",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

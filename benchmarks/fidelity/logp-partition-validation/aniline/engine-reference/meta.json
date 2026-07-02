@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/aniline/aniline.xyz",
   "expect": "compute",
-  "spec_hash": "1e897c09841f4314",
+  "spec_hash": "24d8d586fb188790",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

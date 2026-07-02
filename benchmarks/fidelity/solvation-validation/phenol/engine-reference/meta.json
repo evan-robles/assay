@@ -13,7 +13,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/phenol/phenol.xyz",
   "expect": "compute",
-  "spec_hash": "524b651a43e290fd",
+  "spec_hash": "56d5edb94e44178d",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

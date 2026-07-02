@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/glycine-zwitterion/glycine_zwitterion.xyz",
   "expect": "compute",
-  "spec_hash": "35bfa3d6c461dc71",
+  "spec_hash": "160cc1276314744b",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

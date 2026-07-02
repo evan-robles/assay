@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/ethanol/ethanol.xyz",
   "expect": "compute",
-  "spec_hash": "11cbd1a91d06fcf6",
+  "spec_hash": "c42c7ec9a31b6f9c",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

@@ -12,7 +12,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/ammonia-planar-ts.xyz",
   "expect": "compute",
-  "spec_hash": "abe731d49056c37b",
+  "spec_hash": "c8698a59c4f22956",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

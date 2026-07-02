@@ -12,7 +12,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methane/methane.xyz",
   "expect": "compute",
-  "spec_hash": "8445f3e05ff180e3",
+  "spec_hash": "4dbd5f0d6b96ee18",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

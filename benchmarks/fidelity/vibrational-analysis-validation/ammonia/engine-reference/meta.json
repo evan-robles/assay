@@ -12,7 +12,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia/ammonia.xyz",
   "expect": "compute",
-  "spec_hash": "3d64f82c89755219",
+  "spec_hash": "a24a52bc787202f3",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

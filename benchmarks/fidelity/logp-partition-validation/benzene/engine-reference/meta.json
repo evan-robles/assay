@@ -11,7 +11,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/benzene.xyz",
   "expect": "compute",
-  "spec_hash": "06481f3a097d8cdd",
+  "spec_hash": "4b9377f91bbb9a18",
   "determinism_ok": true,
   "determinism_msg": "migrated; determinism PASS in original run",
   "engine_failed": false,

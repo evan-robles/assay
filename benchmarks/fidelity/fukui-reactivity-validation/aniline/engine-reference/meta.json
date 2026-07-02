@@ -17,7 +17,7 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz",
   "expect": "compute",
-  "spec_hash": "af8fb10827558635",
+  "spec_hash": "3663a00db97bb00c",
   "determinism_ok": true,
   "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
   "engine_failed": false,
