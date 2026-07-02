@@ -2250,7 +2250,28 @@ def main() -> int:
                       f"ERRORED and excluded from scoring.")
     if agent_run is None and args.agent_run:
         agent_run = json.loads(Path(args.agent_run).read_text())
+    if agent_run is None and args.live:
+        # LIVE mode but no agent-run produced: the agent exhausted its turn budget
+        # without submitting a final_report, or the call otherwise yielded nothing.
+        # This is NOT a chemistry FAIL (the model never gave an answer to score) —
+        # treat it as ERRORED and EXCLUDE it from the pass-rate, like a crash or a
+        # transport fault. Exit 2 so run_suite/collect flag it errored, never a
+        # 0/N pass rate charged against the model.
+        print("\n==> ERROR: live agent produced no scorable run "
+              "(no final_report within the turn budget) — flagged ERRORED and "
+              "excluded from fidelity scoring, not counted as a model failure.")
+        (run_dir / "result.json").write_text(json.dumps({
+            "mode": mode, "layer_A_determinism": det_ok,
+            "overall": "ERROR", "exit_code": 2, "scored": False,
+            "error": "no_agent_run",
+            "error_detail": ("live agent did not submit a final_report within the "
+                             "turn budget; no reported values to score"),
+        }, indent=2))
+        print(f"\nArtifacts: {run_dir}")
+        return _restore_tee(2)
     if agent_run is None:
+        # NON-live (recorded) mode with no --agent-run supplied: informational,
+        # nothing to score. Not an error — determinism verdict stands.
         print("\nNo agent-run record to score (supply --agent-run or enable --live).")
         (run_dir / "result.json").write_text(json.dumps({
             "mode": mode, "layer_A_determinism": det_ok,
