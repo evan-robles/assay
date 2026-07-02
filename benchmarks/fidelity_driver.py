@@ -1580,6 +1580,41 @@ def load_rules(names: List[str]) -> str:
     )
 
 
+def _available_models(client) -> List[str]:
+    """The model ids the endpoint currently serves, via /v1/models. Returns an
+    empty list if the listing cannot be retrieved (so a listing outage does not
+    block a run — the subsequent create() call still surfaces any real error)."""
+    try:
+        return [m.id for m in client.models.list().data]
+    except Exception:
+        return []
+
+
+def _require_model_available(client, model: str) -> None:
+    """Fail fast with a clear message if `model` is not in the endpoint's
+    /v1/models list. A no-op if the list is empty/unavailable (can't disprove
+    availability) — the model call itself will then report any genuine error."""
+    available = _available_models(client)
+    if not available:
+        return  # listing unavailable; do not block — let create() surface errors
+    if model in available:
+        return
+    # Show the closest matches first to make a typo obvious, then the full list.
+    import difflib
+    near = difflib.get_close_matches(model, available, n=5, cutoff=0.3)
+    hint = f"  did you mean: {', '.join(near)}\n" if near else ""
+    print(
+        f"[live] ERROR: model {model!r} is not available on the endpoint "
+        f"({_ARGO_BASE_URL}).\n{hint}"
+        f"  available models ({len(available)}): {', '.join(sorted(available))}",
+        file=sys.stderr,
+    )
+    # Exit 2 (ERROR), not 1 (scored FAIL): an unavailable model is a config
+    # error, not a model getting the chemistry wrong — run_suite's roll-up should
+    # flag it ERRORED/excluded, never count it as a 0/N pass rate against the model.
+    sys.exit(2)
+
+
 def run_live_agent(spec: Dict[str, Any],
                    run_dir: Optional[Path] = None,
                    model: Optional[str] = None) -> Optional[Dict[str, Any]]:
@@ -1607,6 +1642,14 @@ def run_live_agent(spec: Dict[str, Any],
         return None
 
     client = OpenAI(base_url=_ARGO_BASE_URL, api_key=api_key)
+
+    # Preflight: verify the requested model is actually served by the endpoint.
+    # Without this, an unknown model id surfaces only as a cryptic 404
+    # "DeploymentNotFound" from deep inside the OpenAI client, mid-run. Check
+    # /v1/models up front and fail with a clear, actionable message listing what
+    # IS available, so a typo'd or unavailable model is caught immediately.
+    _require_model_available(client, model)
+
     # Positional input: an xyz file for most skills, a SMILES/name string for
     # build-from-smiles, or NONE for positional-less multi-input skills
     # (reaction-energy / pka-acidity / reaction-profile). main() has already
