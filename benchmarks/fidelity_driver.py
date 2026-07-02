@@ -2220,23 +2220,34 @@ def main() -> int:
         # The argo-proxy transport occasionally mangles Unicode escapes
         # (\u00XXXX -> C0 control chars; see _has_encoding_corruption), corrupting
         # an otherwise-good response. That is a TRANSPORT fault, not a model
-        # decision, so a corrupted response is not a valid data point at all —
-        # re-call the agent until the transport returns a clean (non-corrupted)
-        # response, so every completed run is a real, scorable data point. Only
-        # encoding corruption triggers a retry; a normal wrong answer is clean and
-        # is scored, not retried. (agent_run is None means the agent itself died —
-        # not a transport fault — so we stop and let the None path handle it.)
-        _attempt = 0
-        while True:
+        # decision, so a corrupted response is not a valid data point — re-call the
+        # agent to try for a clean response. This is BOUNDED: some responses
+        # corrupt persistently (output heavy in Δ/±/Å chars trips the bug almost
+        # every time), and an unbounded loop would spin forever on such a case,
+        # stalling the whole sweep. After CHEMKIT_LIVE_MAX_RETRIES clean attempts
+        # fail, give up and let score_agent_run flag the run ERRORED/excluded
+        # (never counted as a model failure). Only encoding corruption retries; a
+        # normal wrong answer is clean and is scored. (agent_run is None means the
+        # agent process died — not transport — so we stop immediately.)
+        try:
+            _max_retries = max(0, int(os.environ.get("CHEMKIT_LIVE_MAX_RETRIES", "5")))
+        except ValueError:
+            _max_retries = 5
+        for _attempt in range(_max_retries + 1):
             agent_run = run_live_agent(spec, run_dir=run_dir, model=model)
             if agent_run is None:
                 break  # agent died (not transport corruption) — handled below
             if not _has_encoding_corruption(agent_run.get("reported", {}) or {},
                                             agent_run.get("prose")):
                 break  # clean response — proceed to scoring
-            _attempt += 1
-            print(f"[live] encoding corruption in transit (malformed Unicode "
-                  f"escapes) — retrying agent call (attempt {_attempt + 1})")
+            if _attempt < _max_retries:
+                print(f"[live] encoding corruption in transit (malformed Unicode "
+                      f"escapes) — retrying agent call "
+                      f"({_attempt + 1}/{_max_retries})")
+            else:
+                print(f"[live] encoding corruption persisted after "
+                      f"{_max_retries} retries — giving up; run will be flagged "
+                      f"ERRORED and excluded from scoring.")
     if agent_run is None and args.agent_run:
         agent_run = json.loads(Path(args.agent_run).read_text())
     if agent_run is None:
