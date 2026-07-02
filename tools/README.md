@@ -42,6 +42,44 @@ live `.out` log is written locally. The `.out` header records the full
 
 Unset `CHEMKIT_REMOTE_HOST` to go back to running the engine locally.
 
+### `CHEMKIT_REMOTE_ENV_SETUP` — activate the env on the remote side (required on Aurora)
+
+A non-interactive `ssh host "…"` shell does **not** source `~/.bashrc` or
+activate conda, so `xtb` / `mopac` / the right `python` are not on `PATH`.
+`CHEMKIT_REMOTE_ENV_SETUP` is prepended to every remote command. On Aurora the
+default (`source ~/.bashrc; conda activate <env>`) does **not** work — you must
+load the frameworks module first:
+
+```bash
+export CHEMKIT_REMOTE_ENV_SETUP='module use /soft/modulefiles && module load frameworks && conda activate assay_env'
+```
+
+Verify it before running a suite (should print an `xtb` path, a `mopac` path, and `OK`):
+
+```bash
+ssh -o BatchMode=yes "$CHEMKIT_REMOTE_HOST" "$CHEMKIT_REMOTE_ENV_SETUP; which xtb; which mopac; echo OK"
+```
+
+### Thread caps — required on large-core nodes (OpenBLAS segfault)
+
+Aurora nodes report `os.cpu_count() == 208`. Many conda-forge OpenBLAS builds are
+compiled for a **maximum of 128 threads**; if PySCF pins its OpenMP pool to the
+full core count, OpenBLAS aborts the process mid-SCF
+(`precompiled NUM_THREADS exceeded` → segfault / `double free or corruption`).
+
+The engine now **self-caps the auto (cpu_count) default at 64** (see
+`calculators.py`; override with `CHEMKIT_PYSCF_MAX_AUTO_THREADS`), so a fresh run
+will not crash even with no thread env vars set. To run at a specific higher
+count (still under 128), set it explicitly in `CHEMKIT_REMOTE_ENV_SETUP`:
+
+```bash
+export CHEMKIT_REMOTE_ENV_SETUP='module use /soft/modulefiles && module load frameworks && conda activate assay_env && export CHEMKIT_PYSCF_THREADS=96 OPENBLAS_NUM_THREADS=96 OMP_NUM_THREADS=96 MKL_NUM_THREADS=96 OMP_NESTED=FALSE OMP_MAX_ACTIVE_LEVELS=1'
+```
+
+`CHEMKIT_PYSCF_THREADS` is the one the engine honours for the PySCF pool; the
+`OMP_NESTED=FALSE` / `OMP_MAX_ACTIVE_LEVELS=1` pair prevents nested thread
+explosion. Keep the count **≤ 128** (64 is a safe, well-scaling default for DFT).
+
 ---
 
 ## aurora_submit.py — run ASSAY on Aurora (PBS Pro)
