@@ -106,14 +106,18 @@ echo "           ${#SPECS[@]} molecule(s) × $REPEAT repeat(s); models run in pa
 run_model_serial() {  # $1 = model, $2 = node — process all molecules×repeats serially
   local model="$1" node="$2" msafe spec moldir mol rep
   msafe="${model//[:\/]/_}"
-  for rep in $(seq 1 "$REPEAT"); do
-    for idx in "${!SPECS[@]}"; do
-      spec="${SPECS[$idx]}"
-      moldir="$(dirname "$spec")"
-      mol="$(basename "$moldir")"
+  # DEPTH-FIRST: complete all REPEAT reps of one molecule before moving to the
+  # next (molecule outer, rep inner). This yields complete per-molecule data
+  # early — a molecule's full pass-rate is ready as soon as its reps finish —
+  # rather than one rep of everything (breadth-first). Deliberately SERIAL per
+  # model (no '&'): one agent call at a time to avoid oversubscribing argo.
+  for idx in "${!SPECS[@]}"; do
+    spec="${SPECS[$idx]}"
+    moldir="$(dirname "$spec")"
+    mol="$(basename "$moldir")"
+    for rep in $(seq 1 "$REPEAT"); do
       # --out-dir places the run under <molecule>/<model>/<timestamp>/ (matching
       # run_suite.py) and points the engine-reference cache at the molecule folder.
-      # No trailing '&' here: this loop is deliberately SERIAL per model.
       CHEMKIT_REMOTE_HOST="$node" \
         python "$DRIVER" --spec "$spec" --live --model "$model" --out-dir "$moldir" \
         > "/tmp/run_${mol}_${msafe}_${rep}.log" 2>&1
