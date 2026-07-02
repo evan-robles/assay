@@ -2,25 +2,25 @@
 
 **A**gentic **S**imulation **S**uite for **A**utomated chemistr**Y**
 
-*(formerly `chemkit` — the internal package/command names still use `chemkit`
-during the transition; the project is ASSAY.)*
+A computational chemistry suite powered by **xtb** (GFN2), **MOPAC** (PM7), and
+**PySCF** (DFT / HF), with optional implicit solvation (ALPB / COSMO / PCM). ASE
+provides the geometry-I/O and calculator-driver layer; the quantum chemistry runs
+in those backends. Nineteen task-focused skills sit behind a single unified
+engine exposed over the open Model Context Protocol.
 
-Computational chemistry suite powered by **xtb** (GFN2), **MOPAC** (PM7), and
-**PySCF** (DFT / HF), with optional implicit solvation (ALPB / COSMO / PCM).
-ASE is used as the geometry-I/O and calculator-driver layer; the quantum
-chemistry itself runs in those backends. Nineteen task-focused skills sit behind
-one unified engine exposed over the open Model Context Protocol.
+> **Note:** the project is named ASSAY (formerly `chemkit`). The internal package
+> and command names still use `chemkit` during the transition.
 
 ## Layout
 
-One unified chemistry engine lives behind an **MCP server**; each skill is a
-thin client that calls it over the open Model Context Protocol. The engine is
-*not* duplicated into the skills — they're ~18-line wrappers.
+A single unified chemistry engine lives behind an **MCP server**; each skill is a
+thin client that calls it over the open Model Context Protocol. The engine is not
+duplicated into the skills — each skill is a compact wrapper (~18 lines).
 
 ```
 ~/chem-skills/
 ├── rules/
-│   ├── skill-standards.md            # how to author one atomic skill (follow it!)
+│   ├── skill-standards.md            # how to author one atomic skill
 │   ├── research-standards.md         # how to find/verify/cite literature (binding)
 │   └── workflow-standards.md         # how to compose skills into a vetted workflow
 ├── mcp_server/
@@ -102,7 +102,8 @@ Every task takes `--method {xtb, mopac, dft, hf}`:
 
 - **`xtb`** — GFN2-xTB semiempirical; fast, ALPB implicit solvation.
 - **`mopac`** — PM7 semiempirical; COSMO implicit solvation. *(PM7
-  transition-metal parameters are spotty — flagged in the schema `warnings`.)*
+  transition-metal parameters have limited coverage; this is flagged in the
+  schema `warnings` when relevant.)*
 - **`dft`** / **`hf`** — PySCF. DFT supports **tier presets** via `--tier`:
   - `fast` → r2SCAN / def2-SVP
   - `standard` → B3LYP / def2-TZVP
@@ -115,43 +116,56 @@ Common flags across tasks: `--charge`, `--mult/--multiplicity`, `--solvent`
 (gas phase if omitted), `--out`. `sella` enables transition-state searches on
 the xtb/dft/hf backends (MOPAC has a native TS optimizer).
 
-## Install & run
+## Installation
+
+The recommended path installs all backends and Python dependencies from the
+checkout in a single step:
 
 ```bash
-# 1. Install EVERYTHING in one shot from the checkout (all backends + all Python
-#    deps, no optional extras to choose). This is the recommended path:
-conda env create -f environment.yml   # xtb, xtb-python, mopac, openbabel, rdkit,
-conda activate chemkit                #   pytest + `pip install -e .` (pyscf,
-                                      #   matplotlib, sella, openai, mcp, ase, numpy)
-
-#    ...or, if you manage Python deps with pip yourself, the conda-only binaries
-#    still MUST come from conda-forge (none are pip-installable):
-#      conda install -c conda-forge xtb xtb-python mopac openbabel
-#      pip install chemkit-mcp        # pulls all pip deps (pyscf/sella/rdkit/openai/…)
-
-# 2a. Run a skill from the shell (the thin client spawns/uses the server):
-python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water mol.xyz
-python skills/single-point-energy/scripts/single-point-energy.py --help
-
-# 2b. Or start the MCP server and connect any MCP client (same config everywhere):
-chemkit-mcp                        # stdio MCP server
-#   client config:  { "mcpServers": { "chemkit": { "command": "chemkit-mcp" } } }
-#   see mcp_server/README.md for uvx, OpenAI Agents SDK, and run-from-checkout forms.
+conda env create -f environment.yml
+conda activate chemkit
 ```
 
-Conda-only pieces (NOT pip-installable — from conda-forge, handled by
-`environment.yml`): `xtb` + `xtb-python` for `--method xtb`; `mopac` for
-`--method mopac` / PM7 post-opt; `openbabel` (`obabel`/`obenergy`) for SMILES→3D,
-name lookup, and conformer search; `rdkit` for structure handling. Everything
-else is a core pip dependency and installs automatically: `pyscf`
-(`--method dft`/`--method hf`), `matplotlib` (plots), `sella` (transition-state
-searches on the xtb/dft/hf backends), `openai` (live agent scoring in the
-fidelity benchmark harness).
+Alternatively, if you manage Python dependencies with pip, install the
+conda-forge binaries first (none are pip-installable), then the package:
 
-Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to point the thin clients at
-a specific server.
+```bash
+conda install -c conda-forge xtb xtb-python mopac openbabel rdkit
+pip install chemkit-mcp
+```
 
-## Quick examples
+**Dependencies.** The conda-forge binaries are required per backend: `xtb` and
+`xtb-python` for `--method xtb`; `mopac` for `--method mopac`; `openbabel` for
+SMILES-to-3D conversion, name lookup, and conformer search; `rdkit` for structure
+handling. All remaining dependencies are installed automatically by pip: `pyscf`
+(`--method dft` / `--method hf`), `matplotlib`, `sella` (transition-state
+searches on the xtb/dft/hf backends), `mcp`, `ase`, `numpy`, and `openai`.
+
+## Usage
+
+Run a skill directly from the shell; the thin client starts and communicates with
+the engine automatically:
+
+```bash
+python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water mol.xyz
+python skills/single-point-energy/scripts/single-point-energy.py --help
+```
+
+Or start the MCP server and connect any MCP-capable client:
+
+```bash
+chemkit-mcp
+```
+
+```json
+{ "mcpServers": { "chemkit": { "command": "chemkit-mcp" } } }
+```
+
+See `mcp_server/README.md` for uvx, OpenAI Agents SDK, and run-from-checkout
+configurations. Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to point the
+thin clients at a specific server.
+
+## Example commands
 
 ```bash
 python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water mol.xyz
@@ -226,9 +240,9 @@ to the measuring paper, database values are labeled as such, and citations are
 ACS-formatted and link-checked. Fabricating or misattributing a literature
 value is prohibited.
 
-## Notes / caveats
+## Notes and caveats
 
-- **PM7 transition-metal parameters are spotty** — the schema flags this in `warnings` when relevant.
-- **Redox potentials and conformer search are screening-grade**, not publication-grade. The skill output warns about this.
-- **xtb and MOPAC energy zeros are not comparable** — never subtract an xtb energy from a MOPAC energy.
+- **PM7 transition-metal parameters have limited coverage** — the schema flags this in `warnings` when relevant.
+- **Redox potentials and conformer search are screening-grade**, not publication-grade; the skill output states this.
+- **xtb and MOPAC energy zeros are not comparable** — an xtb energy must never be subtracted from a MOPAC energy.
 - **Literature values must be verified** — see [`rules/research-standards.md`](rules/research-standards.md).
