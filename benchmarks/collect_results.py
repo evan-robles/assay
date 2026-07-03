@@ -42,9 +42,9 @@ _DEFAULT_DIR = _REPO / "benchmarks" / "fidelity" / "single-point-validation"
 _TIMING_KEYS = ("total_s", "llm_s", "engine_s")
 
 
-def _run_timing(run: Path) -> Dict[str, float]:
-    """The timing block for one run, from result.json then agent_run.json.
-    Returns {} if neither has one (e.g. a run predating timing instrumentation)."""
+def _run_timing_full(run: Path) -> Dict[str, Any]:
+    """The full timing block for one run (total_s/llm_s/engine_s/turns/tool_calls),
+    from result.json then agent_run.json. {} if neither has one."""
     for name in ("result.json", "agent_run.json"):
         f = run / name
         if not f.is_file():
@@ -54,8 +54,14 @@ def _run_timing(run: Path) -> Dict[str, float]:
         except (OSError, ValueError):
             continue
         if isinstance(t, dict):
-            return {k: float(t[k]) for k in _TIMING_KEYS if isinstance(t.get(k), (int, float))}
+            return t
     return {}
+
+
+def _run_timing(run: Path) -> Dict[str, float]:
+    """Just the float timing metrics (total_s/llm_s/engine_s) for one run."""
+    t = _run_timing_full(run)
+    return {k: float(t[k]) for k in _TIMING_KEYS if isinstance(t.get(k), (int, float))}
 
 
 def _stats(vals: Sequence[float]) -> Dict[str, Any]:
@@ -607,26 +613,50 @@ def _print_repeat_table(rows: List[Dict[str, Any]]) -> None:
 
 
 def model_timing_stats(base: Path, n: Optional[int] = None) -> Dict[str, Dict[str, Any]]:
-    """Per-MODEL wall-clock timing stats over that model's individual runs.
+    """Per-MODEL wall-clock timing over that model's individual runs.
 
-    For each model, gather every scored run's timing (across all cases; the n
-    newest per (case,model) when n is given, matching collect_repeats), then
-    compute mean / sample-std / standard-error of total_s, llm_s, engine_s. This
-    is the exact per-model timing (std/SE over individual runs, not over cell
-    means), suitable for 'how long does model X take per task on average'."""
+    Returns per model: stats for llm_s, turns, tool_calls (the genuinely
+    MODEL-DEPENDENT metrics — the model's own latency/thinking and how many
+    round-trips/tool calls it needed), plus total_s/engine_s for reference.
+
+    IMPORTANT: engine_s (and thus total_s) is TASK-bound, not model-bound — the
+    DFT compute is identical whichever model calls it (nitrobenzene ~178 s for
+    everyone; furan ~32 s). A per-model engine_s "mean" only reflects which
+    molecules that model happened to sample, so DO NOT compare models on engine_s
+    or total_s. Compare on llm_s / turns / tool_calls. For the (task-bound)
+    compute cost, use molecule_engine_stats(). For an unconfounded model
+    comparison holding the task fixed, use the per-(case,model) llm_s in the row
+    columns."""
+    keys = ("llm_s", "turns", "tool_calls", "total_s", "engine_s")
     per_model: Dict[str, Dict[str, List[float]]] = {}
     for case_dir in sorted(p for p in base.iterdir() if p.is_dir()):
         for model, runs in _runs_per_model(case_dir, n=n).items():
-            acc = per_model.setdefault(model, {k: [] for k in _TIMING_KEYS})
+            acc = per_model.setdefault(model, {k: [] for k in keys})
             for run in runs:
-                t = _run_timing(run)
-                for k in _TIMING_KEYS:
-                    if k in t:
-                        acc[k].append(t[k])
-    out: Dict[str, Dict[str, Any]] = {}
-    for model, acc in per_model.items():
-        out[model] = {k: _stats(acc[k]) for k in _TIMING_KEYS}
-    return out
+                t = _run_timing_full(run)
+                for k in keys:
+                    if isinstance(t.get(k), (int, float)):
+                        acc[k].append(float(t[k]))
+    return {model: {k: _stats(acc[k]) for k in keys} for model, acc in per_model.items()}
+
+
+def molecule_engine_stats(base: Path, n: Optional[int] = None) -> Dict[str, Dict[str, Any]]:
+    """Per-MOLECULE engine (DFT compute) wall-time — the TASK-bound cost.
+
+    engine_s depends on the molecule + level of theory, not the calling model, so
+    it is aggregated here per molecule (across ALL models' runs). Mean/std/SE of
+    engine_s per molecule characterizes how expensive each calculation is."""
+    per_mol: Dict[str, List[float]] = {}
+    for case_dir in sorted(p for p in base.iterdir() if p.is_dir()):
+        vals: List[float] = []
+        for _model, runs in _runs_per_model(case_dir, n=n).items():
+            for run in runs:
+                e = _run_timing(run).get("engine_s")
+                if isinstance(e, (int, float)):
+                    vals.append(float(e))
+        if vals:
+            per_mol[case_dir.name] = vals
+    return {mol: {"engine_s": _stats(v)} for mol, v in per_mol.items()}
 
 
 def write_grouped_csv(rows: List[Dict[str, Any]], csv_path: Path,
@@ -650,6 +680,7 @@ def write_grouped_csv(rows: List[Dict[str, Any]], csv_path: Path,
     the chosen layout."""
     fieldnames = list(rows[0].keys()) if rows else ["case"]
     mtiming = model_timing_stats(base, n=n) if base is not None else {}
+    moltiming = molecule_engine_stats(base, n=n) if base is not None else {}
 
     def _fmt(st: Dict[str, Any]) -> str:
         if not st or st.get("mean") is None:
@@ -673,10 +704,22 @@ def write_grouped_csv(rows: List[Dict[str, Any]], csv_path: Path,
                 w.writerow([f"model: {m}"])   # banner/subtitle row
                 mt = mtiming.get(m)
                 if mt:
-                    w.writerow([f"timing (s): total={_fmt(mt['total_s'])}  "
-                                f"llm={_fmt(mt['llm_s'])}  engine={_fmt(mt['engine_s'])}"])
+                    # MODEL-dependent metrics only: llm latency + round-trips +
+                    # tool calls. engine_s/total_s are task-bound (see below) and
+                    # deliberately NOT reported per-model to avoid the task-mix
+                    # confound.
+                    w.writerow([f"model latency: llm_s={_fmt(mt['llm_s'])}  "
+                                f"turns={_fmt(mt['turns'])}  "
+                                f"tool_calls={_fmt(mt['tool_calls'])}"])
                 current = m
             dict_w.writerow(r)
+        # Task-bound compute cost: engine_s per molecule (same for any model).
+        if moltiming:
+            w.writerow([])
+            w.writerow(["# engine (DFT compute) wall-time per molecule — "
+                        "TASK-bound (independent of the calling model)"])
+            for mol in sorted(moltiming):
+                w.writerow([f"engine_s[{mol}]: {_fmt(moltiming[mol]['engine_s'])}"])
 
 
 def _rescore_all(base: Path) -> None:
