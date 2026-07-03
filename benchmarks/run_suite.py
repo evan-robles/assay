@@ -322,14 +322,16 @@ def main() -> int:
         if args.repeat > 1:
             rows = collect_repeats(folder, n=args.repeat)
             printer = _print_repeat_table
+            _cap = args.repeat
         else:
             rows = collect_all(folder)
             printer = _print_table
+            _cap = None
         if rows:
             print()
             printer(rows)
             csv_path = folder / "summary.csv"
-            write_grouped_csv(rows, csv_path)
+            write_grouped_csv(rows, csv_path, base=folder, n=_cap)
             print(f"\nCSV written: {csv_path}")
 
     # Suite exit code: nonzero if any case failed to pass.

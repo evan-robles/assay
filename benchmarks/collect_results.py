@@ -24,12 +24,53 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Sequence
 
 _REPO = Path(__file__).resolve().parent.parent
 _DEFAULT_DIR = _REPO / "benchmarks" / "fidelity" / "single-point-validation"
+
+
+# ── timing helpers ────────────────────────────────────────────────────────────
+# Per-run wall-clock timing is recorded by fidelity_driver in each run's
+# result.json (and agent_run.json) under a "timing" block:
+#   {total_s, llm_s, engine_s, turns, tool_calls}
+# These helpers pull those values and compute mean / sample-std / standard-error
+# so the summary can report how long each MODEL takes per task.
+_TIMING_KEYS = ("total_s", "llm_s", "engine_s")
+
+
+def _run_timing(run: Path) -> Dict[str, float]:
+    """The timing block for one run, from result.json then agent_run.json.
+    Returns {} if neither has one (e.g. a run predating timing instrumentation)."""
+    for name in ("result.json", "agent_run.json"):
+        f = run / name
+        if not f.is_file():
+            continue
+        try:
+            t = (json.loads(f.read_text()) or {}).get("timing")
+        except (OSError, ValueError):
+            continue
+        if isinstance(t, dict):
+            return {k: float(t[k]) for k in _TIMING_KEYS if isinstance(t.get(k), (int, float))}
+    return {}
+
+
+def _stats(vals: Sequence[float]) -> Dict[str, Any]:
+    """mean / sample-std (ddof=1) / standard-error / n for a list of numbers.
+    std and se are None for n<2 (undefined); all None for n==0."""
+    n = len(vals)
+    if n == 0:
+        return {"n": 0, "mean": None, "std": None, "se": None}
+    mean = sum(vals) / n
+    if n < 2:
+        return {"n": n, "mean": round(mean, 2), "std": None, "se": None}
+    var = sum((v - mean) ** 2 for v in vals) / (n - 1)   # sample variance (ddof=1)
+    std = math.sqrt(var)
+    se = std / math.sqrt(n)                                # standard error of the mean
+    return {"n": n, "mean": round(mean, 2), "std": round(std, 2), "se": round(se, 2)}
 
 # Fixed-name engine-reference folder (sibling of agent-run folders under a
 # molecule). The engine reference moved here from inside each run folder; keep
@@ -364,6 +405,8 @@ def _row_for_run(case_dir: Path, run: Path) -> Dict[str, Any]:
         "determinism": "pass" if result.get("layer_A_determinism") else "FAIL",
         "overall": result.get("overall", "?"),
         "failed_checks": "; ".join(c for c in failed if c) or "",
+        # Per-run wall-clock timing (seconds); None where not recorded.
+        **{k: _run_timing(run).get(k) for k in _TIMING_KEYS},
     }
 
 
@@ -458,6 +501,9 @@ def _aggregate_repeat(case_dir: Path, model: str,
         "functional": "", "basis": "", "tier": "",
         "value_field": "", "truth_value": "", "reported_value": "",
     }
+    # Per-cell timing (over this (case,model)'s scored runs that recorded timing).
+    _tstats = {k: _stats([r[k] for r in scored_rows if isinstance(r.get(k), (int, float))])
+               for k in _TIMING_KEYS}
     return {
         "case": case_dir.name,
         "model": model,
@@ -477,6 +523,12 @@ def _aggregate_repeat(case_dir: Path, model: str,
         "value_field": rep["value_field"],
         "truth_value": rep["truth_value"],
         "reported_value_latest": rep["reported_value"],
+        # Per-cell mean total wall-time (s) + its std/SE across this cell's runs.
+        "total_s_mean": _tstats["total_s"]["mean"],
+        "total_s_std": _tstats["total_s"]["std"],
+        "total_s_se": _tstats["total_s"]["se"],
+        "llm_s_mean": _tstats["llm_s"]["mean"],
+        "engine_s_mean": _tstats["engine_s"]["mean"],
     }
 
 
@@ -554,20 +606,60 @@ def _print_repeat_table(rows: List[Dict[str, Any]]) -> None:
               f"mean pass_rate = {mean_rate}{err_note}")
 
 
-def write_grouped_csv(rows: List[Dict[str, Any]], csv_path: Path) -> None:
+def model_timing_stats(base: Path, n: Optional[int] = None) -> Dict[str, Dict[str, Any]]:
+    """Per-MODEL wall-clock timing stats over that model's individual runs.
+
+    For each model, gather every scored run's timing (across all cases; the n
+    newest per (case,model) when n is given, matching collect_repeats), then
+    compute mean / sample-std / standard-error of total_s, llm_s, engine_s. This
+    is the exact per-model timing (std/SE over individual runs, not over cell
+    means), suitable for 'how long does model X take per task on average'."""
+    per_model: Dict[str, Dict[str, List[float]]] = {}
+    for case_dir in sorted(p for p in base.iterdir() if p.is_dir()):
+        for model, runs in _runs_per_model(case_dir, n=n).items():
+            acc = per_model.setdefault(model, {k: [] for k in _TIMING_KEYS})
+            for run in runs:
+                t = _run_timing(run)
+                for k in _TIMING_KEYS:
+                    if k in t:
+                        acc[k].append(t[k])
+    out: Dict[str, Dict[str, Any]] = {}
+    for model, acc in per_model.items():
+        out[model] = {k: _stats(acc[k]) for k in _TIMING_KEYS}
+    return out
+
+
+def write_grouped_csv(rows: List[Dict[str, Any]], csv_path: Path,
+                      base: Optional[Path] = None, n: Optional[int] = None) -> None:
     """Write a human-oriented, model-grouped summary CSV.
 
     Layout: a header row of column names, then for each model a banner row
-    ``model: <name>`` followed by that model's case rows, with a blank line
-    between model sections. Each data row STILL carries the ``model`` column, so
-    the file is also recoverable programmatically by skipping lines whose first
-    cell starts with ``model:`` or is empty. `rows` is expected pre-grouped by
-    model (as collect_all returns).
+    ``model: <name>``, a per-model TIMING summary banner (mean/std/SE of
+    total/llm/engine seconds across that model's runs), then that model's case
+    rows, with a blank line between model sections. Each data row STILL carries
+    the ``model`` column, so the file is also recoverable programmatically by
+    skipping lines whose first cell starts with ``model:`` / ``timing:`` or is
+    empty. `rows` is expected pre-grouped by model (as collect_repeats returns).
+
+    If `base` is given, the per-model timing banner is computed EXACTLY from the
+    raw per-run timings (std/SE over individual runs; pass the same `n` used for
+    collect_repeats). Without `base`, the banner is omitted.
 
     Note: the banner rows make this NOT directly loadable by pandas.read_csv
     without filtering; it is a report, not a tidy CSV. That is intentional per
     the chosen layout."""
     fieldnames = list(rows[0].keys()) if rows else ["case"]
+    mtiming = model_timing_stats(base, n=n) if base is not None else {}
+
+    def _fmt(st: Dict[str, Any]) -> str:
+        if not st or st.get("mean") is None:
+            return "n/a"
+        mean, std, se, k = st["mean"], st.get("std"), st.get("se"), st.get("n")
+        s = f"{mean}"
+        if std is not None:
+            s += f" ± {std} (SE {se})"
+        return f"{s} [n={k}]"
+
     with open(csv_path, "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(fieldnames)  # top column header
@@ -579,6 +671,10 @@ def write_grouped_csv(rows: List[Dict[str, Any]], csv_path: Path) -> None:
                 if current is not None:
                     w.writerow([])            # blank line between model sections
                 w.writerow([f"model: {m}"])   # banner/subtitle row
+                mt = mtiming.get(m)
+                if mt:
+                    w.writerow([f"timing (s): total={_fmt(mt['total_s'])}  "
+                                f"llm={_fmt(mt['llm_s'])}  engine={_fmt(mt['engine_s'])}"])
                 current = m
             dict_w.writerow(r)
 
@@ -660,7 +756,7 @@ def main() -> int:
             print(f"No scored runs found under {base}")
             return 1
         _print_table(rows)
-        write_grouped_csv(rows, csv_path)
+        write_grouped_csv(rows, csv_path, base=base)
 
     print(f"\nCSV written: {csv_path}")
     return 0

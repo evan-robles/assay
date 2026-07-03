@@ -73,7 +73,7 @@ import sys; from pathlib import Path
 sys.path.insert(0,"benchmarks")
 from collect_results import collect_repeats,_print_repeat_table,write_grouped_csv
 s=Path(sys.argv[1]); n=int(sys.argv[2]); rows=collect_repeats(s,n=n)
-_print_repeat_table(rows); write_grouped_csv(rows, s/"summary.csv"); print("wrote", s/"summary.csv")
+_print_repeat_table(rows); write_grouped_csv(rows, s/"summary.csv", base=s, n=n); print("wrote", s/"summary.csv")
 PY
         break
     fi

@@ -195,7 +195,7 @@ from collect_results import collect_repeats, _print_repeat_table, write_grouped_
 suite = Path(sys.argv[1]); n = int(sys.argv[2])
 rows = collect_repeats(suite, n=n)
 _print_repeat_table(rows)
-write_grouped_csv(rows, suite / "summary.csv")
+write_grouped_csv(rows, suite / "summary.csv", base=suite, n=n)
 print(f"\n[collect] wrote {suite/'summary.csv'}")
 PY
 echo "[parallel] all done."

@@ -122,7 +122,7 @@ sys.path.insert(0, 'benchmarks')
 from collect_results import collect_repeats, _print_repeat_table, write_grouped_csv
 suite=Path(sys.argv[1]); n=int(sys.argv[2])
 rows=collect_repeats(suite, n=n); _print_repeat_table(rows)
-write_grouped_csv(rows, suite/'summary.csv'); print('wrote', suite/'summary.csv')
+write_grouped_csv(rows, suite/'summary.csv', base=suite, n=n); print('wrote', suite/'summary.csv')
 PY" 2>&1 | sed 's/^/    [collect] /'
         exit 0
     fi
