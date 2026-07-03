@@ -144,6 +144,46 @@ _SSH_UNREACHABLE_MARKERS = (
 )
 
 
+def _normalize_tool_args(raw: List[str]) -> List[str]:
+    """Normalize the agent's `chemkit.args` array into proper argv tokens.
+
+    Some models (esp. weaker ones) return the WHOLE flag string as a single array
+    element instead of separate tokens, e.g.
+        ["--method dft --functional b3lyp --tier standard", "/path/mol.xyz"]
+    which the engine sees as `--method` == "dft --functional b3lyp …" -> argparse
+    `invalid choice`. That is a tool-CALL FORMATTING quirk, not a CHEMISTRY error:
+    the model picked the right method/basis/etc., it just failed to tokenize argv.
+    The fidelity benchmark scores whether the model chose the right calculation,
+    so we forgive the formatting by splitting any element that contains
+    whitespace into tokens, honoring shell quoting (shlex) so a legitimately
+    space-bearing VALUE stays intact:
+        '--solvent "gas phase"'  -> ['--solvent', 'gas phase']
+
+    Guards against over-splitting a real argument that genuinely contains a space:
+      * an element that is an EXISTING file path (a real xyz whose absolute path
+        contains a space) is left as one token;
+      * if shlex.split fails (unbalanced quotes) the element is kept verbatim.
+    An element with no whitespace is passed through unchanged (the common case).
+    """
+    out: List[str] = []
+    for a in raw:
+        s = str(a)
+        if not s.strip() or (" " not in s and "\t" not in s):
+            out.append(s)
+            continue
+        # Don't split a real, existing path that happens to contain a space.
+        if os.path.exists(s):
+            out.append(s)
+            continue
+        try:
+            toks = shlex.split(s)
+        except ValueError:
+            out.append(s)  # unbalanced quotes — leave as-is, engine will report
+            continue
+        out.extend(toks if toks else [s])
+    return out
+
+
 def _is_ssh_unreachable(returncode: int, stderr: str) -> bool:
     """True if a nonzero engine subprocess looks like an ssh TRANSPORT failure to
     the remote compute host (dead allocation), not a chemistry error.
@@ -1858,7 +1898,14 @@ def run_live_agent(spec: Dict[str, Any],
                 }
             if fn == "chemkit":
                 skill = fargs.get("skill", "")
-                cargs = [str(a) for a in fargs.get("args", [])]
+                raw_cargs = [str(a) for a in fargs.get("args", [])]
+                # Forgive a whole-flags-in-one-string tool call (see
+                # _normalize_tool_args): split space-mashed elements into argv
+                # tokens so a formatting quirk isn't scored as a chemistry error.
+                cargs = _normalize_tool_args(raw_cargs)
+                if cargs != raw_cargs:
+                    print(f"[live] normalized tool args (split space-mashed "
+                          f"tokens): {raw_cargs} -> {cargs}")
                 print(f"[live] agent calls chemkit: {skill} {cargs}")
                 call_n += 1
                 try:

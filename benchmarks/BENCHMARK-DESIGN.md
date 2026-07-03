@@ -192,6 +192,19 @@ reflects genuine *model* behavior, not a harness/spec bug.
 - Record the rc=1 classification (which molecules, which flag/mistake) in the
   commit message so the pass-rate is auditable.
 
+> **Forgiven formatting (not a failure): space-mashed argv.** The driver
+> normalizes the agent's `chemkit.args` before running the engine
+> (`_normalize_tool_args`): if a single array element contains whitespace it is
+> `shlex.split` into proper tokens, so a model that returns
+> `["--method dft --tier standard", "mol.xyz"]` instead of separate tokens is NOT
+> penalized — the benchmark scores the *chemistry chosen*, not argv tokenization.
+> Space-bearing quoted VALUES (`--solvent "gas phase"`) and existing file paths
+> with spaces are preserved. This does NOT rescue semantic errors: an invented
+> flag (`--phase`/`--geometry`/`--environment`) or a wrong method value
+> (`--method b3lyp`) still fails — those are real fidelity errors. When this
+> normalizer is added/changed, delete any pool FAILs that were ONLY space-mash
+> (they'd now pass) and re-run; keep the invented-flag/wrong-value FAILs.
+
 Only after Check 1 = 0 remaining and every Check 2 rc=1 is confirmed valid may
 the corrected `summary.csv` be committed.
 
