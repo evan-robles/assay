@@ -164,6 +164,16 @@ def _normalize_tool_args(raw: List[str]) -> List[str]:
         contains a space) is left as one token;
       * if shlex.split fails (unbalanced quotes) the element is kept verbatim.
     An element with no whitespace is passed through unchanged (the common case).
+
+    Finally, a MULTIWORD gas-phase solvent synonym that the model wrote UNQUOTED
+    (e.g. `--solvent gas phase`) would be split into `--solvent gas` + a stray
+    `phase` token, which argparse rejects as an extra positional. But the engine
+    ACCEPTS `gas phase`/`no solvent` as valid gas-phase synonyms (cli.py) — the
+    model chose correctly, it just didn't quote a two-word value. So after
+    splitting we rejoin a known multiword synonym that follows `--solvent`,
+    preserving the valid invocation. Only the REAL `--solvent` flag triggers this;
+    invented flags (`--phase`, `--environment`) are left broken so they still FAIL
+    as the genuine model errors they are.
     """
     out: List[str] = []
     for a in raw:
@@ -181,6 +191,41 @@ def _normalize_tool_args(raw: List[str]) -> List[str]:
             out.append(s)  # unbalanced quotes — leave as-is, engine will report
             continue
         out.extend(toks if toks else [s])
+    return _rejoin_multiword_solvent(out)
+
+
+# Multiword gas-phase-meaning solvent values the engine treats as "no solvent"
+# (mirror mcp_server/chemkit_engine/cli.py's synonym set). If the model wrote one
+# unquoted after --solvent, tokenization split it; we rejoin so the valid value
+# survives instead of leaving a stray token that argparse rejects.
+_MULTIWORD_SOLVENT_SYNONYMS = {
+    ("gas", "phase"): "gas phase",
+    ("gas-phase",): "gas-phase",
+    ("no", "solvent"): "no solvent",
+}
+
+
+def _rejoin_multiword_solvent(toks: List[str]) -> List[str]:
+    """Rejoin a known multiword gas-phase synonym immediately following --solvent.
+
+    e.g. [..., '--solvent', 'gas', 'phase', 'mol.xyz'] -> [..., '--solvent',
+    'gas phase', 'mol.xyz']. Only fires for the real `--solvent` flag and only for
+    the exact 2-word synonyms above (so it never swallows a real following flag or
+    positional). Idempotent and a no-op when the value is already one token."""
+    out: List[str] = []
+    i = 0
+    n = len(toks)
+    while i < n:
+        t = toks[i]
+        if t == "--solvent" and i + 2 < n:
+            pair = (toks[i + 1].lower(), toks[i + 2].lower())
+            if pair in _MULTIWORD_SOLVENT_SYNONYMS:
+                out.append(t)
+                out.append(_MULTIWORD_SOLVENT_SYNONYMS[pair])
+                i += 3
+                continue
+        out.append(t)
+        i += 1
     return out
 
 
