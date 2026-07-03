@@ -15,7 +15,10 @@
 #
 # Requires argo reachable on this login node (the tunnel session) and the fixed
 # driver/engine synced. Injects the full env per the #1 rule.
-set -uo pipefail
+# NOTE: NO `set -u` — `module load frameworks` (Lmod) references unset vars
+# internally and would abort the script under -u (this silently killed an earlier
+# run right after the startup log line). pipefail only.
+set -o pipefail
 
 SUITE="${1:?usage: aurora_autorelaunch.sh <suite> <repeat> <model...>}"
 REPEAT="${2:?}"; shift 2
