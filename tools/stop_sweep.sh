@@ -26,7 +26,11 @@ for attempt in 1 2 3 4 5; do
     ids=$(qstat -u "$USER" 2>/dev/null | awk '/assay-nod/{print $1}')
     [ -z "$ids" ] && { echo "  no assay jobs remaining."; break; }
     echo "  attempt $attempt: qdel $ids"
-    for j in $ids; do qdel "$j" 2>/dev/null; done
+    for j in $ids; do
+        qdel "$j" 2>/dev/null
+        # a queued job that won't clear on plain qdel needs a forced delete
+        [ "$attempt" -ge 2 ] && qdel -W force "$j" 2>/dev/null
+    done
     # re-touch in case a dying holder deleted the flag before its clone read it
     touch "$REPO/.sweep_done"
     sleep 4
