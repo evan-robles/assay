@@ -2,7 +2,7 @@
   "name": "hydrogen-peroxide-torsion_irc",
   "skill": "intrinsic-reaction-coordinate",
   "xyz": "benchmarks/fidelity/intrinsic-reaction-coordinate-validation/hydrogen-peroxide-torsion/hydrogen-peroxide-torsion.xyz",
-  "prompt": "Run the intrinsic-reaction-coordinate task on the hydrogen-peroxide-torsion transition-state geometry using the PM7 (mopac) method in the gas phase. Report the forward and reverse endpoint energies, the energy drops in each direction, and whether the two endpoints are distinct. State the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the intrinsic-reaction-coordinate task on the hydrogen-peroxide-torsion transition-state geometry using the PM7 (mopac) method in the gas phase. Report the forward and reverse endpoint energies, the energy drops in each direction, and whether the two endpoints are distinct. State the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "mopac"

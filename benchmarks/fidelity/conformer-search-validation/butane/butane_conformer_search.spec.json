@@ -2,7 +2,7 @@
   "name": "butane_conformer_search",
   "skill": "conformer-search",
   "xyz": "benchmarks/fidelity/conformer-search-validation/butane/butane.xyz",
-  "prompt": "Run the conformer-search task on butane in the gas phase (pass --method xtb, the canonical CLI token for this skill; note the conformer SAMPLER is Open Babel confab using the MMFF94 force field, which is what the engine reports as the method). Report the conformer ensemble found (how many conformers and the lowest-energy one) and state the method exactly as the tool reports it. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the conformer-search task on butane in the gas phase (pass --method xtb, the canonical CLI token for this skill; note the conformer SAMPLER is Open Babel confab using the MMFF94 force field, which is what the engine reports as the method). Report the conformer ensemble found (how many conformers and the lowest-energy one) and state the method exactly as the tool reports it. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "xtb"

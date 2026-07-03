@@ -2,7 +2,7 @@
   "name": "ferrocene_sp_mopac",
   "skill": "single-point-energy",
   "xyz": "benchmarks/fidelity/single-point-validation/ferrocene_sp_mopac/ferrocene.xyz",
-  "prompt": "Compute the single-point energy (heat of formation) of ferrocene, Fe(C5H5)2, using the PM7 (mopac) method in the gas phase. Report the result and state the method used, and surface any warnings the calculation produced about parameter coverage. Use the chemkit tools; do not guess the number.",
+  "prompt": "Compute the single-point energy (heat of formation) of ferrocene, Fe(C5H5)2, using the PM7 (mopac) method in the gas phase. Report the result and state the method used, and surface any warnings the calculation produced about parameter coverage. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "mopac"

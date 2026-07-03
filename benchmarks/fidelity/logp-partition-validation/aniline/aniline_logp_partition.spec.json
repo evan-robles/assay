@@ -2,7 +2,7 @@
   "name": "aniline_logp_partition",
   "skill": "logp-partition",
   "xyz": "benchmarks/fidelity/logp-partition-validation/aniline/aniline.xyz",
-  "prompt": "Run the logp-partition task on aniline using the GFN2-xTB method in the gas phase. Report the logP partition coefficient (the dimensionless octanol-water log P) as the headline value (the logp-partition task also returns per-solvent solvation free energies and total energies \u2014 do NOT report those as the headline value), and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the logp-partition task on aniline using the GFN2-xTB method in the gas phase. Report the logP partition coefficient (the dimensionless octanol-water log P) as the headline value (the logp-partition task also returns per-solvent solvation free energies and total energies \u2014 do NOT report those as the headline value), and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "xtb"

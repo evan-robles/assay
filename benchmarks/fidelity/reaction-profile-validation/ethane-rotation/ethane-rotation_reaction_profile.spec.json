@@ -16,7 +16,7 @@
       "xyz": "benchmarks/fidelity/reaction-profile-validation/ethane-rotation/ts_guess.xyz"
     }
   ],
-  "prompt": "Run the reaction-profile task for the ethane-rotation reaction using the PM7 (mopac) method in the gas phase. Pass the reactant, product, and TS guess (shared atom ordering) with --reactant/--product/--ts-guess. Report the activation free energy delta_G_activation in kcal/mol as the headline value, plus the reaction free energy and the IRC connectivity verdict. State the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the reaction-profile task for the ethane-rotation reaction using the PM7 (mopac) method in the gas phase. Pass the reactant, product, and TS guess (shared atom ordering) with --reactant/--product/--ts-guess. Report the activation free energy delta_G_activation in kcal/mol as the headline value, plus the reaction free energy and the IRC connectivity verdict. State the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "mopac"

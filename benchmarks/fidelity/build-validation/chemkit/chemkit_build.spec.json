@@ -4,7 +4,7 @@
   "input": "chemkit",
   "input_kind": "string",
   "expect": "refusal",
-  "prompt": "Build a 3D structure of 'chemkit' from its name using the build-from-smiles tool. Report what you built (the molecule and its atom count) and the source it was resolved from. Do not fabricate coordinates; use the tool only.",
+  "prompt": "Build a 3D structure of 'chemkit' from its name using the build-from-smiles tool. Report what you built (the molecule and its atom count) and the source it was resolved from. Do not fabricate coordinates; use the tool only. Use charge 0.",
   "intended_flags": [],
   "intended": {
     "method": "",

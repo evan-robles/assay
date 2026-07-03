@@ -4,7 +4,7 @@
   "input": "cysteine",
   "input_kind": "string",
   "expect": "structure",
-  "prompt": "Build a 3D structure of cysteine from its name using the build-from-smiles tool. Report what you built (the molecule and its atom count) and the source it was resolved from. Do not fabricate coordinates; use the tool.",
+  "prompt": "Build a 3D structure of cysteine from its name using the build-from-smiles tool. Report what you built (the molecule and its atom count) and the source it was resolved from. Do not fabricate coordinates; use the tool. Use charge 0.",
   "intended_flags": [],
   "intended": {
     "method": "",

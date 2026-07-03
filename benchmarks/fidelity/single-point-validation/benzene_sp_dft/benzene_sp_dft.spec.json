@@ -2,7 +2,7 @@
   "name": "benzene_sp_dft",
   "skill": "single-point-energy",
   "xyz": "benchmarks/fidelity/single-point-validation/benzene_sp_dft/benzene.xyz",
-  "prompt": "Compute the single-point energy of benzene with DFT using the M06 functional and 6-311+G(2df,2p) basis set in the gas phase. Report the total energy in eV and state the full level of theory (functional and basis set). Use the chemkit tools; do not guess the number. Use DFT at the M06 functional with the 6-311+G(2df,2p) basis set.",
+  "prompt": "Compute the single-point energy of benzene with DFT using the M06 functional and 6-311+G(2df,2p) basis set in the gas phase. Report the total energy in eV and state the full level of theory (functional and basis set). Use the chemkit tools; do not guess the number. Use DFT at the M06 functional with the 6-311+G(2df,2p) basis set. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "dft"

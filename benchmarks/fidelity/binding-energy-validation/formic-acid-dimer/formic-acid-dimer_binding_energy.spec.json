@@ -12,7 +12,7 @@
       "xyz": "benchmarks/fidelity/binding-energy-validation/formic-acid-dimer/monomer_2_formic-acid.xyz"
     }
   ],
-  "prompt": "Run the binding-energy task on the formic acid dimer using the GFN2-xTB method in the gas phase. The complex geometry is the positional input; pass each monomer with --monomer. Report the binding (interaction) energy in eV as the headline value (negative = bound; the task also returns kcal/mol and hartree \u2014 report eV), and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the binding-energy task on the formic acid dimer using the GFN2-xTB method in the gas phase. The complex geometry is the positional input; pass each monomer with --monomer. Report the binding (interaction) energy in eV as the headline value (negative = bound; the task also returns kcal/mol and hartree \u2014 report eV), and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "xtb"

@@ -2,7 +2,7 @@
   "name": "methanol-torsion_transition_state",
   "skill": "transition-state",
   "xyz": "benchmarks/fidelity/transition-state-validation/methanol-torsion/methanol-torsion.xyz",
-  "prompt": "Run the transition-state task on the methanol-torsion TS guess geometry using the PM7 (mopac) method in the gas phase. Report the total energy in eV as the headline value, and state whether the converged structure is a valid TS (exactly one imaginary mode) and the imaginary frequency. State the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the transition-state task on the methanol-torsion TS guess geometry using the PM7 (mopac) method in the gas phase. Report the total energy in eV as the headline value, and state whether the converged structure is a valid TS (exactly one imaginary mode) and the imaginary frequency. State the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "mopac"

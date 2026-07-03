@@ -2,7 +2,7 @@
   "name": "phenol_fukui_reactivity",
   "skill": "fukui-reactivity",
   "xyz": "benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz",
-  "prompt": "Run the fukui-reactivity task on phenol using DFT at the b3lyp functional with the def2-tzvp basis set (tier 'standard') in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the fukui-reactivity task on phenol using DFT at the b3lyp functional with the def2-tzvp basis set (tier 'standard') in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "dft"

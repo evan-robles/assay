@@ -2,7 +2,7 @@
   "name": "formaldehyde_geometry_optimize",
   "skill": "geometry-optimize",
   "xyz": "benchmarks/fidelity/geometry-optimize-validation/formaldehyde/formaldehyde.xyz",
-  "prompt": "Run the geometry-optimize task on formaldehyde using the GFN2-xTB method in the gas phase. Report the total energy in eV as the headline value (the engine also reports the same energy in hartree and kcal/mol \u2014 report the eV value), and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the geometry-optimize task on formaldehyde using the GFN2-xTB method in the gas phase. Report the total energy in eV as the headline value (the engine also reports the same energy in hartree and kcal/mol \u2014 report the eV value), and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "xtb"

@@ -2,7 +2,7 @@
   "name": "ammonia_visualize_orbitals",
   "skill": "visualize-orbitals",
   "xyz": "benchmarks/fidelity/visualize-orbitals-validation/ammonia/ammonia.xyz",
-  "prompt": "Run the visualize-orbitals task on ammonia using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the visualize-orbitals task on ammonia using the GFN2-xTB method in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
     "xtb"
