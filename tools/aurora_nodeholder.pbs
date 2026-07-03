@@ -18,6 +18,16 @@
 # node list this job publishes and runs parallel_suite.sh ON the login node.
 #
 # It writes the allocated node list to a well-known shared-FS file, then sleeps.
+#
+# ── NODE COUNT: MATCH TO THE NUMBER OF MODELS THAT WILL ACTUALLY RUN ──
+# parallel_suite.sh is serial-per-model (one model per node); more models than
+# nodes just doubles up (one node runs 2 models serially = slower). The
+# `#PBS -l select=4` above is only a DEFAULT. Set N = number of models NOT already
+# at REPEAT (resume-skipped models need ~0 compute — don't count them) and
+# OVERRIDE at submit time:
+#     qsub -l select=<N> tools/aurora_nodeholder.pbs
+# e.g. a fresh 4-model sweep → select=4; expanding by 5 new models → select=5.
+# The qsub -l flag takes precedence over the directive above.
 # ══════════════════════════════════════════════════════════════════════════════
 set -o pipefail
 cd "${PBS_O_WORKDIR:-$HOME/chem-skills}"
