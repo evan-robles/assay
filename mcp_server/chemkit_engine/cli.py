@@ -964,6 +964,21 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
 
     # ------------------------------------------------------------------
+    # Gas-phase synonyms -> None. Gas phase is expressed by OMITTING --solvent
+    # (None), but an agent told to run "in the gas phase" reasonably passes
+    # --solvent gas (or none/vacuum/gas-phase), which would otherwise hit
+    # resolve_dielectric and crash with "unknown solvent 'gas'" (rc=1). Normalize
+    # these to None here so every downstream task treats them as gas phase — a
+    # forgiving, correct interpretation instead of a hard error. (Observed with
+    # gpt-4o/o4-mini on the fukui suite, 2026-07-03.)
+    if hasattr(args, "solvent") and isinstance(args.solvent, str):
+        if args.solvent.strip().lower() in {
+            "gas", "gas phase", "gas-phase", "gasphase",
+            "none", "vacuum", "vac", "no solvent", "no-solvent", "",
+        }:
+            args.solvent = None
+
+    # ------------------------------------------------------------------
     # Vendor-/harness-proof guard: never let the level of theory be chosen
     # SILENTLY. This lives in the engine (the Python every calc must pass
     # through), so it protects calculations under ANY model or harness — not just
