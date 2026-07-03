@@ -10,12 +10,77 @@ from . import __version__
 from .io import write_result, cli_invocation
 
 
+# ── Forgiving-input normalizers (argparse `type=`) ────────────────────────────
+# An agent may pass reasonable-but-non-canonical spellings of a choices-guarded
+# flag (case variants, common synonyms). Without normalization, argparse rejects
+# them with a hard error before the task runs — the same class of brittleness as
+# the "--solvent gas" crash. These `type=` callables map synonyms/case to the
+# canonical value BEFORE argparse's `choices=` check, so the whole engine accepts
+# the obvious intent. Unknown values still fail `choices` with a clear message.
+# Applied to --method, --tier, --ref, and the various --mode flags below.
+
+def _norm_method(v):
+    """xtb/mopac/dft/hf, accepting case + common synonyms."""
+    s = str(v).strip().lower().replace("_", "-")
+    aliases = {
+        "gfn2": "xtb", "gfn2-xtb": "xtb", "gfn2xtb": "xtb", "gfn-xtb": "xtb",
+        "xtb": "xtb", "tblite": "xtb",
+        "pm7": "mopac", "mopac": "mopac", "semiempirical": "mopac",
+        "dft": "dft", "ks": "dft", "kohn-sham": "dft",
+        "hf": "hf", "hartree-fock": "hf", "hartreefock": "hf", "scf": "hf",
+    }
+    return aliases.get(s, s)  # unknown -> pass through, choices= will reject it
+
+
+def _norm_tier(v):
+    """fast/standard/accurate, accepting case + synonyms."""
+    s = str(v).strip().lower()
+    aliases = {
+        "fast": "fast", "quick": "fast", "cheap": "fast", "low": "fast",
+        "standard": "standard", "default": "standard", "medium": "standard", "std": "standard",
+        "accurate": "accurate", "high": "accurate", "best": "accurate", "tight": "accurate",
+    }
+    return aliases.get(s, s)
+
+
+def _norm_redox_ref(v):
+    """SHE / Ag/AgCl / Fc+/Fc reference electrode, accepting case + variants."""
+    s = str(v).strip().lower().replace(" ", "").replace("_", "")
+    aliases = {
+        "she": "SHE", "nhe": "SHE", "standardhydrogen": "SHE",
+        "ag/agcl": "Ag/AgCl", "agagcl": "Ag/AgCl", "agcl": "Ag/AgCl",
+        "fc+/fc": "Fc+/Fc", "fc/fc+": "Fc+/Fc", "fcfc": "Fc+/Fc",
+        "ferrocene": "Fc+/Fc", "fc": "Fc+/Fc",
+    }
+    return aliases.get(s, v)  # unknown -> original, choices= rejects it
+
+
+def _norm_mode(v):
+    """Generic --mode normalizer: case + common synonyms across tasks
+    (adiabatic/vertical/freq, absolute/reference, sp/opt/freq). Maps to the
+    canonical token; unknown values pass through to the per-task choices= check."""
+    s = str(v).strip().lower().replace("-", "").replace("_", "").replace(" ", "")
+    aliases = {
+        # redox
+        "adiabatic": "adiabatic", "adiab": "adiabatic", "relaxed": "adiabatic",
+        "vertical": "vertical", "vert": "vertical",
+        # pka
+        "absolute": "absolute", "abs": "absolute", "direct": "absolute",
+        "reference": "reference", "ref": "reference", "relative": "reference", "anchored": "reference",
+        # reaction_energy
+        "sp": "sp", "singlepoint": "sp", "single": "sp", "energy": "sp",
+        "opt": "opt", "optimize": "opt", "optimise": "opt", "geometry": "opt",
+        "freq": "freq", "frequency": "freq", "thermo": "freq", "thermochemistry": "freq",
+    }
+    return aliases.get(s, v)  # unknown -> original, choices= rejects it
+
+
 def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
     """Shared CLI options. Set `with_solvent=False` for tasks where the
     solvent is fixed by the task itself (e.g. logp pins water + octanol)."""
     if with_input:
         p.add_argument("input", help="Path to input geometry (.xyz, .sdf, .pdb).")
-    p.add_argument("--method", choices=["xtb", "mopac", "dft", "hf"], required=True)
+    p.add_argument("--method", type=_norm_method, choices=["xtb", "mopac", "dft", "hf"], required=True)
     p.add_argument("--charge", type=int, default=0)
     p.add_argument("--mult", "--multiplicity", dest="multiplicity",
                    type=int, default=1, help="Spin multiplicity 2S+1 (default 1).")
@@ -35,7 +100,7 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
                             "xtb uses ALPB regardless; a non-default value with "
                             "those methods (and a solvent set) is an error.")
     # PySCF-only knobs; silently ignored for xtb/mopac.
-    p.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None,
+    p.add_argument("--tier", type=_norm_tier, choices=["fast", "standard", "accurate"], default=None,
                    help="DFT tier preset (fast=r2SCAN/def2-SVP, standard=B3LYP/def2-TZVP, "
                         "accurate=wB97M-V/def2-QZVPP). Ignored unless --method dft.")
     p.add_argument("--functional", default=None,
@@ -491,10 +556,10 @@ def build_parser() -> argparse.ArgumentParser:
     p_redox.add_argument("--red-charge", type=int, required=True)
     p_redox.add_argument("--ox-mult", type=int, default=1)
     p_redox.add_argument("--red-mult", type=int, default=2)
-    p_redox.add_argument("--ref", choices=["SHE", "Ag/AgCl", "Fc+/Fc"], default="SHE")
+    p_redox.add_argument("--ref", type=_norm_redox_ref, choices=["SHE", "Ag/AgCl", "Fc+/Fc"], default="SHE")
     p_redox.add_argument("--n-electrons", type=int, default=1)
     p_redox.add_argument(
-        "--mode", choices=["adiabatic", "vertical", "freq"], default="adiabatic",
+        "--mode", type=_norm_mode, choices=["adiabatic", "vertical", "freq"], default="adiabatic",
         help=(
             "How to evaluate the redox free-energy difference. "
             "adiabatic (default): relax each oxidation state separately, ΔE "
@@ -579,7 +644,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_prof.add_argument("--ts-guess", dest="ts_guess", required=True,
                         help="TS guess xyz (often from /conformational_analysis).")
     p_prof.add_argument(
-        "--method", choices=["xtb", "mopac", "dft", "hf"], required=True,
+        "--method", type=_norm_method, choices=["xtb", "mopac", "dft", "hf"], required=True,
         help="Same method is used for every species in the cycle.",
     )
     p_prof.add_argument("--charge", type=int, default=0)
@@ -597,7 +662,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Skip the IRC connectivity check (only the RMSD-based check is "
              "available for dft/hf anyway, so this is a noop there).",
     )
-    p_prof.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_prof.add_argument("--tier", type=_norm_tier, choices=["fast", "standard", "accurate"], default=None)
     p_prof.add_argument("--functional", default=None)
     p_prof.add_argument("--basis", default=None)
     p_prof.add_argument("--density-fit", dest="density_fit", action="store_true",
@@ -621,11 +686,11 @@ def build_parser() -> argparse.ArgumentParser:
     p_pka.add_argument("--a-minus", dest="a_minus", required=True,
                        help="xyz of the deprotonated form (A⁻).")
     p_pka.add_argument(
-        "--method", choices=["xtb", "mopac", "dft", "hf"], required=True,
+        "--method", type=_norm_method, choices=["xtb", "mopac", "dft", "hf"], required=True,
         help="Same method is applied to every species in the cycle.",
     )
     p_pka.add_argument(
-        "--mode", choices=["absolute", "reference"], default="absolute",
+        "--mode", type=_norm_mode, choices=["absolute", "reference"], default="absolute",
         help="absolute: uses literature G(H+,aq). reference: uses a known acid "
              "(--ref-ha, --ref-a-minus, --pka-ref). Reference is far more accurate.",
     )
@@ -654,7 +719,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_pka.add_argument("--ref-ha-charge", type=int, default=0)
     p_pka.add_argument("--ref-ha-mult", type=int, default=1)
     p_pka.add_argument("--ref-a-minus-mult", type=int, default=1)
-    p_pka.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_pka.add_argument("--tier", type=_norm_tier, choices=["fast", "standard", "accurate"], default=None)
     p_pka.add_argument("--functional", default=None)
     p_pka.add_argument("--basis", default=None)
     p_pka.add_argument("--density-fit", dest="density_fit", action="store_true",
@@ -690,7 +755,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Title comment for the xyz (default: the SMILES string).",
     )
     p_build.add_argument(
-        "--opt", dest="opt_method", choices=["xtb", "mopac", "dft", "hf"],
+        "--opt", dest="opt_method", type=_norm_method, choices=["xtb", "mopac", "dft", "hf"],
         default=None,
         help="Optional QM refinement step after the obabel build. Calls "
              "`chemkit opt` internally; the QM-relaxed xyz becomes the canonical "
@@ -716,7 +781,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--mult", "--multiplicity", dest="multiplicity", type=int, default=None,
         help="Spin multiplicity forwarded to the QM step (default 1).",
     )
-    p_build.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_build.add_argument("--tier", type=_norm_tier, choices=["fast", "standard", "accurate"], default=None)
     p_build.add_argument("--functional", default=None)
     p_build.add_argument("--basis", default=None)
     p_build.add_argument("--density-fit", dest="density_fit", action="store_true",
@@ -811,7 +876,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Species spec '[COEF*]PATH[,charge=Q][,mult=M]'. Repeat per product.",
     )
     p_rxn.add_argument(
-        "--mode", choices=["sp", "opt", "freq"], default="sp",
+        "--mode", type=_norm_mode, choices=["sp", "opt", "freq"], default="sp",
         help="sp: single-point on each input xyz (default). opt: optimize then SP. "
              "freq: full opt+freq → reports ΔE, ΔH, ΔG.",
     )
