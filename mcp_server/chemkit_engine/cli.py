@@ -1024,8 +1024,37 @@ def check_tools_cli_consistency(tools_subcommands) -> List[str]:
     return problems
 
 
+def _split_combined_flag_tokens(argv):
+    """Split tokens like '--method dft' (a flag and its value joined into ONE
+    argv element) into two elements ['--method', 'dft'].
+
+    Some models (esp. small ones like gpt-4.1-nano) emit tool args as
+    ['--method dft', '--basis def2-tzvp', ...] instead of ['--method','dft',...].
+    argparse then sees an unknown option '--method dft' and the run crashes
+    (rc=1, engine never runs). Splitting on the FIRST space of any token that
+    starts with '--' and contains a space recovers the obvious intent. A bare
+    positional (e.g. an .xyz path, no leading --) is left untouched, as is a
+    value that itself contains spaces only after the flag (we split once)."""
+    if argv is None:
+        return None
+    out = []
+    for tok in argv:
+        if isinstance(tok, str) and tok.startswith("--") and " " in tok:
+            flag, _, val = tok.partition(" ")
+            out.append(flag)
+            if val.strip():
+                out.append(val.strip())
+        else:
+            out.append(tok)
+    return out
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     parser = build_parser()
+    # Normalize combined 'flag value' tokens whether argv is passed explicitly or
+    # taken from sys.argv (the subprocess path used by run_engine, where a
+    # model's malformed ['--method dft', ...] arrives as one argv element).
+    argv = _split_combined_flag_tokens(argv if argv is not None else sys.argv[1:])
     args = parser.parse_args(argv)
 
     # ------------------------------------------------------------------
