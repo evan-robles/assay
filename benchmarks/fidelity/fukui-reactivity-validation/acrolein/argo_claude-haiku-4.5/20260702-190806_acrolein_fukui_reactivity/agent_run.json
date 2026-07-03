@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "**Acrolein Fukui Reactivity Functions** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fitted RKS) in PySCF, gas phase, charge 0 multiplicity 1 (neutral reference state); cation and anion single-point energies computed as charge \u00b11, multiplicity 2 for Fukui derivative evaluation. Geometry: fixed input (acrolein.xyz, 8 atoms: O, 3 \u00d7 C, 4 \u00d7 H). Partial charges computed via Mulliken scheme on all three states; Fukui functions derived as f\u207a(i) = q_cation(i) \u2212 q_neutral(i) and f\u207b(i) = q_neutral(i) \u2212 q_anion(i). All SCF converged. Charge conservation: \u03a3(f\u207a) = 1.0000 \u2713, \u03a3(f\u207b) = 1.0000 \u2713 (integrity trustworthy = true). **Most electrophilic site:** C4 (terminal olefinic carbon), f\u207a = 0.642. **Most nucleophilic site:** O1 (carbonyl oxygen), f\u207b = 0.394. Dual descriptor (f\u207a \u2212 f\u207b) highlights C4 preference for electrophilic attack (\u0394fD = 0.555) and reveals the \u03b1,\u03b2-unsaturated carbonyl reactivity characteristic of acrolein. Visualization and full atom-resolved tables (fukui_plus, fukui_minus, fukui_zero, dual_descriptor arrays) logged to result JSON and plot file.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}

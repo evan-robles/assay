@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of nitrobenzene was performed using DFT at the B3LYP/def2-TZVP level (tier 'standard', density-fit, PySCF RKS) in the gas phase, charge 0, multiplicity 1. Cation (N\u22121): charge +1, multiplicity 2; Anion (N+1): charge \u22121, multiplicity 2. Fukui indices were computed via finite differences of Mulliken charges across the three species (neutral, cation, anion). The headline value reported is the maximum f\u207a index = 0.49641778 at atom 4 (ipso carbon, C attached to \u2013NO\u2082), identifying it as the most electrophilic site (most susceptible to nucleophilic attack). The most nucleophilic site is atom 5 (ortho-C, f\u207b = 0.10729). Integrity: trustworthy = true; sum(f\u207a) = 1.0000; sum(f\u207b) = 1.0000. No error warnings were reported by the engine. The three integrity checks all passed: fukui_charge_conservation_f+ (sum(f+) = 1.0000, should be ~1.0; large drift suggests an N\u00b11 state did not converge), fukui_charge_conservation_f- (sum(f-) = 1.0000, should be ~1.0; large drift suggests an N\u00b11 state did not converge), schema_header (common header present). Method: DFT, tier standard (B3LYP/def2-TZVP), PySCF, gas phase, Mulliken charges, 14 atoms."
+}

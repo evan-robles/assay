@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance:\nProperty: Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, most electrophilic/nucleophilic atoms for pyridine.\nLevel of theory: DFT, tier `standard` (B3LYP/def2-TZVP) with RI density fitting in PySCF.\nGeometry provenance: single-point evaluation on the fixed input geometry supplied in /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz (no re-optimization).\nSolvent / environment: gas phase (no implicit solvation).\nCharge and multiplicity: neutral singlet (charge 0, multiplicity 1). Cation/anionic states computed at charge +1 (doublet) and \u20131 (doublet) for the finite-difference Fukui derivatives.\nSoftware: chemkit fukui-reactivity skill \u2192 PySCF 2.x backend.\nConvergence & warnings: SCF cycles for neutral and N\u00b11 states all converged. The engine returned three warnings (VERBATIM):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nIntegrity: integrity.status = ok, trustworthy = true.\n\nHeadline result\nMost electrophilic site: atom 1 (N) with f\u207a = 0.48422572.\nMost nucleophilic site: atom 4 (C) with f\u207b = 0.1182626.\n\nLive log: the PySCF/stdout stream was written to a time-stamped .out file in the current working directory while the run executed (path echoed at launch).\n\nAll numbers and files originate from this single chemkit computation; provenance = computed."
+}

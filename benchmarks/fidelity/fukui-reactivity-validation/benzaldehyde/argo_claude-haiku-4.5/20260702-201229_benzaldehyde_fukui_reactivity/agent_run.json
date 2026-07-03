@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzaldehyde Fukui Reactivity (DFT B3LYP/def2-TZVP, gas phase)**\n\nThe fukui-reactivity skill was executed using DFT with the B3LYP functional and def2-TZVP basis set (tier standard, density-fitted) via PySCF, computing Fukui indices on the neutral molecule and its N\u00b11 electronic states (cation and anion, both computed at multiplicity 2 to properly treat open-shell systems). The geometry was taken as-is from the input .xyz file without re-optimization at DFT level.\n\n**Most electrophilic atom:** C atom 3 (ortho position), f\u207a = 0.39938968\n**Most nucleophilic atom:** O atom 1 (carbonyl oxygen), f\u207b = 0.23839906\n\nAll three SCF calculations converged cleanly. Mulliken partial charges were used. Fukui charge conservation was verified (sum f\u207a = 1.0, sum f\u207b = 1.0). The dual descriptor and per-atom Fukui indices (f\u207a, f\u207b, f\u2070) are tabulated above. A reactivity visualization was produced at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_claude-haiku-4.5/20260702-201229_benzaldehyde_fukui_reactivity/agent_call_02_plot.png`. The live log streamed to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_claude-haiku-4.5/20260702-201229_benzaldehyde_fukui_reactivity/fukui_20260702-201237.out`."
+}

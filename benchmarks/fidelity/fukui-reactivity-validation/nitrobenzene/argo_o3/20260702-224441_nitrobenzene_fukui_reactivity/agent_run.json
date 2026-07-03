@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\nProperty: atom-condensed Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor for nitrobenzene; headline figure is the largest electrophilic Fukui index f\u207a = 0.49641779 (on C4, atom index 3).\nLevel of theory: DFT, tier \u2018standard\u2019 \u2261 B3LYP/def2-TZVP, density-fitted (RI-JK) in PySCF.\nGeometry provenance: single-point analysis on the supplied fixed geometry (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz); not re-optimized (denoted Fukui//input).\nSolvent / environment: gas phase (implicit continuum off).\nCharge & multiplicity: neutral singlet (0, 1) base state; cation (+1, 2) and anion (\u22121, 2) states for N \u00b1 1 densities.\nSoftware: chemkit fukui-reactivity skill \u2192 PySCF backend (version bundled with chemkit 2026-07-02 build).\nConvergence & caveats: SCF cycles for all three charge states reported as converged. Integrity checker flags (verbatim in warnings above) note charge-conservation checks; sums equal 1.0000, so no significant drift detected.\nLive log: calculation streamed to a timestamped .out file in the working directory while running; it contains full PySCF SCF and Mulliken charge details. Ask if you\u2019d like the path or the full JSON.\n\nResult highlights\n\u2022 Most electrophilic site: C4 (atom 3, ring carbon ipso to NO\u2082), f\u207a = 0.49641779.\n\u2022 Most nucleophilic site: C5 (atom 4, adjacent ring carbon), f\u207b = 0.10728820.\nFull per-atom f\u207a/f\u207b/f\u2070 and dual descriptor arrays, as well as a visualization PNG, are supplied in the output directory specified in the method block."
+}

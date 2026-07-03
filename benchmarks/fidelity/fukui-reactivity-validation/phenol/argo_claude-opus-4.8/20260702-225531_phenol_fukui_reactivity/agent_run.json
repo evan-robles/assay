@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of phenol** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**), backend PySCF (`--method dft`), **gas phase** (no solvent / no implicit continuum model). Neutral state: charge 0, multiplicity 1. The finite-difference Fukui analysis added the N\u00b11 states: cation charge +1, multiplicity 2, and anion charge \u22121, multiplicity 2. Condensed-to-atom Fukui functions were derived from **Mulliken (PySCF) partial charges**. Geometry provenance: coordinates used **as-is** from the user-supplied file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (13 atoms), not re-optimized in this run.\n\n**Headline result:** the most electrophilic site (largest f\u207a) is **C at atom label 3 (0-based index 2), f\u207a = 2.1028319** (dimensionless condensed Fukui index). For reference, the most nucleophilic site (largest f\u207b) is the phenolic **O at atom label 1 (index 0), f\u207b = 0.16201477**.\n\n**Method used:** DFT B3LYP/def2-TZVP (tier `standard`) in the gas phase, via the chemkit `fukui-reactivity` skill (PySCF backend). Reproduce with the exact command:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz`\n\n**Note on precision/regime:** condensed Fukui indices depend on the atomic-charge partitioning scheme (Mulliken here), which is basis-set sensitive; treat these values as reactivity trends rather than high-precision numbers. Some individual f\u207a/f\u207b values are negative, which is a known artifact of Mulliken-based finite-difference Fukui functions.\n\n**Integrity / convergence:** the engine reported `integrity.status = ok` and `trustworthy = true`. All three integrity checks passed (`ok: true`). The charge-conservation checks confirm sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (consistent with converged N\u00b11 states).\n\n**Warnings (reproduced verbatim from the result JSON, all severity \"warning\", all checks passed ok:true):**\n- fukui_charge_conservation_f+: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- fukui_charge_conservation_f-: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- schema_header: \"common header present\"\n\n**Artifacts:** a Fukui reactivity plot was written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-opus-4.8/20260702-225531_phenol_fukui_reactivity/agent_call_01_plot.png`, and the live result JSON to `/home/erobles/chem-skills/.fidelity_scratch/tmphcq_iedv/live.json`. No experimental comparison is offered; ask if you want one and I will verify a source first."
+}

@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of benzaldehyde** \u2014 computed with chemkit's `fukui-reactivity` skill.\n\n**Method-provenance block**\n- **Property:** Condensed (atom-resolved) Fukui functions f\u207a, f\u207b, f\u2070, and the dual descriptor, from Mulliken (PySCF) partial charges on the neutral, cation, and anion states (finite-difference / frozen-geometry scheme).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP/def2-TZVP** (PySCF; density fitting is on by default). HF/DFT continuum solvation not used.\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz`; used as-is (single-point charges on that fixed geometry \u2014 no re-optimization at this level).\n- **Environment:** **Gas phase** (solvent = null).\n- **Charge / multiplicity:** Neutral reference charge 0, multiplicity 1. For the finite-difference states the engine used cation charge +1 / multiplicity 2 and anion charge \u22121 / multiplicity 2 (open-shell doublets, UKS).\n- **Software:** PySCF (via chemkit DFT backend).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Headline result**\n- **Most electrophilic site:** atom label 3 (0-based index 2), a ring **carbon**, with **f\u207a = 0.39938963** \u2014 this is the headline value reported.\n- **Most nucleophilic site:** atom label 1 (index 0), the carbonyl **oxygen**, with f\u207b = 0.23839906.\n\n**Integrity / convergence:** The engine reports `integrity.status = ok`, `trustworthy = true`. All integrity checks passed (ok = true).\n\n**Warnings (reproduced verbatim):**\n- `fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `schema_header: common header present`\n\n(These three are severity `warning` integrity checks, all of which passed \u2014 the f\u207a and f\u207b sums both conserve to 1.0000, indicating the N\u00b11 states converged properly.)\n\n**Reproducibility**\n- CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmphkcoo3c8/live.json`\n- Plot artifact: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_claude-opus-4.8/20260702-202353_benzaldehyde_fukui_reactivity/agent_call_01_plot.png`\n\nNote: these Fukui values are model-dependent (Mulliken charges are basis-set sensitive), computed at a fixed input geometry with no conformational averaging. No experimental or literature comparison is offered."
+}

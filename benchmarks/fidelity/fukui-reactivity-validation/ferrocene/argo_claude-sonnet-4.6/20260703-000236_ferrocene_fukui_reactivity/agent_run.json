@@ -1,0 +1,25 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of ferrocene (21 atoms: 10 C, 10 H, 1 Fe) computed at the GFN2-xTB level (semi-empirical tight-binding) in the gas phase (no implicit solvation), charge 0 multiplicity 1 for the neutral; cation at charge +1 multiplicity 2 and anion at charge \u22121 multiplicity 2 for the finite-difference N\u00b11 states. Geometry taken as-is from the user-supplied ferrocene.xyz; no re-optimization was performed. Partial charges via the Mulliken scheme (GFN2-xTB). The headline value reported (0.22885456) is f\u207a on Fe (atom 11), which is the most electrophilic site. Fe is simultaneously the most nucleophilic site (f\u207b = 0.25938191) and has a negative dual descriptor (\u22120.030527354), indicating preferential nucleophilic / electron-donating character \u2014 consistent with Fe(II) chemistry. The Cp ring carbons show low Fukui indices (~0.0136) and the ring hydrogens moderate values (~0.0635). Both rings are symmetry-equivalent within numerical noise, reflecting the molecule's D5 symmetry. Integrity checks: sum(f+) = 1.0000, sum(f\u2212) = 1.0000 \u2014 both passed; integrity status ok, trustworthy: true. Warnings (verbatim from tool): 'sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)' and 'sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)' \u2014 both are routine informational checks that passed."
+}

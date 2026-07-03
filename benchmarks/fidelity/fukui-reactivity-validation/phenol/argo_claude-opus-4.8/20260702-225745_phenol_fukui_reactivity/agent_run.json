@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis \u2014 phenol**\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, and site reactivity ranking from finite-difference Mulliken charges (PySCF Mulliken partitioning).\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (chemkit tier `standard`, which expands to B3LYP/def2-TZVP), density fitting on by default (RI approximation to the two-electron integrals), PySCF backend.\n- **Geometry provenance:** User-supplied geometry `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (13 atoms), used **as-is** \u2014 this is a single-point Fukui analysis; the geometry was NOT re-optimized at this or any level.\n- **Solvent / environment:** **Gas phase** (solvent = null; no implicit/continuum solvation).\n- **Charge / multiplicity:** Neutral reference N: charge 0, multiplicity 1. The finite-difference states use cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2), both open-shell (UKS).\n- **Software:** PySCF (via chemkit `fukui` skill).\n\n**Headline result**\n- **Most electrophilic site (largest f\u207a):** atom #3 (1-based), a carbon, with **f\u207a = 2.1028319** \u2014 this is the reported headline value. (Note: an f\u207a > 1 at a single site indicates significant Mulliken-charge redistribution / possible spread of the added-electron density across atoms; interpret condensed Fukui magnitudes with care, especially with diffuse basis functions and Mulliken partitioning.)\n- **Most nucleophilic site (largest f\u207b):** atom #1, the **oxygen**, with f\u207b = 0.16201477.\n\n**Convergence & integrity**\n- Engine integrity verdict: **status = ok, trustworthy = true.**\n- Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (as expected for converged N\u00b11 states).\n\n**Warnings reported by the engine (verbatim):**\n1. `fukui_charge_conservation_f+` (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. `fukui_charge_conservation_f-` (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. `schema_header` (severity: warning): \"common header present\"\n\nThese three items are the integrity checks in the result JSON; all three are marked `ok: true` (they are labeled with severity \"warning\" but did not trip). No other warnings were present.\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpa7olb15z/live.json`\n- Fukui plot written to: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-opus-4.8/20260702-225745_phenol_fukui_reactivity/agent_call_01_plot.png`\n- Partial-charge scheme: Mulliken (PySCF).\n\nNo experimental or literature comparison is offered (none was requested)."
+}

@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui-descriptor reactivity indices calculated for pyridine using DFT at the B3LYP/def2-TZVP level (tier standard) in the gas phase with Mulliken partial charges (PySCF backend). The calculation computed three electronic states (neutral, cation, and anion) to derive the Fukui indices f\u207a (electrophilic reactivity), f\u207b (nucleophilic reactivity), and f\u2070 (radical reactivity). SCF converged for all states. The most electrophilic site is nitrogen with f\u207a = 0.48423 (highest nucleophilic attack susceptibility); the most nucleophilic site is the para carbon (atom 4) with f\u207b = 0.11826 (highest electrophilic attack susceptibility). Charge-conservation integrity checks passed: \u03a3f\u207a = 1.000 and \u03a3f\u207b = 1.000, confirming proper convergence. No warnings were reported. The structure contains 11 atoms (1 N + 5 C + 5 H) in a neutral singlet state.</prose>\n<parameter name=\"value\">0.48423"
+}

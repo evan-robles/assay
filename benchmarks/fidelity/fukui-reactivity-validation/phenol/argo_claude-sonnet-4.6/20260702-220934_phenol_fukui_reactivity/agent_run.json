@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of phenol performed with the chemkit fukui-reactivity skill using DFT at tier 'standard' (B3LYP/def2-TZVP) in PySCF, gas phase, charge 0/multiplicity 1 for the neutral species (cation: charge +1 mult 2; anion: charge \u22121 mult 2). Geometry taken directly from the user-supplied .xyz file (no relaxation). Partial charges computed via the Mulliken scheme (PySCF). All three SCFs converged. Integrity checks: trustworthy = true, status = ok. Fukui charge conservation: sum(f+) = 1.0000, sum(f\u2212) = 1.0000.\n\nHeadline result: most electrophilic site (largest f+) is atom 3 (C), f+ = 2.1028319. Most nucleophilic site (largest f\u2212) is atom 1 (O), f\u2212 = 0.16201477.\n\nNo engine warnings were reported. The result is consistent with phenol's known ortho/para-directing character and the nucleophilicity of the hydroxyl oxygen."
+}

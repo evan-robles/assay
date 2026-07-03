@@ -1,0 +1,44 @@
+case,model,expect,mode,n_pass,n_error,n_runs,pass_rate,modal_verdict,fail_tally,method,solvent,functional,basis,tier,value_field,truth_value,reported_value_latest
+model: argo:claude-haiku-4.5
+acrolein,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,
+aniline,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
+benzaldehyde,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
+ferrocene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,21
+formaldehyde,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4
+furan,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9
+nitrobenzene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
+phenol,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,
+pyridine,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,11
+
+model: argo:claude-opus-4.8
+acrolein,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,
+aniline,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,
+benzaldehyde,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
+ferrocene,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,21
+formaldehyde,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4
+furan,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9
+nitrobenzene,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
+phenol,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,
+pyridine,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,
+
+model: argo:claude-sonnet-4.6
+acrolein,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,8
+aniline,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
+benzaldehyde,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
+ferrocene,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,21
+formaldehyde,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4
+furan,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9
+nitrobenzene,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
+phenol,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,13
+pyridine,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,11
+
+model: argo:o3
+acrolein,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,
+aniline,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,
+benzaldehyde,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,
+ferrocene,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,
+formaldehyde,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,
+furan,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,
+nitrobenzene,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,
+phenol,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,
+pyridine,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,

@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for aniline (14 atoms: N1C6H7) using DFT at tier 'standard' (B3LYP/def2-TZVP) in PySCF, gas phase, charge 0/multiplicity 1 for the neutral; charge +1/mult 2 for the cation; charge -1/mult 2 for the anion. Geometry was taken as-is from the user-supplied .xyz file (no re-optimization). Charges were computed via Mulliken population analysis (PySCF). The finite-difference Fukui functions f+, f-, f0 and the dual descriptor (f+ - f-) were obtained for all 14 atoms. Key results: most nucleophilic site = N (atom 1, f- = 0.20452359); most electrophilic site = C-ortho (atom 3, f+ = 2.2975867). The headline value reported (2.2975867) is the maximum f+ (atom 3, C-ortho). Integrity: status OK, trustworthy=true. Charge conservation: sum(f+)=1.0000, sum(f-)=1.0000. No engine warnings were reported. The Mulliken scheme with a large basis (def2-TZVP) can produce negative Fukui values due to basis overlap artifacts; qualitative trends (ortho/para activation, N as nucleophile) are chemically robust."
+}

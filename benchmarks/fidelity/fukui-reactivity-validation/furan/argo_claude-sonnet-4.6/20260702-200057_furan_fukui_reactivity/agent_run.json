@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for furan (9 atoms: O, C, C, C, C, H, H, H, H) using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. The N\u00b11 states (cation: charge +1, mult 2; anion: charge \u22121, mult 2) were computed via finite differences. Partial charges were obtained via the Mulliken scheme. The geometry was taken from the supplied furan.xyz as-is (no re-optimization). The headline value reported is the maximum f\u207a (electrophilic Fukui index), 1.9242931, located at atom 5 (C, an \u03b1-carbon). Charge conservation checks passed: sum(f\u207a) = 1.0000 and sum(f-) = 1.0000. Integrity status: trustworthy = true. The three integrity checks reported by the engine are reproduced verbatim in the warnings field. Note: Mulliken-based Fukui indices can yield negative values on electronegative atoms (O) and hydrogens due to basis-set overlap artifacts \u2014 a known limitation of the Mulliken finite-difference scheme."
+}

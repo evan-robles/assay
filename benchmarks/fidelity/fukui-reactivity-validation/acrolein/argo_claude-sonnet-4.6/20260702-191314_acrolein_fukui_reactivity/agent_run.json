@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for acrolein (8 atoms: O, C, C, C, H, H, H, H) using DFT at tier 'standard' (B3LYP/def2-TZVP, density-fitted) in PySCF, gas phase, charge 0, multiplicity 1 (neutral); cation: charge +1, multiplicity 2; anion: charge \u22121, multiplicity 2. Geometry was taken from the user-supplied .xyz file as-is (no re-optimization). Partial charges via Mulliken (PySCF). All integrity checks passed (trustworthy: true); sum(f+) = 1.0000, sum(f\u2212) = 1.0000. No warnings reported.\n\nHeadline result \u2014 most electrophilic site: C4 (\u03b2-carbon), f\u207a = 0.64232102. Most nucleophilic site: O1 (carbonyl oxygen), f\u207b = 0.39388616.\n\nPer-atom Fukui indices (f\u207a / f\u207b / f\u2070 / dual descriptor):\n  Atom 1 O:  f+ = 0.40136419, f\u2212 = 0.39388616, f0 = 0.39762517, \u0394f = +0.00747804\n  Atom 2 C:  f+ = 0.02225511, f\u2212 = 0.00598844, f0 = 0.01412177, \u0394f = +0.01626667\n  Atom 3 C:  f+ = 0.43404673, f\u2212 = 0.09140310, f0 = 0.26272491, \u0394f = +0.34264363\n  Atom 4 C:  f+ = 0.64232102, f\u2212 = 0.08736982, f0 = 0.36484542, \u0394f = +0.55495120\n  Atom 5 H:  f+ = \u22120.15725950, f\u2212 = 0.08596142, f0 = \u22120.03564904, \u0394f = \u22120.24322092\n  Atom 6 H:  f+ = \u22120.20720290, f\u2212 = 0.18567960, f0 = \u22120.01076165, \u0394f = \u22120.39288251\n  Atom 7 H:  f+ = \u22120.06211700, f\u2212 = 0.08448581, f0 = +0.01118441, \u0394f = \u22120.14660281\n  Atom 8 H:  f+ = \u22120.07340765, f\u2212 = 0.06522566, f0 = \u22120.00409099, \u0394f = \u22120.13863330\n\nThe \u03b2-carbon (C4) is the dominant Michael-acceptor site (largest f\u207a and dual descriptor), consistent with acrolein's known 1,4-addition reactivity. The carbonyl oxygen (O1) is the most nucleophilic site."
+}

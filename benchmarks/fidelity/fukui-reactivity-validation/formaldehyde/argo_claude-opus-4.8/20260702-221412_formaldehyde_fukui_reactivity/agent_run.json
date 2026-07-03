@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of formaldehyde (H\u2082C=O)** \u2014 condensed Fukui indices from finite-difference (N, N\u00b11) Mulliken population analysis.\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, and identification of most electrophilic/nucleophilic atoms, computed from Mulliken partial charges (PySCF scheme).\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (chemkit tier `standard` = B3LYP/def2-TZVP), density-fit as per chemkit DFT default. Backend: PySCF.\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`, 4 atoms: O, C, H, H). Used as-is \u2014 this is a single-point property evaluation at the supplied geometry (not re-optimized).\n- **Solvent / environment:** **Gas phase** (solvent: null).\n- **Charge / multiplicity:** Neutral reference charge 0, multiplicity 1. The finite-difference states used cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2), both open-shell doublets (UKS).\n- **Software:** PySCF (via chemkit `fukui` skill).\n- **Convergence / integrity:** Engine integrity status **ok**, `trustworthy: true`. Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Results**\n- Atom order: [O, C, H, H]\n- f\u207a (electrophilic attack susceptibility): O = 0.46814, **C = 0.70839**, H = \u22120.08827, H = \u22120.08826\n- f\u207b (nucleophilic attack / electrophilicity of removal): O = 0.46742, C = 0.11244, H = 0.21008, H = 0.21006\n- f\u2070 (radical): O = 0.46778, C = 0.41042, H = 0.06090, H = 0.06090\n- Dual descriptor (f\u207a \u2212 f\u207b): O = 0.00071, C = 0.59595, H = \u22120.29835, H = \u22120.29832\n- **Most electrophilic atom:** C (atom label 2), f\u207a = **0.70839** \u2014 the headline value reported above. This is chemically sensible: the carbonyl carbon is the site most susceptible to nucleophilic attack.\n- **Most nucleophilic atom:** O (atom label 1), f\u207b = 0.46742.\n\n**Warnings (verbatim, all integrity checks \u2014 none omitted):**\n- `fukui_charge_conservation_f+` (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `fukui_charge_conservation_f-` (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `schema_header` (severity: warning): \"common header present\"\n\nAll three integrity checks reported `ok: true`.\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp06mrr0pe/live.json`\n- Plot written to: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_claude-opus-4.8/20260702-221412_formaldehyde_fukui_reactivity/agent_call_01_plot.png`\n- Partial-charge scheme: Mulliken (PySCF).\n\nNote: condensed Fukui indices are inherently population-analysis-dependent (Mulliken here) and are relative/qualitative reactivity descriptors, not experimentally measured quantities. No experimental comparison is offered."
+}

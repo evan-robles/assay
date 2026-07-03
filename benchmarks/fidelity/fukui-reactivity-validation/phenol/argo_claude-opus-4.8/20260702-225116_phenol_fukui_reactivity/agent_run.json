@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (ok, severity warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (ok, severity warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (ok, severity warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of phenol** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, PySCF, density-fit by default), **gas phase** (no solvent model), neutral reference state charge 0, multiplicity 1. Partial-charge scheme: **Mulliken (PySCF)**. The finite-difference Fukui functions were built from three states: neutral (charge 0, mult 1), cation (charge +1, mult 2), and anion (charge \u22121, mult 2). Geometry provenance: the user-supplied file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (13 atoms), used as-is \u2014 this task performs single-point calculations at that fixed geometry (no relaxation at DFT).\n\n**Headline result** \u2014 the **most electrophilic site** (largest f\u207a, susceptible to nucleophilic attack) is **atom 3 (C), f\u207a = 2.1028319** (0-based index 2). The **most nucleophilic site** (largest f\u207b, susceptible to electrophilic attack) is **atom 1 (O), f\u207b = 0.16201477** (0-based index 0). Note these Fukui values are condensed-to-atom, Mulliken-population-based finite-difference descriptors and are dimensionless; they inherit the known sensitivity of Mulliken populations to basis set (the anion/cation Mulliken charges here show large, physically exaggerated values typical of diffuse anionic densities in a large basis).\n\n**Method used:** DFT B3LYP/def2-TZVP (tier `standard`), gas phase, via PySCF (`dft` backend). Command: `.../cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard .../phenol.xyz --out .../live.json`.\n\n**Integrity:** the engine reports `status: ok`, `trustworthy: true`.\n\n**Warnings / integrity checks (reproduced verbatim):**\n- fukui_charge_conservation_f+ (ok, severity warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- fukui_charge_conservation_f- (ok, severity warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- schema_header (ok, severity warning): \"common header present\"\n\nThere were no other engine warnings (the result JSON contained no separate `warnings` array). A plot was written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-opus-4.8/20260702-225116_phenol_fukui_reactivity/agent_call_01_plot.png`.\n\nNo experimental or literature comparison is offered \u2014 ask if you want one and I will verify a source first."
+}

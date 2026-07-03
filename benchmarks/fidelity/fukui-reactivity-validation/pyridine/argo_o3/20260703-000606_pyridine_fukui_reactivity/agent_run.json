@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance block\nProperty: Most electrophilic Fukui function value f+ (dimensionless) at the reactive site (atom 1, N) of pyridine.\nLevel of theory: DFT tier `standard`, i.e. B3LYP/def2-TZVP with RI density fitting (PySCF backend via chemkit).\nGeometry provenance: single-point charges calculated on the fixed geometry supplied by the user (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz); no further optimisation was performed (DFT//given XYZ).\nSolvent / environment: gas phase (no implicit or explicit solvation model).\nCharge & multiplicity: 0, 1 (closed-shell singlet). The N+1 and N\u20131 states were treated as doublets (charge +1, mult 2; charge \u20131, mult 2) to obtain f+ and f\u2013, respectively.\nSoftware: chemkit fukui-reactivity skill calling PySCF (version as bundled with chemkit, B3LYP functional, def2-TZVP basis, RI enabled).\nConvergence & caveats: Single-point SCF calculations for N, N+1 and N\u20131 states all converged (integrity.status = \"ok\"). The integrity checker returned trustworthy = true. Warnings reported by the engine are reproduced verbatim below.\n\nWarnings (VERBATIM):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 schema_header present\n\nReproducibility and files\nCLI invocation that generated the result (from result JSON):\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpja0a_you/live.json\n\nThe result JSON is at /home/erobles/chem-skills/.fidelity_scratch/tmpja0a_you/live.json and a graphical map of the Fukui indices was written to /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_o3/20260703-000606_pyridine_fukui_reactivity/agent_call_01_plot.png. The engine streamed its full PySCF output to a live .out log in the working directory during the run (path shown at runtime; available for inspection upon request).\n\nHeadline result\nThe most electrophilic site in pyridine is the nitrogen atom (atom 1), with an f+ value of 0.48422572 (dimensionless)."
+}

@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for acrolein computed at the DFT level using B3LYP/def2-TZVP (PySCF RKS, tier 'standard'), gas phase, charge 0, multiplicity 1. Cation: charge +1, multiplicity 2; Anion: charge \u22121, multiplicity 2. Partial charges via Mulliken (PySCF). Geometry taken from the user-supplied acrolein.xyz without re-optimization. All SCFs converged; charge conservation checks passed (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000). No warnings reported. Integrity: trustworthy = true.\n\nMost electrophilic site: Atom 4 (C, \u03b2-carbon), f\u207a = 0.64232102.\nMost nucleophilic site: Atom 1 (O), f\u207b = 0.39388616.\n\nFull per-atom Fukui indices (f\u207a, f\u207b, f\u2070, dual descriptor):\n  O   : f\u207a=0.40136419, f\u207b=0.39388616, f\u2070=0.39762517, \u0394f= 0.0074780351\n  C(2): f\u207a=0.022255106, f\u207b=0.0059884353, f\u2070=0.01412177, \u0394f=0.01626667\n  C(3): f\u207a=0.43404673, f\u207b=0.091403097, f\u2070=0.26272491, \u0394f=0.34264363\n  C(4): f\u207a=0.64232102, f\u207b=0.087369815, f\u2070=0.36484542, \u0394f=0.5549512\n  H(5): f\u207a=\u22120.1572595, f\u207b=0.085961423, f\u2070=\u22120.03564904, \u0394f=\u22120.24322092\n  H(6): f\u207a=\u22120.2072029, f\u207b=0.1856796, f\u2070=\u22120.010761648, \u0394f=\u22120.39288251\n  H(7): f\u207a=\u22120.062116996, f\u207b=0.084485809, f\u2070=0.011184406, \u0394f=\u22120.14660281\n  H(8): f\u207a=\u22120.073407645, f\u207b=0.065225658, f\u2070=\u22120.004090993, \u0394f=\u22120.1386333\n\nThe headline value reported is f\u207a for the most electrophilic atom (C-\u03b2, atom 4)."
+}

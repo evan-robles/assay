@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of phenol** using DFT at the B3LYP/def2-TZVP level (tier 'standard') in gas phase, neutral singlet state. Geometry: single-point on the supplied input structure (not re-optimized). Partial charges computed via Mulliken population analysis in PySCF. Fukui functions (f\u207a, f\u207b, \u0394f) derived from differences in Mulliken charges between N+1 (doublet cation), N (singlet), and N\u22121 (doublet anion) electron states. **Most electrophilic site:** Atom 3 (ortho-carbon), f\u207a = 2.103. **Most nucleophilic site:** Atom 1 (oxygen), f\u207b = 0.162. SCF converged; charge-conservation checks passed (sum f\u207a = sum f\u207b = 1.0). Calculation run via chemkit CLI: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz`. Plot output: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-haiku-4.5/20260702-225210_phenol_fukui_reactivity/agent_call_01_plot.png`.</prose>\n<parameter name=\"n_atoms\">13"
+}

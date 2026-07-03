@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of phenol** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, PySCF; density fitting on by default), **gas phase** (no implicit solvent), reference (neutral) state charge 0 / multiplicity 1. The finite-difference Fukui functions were built from three SCF calculations: neutral (charge 0, mult 1), cation (charge +1, mult 2, open-shell UKS), and anion (charge \u22121, mult 2, open-shell UKS). Partial charges use the Mulliken (PySCF) scheme. Geometry: user-supplied `phenol.xyz` (13 atoms: C6H5OH), used as-is \u2014 this was a single-point-based descriptor calculation, not a geometry optimization; the coordinates were not re-relaxed at this level.\n\n**Headline result \u2014 most electrophilic site (largest f\u207a):** atom index 3 (1-based), a ring **carbon**, with **f\u207a = 2.1028319**. The most nucleophilic site (largest f\u207b) is the **oxygen** (atom 1, 1-based), f\u207b = 0.16201477. The dual descriptor (f\u207a \u2212 f\u207b) is likewise largest at C3 (2.0318595), reinforcing it as the preferred electrophilic-attack center.\n\nNote on interpretation and significant figures: these are semi-quantitative, method- and geometry-dependent descriptors derived from Mulliken charges, which are known to be basis-set sensitive; the several-decimal precision reflects the raw tool output, not physical accuracy. Some individual atomic f\u207a/f\u207b values are negative and some magnitudes are large (e.g. the anion's Mulliken charges are quite delocalized), which is typical of Mulliken-based finite-difference Fukui indices and not itself an error.\n\n**Method/backend:** PySCF, DFT RKS (neutral) / UKS (open-shell ions). Command: `.../cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard .../phenol.xyz`. A plot was written to `.../20260702-225322_phenol_fukui_reactivity/agent_call_01_plot.png`.\n\n**Integrity:** the engine reports `integrity.status = \"ok\"` and `trustworthy = true`. All three integrity checks passed. **Warnings reported by the engine (verbatim, none dropped):**\n- fukui_charge_conservation_f+ (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- fukui_charge_conservation_f- (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- schema_header (severity: warning): \"common header present\"\n\nBoth charge-conservation checks passed (sum = 1.0000 as required), so the N\u00b11 states are consistent. No experimental/literature comparison is offered \u2014 ask if you want one and I will verify a source first. Note: the raw result JSON did not surface a live `.out` log path or an explicit per-SCF `converged` flag for this skill run; if you want the live log or convergence transcript, I can re-run with output capture."
+}

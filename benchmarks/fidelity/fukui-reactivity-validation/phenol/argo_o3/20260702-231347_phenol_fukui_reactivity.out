@@ -1,0 +1,16 @@
+[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:o3 via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--tier', 'standard', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz']
+[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--tier', 'standard', '--charge', '0', '--mult', '1', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz']
+[live] agent calls chemkit: fukui-reactivity ['/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz', '--method', 'dft', '--tier', 'standard']
+[live] agent calls chemkit: build-from-smiles ['c1ccc(cc1)O']
+[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz']
+[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz']
+[live] agent calls chemkit: single-point-energy ['--method', 'xtb', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz']
+[live] agent calls chemkit: build-from-smiles ['C1=CC=CC=C1O']
+[live] agent did not submit final_report within turn budget.
+
+No agent-run record to score (supply --agent-run or enable --live).
+
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_o3/20260702-231347_phenol_fukui_reactivity

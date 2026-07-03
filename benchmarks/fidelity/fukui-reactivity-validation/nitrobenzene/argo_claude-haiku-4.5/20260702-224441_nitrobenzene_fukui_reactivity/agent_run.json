@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed on nitrobenzene using DFT at B3LYP/def2-TZVP (tier standard, density-fit in PySCF), gas phase, charge 0, multiplicity 1. Input geometry from provided .xyz file; single-point calculation. Mulliken partial charges used for condensed Fukui index calculation. Most electrophilic site: atom 4 (C, ortho to NO\u2082) with f\u207a = 0.496. Most nucleophilic site: atom 5 (C, meta to NO\u2082) with f\u207b = 0.107. All SCF states converged; charge-conservation checks passed. Full Fukui indices (f\u207a, f\u207b, f\u2070, dual descriptor) reported atom-by-atom in the table above. Visualization (Fukui-index plot) generated and available at the path specified. Integrity status: ok/trustworthy."
+}

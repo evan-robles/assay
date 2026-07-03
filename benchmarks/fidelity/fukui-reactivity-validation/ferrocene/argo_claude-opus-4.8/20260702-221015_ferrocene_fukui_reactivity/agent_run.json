@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of ferrocene** \u2014 Method: **GFN2-xTB** (Grimme's semi-empirical tight-binding Hamiltonian), backend **xtb**, invoked via the chemkit `fukui-reactivity` skill. There is no basis set or DFT functional in GFN2-xTB.\n\n**Method-provenance block**\n- **Property:** Condensed (Mulliken-based) Fukui functions f\u207a, f\u207b, f\u2070 and the dual descriptor, plus most-electrophilic / most-nucleophilic site identification.\n- **Level of theory:** GFN2-xTB (semi-empirical tight-binding); no basis, no functional.\n- **Geometry provenance:** User-supplied structure `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` (21 atoms), used **as-is** \u2014 this run performs single-point charge calculations at that fixed geometry; no geometry optimization was done.\n- **Solvent / environment:** **Gas phase** (`solvent: null` \u2014 no implicit solvation).\n- **Charge / multiplicity:** Neutral reference N (charge 0, multiplicity 1); cation N\u22121 electrons (charge +1, multiplicity 2); anion N+1 electrons (charge \u22121, multiplicity 2). Partial-charge scheme: Mulliken (GFN2-xTB).\n- **Software:** xtb (GFN2-xTB).\n\n**Result**\n- **Most nucleophilic site (headline value):** the **Fe atom** (atom label 11, 0-based index 10), with **f\u207b = 0.25938191**.\n- **Most electrophilic site:** also the **Fe atom** (atom label 11), with **f\u207a = 0.22885456**.\n- The dual descriptor is negative at Fe (\u22120.030527354), consistent with the iron center being the dominant nucleophilic (electron-donating) site \u2014 as expected for the electron-rich Fe(II) center of ferrocene.\n\n**Convergence / integrity:** Engine integrity status **ok**, `trustworthy: true`. Both Fukui charge-conservation checks passed (sum f\u207a = 1.0000, sum f\u207b = 1.0000), indicating the N\u00b11 states converged.\n\n**Warnings (verbatim, all three integrity check details):**\n1. `fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)` \u2014 check passed (ok).\n2. `fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)` \u2014 check passed (ok).\n3. `schema_header: common header present` \u2014 check passed (ok).\n\n**Reproducibility**\n- CLI invocation (as recorded by the engine): `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpb_jjtyff/live.json`\n- Result JSON written to `ferrocene_fukui.json`.\n- Fukui plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-opus-4.8/20260702-221015_ferrocene_fukui_reactivity/agent_call_01_plot.png`\n\nNote: GFN2-xTB is a semi-empirical method best suited to trends and relative reactivity rather than chemically accurate absolute values; condensed Fukui indices here are Mulliken-population differences between the N, N\u22121, and N+1 states. No experimental/literature comparison is offered."
+}

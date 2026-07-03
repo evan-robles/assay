@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for aniline using **DFT with B3LYP/def2-TZVP** (tier standard, density-fitted) in PySCF, gas phase, neutral singlet. The fukui-reactivity task calculated Mulliken partial charges on the neutral, cationic (+1, doublet), and anionic (\u22121, doublet) species, and derived per-atom Fukui indices (f\u207a, f\u207b, f\u2070) and the dual descriptor. All convergence and charge-conservation checks passed. The most electrophilic site is the ortho carbon (atom 3, f\u207a = 2.2975867), and the most nucleophilic site is the nitrogen (atom 1, f\u207b = 0.20452359), consistent with aniline's electronic structure. The live log streamed to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_claude-haiku-4.5/20260702-195145_aniline_fukui_reactivity/fukui_20260702-195210.out`.</prose>\n<parameter name=\"n_atoms\">14"
+}

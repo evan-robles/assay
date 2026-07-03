@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for acrolein (8 atoms: O, C, C, C, H, H, H, H) using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF, gas phase, charge 0 / multiplicity 1 for the neutral species (cation: charge +1, mult 2; anion: charge \u22121, mult 2). Partial charges were computed via the Mulliken scheme. Geometry was taken directly from the user-supplied XYZ file (no re-optimization at this level). The headline value reported is the largest f\u207a (Fukui function for electrophilic attack) = 0.64232102, located on atom 4 (C, the \u03b2-carbon) \u2014 identifying it as the most electrophilic site and the primary Michael acceptor site of acrolein, consistent with chemical expectation. The most nucleophilic site is atom 1 (O, carbonyl oxygen) with f\u207b = 0.39388616. All integrity checks passed (sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000); the engine reported integrity.trustworthy = true. All three integrity check messages (listed verbatim in warnings) are informational PASS messages, not errors. No warnings of concern were raised."
+}

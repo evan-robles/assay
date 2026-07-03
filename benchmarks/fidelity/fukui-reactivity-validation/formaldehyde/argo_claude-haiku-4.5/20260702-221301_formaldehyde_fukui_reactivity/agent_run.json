@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for formaldehyde were computed using DFT (tier `standard`: B3LYP/def2-TZVP with density fitting in PySCF), gas phase, charge 0, multiplicity 1 for the neutral ground state; cation and anion states (charges \u00b11, multiplicity 2) were computed to derive the Fukui functions via Mulliken population analysis. Most electrophilic site: carbon (atom 2, f\u207a = 0.7083913). Most nucleophilic site: oxygen (atom 1, f\u207b = 0.46742464). Dual descriptor at carbon: +0.59594709 (strong electrophilic character). Charge conservation checks passed: sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000. Integrity status: ok, trustworthy. Visualization: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_claude-haiku-4.5/20260702-221301_formaldehyde_fukui_reactivity/agent_call_01_plot.png</prose>\n<parameter name=\"value\">null"
+}

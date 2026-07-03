@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ [severity: warning]: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- [severity: warning]: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header [severity: warning]: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of furan \u2014 condensed (atom-resolved) Fukui functions**\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, and Mulliken partial charges for the neutral, cation, and anion states \u2192 identification of most electrophilic/nucleophilic sites.\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (PySCF `dft` backend; density fitting on by default). Reported by the engine as `method: b3lyp/def2-tzvp`.\n- **Geometry provenance:** User-supplied `.xyz` (`furan.xyz`, 9 atoms: O, 4\u00d7C, 4\u00d7H) used **as-is** \u2014 this is a single-point Fukui analysis on the provided geometry, not a re-optimization at DFT.\n- **Solvent / environment:** **Gas phase** (`solvent: null`).\n- **Charge / multiplicity:** Neutral reference \u2014 charge 0, multiplicity 1. The finite-difference states used a **cation** (charge +1, multiplicity 2) and **anion** (charge \u22121, multiplicity 2), both open-shell doublets (UKS).\n- **Partial-charge scheme:** Mulliken (PySCF).\n- **Software:** PySCF (chemkit `dft` backend).\n- **Integrity:** engine reports `status: ok`, **trustworthy: true**. Both Fukui charge-conservation checks passed (sum f\u207a = 1.0000, sum f\u207b = 1.0000).\n\n**Key results** (atom labels are 1-based; index 0-based in parentheses)\n- **Most electrophilic site (largest f\u207a):** atom 5 (C, index 4), **f\u207a = 1.9242931** \u2014 the headline value. (Note: because the cation is a doublet computed by finite difference, several f\u207a values are negative here, so this \"largest f\u207a\" is the maximum among the reported condensed values.)\n- **Most nucleophilic site (largest f\u207b):** atom 5 (C, index 4), **f\u207b = 0.1616371**.\n- Full per-atom f\u207a, f\u207b, f\u2070, and dual-descriptor arrays were returned (see below for a summary).\n\n**Selected per-atom values (atom label: f\u207a / f\u207b):**\nO1: \u22121.3316 / 0.0838; C2: 1.2287 / 0.0891; C3: 1.2270 / 0.0893; C4: 1.9233 / 0.1615; C5: 1.9243 / 0.1616; H6: \u22121.2191 / 0.1025; H7: \u22121.2191 / 0.1025; H8: \u22120.7668 / 0.1048; H9: \u22120.7667 / 0.1048.\n\n**Interpretation caveat:** condensed Fukui functions from a Mulliken finite-difference scheme are basis-set-dependent and can produce negative condensed values (as seen here for O and the H atoms); treat the atom-resolved numbers as qualitative reactivity trends, not high-precision quantities. These are computed values in the gas phase \u2014 no experimental comparison is offered.\n\n**Warnings reported by the engine (verbatim):**\n- fukui_charge_conservation_f+ [severity: warning]: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- fukui_charge_conservation_f- [severity: warning]: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- schema_header [severity: warning]: \"common header present\"\n\n(All three checks passed \u2014 `ok: true`.)\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmprggh96qj/live.json`\n- Plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_claude-opus-4.8/20260702-221532_furan_fukui_reactivity/agent_call_01_plot.png`"
+}

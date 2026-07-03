@@ -1,0 +1,22 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property: condensed Fukui functions f\u207a, f\u207b, f\u2070 and dual descriptor for pyridine; headline figure reported here is the largest electrophilic Fukui index f\u207a (N atom).\n\u2022 Level of theory: DFT, tier `standard` = B3LYP/def2-TZVP with density fitting (RIJK) in PySCF 2.5.0.\n\u2022 Geometry provenance: fixed single-point on the user-supplied Cartesian coordinates in /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz (no re-optimization; therefore DFT//unknown).\n\u2022 Solvent / environment: gas phase (no implicit solvent).\n\u2022 Charge / multiplicity: neutral singlet (charge 0, multiplicity 1); N \u00b1 1 states were treated as doublets (charge +1/\u20131, multiplicity 2) for the finite-difference Fukui evaluation.\n\u2022 Software: chemkit fukui-reactivity skill \u2192 PySCF backend (functional \u201cb3lyp\u201d, basis \u201cdef2-tzvp\u201d).\n\u2022 Convergence & caveats: all three single-point SCFs (N, N+1, N\u20131) reported \u201cconverged: true\u201d.\n  Integrity checker verdict: status ok, trustworthy true.  Additional integrity notes (severity = warning):\n  \u2013 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  \u2013 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  \u2013 \"common header present\"\n\u2022 Live log: the PySCF run was streamed during execution to a `.out` file created by the skill in the working directory (path echo displayed during the run).\n\nResult (selected data)\n\u2013 Most electrophilic site: atom 1 (N), f\u207a = 0.48422572\n\u2013 Most nucleophilic site: atom 4 (C), f\u207b = 0.11826260\n\u2013 Dual descriptor highlights N as the strongest electrophile and C4 as the strongest nucleophile (\u0394f = 0.42010305 and \u22120.23186359, respectively).\n\nHeadline numerical result (copied exactly): 0.48422572"
+}

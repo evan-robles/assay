@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for benzaldehyde computed at DFT, tier 'standard' \u2014 B3LYP/def2-TZVP (PySCF RKS), gas phase, charge 0/multiplicity 1 for the neutral (charge +1/mult 2 for cation; charge \u22121/mult 2 for anion). Geometry: user-supplied .xyz, single-point (not re-optimized). Partial charges scheme: Mulliken (PySCF). All SCF calculations converged; integrity checks passed (trustworthy: true); sum(f+) = 1.0000, sum(f\u2212) = 1.0000. No warnings reported by the engine.\n\nHeadline result (most electrophilic site): atom 3 (ring carbon adjacent to aldehyde), f+ = 0.39938965.\nMost nucleophilic site: atom 1 (carbonyl oxygen), f\u2212 = 0.23839906.\n\nFull per-atom Fukui indices:\nAtom 1  O:  f+ = 0.37884472,  f\u2212 = 0.23839906,  f0 = 0.30862189,  dual = 0.14044566\nAtom 2  C:  f+ = \u22120.35166792, f\u2212 = \u22120.00705278, f0 = \u22120.17936035, dual = \u22120.34461515\nAtom 3  C:  f+ = 0.39938965,  f\u2212 = 0.03675412,  f0 = 0.21807189,  dual = 0.36263553\nAtom 4  C:  f+ = 0.21161749,  f\u2212 = 0.08331781,  f0 = 0.14746765,  dual = 0.12829967\nAtom 5  C:  f+ = 0.33721990,  f\u2212 = 0.05370966,  f0 = 0.19546478,  dual = 0.28351025\nAtom 6  C:  f+ = 0.28475600,  f\u2212 = \u22120.00232097, f0 = 0.14121752,  dual = 0.28707697\nAtom 7  C:  f+ = 0.27923467,  f\u2212 = 0.05825316,  f0 = 0.16874391,  dual = 0.22098152\nAtom 8  C:  f+ = 0.35870964,  f\u2212 = 0.08235367,  f0 = 0.22053165,  dual = 0.27635597\nAtom 9  H:  f+ = \u22120.11586238, f\u2212 = 0.06031459,  f0 = \u22120.02777389, dual = \u22120.17617697\nAtom 10 H:  f+ = \u22120.20260656, f\u2212 = 0.05868656,  f0 = \u22120.07195999, dual = \u22120.26129312\nAtom 11 H:  f+ = \u22120.12695921, f\u2212 = 0.07419972,  f0 = \u22120.02637975, dual = \u22120.20115893\nAtom 12 H:  f+ = \u22120.13403560, f\u2212 = 0.06601069,  f0 = \u22120.03401245, dual = \u22120.20004628\nAtom 13 H:  f+ = \u22120.13691069, f\u2212 = 0.07154163,  f0 = \u22120.03268453, dual = \u22120.20845232\nAtom 14 H:  f+ = \u22120.18172971, f\u2212 = 0.12583308,  f0 = \u22120.02794832, dual = \u22120.30756279"
+}

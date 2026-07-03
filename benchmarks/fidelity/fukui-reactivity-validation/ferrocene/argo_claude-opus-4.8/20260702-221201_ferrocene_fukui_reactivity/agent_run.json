@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of ferrocene** \u2014 Method: **GFN2-xTB** (semi-empirical tight-binding; no basis set and no functional in the ab-initio sense), backend **xtb**. Environment: **gas phase** (solvent = null). Neutral state: charge 0, multiplicity 1. The finite-difference Fukui functions were built from Mulliken partial charges (scheme: \"Mulliken (GFN2-xTB)\") on the N, N+1, and N\u22121 electron states: cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2).\n\nGeometry provenance: the user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` was used as-is (single-point charge evaluations at the fixed input geometry; no geometry optimization was performed by this task). The molecule has 21 atoms (2 cyclopentadienyl C5H5 rings + 1 Fe).\n\n**Key results (condensed Fukui indices, dimensionless):**\n- **Most electrophilic site** (largest f\u207a): atom #11 (1-based), **Fe**, f\u207a = 0.22885456\n- **Most nucleophilic site** (largest f\u207b): atom #11 (1-based), **Fe**, f\u207b = **0.25938191** (headline value)\n- The dual descriptor (f\u207a \u2212 f\u207b) is negative and largest in magnitude at Fe (\u22120.030527354), consistent with Fe being the dominant nucleophilic/electron-donating center; all ring C and H atoms carry small positive dual-descriptor values.\n\n**Convergence / integrity:** The engine's integrity check reports status = ok, trustworthy = **true**. Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Warnings reported by the engine (verbatim):**\n- `fukui_charge_conservation_f+`: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `fukui_charge_conservation_f-`: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `schema_header`: \"common header present\"\n\n(These three checks all passed \u2014 `ok: true` \u2014 and are surfaced here for completeness; there were no failures.)\n\n**Reproducibility.** Exact command run by the engine: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpnbc01dxf/live.json`. A Fukui plot was written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-opus-4.8/20260702-221201_ferrocene_fukui_reactivity/agent_call_01_plot.png`.\n\nNote on regime: GFN2-xTB Fukui indices from Mulliken charges are best used for qualitative/relative reactivity trends, not chemically-accurate absolute values. No experimental or literature comparison is offered here (none was requested)."
+}

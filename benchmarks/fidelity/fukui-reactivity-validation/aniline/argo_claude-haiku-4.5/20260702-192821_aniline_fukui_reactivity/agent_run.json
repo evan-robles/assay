@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Aniline** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, gas phase, charge/multiplicity: neutral (0, singlet), cation (+1, doublet), anion (\u22121, doublet). Geometry: input from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (not optimized). The Fukui indices f\u207a, f\u207b, and f\u2070 quantify each atom's susceptibility to nucleophilic, electrophilic, and radical attack, respectively. They are derived by comparing Mulliken partial charges across three electronic states (neutral, cation, anion). **Most electrophilic site (maximum f\u207a):** Carbon at position 3 (ortho to NH\u2082), f\u207a = 2.298. **Most nucleophilic site (maximum f\u207b):** Nitrogen (amino), f\u207b = 0.205. **Dual descriptor (\u0394f = f\u207a \u2212 f\u207b)** at C-3: 1.465. All convergence checks passed (charge conservation verified: \u03a3(f\u207a) = 1.000, \u03a3(f\u207b) = 1.000). Visualization saved to calculation output directory. No warnings.</prose>\n<parameter name=\"value\">2.298"
+}

@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Method & provenance (Fukui reactivity indices)**\nProperty: Condensed Fukui functions f\u207a (electrophilic attack), f\u207b (nucleophilic attack), f\u2070 (radical attack) and dual descriptor for benzaldehyde; identification of the most electrophilic and nucleophilic atomic sites.\nLevel of theory: DFT tier `standard` \u2192 B3LYP/def2-TZVP with RI (density fitting) as implemented in PySCF 2.x.\nGeometry provenance: fixed Cartesian coordinates taken directly from the supplied file \u201c/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz\u201d; no further optimisation (single-point energies for the N, N+1, and N\u20131 charge states).  \nSolvent / environment: gas phase (no implicit solvent model).\nCharge & multiplicity: neutral singlet (Q = 0, M = 1); cation Q = +1, M = 2; anion Q = \u20131, M = 2.\nSoftware: chemkit fukui-reactivity skill (backend PySCF) \u2013 calculation launched via\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard benzaldehyde.xyz \u2026` (see live log `fukui_20260702-200853.out`, written in real time during the run).\nConvergence & caveats: SCF cycles for the neutral, cation, and anion all converged (integrity status: ok, trustworthy = true).  \nWarnings returned by engine (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 common header present\n\nKey results (condensed Fukui indices, Mulliken scheme, atoms numbered as in the input geometry):\n- Most electrophilic site: atom 3 (C, carbonyl carbon) with f\u207a = 0.39938972.\n- Most nucleophilic site: atom 1 (O, carbonyl oxygen) with f\u207b = 0.23839906.\n\nHeadline value (reported above): f\u207a at the most electrophilic atom = 0.39938972 (dimensionless)."
+}

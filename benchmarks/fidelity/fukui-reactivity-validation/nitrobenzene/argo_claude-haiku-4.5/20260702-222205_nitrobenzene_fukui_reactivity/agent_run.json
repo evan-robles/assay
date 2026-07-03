@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Indices for Nitrobenzene** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitted) in PySCF, gas phase, charge 0 (neutral) / multiplicity 1. Geometry: fixed (single-point) from the provided nitrobenzene.xyz file; no relaxation at this level. Fukui indices computed via Mulliken partial charges from the neutral (N), cation radical (N+1, doublet), and anion radical (N\u22121, doublet) states. SCF converged for all three charge states. Charge conservation checks passed (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000).\n\n**Most important atomic sites:**\n- **Most electrophilic:** C atom (ortho to NO\u2082, atom #4, 1-indexed), f\u207a = 0.49641783\n- **Most nucleophilic:** C atom (meta to NO\u2082, atom #5, 1-indexed), f\u207b = 0.1072882\n\nThe nitro-bearing nitrogen (atom #3) exhibits negative Fukui indices (f\u207a = \u22120.457, f\u207b = 0.017, dual descriptor = \u22120.474), reflecting its deactivating effect on the aromatic ring. Oxygen atoms in the nitro group are highly electrophilic (f\u207a \u2248 0.47 each), consistent with their Lewis-acidic character in the N=O bonds. A complete atom-by-atom Fukui table and a color-coded molecular diagram have been generated and are available in the output directory. Engine integrity check passed: trustworthy = true.</prose>\n<parameter name=\"value\">0.49641783"
+}

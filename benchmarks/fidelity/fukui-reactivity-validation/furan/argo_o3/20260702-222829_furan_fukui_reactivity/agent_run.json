@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Property: atom-resolved Fukui indices (electrophilic f+ and nucleophilic f\u2212) and dual descriptors for furan.\nLevel of theory: DFT tier `standard` (B3LYP/def2-TZVP, RI approximation on) in PySCF.\nGeometry provenance: fixed; single-point population analysis executed on the user-supplied /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz structure (no re-optimization).\nSolvent / environment: gas phase (no implicit solvent model).\nCharge and multiplicity: neutral singlet (charge 0, multiplicity 1). Radical cation and anion states used for N\u00b11 runs were charge +1, multiplicity 2 and charge \u22121, multiplicity 2, respectively.\nSoftware: chemkit fukui-reactivity skill \u2192 PySCF back-end (version as in engine). Mulliken population scheme.\nConvergence & warnings: SCF for N, N+1, and N\u22121 states all reported converged; the integrity block carries three warnings reproduced verbatim below.\n\nMost electrophilic site (largest f+): atom 5 (C, 0-based index 4) with f+ = 1.9242931.\nMost nucleophilic site (largest f\u2212): atom 5 (same C) with f\u2212 = 0.1616371.\nHeadline number reported above (value field) is this largest f+.\n\nLive log: the run streamed to a file announced during execution (path retained in the CLI invocation recorded in the JSON).\n\nVerbatim warnings from the tool result:\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nintegrity.trustworthy verdict: true.\nProvenance: computed (no experimental data involved)."
+}

@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance (fukui-reactivity, phenol)\nProperty: Condensed Fukui indices f + (electrophilic), f \u2212 (nucleophilic), f 0, and dual descriptor (dimensionless)\nLevel of theory: DFT, B3LYP/def2-TZVP (tier `standard`, density-fitted) as implemented in PySCF 2.x (via chemkit)\nGeometry provenance: user-supplied Cartesian coordinates (phenol.xyz) taken as-is; single-point calculations were performed for the neutral (N), cationic (N\u20131, charge +1, multiplicity 2) and anionic (N+1, charge \u20131, multiplicity 2) states \u2014 no additional geometry optimization (`single-point//file geometry`).\nSolvent / environment: gas phase (no implicit or explicit solvation model).\nTotal charge & multiplicity: neutral singlet (0, 1) for the parent; +1 doublet and \u22121 doublet for the N\u00b11 states, as required by the Fukui protocol.\nConvergence & caveats: SCF cycles for all three charge states converged (integrity.status = \"ok\").\nWarnings returned by the engine (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nBackend / software: chemkit fukui-reactivity skill (PySCF DFT engine). Live engine output was written during the run to the standard chemkit logfile `<cwd>/fukui_<timestamp>.out`; the structured result JSON resides at /home/erobles/chem-skills/.fidelity_scratch/tmpjsq3swpb/live.json.\n\nKey results (atom indices are 0-based, labels 1-based from the input .xyz):\n\u2022 Most electrophilic site (highest f +): atom 3 (index 2, C)  f + = 2.1028319\n\u2022 Most nucleophilic site (highest f \u2212): atom 1 (index 0, O)  f \u2212 = 0.16201477\n\nSelected condensed Fukui indices (dimensionless):\nAtom  Label  Element   f +        f \u2212        f 0        \u0394f  (dual descriptor)\n 0      1       O   \u22120.99514   0.16201  \u22120.41656  \u22121.15715\n 1      2       C    0.39933   0.04877   0.22405   0.35056\n 2      3       C    2.10283   0.07097   1.08690   2.03186  \u21e7 strongest electrophile\n 3      4       C    1.61968   0.07050   0.84509   1.54918\n 4      5       C   \u22120.34201   0.02670  \u22120.15765  \u22120.36871\n 5      6       C   \u22120.28911   0.02095  \u22120.13408  \u22120.31006\n 6      7       C    1.30798   0.12352   0.71575   1.18446\n 7\u201312  H\u2019s    H   (see JSON for full list)\n\nThe plotted atom-color-coded Fukui surfaces are available at:\n/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_o3/20260702-233356_phenol_fukui_reactivity/agent_call_01_plot.png\n\nResult summary: the carbon at position 3 (para to the hydroxyl group) is predicted to be the most electrophilic (largest f + = 2.1028319), while the oxygen (atom 1) is the most nucleophilic site (largest f \u2212 = 0.16201477) at the B3LYP/def2-TZVP (gas-phase) level.\n"
+}

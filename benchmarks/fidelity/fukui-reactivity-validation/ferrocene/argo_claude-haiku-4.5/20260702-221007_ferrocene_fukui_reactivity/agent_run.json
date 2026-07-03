@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui Reactivity Indices** \u2014 GFN2-xTB (semi-empirical tight-binding), gas phase, charge 0/multiplicity 1 (neutral); charge \u00b11 / multiplicity 2 (ionized states for Fukui calculation). Geometry: input from user-supplied ferrocene.xyz (21 atoms: C\u2081\u2080H\u2081\u2080Fe\u2082). Software: xtb. Both neutral and ionized states converged; charge conservation checks passed (\u2211f\u207a = 1.0000, \u2211f\u207b = 1.0000).\n\n**Key Results:**\nIron (atom 11) is the most reactive site:\n- **f\u207a (electrophilic Fukui index)** = **0.22885456** (most electrophilic atom)\n- **f\u207b (nucleophilic Fukui index)** = **0.25938191** (most nucleophilic atom)\n- **Dual descriptor (\u0394f = f\u207a \u2212 f\u207b)** = **\u22120.030527354** (negative, indicating stronger nucleophilicity)\n\nThe negative dual descriptor shows Fe is *more nucleophilic than electrophilic*, typical of a transition metal center in a reduced state. Cyclopentadienyl carbon atoms show substantially lower reactivity indices (f\u207a \u2248 0.0136, f\u207b \u2248 0.0122 per carbon). Mulliken charges (GFN2-xTB): Fe = +0.420; Cp-C \u2248 \u22120.077; Cp-H \u2248 +0.035.\n\nIntegrity: **trustworthy** (all convergence and charge-conservation checks passed). Visualization saved. Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out \u2026/live.json`.</prose>\n<parameter name=\"value\">0.22885456"
+}

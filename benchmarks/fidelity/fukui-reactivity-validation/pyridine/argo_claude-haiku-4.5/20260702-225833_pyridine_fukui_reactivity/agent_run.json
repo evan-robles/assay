@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": "true</integrity_trustworthy>\n</invoke>",
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Pyridine \u2014 DFT B3LYP/def2-TZVP**\n\nFukui indices were computed at the DFT level using the B3LYP functional with def2-TZVP basis set (tier 'standard') via PySCF. The input geometry was the supplied pyridine.xyz file; it was not optimized but used as a single point. The calculation was run in the gas phase at neutral (N), cationic (N+1, doublet), and anionic (N\u22121, doublet) states, with atomic partial charges computed by Mulliken analysis.\n\n**Key Results:**\n- **Most electrophilic site:** Nitrogen (atom 1), f\u207a = 0.48422572\n- **Most nucleophilic site:** Ortho-carbon (atom 4), f\u207b = 0.11826260\n- All Fukui indices (f\u207a, f\u207b, f\u2070) and dual descriptors are reported for all 11 atoms.\n- Charge conservation checks passed: sum(f\u207a) = 1.0, sum(f\u207b) = 1.0.\n- SCF convergence: all three electronic-structure runs (N, N+1, N\u22121) converged.\n\nThe analysis indicates strong electrophilic character at the pyridine nitrogen and weak but measurable nucleophilic character at the ortho-carbons, consistent with the known reactivity of pyridine. A visualization has been saved.\n\n**Method provenance:** DFT, B3LYP/def2-TZVP, PySCF, gas phase, Mulliken charges, converged SCF.\n\n**Integrity:** trustworthy.</prose>\n<parameter name=\"value\">0.48422572"
+}

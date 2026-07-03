@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of formaldehyde (H\u2082C=O)** \u2014 condensed Fukui indices from finite-difference (N\u00b11) Mulliken population analysis.\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, and identification of most electrophilic/nucleophilic sites, derived from Mulliken (PySCF) partial charges of the neutral, cation, and anion.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** \u2014 this is chemkit tier `standard` (B3LYP/def2-TZVP), run via PySCF. Density fitting (RI) is on by default in chemkit. There is no functional/basis mismatch; the requested and applied levels agree.\n- **Geometry provenance:** User-supplied `.xyz` (formaldehyde.xyz, 4 atoms: O, C, H, H). The geometry was used **as-is** \u2014 this is a single-point Fukui analysis at the supplied geometry, not a re-optimized structure.\n- **Solvent / environment:** **Gas phase** (solvent: null), as requested.\n- **Charge / multiplicity:** Neutral reference at charge 0, multiplicity 1 (singlet). The cation was computed at charge +1, multiplicity 2 (doublet); the anion at charge \u22121, multiplicity 2 (doublet). Open-shell N\u00b11 states use unrestricted DFT (UKS).\n- **Software:** PySCF (DFT backend).\n- **Charge scheme:** Mulliken (PySCF).\n\n**Results (headline)**\n- **Most electrophilic site:** **carbon (atom 2, C)** with **f\u207a = 0.70839** \u2014 the site most susceptible to nucleophilic attack, consistent with the carbonyl carbon being the electrophilic center.\n- **Most nucleophilic site:** oxygen (atom 1, O) with f\u207b = 0.46742 \u2014 the site most susceptible to electrophilic attack.\n- Condensed f\u207a (O, C, H, H): 0.46814, 0.70839, \u22120.088269, \u22120.088260\n- Condensed f\u207b (O, C, H, H): 0.46742, 0.11244, 0.21008, 0.21006\n- Condensed f\u2070 (O, C, H, H): 0.46778, 0.41042, 0.060903, 0.060898\n- Dual descriptor (O, C, H, H): 0.00071360, 0.59595, \u22120.29835, \u22120.29832 (positive at C \u2192 electrophilic; negative at H \u2192 nucleophilic)\n\n**Convergence / integrity:** The engine's integrity check returned **status \"ok\", trustworthy = true**. All three integrity checks passed (`ok: true`). Charge conservation held: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000, indicating the N\u00b11 states converged properly.\n\n**Warnings:** The engine reported the following integrity-check entries verbatim (all passed, severity \"warning\"):\n- fukui_charge_conservation_f+ \u2014 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- fukui_charge_conservation_f- \u2014 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- schema_header \u2014 \"common header present\"\n\n**Reproducibility.** Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`. A plot was written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_claude-opus-4.8/20260702-221230_formaldehyde_fukui_reactivity/agent_call_01_plot.png`.\n\nNote on regime: condensed Fukui indices are Mulliken-population-based and thus basis-set-dependent; they are best interpreted as relative reactivity trends rather than absolute quantities. No experimental/literature comparison is offered."
+}

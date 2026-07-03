@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : build
+# args       : acrolein /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpynp8xr_r/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli build acrolein /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpynp8xr_r/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_claude-sonnet-4.6/20260702-191146_acrolein_fukui_reactivity
+# started    : 20260702-191157
+# ============================================================
+usage: chemkit [-h] [--version]
+               {sp,opt,freq,binding,redox,confsearch,frontier,electrostatics,solvation,logp,profile,pka,build,resolve,fukui,ts,irc,rxn-energy,scan,orbitals}
+               ...
+chemkit: error: unrecognized arguments: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

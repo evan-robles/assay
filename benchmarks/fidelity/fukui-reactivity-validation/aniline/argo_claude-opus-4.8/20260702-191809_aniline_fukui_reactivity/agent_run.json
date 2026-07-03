@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of aniline** \u2014 condensed Fukui functions / dual descriptor from Mulliken (PySCF) partial charges on the neutral, cation, and anion.\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, and site reactivity ranking, derived from Mulliken partial charges.\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (as reported by the engine, `method: \"b3lyp/def2-tzvp\"`), PySCF backend. Density fitting is on by default in chemkit; this is an approximation to the two-electron integrals.\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`, 14 atoms). The structure was used as-is \u2014 this analysis did not relax the geometry (single-point-style property evaluation at the provided coordinates).\n- **Solvent / environment:** **Gas phase** (`solvent: null`) \u2014 no implicit solvation.\n- **Charge / multiplicity:** Neutral reference charge 0, multiplicity 1. For the finite-difference states the engine used cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2), i.e. open-shell UKS.\n- **Software:** PySCF (DFT), Mulliken charge partitioning.\n- **Convergence / integrity:** Engine integrity status **ok**, **trustworthy: true**. Charge conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Key results**\n- **Most electrophilic site (largest f\u207a):** atom index 3 (1-based), a ring **carbon**, with **f\u207a = 2.2975867** (the headline value). Note the sister ortho/para carbons show comparably large values (e.g. atom 4, f\u207a = 2.2965637), consistent with aniline's ortho/para-directing NH\u2082 group.\n- **Most nucleophilic site (largest f\u207b):** atom index 1 (1-based), the **nitrogen**, with f\u207b = 0.20452359.\n- Dual descriptor peaks likewise at the ortho/para ring carbons (e.g. atom 3: 2.2310153).\n\n**Warnings reported by the engine (verbatim, all three):**\n- fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- schema_header (severity: warning): common header present\n\nAll three checks are marked `ok: true`; these are informational severity=\"warning\" entries, not failures.\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out \u2026/live.json`\n- Plot artifact: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_claude-opus-4.8/20260702-191809_aniline_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental or literature comparison is offered; this is a computed result only."
+}

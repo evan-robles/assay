@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of acrolein (prop-2-enal, CH2=CH\u2013CHO)**\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, and most-electrophilic / most-nucleophilic site identification, derived from Mulliken atomic charges of the neutral, cation, and anion states (finite-difference / frozen-geometry approach).\n- **Level of theory:** DFT, tier `standard` = **B3LYP/def2-TZVP** (PySCF). Density fitting (RI) is on by default in chemkit.\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`), used **as-is** \u2014 this is a single-point property evaluation at the provided geometry; no geometry optimization was performed at this or any level.\n- **Solvent / environment:** **Gas phase** (solvent = null; no implicit solvation).\n- **Charge / multiplicity:** Neutral state charge 0, multiplicity 1 (closed shell). The finite-difference states are the cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2), both open-shell (UKS).\n- **Partial-charge scheme:** Mulliken (PySCF) \u2014 note that Mulliken charges are basis-set dependent, so the condensed Fukui values inherit that sensitivity.\n- **Software:** PySCF (DFT backend, `dft`).\n- **Atom count:** 8 atoms \u2014 O, C, C, C, H, H, H, H.\n\n**Headline results**\n- **Most electrophilic site (largest f\u207a):** atom index 3 (0-based) / atom label 4 (1-based), a **carbon**, with **f\u207a = 0.64232** \u2014 this is the terminal CH\u2082 carbon (the \u03b2-carbon of the enal), the expected site of nucleophilic attack in conjugate (Michael) addition. This is the headline value reported.\n- **Most nucleophilic site (largest f\u207b):** atom index 0 / label 1, the **oxygen**, with **f\u207b = 0.39389**.\n- Dual descriptor is largest and positive at the same \u03b2-carbon (0.55495), reinforcing it as the preferred electrophilic center.\n\n**Convergence / integrity:** The engine reports integrity **status: ok, trustworthy: true**. All three integrity checks passed. The two charge-conservation checks confirm sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (as expected; large drift would have flagged a non-converged N\u00b11 state).\n\n**Warnings (reproduced verbatim from the result JSON):**\n1. `fukui_charge_conservation_f+` (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. `fukui_charge_conservation_f-` (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. `schema_header` (severity: warning): \"common header present\"\n\nThese are the integrity checks the engine surfaced (all passed `ok: true`); no non-convergence, fallback, or SCF failure was reported.\n\n**Reproducibility artifacts**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpfh3fhr9p/live.json`\n- Plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_claude-opus-4.8/20260702-191219_acrolein_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental or literature comparison is offered \u2014 this is a purely computed result; ask if you would like one and I will verify a source first."
+}

@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Most electrophilic Fukui function (f+) for nitrobenzene, B3LYP/def2-TZVP gas-phase DFT calculation\n\nMethod provenance\nProperty: Atom-resolved Fukui reactivity indices (f+, f\u2212, f\u2070) and dual descriptor; headline value = largest electrophilic Fukui index (f+)\nLevel of theory: DFT, tier `standard`  \u2192 B3LYP/def2-TZVP, density-fitted (PySCF backend)\nGeometry provenance: single-point on user-supplied geometry (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz); no further optimisation (DFT//input-xyz)\nSolvent / environment: gas phase (no implicit solvation)\nCharge & multiplicity: neutral singlet (charge 0, multiplicity 1); cation (+1, doublet) and anion (\u20131, doublet) states generated internally for the N \u00b1 1 calculations\nSoftware: chemkit fukui-reactivity skill (PySCF under the hood; version not specified in JSON)\nConvergence & caveats: integrity.status = \"ok\", integrity.trustworthy = true. All SCF steps for neutral, cation, and anion states converged. Density fitting (RI/JK) used by default. Warnings reproduced below verbatim.\n\nResult (headline number)\nMost electrophilic atom: C4 (index 3, ring carbon ortho to NO\u2082) with f+ = 0.49641783 (dimensionless Mulliken-derived Fukui index).\n\nOutput & reproducibility\nCLI invocation (from result JSON):\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmppm5xve1o/live.json\nLive engine log (.out) was written during execution alongside the caller\u2019s working directory (path announced at launch). Key artifacts: result JSON at the --out path above and plot image at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_o3/20260702-225454_nitrobenzene_fukui_reactivity/agent_call_02_plot.png.\n\nVerbatim warnings from engine (also provided in warnings field):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nNo other warnings were reported."
+}

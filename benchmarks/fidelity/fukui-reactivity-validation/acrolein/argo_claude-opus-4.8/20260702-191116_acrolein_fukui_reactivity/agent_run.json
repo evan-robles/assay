@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of acrolein (prop-2-enal, CH2=CH\u2013CHO)**\n\n**Method-provenance block**\n- **Property:** Condensed Fukui indices (f\u207a, f\u207b, f\u2070), dual descriptor, and the derived most-electrophilic / most-nucleophilic sites, from Mulliken atomic charges of the N, N+1, and N\u22121 electron states.\n- **Level of theory:** DFT \u2014 **B3LYP/def2-TZVP** (chemkit tier `standard`, which expands to exactly B3LYP/def2-TZVP), via PySCF (RKS for the neutral; UKS for the doublet ion states). Density fitting is on by default in chemkit (RI approximation to the two-electron integrals).\n- **Geometry provenance:** User-supplied input geometry `acrolein.xyz` (8 atoms: O, 3\u00d7C, 4\u00d7H). The geometry was used **as-is** \u2014 Fukui indices are single-point property evaluations at this fixed geometry; no optimization was performed at this level.\n- **Solvent / environment:** **Gas phase** (solvent = null; no implicit continuum, no explicit solvent).\n- **Charge / multiplicity:** Neutral state charge 0, multiplicity 1 (closed-shell RKS). Cation: charge +1, multiplicity 2 (UKS doublet). Anion: charge \u22121, multiplicity 2 (UKS doublet).\n- **Software:** PySCF (chemkit `fukui` skill). Partial-charge scheme: Mulliken (PySCF).\n- **Convergence / integrity:** Engine integrity status **ok**, **trustworthy: true**. Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Key results**\n- **Most electrophilic site (largest f\u207a):** atom index 3 (0-based) / atom label 4 (1-based) = **carbon, f\u207a = 0.64232** \u2014 this is the terminal =CH\u2082 (\u03b2-carbon) of the vinyl group, consistent with acrolein being a Michael acceptor whose \u03b2-carbon is the site of nucleophilic (conjugate) attack.\n- **Most nucleophilic site (largest f\u207b):** atom index 0 (0-based) / atom label 1 (1-based) = **oxygen, f\u207b = 0.39389**.\n- **Dual descriptor** peaks on the same \u03b2-carbon (atom 4, \u0394f = +0.5550), reinforcing it as the preferred electrophilic center.\n\nPer-atom condensed Fukui values (order: O, C, C, C, H, H, H, H):\n- f\u207a: [0.40136, 0.022255, 0.43405, 0.64232, \u22120.15726, \u22120.20720, \u22120.062117, \u22120.073408]\n- f\u207b: [0.39389, 0.0059884, 0.091403, 0.087370, 0.085961, 0.18568, 0.084486, 0.065226]\n- f\u2070: [0.39763, 0.014122, 0.26272, 0.36485, \u22120.035649, \u22120.010762, 0.011184, \u22120.0040910]\n\n**Warnings** \u2014 the engine's `checks` array carried the three entries below (all severity \"warning\", all ok=true); reproduced verbatim:\n- fukui_charge_conservation_f+ (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- fukui_charge_conservation_f- (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- schema_header (severity: warning): \"common header present\"\n\n**Caveats:** Condensed Fukui indices are Mulliken-charge-based and therefore basis-set-sensitive; treat them as relative-reactivity indicators rather than absolute quantities. This is a gas-phase, single-geometry, single-point analysis (no conformer/Boltzmann averaging, no solvent). No experimental or literature comparison is offered.\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out .../live.json`\n- Plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_claude-opus-4.8/20260702-191116_acrolein_fukui_reactivity/agent_call_01_plot.png`"
+}

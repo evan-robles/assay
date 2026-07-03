@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : fukui
+# args       : --method dft --tier standard --gas-phase /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp8a5351f0/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli fukui --method dft --tier standard --gas-phase /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp8a5351f0/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-sonnet-4.6/20260702-221521_phenol_fukui_reactivity
+# started    : 20260702-221529
+# ============================================================
+usage: chemkit [-h] [--version]
+               {sp,opt,freq,binding,redox,confsearch,frontier,electrostatics,solvation,logp,profile,pka,build,resolve,fukui,ts,irc,rxn-energy,scan,orbitals}
+               ...
+chemkit: error: unrecognized arguments: --gas-phase
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

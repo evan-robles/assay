@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property computed: atom-condensed Fukui functions (f+ for electrophilic attack, f\u2013 for nucleophilic attack, f0 and dual descriptor) and identification of the most electrophilic and most nucleophilic sites.\n\u2022 Electronic structure level of theory: tier `standard`, i.e. B3LYP/def2-TZVP density-fitted DFT (PySCF).\n\u2022 Geometry provenance: single-point calculations on the user-supplied benzaldehyde geometry at\n  /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz\n  (no further optimisation; DFT//input-xyz).\n\u2022 Environment: gas phase (no implicit solvent).\n\u2022 Charge & multiplicity: neutral singlet (0, 1) for N electrons; open-shell doublets (\u00b11, 2) for the N \u00b1 1 charge states used to build the Fukui functions.\n\u2022 Software: PySCF 2.x via chemkit \u201cfukui-reactivity\u201d skill; Mulliken population analysis used for atomic charges. Density fitting (RI/JK) was on (PySCF default).\n\u2022 Convergence/caveats: SCF cycles for the N, N + 1 and N \u2013 1 states all converged (see live log). Sum of f+ and f\u2013 equals 1.0000 in each case, meeting the internal charge-conservation check.\n\u2022 Live engine log: written during the run to the working directory (see CLI invocation path in result JSON) and available for `tail -f`.\n\nHeadline numerical result\n\u2022 Most electrophilic site: atom 3 (carbonyl carbon, C), f+ = 0.39938965\n\u2022 Most nucleophilic site: atom 1 (carbonyl O), f\u2013 = 0.23839906\n\nThe number reported above (0.39938965) is the largest condensed Fukui + value and therefore the principal quantitative indicator of the atom most susceptible to nucleophilic attack in benzaldehyde at this level of theory.\n\nFiles & reproducibility\nThe complete result JSON (including all condensed Fukui indices, atomic charges, and CLI invocation) and the coloured surface plot were written to:\n  /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_o3/20260702-202634_benzaldehyde_fukui_reactivity/\n\nWarnings (verbatim from tool):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nIntegrity verdict: trustworthy (all integrity checks marked ok)."
+}

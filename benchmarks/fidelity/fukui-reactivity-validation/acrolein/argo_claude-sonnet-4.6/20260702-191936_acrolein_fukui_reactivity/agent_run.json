@@ -1,0 +1,25 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for acrolein (CH\u2082=CH\u2013CHO, 8 atoms) at DFT B3LYP/def2-TZVP (tier 'standard') in gas phase, charge 0, multiplicity 1, using PySCF via the chemkit fukui-reactivity skill. Charges from Mulliken population analysis on the neutral, cation (N\u22121, charge +1, doublet), and anion (N+1, charge \u22121, doublet) species. Geometry used as-is from the supplied .xyz file; no re-optimization was performed. All integrity checks passed (trustworthy: true); sum(f+) = 1.0000, sum(f\u2212) = 1.0000.\n\nMost electrophilic site: Atom 4 (C, \u03b2-carbon), f\u207a = 0.64232102 \u2014 consistent with Michael acceptor reactivity.\nMost nucleophilic site: Atom 1 (O, carbonyl oxygen), f\u207b = 0.39388616.\n\nFukui indices by atom (1-based): f\u207a = [0.40136419, 0.022255106, 0.43404673, 0.64232102, \u22120.1572595, \u22120.2072029, \u22120.062116996, \u22120.073407645]; f\u207b = [0.39388616, 0.0059884353, 0.091403097, 0.087369815, 0.085961423, 0.1856796, 0.084485809, 0.065225658]; dual descriptor \u0394f = [0.0074780351, 0.01626667, 0.34264363, 0.5549512, \u22120.24322092, \u22120.39288251, \u22120.14660281, \u22120.1386333].\n\nWarnings verbatim from engine:\n- \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check PASSED\n- \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check PASSED"
+}

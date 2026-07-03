@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of benzaldehyde** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit RI as chemkit default) in **PySCF**, **gas phase** (no solvent model), charge 0, multiplicity 1 (neutral reference). The finite-difference Fukui functions were built from three separate SCF calculations at this same level: the neutral (N), the cation (N\u22121, charge +1, multiplicity 2, UKS) and the anion (N+1, charge \u22121, multiplicity 2, UKS). Partial-charge scheme: **Mulliken (PySCF)**. 14 atoms.\n\nGeometry provenance: the user-supplied input `.xyz` was used **as-is** (single-point property evaluation at the given geometry \u2014 the structure was not re-optimized at this level).\n\n**Headline result \u2014 condensed-to-atom Fukui indices (dimensionless):**\n- **Most electrophilic site** (largest f\u207a, susceptibility to nucleophilic attack): **atom 3 (1-based), a ring carbon, f\u207a = 0.39939**. This is the value reported as the headline number.\n- **Most nucleophilic site** (largest f\u207b, susceptibility to electrophilic attack): **atom 1 (1-based), the carbonyl oxygen, f\u207b = 0.23840**.\n\nFull per-atom vectors (f\u207a, f\u207b, f\u2070, and the dual descriptor \u0394f = f\u207a\u2212f\u207b) were returned for all 14 atoms; the most-electrophilic and most-nucleophilic atoms above are the engine's identified extrema.\n\n**Convergence / integrity:** the engine's integrity check reports `status: ok`, `trustworthy: true`. The charge-conservation checks confirm sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000, consistent with the N\u00b11 states having converged.\n\n**Warnings (reproduced verbatim from the result JSON's integrity checks; all passed, `ok: true`):**\n- `fukui_charge_conservation_f+` (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `fukui_charge_conservation_f-` (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `schema_header` (severity: warning): \"common header present\"\n\nThere is no separate `warnings` array in this result; the above are the integrity-check entries (each with `ok: true`), surfaced verbatim.\n\n**Method caveats (per reporting standards):** density fitting is an approximation to the two-electron integrals (chemkit default). Fukui indices here are **condensed-to-atom via Mulliken populations**, which are basis-set dependent; treat the numbers as relative-reactivity indicators rather than high-precision absolute quantities. This is a single-geometry, single-conformer analysis in gas phase (no implicit or explicit solvent, no Boltzmann averaging).\n\n**Reproducibility:** command \u2014 `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmprz4tj3u0/live.json`. Plot artifact written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_claude-opus-4.8/20260702-201945_benzaldehyde_fukui_reactivity/agent_call_01_plot.png`. No experimental/literature comparison is offered."
+}

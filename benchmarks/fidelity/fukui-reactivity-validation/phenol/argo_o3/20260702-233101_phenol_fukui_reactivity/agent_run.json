@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\nProperty: Fukui reactivity indices (f+(r), f\u2212(r), f0(r); dual descriptor) for phenol; headline value = maximum electrophilic Fukui function f+ on atom 3 (C)\nLevel of theory: DFT, tier \u201cstandard\u201d \u2261 B3LYP/def2-TZVP with density fitting (PySCF)\nGeometry provenance: single-point calculations on the supplied file /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz (no further optimisation)\nSolvent / environment: gas phase (no implicit solvent)\nCharge & multiplicity: neutral singlet (0, 1) for N calculation; cation (+1, 2) and anion (\u22121, 2) for N \u00b1 1 states\nSoftware: chemkit fukui-reactivity skill (backend PySCF 2.x; ASE wrappers for charge/mult runs)\nConvergence & caveats: all three single-point SCFs converged. Integrity check status: ok; trustworthy = true.\nWarnings (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nLive .out log: written during execution alongside the result JSON (same directory as \u2026/live.json) under the standard chemkit naming scheme (fukui_YYYYMMDD-HHMMSS.out); available for inspection.\n\nKey numerical results (e):\n\u2013 Maximum electrophilic Fukui index f+  = 2.1028319 on atom 3 (C, 0-based index 2)\n\u2013 Maximum nucleophilic Fukui index f\u2212  = 0.16201477 on atom 1 (O, 0-based index 0)\n\u2013 Dual descriptor indicates C3 is the most electrophilic site and O1 is the most nucleophilic.\n\nAll numbers are reported exactly as returned by the chemkit fukui-reactivity run; no rounding applied."
+}

@@ -1,0 +1,25 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) \u2014 PASS",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) \u2014 PASS"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for furan (9 atoms: O, C, C, C, C, H, H, H, H) using DFT B3LYP/def2-TZVP (PySCF RKS), tier 'standard', gas phase (solvent: null), charge 0 / multiplicity 1 for neutral; cation charge +1 / mult 2; anion charge \u22121 / mult 2. Partial charges via Mulliken scheme (PySCF). Geometry from user-supplied furan.xyz, not re-optimized. SCF converged for all three charge states. Integrity: ok, trustworthy: true.\n\nHeadline result: most electrophilic atom is atom 5 (C), f\u207a = 1.9242931. Most nucleophilic atom is also atom 5 (C), f\u207b = 0.1616371. Fukui plus values per atom (1-based): O=\u22121.3316182, C2=1.2286866, C3=1.2270264, C4=1.9233053, C5=1.9242931, H6=\u22121.2190639, H7=\u22121.2191056, H8=\u22120.76678308, H9=\u22120.76674059. Fukui minus values: O=0.08382155, C2=0.089103093, C3=0.089304821, C4=0.161527, C5=0.1616371, H6=0.10248412, H7=0.1025135, H8=0.10481615, H9=0.10479266. Dual descriptor largest positive values at C4 (+1.7617783) and C5 (+1.762656), indicating electrophilic centres. O (\u22121.4154398) is the dominant nucleophilic centre. Charge conservation: sum(f+)=1.0000, sum(f\u2212)=1.0000. Live log: fukui_20260702-200818.out. Plot: agent_call_02_plot.png."
+}

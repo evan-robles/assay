@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of nitrobenzene** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit RI as chemkit's PySCF default), **gas phase** (no solvent), computed with PySCF (`--method dft`). Partial charges: Mulliken (PySCF). The task is a finite-difference Fukui analysis, so three SCF states were computed on the supplied geometry:\n- Neutral: charge 0, multiplicity 1 (RKS)\n- Cation (for f\u207a): charge +1, multiplicity 2 (UKS, open-shell)\n- Anion (for f\u207b): charge \u22121, multiplicity 2 (UKS, open-shell)\n\n**Geometry provenance:** user-supplied file `nitrobenzene.xyz` (14 atoms: O, O, N, C, C, C, C, C, C, H, H, H, H, H), used **as-is** \u2014 no geometry optimization was performed at this or any level; all three single points sit on that fixed input geometry.\n\n**Headline results (condensed Fukui indices, dimensionless):**\n- **Most electrophilic site** (largest f\u207a, susceptible to nucleophilic attack): atom #4 (1-based), a **carbon**, with **f\u207a = 0.49641783** \u2014 this is the headline value.\n- **Most nucleophilic site** (largest f\u207b, susceptible to electrophilic attack): atom #5 (1-based), a **carbon**, with f\u207b = 0.10728820.\n\nThe engine also returned per-atom f\u207a, f\u207b, f\u2070 (average), and the dual descriptor (f\u207a \u2212 f\u207b) arrays, plus a plot at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_claude-opus-4.8/20260702-222657_nitrobenzene_fukui_reactivity/agent_call_01_plot.png`.\n\n**Integrity / convergence:** the engine reports integrity status **ok**, **trustworthy = true**. Note that Fukui indices are derived from Mulliken populations of a semi-arbitrary partitioning scheme and are basis-set sensitive; the finite-difference (condensed) values are best interpreted as relative-reactivity trends rather than exact figures.\n\n**Warnings reported by the engine (verbatim):**\n- `fukui_charge_conservation_f+` (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `fukui_charge_conservation_f-` (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `schema_header` (severity: warning): \"common header present\"\n\nAll three integrity checks passed (`ok: true`); the two charge-conservation sums are both exactly 1.0000, consistent with converged N\u00b11 states.\n\n**Reproducibility.** Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`. The live `.out` log is streamed by the engine to the caller's working directory as `fukui_<timestamp>.out` (with a `--out` JSON written to `/home/erobles/chem-skills/.fidelity_scratch/tmpupq_lx3l/live.json`); it can be `tail -f`'d for SCF cycle detail. No experimental/literature comparison is offered \u2014 ask if you want one and I'll verify a source first."
+}

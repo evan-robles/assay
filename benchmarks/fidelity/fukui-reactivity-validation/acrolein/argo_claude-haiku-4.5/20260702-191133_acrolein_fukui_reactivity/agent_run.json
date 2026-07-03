@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Acrolein Fukui Reactivity Indices** \u2014 DFT, **B3LYP/def2-TZVP** (PySCF), gas phase, charge 0 (neutral) / +1 (cation) / \u22121 (anion), multiplicity 1 / 2 / 2. Geometry: input from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz` (8 atoms), used as-is in a single-point calculation. Charge analysis via Mulliken population. SCF converged for all three electronic states.\n\n**Key Reactivity Sites:**\n- **Most Electrophilic:** Atom 3 (C, terminal vinyl carbon), f\u207a = **0.642**\n- **Most Nucleophilic:** Atom 0 (O, carbonyl oxygen), f\u207b = **0.394**\n\nFukui indices (f\u207a, f\u207b, f\u2070) and dual descriptors computed for all 8 atoms. The terminal =CH\u2082 carbon (atom 3) exhibits the strongest electrophilic character (dual descriptor = 0.555), consistent with expected reactivity of an \u03b1,\u03b2-unsaturated aldehyde toward nucleophilic addition. The carbonyl oxygen (atom 0) is the most nucleophilic site (f\u207b = 0.394) and shows balanced character (dual descriptor \u2248 0.008), typical of a conjugated carbonyl in acrolein's resonance structure.\n\n**Integrity:** `trustworthy: true`. Charge conservation checks passed (sum f\u207a = 1.0000, sum f\u207b = 1.0000). All convergence criteria met.\n\nCommand: `chemkit fukui --method dft --functional b3lyp --basis def2-tzvp /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`\n\nOutput paths: Result JSON and visualization plot generated in the calculation directory; live log available in `.out` files during execution.</prose>\n<parameter name=\"n_atoms\">null"
+}

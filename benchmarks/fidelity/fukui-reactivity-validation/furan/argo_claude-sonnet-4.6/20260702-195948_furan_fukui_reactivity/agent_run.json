@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for furan (9 atoms: O C C C C H H H H) using DFT at the B3LYP/def2-TZVP level (tier 'standard', density-fit RKS) in PySCF, gas phase, charge 0 / multiplicity 1 for the neutral species (cation: charge +1, mult 2; anion: charge \u22121, mult 2). Partial charges were obtained via the Mulliken scheme. The geometry was taken directly from the user-supplied .xyz file (no re-optimization at DFT level). All three SCFs converged. Fukui charge-conservation checks passed (sum f\u207a = 1.0000, sum f\u207b = 1.0000). Integrity verdict: trustworthy = true.\n\nThe headline value reported is the largest f\u207a (electrophilic Fukui index), 1.9242931, located on atom 5 (C, 1-based). The same atom also carries the largest f\u207b = 0.1616371. The \u03b1-carbons of furan (C4 and C5) are identified as the most reactive sites toward both electrophilic and nucleophilic attack, consistent with the known reactivity of furan.\n\nCLI invocation: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz\nPlot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_claude-sonnet-4.6/20260702-195948_furan_fukui_reactivity/agent_call_01_plot.png"
+}

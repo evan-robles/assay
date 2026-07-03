@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Benzaldehyde** using DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0 (neutral), multiplicity 1. The Fukui condensed indices were computed from Mulliken atomic charges evaluated at the neutral state and charged N+1 (cation, doublet) and N\u22121 (anion, doublet) states. All three electronic states converged successfully. The charge conservation checks (sum f\u207a = 1.000, sum f\u207b = 1.000) confirm convergence of the N\u00b11 states. \n\n**Most electrophilic site (highest f\u207a):** Atom 3, carbon (ortho to aldehyde), with f\u207a = 0.399 and dual descriptor \u0394f = 0.363.\n\n**Most nucleophilic site (highest f\u207b):** Atom 1, oxygen (aldehyde), with f\u207b = 0.238 and high f\u207a = 0.379 indicating ambiphilicity.\n\nThe complete atom-condensed Fukui indices (f\u207a, f\u207b, f\u2070, \u0394f) are recorded above in tabular form. The dual descriptor \u0394f = f\u207a \u2212 f\u207b characterizes electrophilicity (\u0394f > 0) vs. nucleophilicity (\u0394f < 0) at each site. Visualization plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_claude-haiku-4.5/20260702-195611_benzaldehyde_fukui_reactivity/agent_call_01_plot.png`. Integrity status: trustworthy.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}

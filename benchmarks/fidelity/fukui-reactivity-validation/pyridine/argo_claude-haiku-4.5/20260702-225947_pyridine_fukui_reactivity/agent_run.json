@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Fukui Reactivity Analysis** \u2014 DFT, **B3LYP/def2-TZVP** (density-fit, PySCF), gas phase, charge 0, multiplicity 1 (neutral); cation/anion states at charge \u00b11, multiplicity 2. Geometry: fixed from input `.xyz`. Fukui indices computed via finite-difference scheme: f\u207a from SCF on (N+1) cation; f\u207b from SCF on (N\u22121) anion; f\u2070 as average. Partial charges via Mulliken population analysis. **SCF converged for all three states.** Fukui charge conservation: sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000 \u2014 both passes (no convergence anomalies flagged). Integrity trustworthy; no warnings. **Most electrophilic site: atom 1 (N), f\u207a = 0.48423.** **Most nucleophilic site: atom 4 (C ortho), f\u207b = 0.11826.** Dual descriptor for N = 0.42010 (electrophilic). Hydrogens uniformly nucleophilic (negative dual descriptor, \u22120.23 to \u22120.21). Visualization PNG written. Reproducible command and result JSON path provided above."
+}

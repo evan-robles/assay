@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block (reproducible calculation details)\n\n\u2022 Property calculated  Fukui reactivity indices (f\u207a, f\u207b, dual descriptor) for nitrobenzene; most electrophilic atom (C\u2084) f\u207a = 0.4964178 (unit-less).\n\u2022 Level of theory      DFT, tier \u2018standard\u2019: B3LYP/def2-TZVP with density-fitting (PySCF).\n\u2022 Geometry provenance  User-supplied file \u2018nitrobenzene.xyz\u2019; single-point charges on this fixed geometry for the neutral (charge 0, multiplicity 1), cation (charge +1, multiplicity 2) and anion (charge \u20131, multiplicity 2) states \u2014 a DFT//geometry-from-file protocol (no further optimisation).\n\u2022 Solvent / phase      Gas phase (no implicit solvent model).\n\u2022 Software             PySCF (via chemkit fukui-reactivity skill).\n\u2022 Charge & mult.       Neutral singlet (0,1); cation doublet (+1,2); anion doublet (-1,2).\n\u2022 Convergence          All three SCF calculations converged; integrity check passed.\n  Warnings surfaced verbatim below (all flagged as \u201cwarning\u201d severity but with ok = true).\n\nVerbatim engine warnings\n\u2013 fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 schema_header: common header present\n\nReproducibility\nCommand executed (from result JSON):\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py \\\n    fukui --method dft --functional b3lyp --basis def2-tzvp \\\n    /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz \\\n    --out /home/erobles/chem-skills/.fidelity_scratch/tmpce8v0dp6/live.json\nThe live PySCF log was streamed to a fukui_<timestamp>.out file in the working directory while the job ran; consult it for full SCF and charge analyses. The JSON output (\u201clive.json\u201d) contains the complete set of charges, Fukui indices, and integrity checks.\n\nHeadline result\n\u2022 Most electrophilic site: atom 4 (C, index 3) with f\u207a = 0.4964178\n\u2022 Most nucleophilic site: atom 5 (C, index 4) with f\u207b = 0.1072882\n\nComputed result \u2014 no comparison to experiment is supplied here."
+}

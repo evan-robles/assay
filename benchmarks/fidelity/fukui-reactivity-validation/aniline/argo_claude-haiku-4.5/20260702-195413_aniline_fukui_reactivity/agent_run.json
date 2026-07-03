@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of aniline was computed using DFT at tier standard (B3LYP/def2-TZVP with density-fitting) in the gas phase. The Fukui indices (f\u207a, f\u207b, f\u2070) and dual descriptor were calculated via finite-difference charges from single-point calculations on the neutral, singly-oxidized, and singly-reduced species using Mulliken population analysis in PySCF. All three SCF calculations converged cleanly. The most electrophilic site is C3 (ortho carbon) with f\u207a = 2.298; the most nucleophilic site is N (amino) with f\u207b = 0.205. The charge-conservation integrity checks passed for both f\u207a and f\u207b (sums = 1.0). The Fukui indices correctly predict ortho/para reactivity activation by the electron-donating aniline group. No warnings were reported."
+}

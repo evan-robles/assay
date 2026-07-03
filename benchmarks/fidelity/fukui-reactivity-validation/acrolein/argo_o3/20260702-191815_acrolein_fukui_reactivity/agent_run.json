@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: Atom-condensed Fukui functions (f+ electrophilic susceptibility, f- nucleophilic susceptibility, f0, and the dual descriptor) for acrolein; headline value reported is the largest electrophilic Fukui index (f+).\nLevel of theory: DFT, tier \u2018standard\u2019 = B3LYP/def2-TZVP with density-fitting (RI) in PySCF.\nGeometry provenance: single-point analysis on the user-supplied acrolein.xyz coordinates (no geometry optimisation at DFT).\nEnvironment: gas phase (no implicit solvation).\nCharge & multiplicity: 0, 1 (closed-shell singlet ground state).\nSoftware: chemkit fukui-reactivity skill (PySCF backend; version per engine build).\nConvergence & caveats: SCF cycles converged; all integrity checks passed. The engine emitted three warnings (reproduced verbatim below). They note charge-conservation checks and header presence; all checks reported ok.\nLive .out log: the run streamed to the standard chemkit live log (path announced at job launch in the session transcript; see that file for full SCF and Mulliken-charge details). Output JSON saved to /home/erobles/chem-skills/.fidelity_scratch/tmpxavmi856/live.json and plot to /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_o3/20260702-191815_acrolein_fukui_reactivity/agent_call_01_plot.png.\n\nHeadline result\n\u2022 Most electrophilic atom: C4 (index 3) with f\u207a = 0.64232102 (dimensionless)\n\u2022 Most nucleophilic atom: O1 (index 0) with f\u207b = 0.39388616 (dimensionless)\n\nWarnings (verbatim from engine):\n1. sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n2. sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n3. common header present\n\nIntegrity assessment: integrity.status = ok, trustworthy = true (no convergence or consistency issues detected beyond the informational charge-conservation checks).\n"
+}

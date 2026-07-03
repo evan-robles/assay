@@ -1,0 +1,16 @@
+[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:claude-sonnet-4.6 via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: fukui-reactivity ['--method', 'xtb', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz']
+[live] agent calls chemkit: fukui-reactivity ['--method', 'xtb', '--charge', '0', '--mult', '1', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz']
+[live] agent calls chemkit: build-from-smiles ['ferrocene', '--out', 'ferrocene_built.xyz']
+[live] agent calls chemkit: build-from-smiles ['[Fe]1234567890([C@@H]%11[C@@H]%12[C@@H]%13[C@@H]1[C@@H]%112345)[C@H]%12[C@H]%136789']
+[live] agent calls chemkit: build-from-smiles ['[Fe+2].[c-]1cccc1.[c-]1cccc1']
+[live] agent calls chemkit: fukui-reactivity ['--method', 'xtb', '--charge', '0', '--mult', '1', '--no-cube', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz']
+[live] agent calls chemkit: single-point-energy ['--method', 'xtb', '--charge', '0', '--mult', '1', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz']
+[live] agent calls chemkit: single-point-energy ['--method', 'xtb', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz']
+[live] agent did not submit final_report within turn budget.
+
+No agent-run record to score (supply --agent-run or enable --live).
+
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-sonnet-4.6/20260702-193857_ferrocene_fukui_reactivity

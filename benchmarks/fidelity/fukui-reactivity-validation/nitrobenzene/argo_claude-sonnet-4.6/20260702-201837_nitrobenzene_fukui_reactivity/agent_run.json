@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for nitrobenzene were computed using the fukui-reactivity chemkit skill at the DFT level, tier 'standard' (B3LYP/def2-TZVP, PySCF RKS, density fitting enabled), in the gas phase, charge 0/multiplicity 1 for the neutral species, charge +1/mult 2 for the cation, and charge \u22121/mult 2 for the anion. Partial charges were obtained via Mulliken population analysis (PySCF). The geometry was taken directly from the user-supplied XYZ file (no re-optimization). All three SCF calculations converged; Fukui charge sums equal 1.0000 for both f+ and f\u2212. No warnings were reported. The headline value reported is the maximum f+ (electrophilic Fukui index) = 0.49641781 at atom 4 (C-ipso, bonded to the nitro group). The most nucleophilic site by f\u2212 is atom 5 (ortho C, f\u2212 = 0.10729). The dual descriptor is largest positive at C-ipso (+0.51071) and most negative at N (\u22120.47394). integrity.trustworthy = true. Plot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_claude-sonnet-4.6/20260702-201837_nitrobenzene_fukui_reactivity/agent_call_01_plot.png"
+}

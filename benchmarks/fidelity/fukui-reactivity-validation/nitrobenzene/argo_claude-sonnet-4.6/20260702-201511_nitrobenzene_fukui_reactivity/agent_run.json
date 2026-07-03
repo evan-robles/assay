@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for nitrobenzene (14 atoms: 2\u00d7O, 1\u00d7N, 6\u00d7C, 5\u00d7H) at DFT B3LYP/def2-TZVP (tier 'standard'), gas phase, charge 0 multiplicity 1, using PySCF via the chemkit fukui-reactivity skill. Partial charges computed via Mulliken scheme. N\u00b11 states used doublet (multiplicity 2) at \u00b11 charge. Geometry: user-supplied .xyz, not re-optimized at this level. Both f+ and f- sum to 1.0000 (charge conservation satisfied). integrity.trustworthy = true, status = ok. No warnings reported. Headline value: most electrophilic site f+ = 0.49641782 at atom 4 (C, ipso carbon attached to \u2013NO\u2082). Most nucleophilic site: atom 5 (C, ortho carbon), f\u2013 = 0.10728820. The two oxygen atoms of the nitro group also show large f+ (~0.473 each). Full per-atom Fukui indices (f+, f\u2013, f0, dual descriptor) reported in table above."
+}

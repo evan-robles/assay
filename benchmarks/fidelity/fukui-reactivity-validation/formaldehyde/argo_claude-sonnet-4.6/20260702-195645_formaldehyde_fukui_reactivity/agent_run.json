@@ -1,0 +1,26 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for formaldehyde (H\u2082C=O, 4 atoms: O, C, H, H) were computed using DFT at the B3LYP/def2-TZVP level (PySCF RKS, tier 'standard', density-fitted) in the gas phase, charge 0 / multiplicity 1 (cation: charge +1, mult 2; anion: charge \u22121, mult 2). Partial charges were obtained via the Mulliken scheme (PySCF) using a finite-difference three-point scheme on the N, N+1, and N\u22121 electron systems. The geometry was taken as-is from the user-supplied file (no re-optimization). All three SCFs converged; integrity.trustworthy = true. The headline value reported is the largest f\u207a index: C (atom 2) f\u207a = 0.70839130, identifying the carbonyl carbon as the most electrophilic site (prime target for nucleophilic attack). The oxygen (atom 1) is the most nucleophilic site with f\u207b = 0.46742464. Full Fukui table \u2014 f\u207a: O=0.46814, C=0.70839, H=\u22120.08827, H=\u22120.08826; f\u207b: O=0.46742, C=0.11244, H=0.21008, H=0.21006; dual descriptor: O=+0.00071, C=+0.59595, H=\u22120.29835, H=\u22120.29832. Charge conservation: \u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000 (both passed). CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp formaldehyde.xyz."
+}

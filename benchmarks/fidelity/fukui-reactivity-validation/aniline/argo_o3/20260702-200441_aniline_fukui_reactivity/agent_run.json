@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\n\u2022 Property: atom-resolved Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, and most electrophilic/nucleophilic sites for aniline; headline figure reported here is the largest electrophilic Fukui index f\u207a = 2.2975867 on atom 3 (C, index 2 in 0-based counting).\n\u2022 Level of theory: DFT tier standard \u2192 B3LYP/def2-TZVP with density fitting (RIJK) in PySCF.\n\u2022 Geometry provenance: single-point charges on the supplied fixed geometry \u201c/home/erobles/\u2026/aniline.xyz\u201d; no geometry optimisation was performed (DFT//input-xyz).\n\u2022 Environment: gas phase (no implicit solvent).\n\u2022 Charge / multiplicity: 0 / 1 for the neutral, +1 / 2 for the (N+1) cation, \u22121 / 2 for the (N\u22121) anion that define f\u207a and f\u207b.\n\u2022 Software: chemkit fukui-reactivity skill (backend PySCF) using Mulliken partitioning.\n\u2022 Convergence & caveats: SCF converged for all three charge states; integrity block says trustworthy: true. All engine warnings are reproduced verbatim below.\n\nEngine warnings (verbatim)\n\u2013 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 common header present\n\nReproducibility\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpgctdctw_/live.json\nLive log streamed to fukui_*.out in the current directory; result JSON at \u2026/live.json; figure at \u2026/aniline_fukui_reactivity/agent_call_01_plot.png."
+}

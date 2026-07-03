@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of ferrocene using GFN2-xTB (semi-empirical tight-binding) in gas phase, charge 0, multiplicity 1. The cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2) states were computed to derive Fukui indices. The iron center is identified as the most reactive site: f\u207a = 0.22885456 (electrophilic), f\u207b = 0.25938191 (nucleophilic), and dual descriptor = \u22120.030527. Cyclopentadienyl carbons show much lower reactivity (f\u207a \u2248 0.01364, f\u207b \u2248 0.01218), with hydrogens intermediate. Both cation and anion converged successfully; charge conservation checks (sum f\u207a = 1.0000, sum f\u207b = 1.0000) confirm reliability. Integrity status: trustworthy. Software: xtb; geometry from input xyz file (21 atoms: 10 C, 5 H per ring, 1 Fe). No solvation model applied (gas phase).</prose>\n<parameter name=\"value\">0.22885456"
+}

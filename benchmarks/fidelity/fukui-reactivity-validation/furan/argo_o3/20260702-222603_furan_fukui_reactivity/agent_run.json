@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property: condensed Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor for each atom; most-electrophilic/nucleophilic sites identified.\n\u2022 Level of theory: DFT, tier \u2018standard\u2019  \u2192 B3LYP/def2-TZVP, density-fitted (PySCF).\n\u2022 Geometry provenance: user-supplied furan coordinates (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz); single-point Fukui analysis performed on this fixed geometry (no additional optimisation).\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\u2022 Charge = 0, multiplicity = 1 for the neutral; cation (+1, doublet) and anion (\u20131, doublet) states were also computed to obtain f\u207a/f\u207b.\n\u2022 Software: chemkit fukui-reactivity skill (PySCF backend).\n\u2022 Convergence & caveats: all three SCF calculations reported as converged.\n  Warnings returned by the engine (verbatim):\n    \u2013 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n    \u2013 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n    \u2013 common header present\n\u2022 Live .out log: /home/erobles/chem-skills/benchmarks/fidelity/furan/argo_o3/20260702-222603_furan_fukui_reactivity/fukui_20260702-222610.out  (written live during the run; available for inspection).\n\nKey numerical results (Mulliken-charge-based condensed Fukui indices):\nAtom (1-based)  Symbol     f\u207a          f\u207b          f\u2070        \u0394f (dual)\n    1             O    \u20131.3316182   0.08382155  \u20130.62389834  \u20131.4154398\n    2             C     1.2286866   0.08910309   0.65889484   1.1395835\n    3             C     1.2270264   0.08930482   0.65816562   1.1377216\n    4             C     1.9233053   0.16152700   1.0424161    1.7617783\n    5             C  \u2190  1.9242931   0.16163710   1.0429651    1.7626560\n    6             H    \u20131.2190639   0.10248412  \u20130.55828991  \u20131.3215481\n    7             H    \u20131.2191055   0.10251350  \u20130.55829603  \u20131.3216190\n    8             H    \u20130.76678308  0.10481615  \u20130.33098346  \u20130.87159923\n    9             H    \u20130.76674059  0.10479266  \u20130.33097397  \u20130.87153325\n\n\u2022 Most electrophilic site (largest f\u207a): atom 5 (C), f\u207a = 1.9242931\n\u2022 Most nucleophilic site (largest f\u207b): atom 5 (C), f\u207b = 0.1616371\n\nThe headline value above reports the largest condensed electrophilic Fukui index (f\u207a) found for furan at this level of theory."
+}

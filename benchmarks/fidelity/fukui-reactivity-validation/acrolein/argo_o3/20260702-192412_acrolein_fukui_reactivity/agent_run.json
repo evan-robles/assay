@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance.\nProperty: Condensed Fukui functions (f+, f\u2212, f0) and dual descriptor for acrolein; headline value reported here is the largest electrophilic Fukui index f+ = 0.64232102 (atom 4, C\u03b2 of the carbonyl-conjugated C=C bond). Units are electrons (dimensionless indices; f+ sums to 1 by construction).\nLevel of theory: DFT, tier \u2018standard\u2019 \u2192 B3LYP/def2-TZVP with density fitting (RI) in PySCF 2.x.\nGeometry provenance: single-point charges on the fixed user-supplied geometry /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz; no additional optimization was performed (notation: fukui//input-xyz).\nSolvent / environment: gas phase (no implicit solvent).\nCharge & multiplicity: neutral singlet (0,1) for the N state; cation doublet (+1,2) and anion doublet (\u22121,2) for the N\u00b11 states used in the finite-difference scheme.\nSoftware/backend: PySCF via chemkit fukui-reactivity skill (cli invocation reproduced below).\nConvergence & caveats: All three SCF calculations converged (integrity.status = \"ok\"). The integrity checker issued three warnings, echoed verbatim below. Sum of Fukui indices f+ and f\u2212 each equals 1.0000, consistent with charge conservation. No other warnings reported.\n\nCLI invocation (from result JSON):\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpifkfo_fw/live.json\n\nLive .out log: the run streamed to a time-stamped file in the caller\u2019s working directory (announced when launched); retain for full SCF and Mulliken-charge details.\n\nKey results (per-atom, 1-based indexing):\nAtom 1 (O) f\u2212 = 0.39388616, f+ = 0.40136419\nAtom 2 (C) f\u2212 = 0.005988435, f+ = 0.022255106\nAtom 3 (C) f\u2212 = 0.091403097, f+ = 0.43404673\nAtom 4 (C) f\u2212 = 0.087369815, f+ = 0.64232102 \u21d0 most electrophilic site\nAtom 5\u20138 (H) see JSON above; most nucleophilic site is Atom 1 (O) with f\u2212 = 0.39388616.\n\nWarnings (verbatim from integrity.checks):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nEngine integrity verdict: trustworthy = true.\nProvenance: computed (chemkit fukui-reactivity, B3LYP/def2-TZVP, gas phase)."
+}

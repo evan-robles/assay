@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for pyridine (C\u2085H\u2085N, 11 atoms) using DFT at the B3LYP/def2-TZVP level (tier 'standard', density-fit RI-J on by default in PySCF), gas phase, charge 0 multiplicity 1 (cation: charge +1 mult 2; anion: charge \u22121 mult 2). Geometry: user-supplied pyridine.xyz, used as-is (no re-optimization). Charges from Mulliken population analysis (PySCF) on N, N+1, and N\u22121 electron states. All three SCF calculations converged. integrity.trustworthy = true. No warnings reported; sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (charge conservation satisfied).\n\nHeadline result (most electrophilic atom): N (atom 1), f\u207a = 0.48422572.\n\nFull per-atom Fukui indices:\n  Atom 1  N:  f+ = 0.48422572,  f\u2212 = 0.06412267,  f0 = 0.27417420,  \u0394f = +0.42010305\n  Atom 2  C:  f+ = 0.32447227,  f\u2212 = 0.00618771,  f0 = 0.16532999,  \u0394f = +0.31828455\n  Atom 3  C:  f+ = 0.14032092,  f\u2212 = 0.11823139,  f0 = 0.12927615,  \u0394f = +0.02208954\n  Atom 4  C:  f+ = 0.14039586,  f\u2212 = 0.11826260,  f0 = 0.12932923,  \u0394f = +0.02213327  \u2190 most nucleophilic (highest f\u2212)\n  Atom 5  C:  f+ = 0.29962626,  f\u2212 = 0.11206595,  f0 = 0.20584611,  \u0394f = +0.18756031\n  Atom 6  C:  f+ = 0.29947706,  f\u2212 = 0.11200985,  f0 = 0.20574345,  \u0394f = +0.18746722\n  Atom 7  H:  f+ = \u22120.14151320, f\u2212 = 0.08284851,  f0 = \u22120.02933234, \u0394f = \u22120.22436171\n  Atom 8  H:  f+ = \u22120.13368410, f\u2212 = 0.09817949,  f0 = \u22120.01775231, \u0394f = \u22120.23186359\n  Atom 9  H:  f+ = \u22120.13365905, f\u2212 = 0.09818226,  f0 = \u22120.01773839, \u0394f = \u22120.23184131\n  Atom 10 H:  f+ = \u22120.13981630, f\u2212 = 0.09496009,  f0 = \u22120.02242810, \u0394f = \u22120.23477639\n  Atom 11 H:  f+ = \u22120.13984545, f\u2212 = 0.09494948,  f0 = \u22120.02244799, \u0394f = \u22120.23479493\n\nKey findings: The nitrogen atom (atom 1) is the most electrophilic site (f\u207a = 0.48423, dual descriptor \u0394f = +0.42010), consistent with its lone-pair donor / Lewis-base character. Carbon-4 (atom 4, para to N) is the most nucleophilic site (f\u207b = 0.11826), consistent with pyridine's \u03c0-deficient ring reactivity. All hydrogen atoms show negative dual descriptor values.\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz\nPlot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_claude-sonnet-4.6/20260702-222625_pyridine_fukui_reactivity/agent_call_01_plot.png"
+}

@@ -1,0 +1,26 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance and findings:\n\n\u2022 Property: condensed Fukui function f(+) (electrophilic attack) value at the most electrophilic atom of acrolein.\n\u2022 Level of theory: DFT, tier \u201cstandard\u201d = B3LYP/def2-TZVP with RI density fitting (PySCF backend).\n\u2022 Geometry: single-point on the user-supplied acrolein.xyz (no re-optimization).\n\u2022 Environment: gas phase.\n\u2022 Charge/multiplicity: neutral singlet for N state; doublet cation (+1) and doublet anion (-1) for N\u00b11.\n\u2022 Software: chemkit fukui-reactivity skill; SCF converged for all three charge states.\n\u2022 Key numerical headline: f(+) on atom index 3 (\u03b2-carbon) = 0.64232102 e\u207b, identifying it as the most electrophilic center.\n\nWarnings from engine (verbatim):\n\u2022 fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 schema_header: common header present"
+}

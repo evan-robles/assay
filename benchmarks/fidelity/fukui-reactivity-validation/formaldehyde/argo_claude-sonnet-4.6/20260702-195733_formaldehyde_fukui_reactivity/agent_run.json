@@ -1,0 +1,22 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for formaldehyde (CH\u2082O, 4 atoms) using DFT at the B3LYP/def2-TZVP level (PySCF RKS, tier 'standard'), gas phase, charge 0, multiplicity 1. The N+1 (anion) and N\u22121 (cation) states used charge \u00b11 and multiplicity 2. Partial charges were computed via the Mulliken scheme (PySCF). Geometry was taken directly from the user-supplied .xyz file (no re-optimization). All three SCFs converged; integrity.trustworthy = true; no warnings reported; both Fukui charge-conservation checks passed (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000).\n\nPer-atom Fukui indices:\n  Atom 1 (O):  f\u207a = 0.46814, f\u207b = 0.46742, f\u2070 = 0.46778, dual = +0.00071\n  Atom 2 (C):  f\u207a = 0.70839, f\u207b = 0.11244, f\u2070 = 0.41042, dual = +0.59595\n  Atom 3 (H):  f\u207a = \u22120.08827, f\u207b = 0.21008, f\u2070 = 0.06090, dual = \u22120.29835\n  Atom 4 (H):  f\u207a = \u22120.08826, f\u207b = 0.21006, f\u2070 = 0.06090, dual = \u22120.29832\n\nMost electrophilic site: C (atom 2), f\u207a = 0.70839 (headline value).\nMost nucleophilic site: O (atom 1), f\u207b = 0.46742.\n\nThe carbonyl carbon is the dominant electrophilic site (large f\u207a and positive dual descriptor), consistent with its known susceptibility to nucleophilic attack. Oxygen is the primary nucleophilic site. No warnings were issued by the engine."
+}
