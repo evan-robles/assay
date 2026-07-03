@@ -64,6 +64,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -1706,11 +1707,21 @@ def run_live_agent(spec: Dict[str, Any],
 
     last_result_json: Dict[str, Any] = {}
     call_n = 0
+    # Per-run timing (wall-clock seconds). total = whole agent loop; llm = time
+    # spent in client.chat.completions.create (model latency+thinking); engine =
+    # time spent in run_engine (the chemistry). turns = LLM round-trips. Recorded
+    # in the returned record's "timing" block so per-(model,task) speed is
+    # analyzable (e.g. gpt-4o is much slower than gemini on fukui).
+    _t0 = time.monotonic()
+    _llm_s = 0.0
+    _eng_s = 0.0
     print(f"[live] model={model} via argo-proxy {_ARGO_BASE_URL}")
     for turn in range(8):
+        _tll = time.monotonic()
         resp = client.chat.completions.create(
             model=model, messages=messages, tools=tools, tool_choice="auto",
         )
+        _llm_s += time.monotonic() - _tll
         msg = resp.choices[0].message
         calls = msg.tool_calls or []
         if not calls:
@@ -1726,7 +1737,10 @@ def run_live_agent(spec: Dict[str, Any],
             except ValueError:
                 fargs = {}
             if fn == "final_report":
-                print("[live] agent submitted final_report.")
+                _total_s = time.monotonic() - _t0
+                print(f"[live] agent submitted final_report. "
+                      f"(total={_total_s:.1f}s llm={_llm_s:.1f}s engine={_eng_s:.1f}s "
+                      f"turns={turn + 1} tool_calls={call_n})")
                 _dump_transcript()
                 _cs = last_result_json.get("code_specific") or {}
                 return {
@@ -1735,6 +1749,16 @@ def run_live_agent(spec: Dict[str, Any],
                     # from the file alone which model performed the calculation).
                     "model": model,
                     "endpoint": _ARGO_BASE_URL,
+                    # Per-run wall-clock timing (seconds): total agent loop, time
+                    # in LLM calls, time in the engine, LLM round-trips, and tool
+                    # calls. Lets per-(model,task) speed be compared.
+                    "timing": {
+                        "total_s": round(_total_s, 2),
+                        "llm_s": round(_llm_s, 2),
+                        "engine_s": round(_eng_s, 2),
+                        "turns": turn + 1,
+                        "tool_calls": call_n,
+                    },
                     "result_json": {
                         "method": last_result_json.get("method"),
                         "charge": last_result_json.get("charge"),
@@ -1771,6 +1795,7 @@ def run_live_agent(spec: Dict[str, Any],
                 print(f"[live] agent calls chemkit: {skill} {cargs}")
                 call_n += 1
                 try:
+                    _teng = time.monotonic()
                     with _scratch_tempdir() as td:
                         out = os.path.join(td, "live.json")
                         # run_engine cleans any --out and de-dups the xyz path;
@@ -1780,6 +1805,7 @@ def run_live_agent(spec: Dict[str, Any],
                             keep_dir=run_dir, label=f"agent_call_{call_n:02d}",
                             model=model,
                         )
+                    _eng_s += time.monotonic() - _teng
                     tool_out = json.dumps(last_result_json)
                 except Exception as e:  # noqa: BLE001
                     tool_out = json.dumps({"error": str(e)})
@@ -1824,6 +1850,11 @@ def score_agent_run(spec: Dict[str, Any], truth: Dict[str, Any],
     silent re-scoring). Does NOT write result.json — the caller persists it."""
     result_record: Dict[str, Any] = {"mode": mode, "expect": expect,
                                       "layer_A_determinism": det_ok}
+    # Carry per-run timing (from run_live_agent) into result.json so speed is
+    # visible alongside the verdict and collectable per (model, task). Present on
+    # live runs; absent on re-scored runs whose agent_run predates timing.
+    if isinstance(agent_run.get("timing"), dict):
+        result_record["timing"] = agent_run["timing"]
 
     # Data-integrity gate: if the agent's recorded output contains the transport
     # encoding corruption (malformed \u00XXXX escapes decoded into C0 control
