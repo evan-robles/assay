@@ -60,6 +60,19 @@ sys.exit(0)
 PY
 }
 
+# A node-holder job is RUNNING (its nodes in .sweep_nodes are actually alive)?
+# CRITICAL gate: never relaunch against a DEAD allocation. Between an old
+# holder's walltime death and its clone starting (queued), .sweep_nodes still
+# lists the now-dead nodes; launching then just produces rc=255 dead-node
+# failures. Only launch when an assay-nodeholder job is in state R.
+holder_running() {
+    ssh_state=$(qstat -u "$USER" 2>/dev/null | awk '/assay-nodeholde/ && $10=="R"{print "R"}' | head -1)
+    [ "$ssh_state" = "R" ]
+}
+# The gen the CURRENTLY-RUNNING holder published (so we relaunch once per fresh
+# allocation). We also relaunch if the sweep process died while the holder is
+# still up (mid-window crash).
+
 log "watching gen counter; suite=$SUITE repeat=$REPEAT models=${MODELS[*]}"
 last_gen=""
 while true; do
@@ -79,12 +92,19 @@ PY
     fi
     gen=$(cat "$GEN_FILE" 2>/dev/null || echo "")
     running=$(pgrep -f "tools/parallel_suite.sh $SUITE" | wc -l | tr -d ' ')
-    if [ -n "$gen" ] && { [ "$gen" != "$last_gen" ] || [ "$running" -eq 0 ]; } && [ -s "$NODES_FILE" ]; then
-        log "gen=$gen (was ${last_gen:-none}), sweep running=$running -> (re)launching against $(wc -l <"$NODES_FILE") nodes"
+    # Only (re)launch when: gen exists, a holder is RUNNING (live nodes), the
+    # sweep isn't already running, and EITHER it's a new generation OR the sweep
+    # died mid-window. The holder_running gate is what prevents hammering dead
+    # nodes during the queue gap between a holder's death and its clone starting.
+    if [ -n "$gen" ] && [ -s "$NODES_FILE" ] && [ "$running" -eq 0 ] \
+       && { [ "$gen" != "$last_gen" ] || holder_running; } && holder_running; then
+        log "gen=$gen (was ${last_gen:-none}), holder=R, sweep=0 -> launching against $(wc -l <"$NODES_FILE") nodes"
         activate
         PBS_NODEFILE="$NODES_FILE" nohup bash tools/parallel_suite.sh "$SUITE" "$REPEAT" "${MODELS[@]}" \
             > "sweep_gen${gen}.log" 2>&1 &
         last_gen="$gen"
+    elif [ -n "$gen" ] && [ "$running" -eq 0 ] && ! holder_running; then
+        log "sweep idle but NO running holder (allocation gap; clone queued) — waiting."
     fi
     sleep "$POLL"
 done
