@@ -66,7 +66,10 @@ PY
 # lists the now-dead nodes; launching then just produces rc=255 dead-node
 # failures. Only launch when an assay-nodeholder job is in state R.
 holder_running() {
-    ssh_state=$(qstat -u "$USER" 2>/dev/null | awk '/assay-nodeholde/ && $10=="R"{print "R"}' | head -1)
+    # NB: qstat -u truncates the job name to "assay-nod*" — match that prefix,
+    # not the full "assay-nodeholder" (which never matches -> gate stuck open).
+    # State is column 10; "R" = running.
+    ssh_state=$(qstat -u "$USER" 2>/dev/null | awk '/assay-nod/ && $10=="R"{print "R"}' | head -1)
     [ "$ssh_state" = "R" ]
 }
 # The gen the CURRENTLY-RUNNING holder published (so we relaunch once per fresh
