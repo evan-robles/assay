@@ -30,25 +30,63 @@
 # The qsub -l flag takes precedence over the directive above.
 # ══════════════════════════════════════════════════════════════════════════════
 set -o pipefail
-cd "${PBS_O_WORKDIR:-$HOME/chem-skills}"
+REPO="${PBS_O_WORKDIR:-$HOME/chem-skills}"
+cd "$REPO"
 
-NODES_FILE="${PBS_O_WORKDIR:-$HOME/chem-skills}/.sweep_nodes"
-READY_FILE="${PBS_O_WORKDIR:-$HOME/chem-skills}/.sweep_ready"
+NODES_FILE="$REPO/.sweep_nodes"
+READY_FILE="$REPO/.sweep_ready"
+GEN_FILE="$REPO/.sweep_gen"        # generation counter — bumped each (re)allocation
+DONE_FILE="$REPO/.sweep_done"      # login-side writes this when the sweep completes
+STATE_FILE="$REPO/.holder_resubmits"
 
-# Publish the unique allocated compute-node hostnames for the external controller.
+# Self-resubmit caps (mirrors the MD submit_multi.sh guards).
+MAX_RESUBMITS="${ASSAY_MAX_RESUBMITS:-100}"
+# Node count for the clone — inherit whatever THIS job was given (so a select=5
+# job re-clones as select=5). Fall back to the directive default.
+NSEL=$(sort -u "$PBS_NODEFILE" | wc -l | tr -d ' ')
+
+# Publish the unique allocated compute-node hostnames + bump the generation so a
+# login-side relauncher knows a FRESH allocation is available.
 sort -u "$PBS_NODEFILE" > "$NODES_FILE"
 echo "$PBS_JOBID" > "$READY_FILE"
+gen=$(( $(cat "$GEN_FILE" 2>/dev/null || echo 0) + 1 ))
+echo "$gen" > "$GEN_FILE"
 
 echo "════════════════════════════════════════════════════════════════════"
-echo "  assay node-holder"
-echo "  PBS_JOBID : ${PBS_JOBID:-?}"
-echo "  nodes     : $(wc -l < "$NODES_FILE")"
+echo "  assay node-holder   job=${PBS_JOBID:-?}  gen=$gen  nodes=$NSEL"
 cat "$NODES_FILE" | sed 's/^/    /'
-echo "  published : $NODES_FILE"
-echo "  Holding nodes for the walltime; the external controller drives the sweep."
+echo "  Self-cloning on SIGTERM (walltime) until .sweep_done exists."
 echo "════════════════════════════════════════════════════════════════════"
 
-# Keep the job (and thus the node allocation) alive for the full walltime.
-# PBS will SIGTERM/SIGKILL at walltime; the controller detects the job ending
-# via qstat and resubmits.
-sleep infinity
+# ── SIGTERM handler: clone this job so the allocation continues past walltime ──
+# PBS sends SIGTERM shortly before the hard walltime kill. On receipt: if the
+# sweep is already done, exit clean; else qsub a fresh copy of THIS script (same
+# node count) so a new allocation comes up and the login-side relauncher resumes
+# the sweep against it. Guarded by a resubmit-count cap so it can't loop forever.
+_cloned=0
+handle_term() {
+    [ "$_cloned" -eq 1 ] && return; _cloned=1
+    echo "[holder] SIGTERM at walltime (gen=$gen)."
+    if [ -f "$DONE_FILE" ]; then
+        echo "[holder] .sweep_done present — sweep complete, NOT cloning. Exiting."
+        rm -f "$STATE_FILE"; exit 0
+    fi
+    rc=$(cat "$STATE_FILE" 2>/dev/null || echo 0)
+    if [ "$rc" -ge "$MAX_RESUBMITS" ]; then
+        echo "[holder] hit MAX_RESUBMITS ($MAX_RESUBMITS) — NOT cloning."; exit 4
+    fi
+    rc=$(( rc + 1 )); echo "$rc" > "$STATE_FILE"
+    echo "[holder] cloning self (resubmit #$rc, select=$NSEL)…"
+    ( cd "$REPO" && qsub -l select="$NSEL" tools/aurora_nodeholder.pbs ) \
+        && echo "[holder] clone submitted." \
+        || echo "[holder] clone qsub FAILED."
+    # brief grace so PBS logs flush before the hard kill
+    sleep 5
+}
+trap handle_term TERM INT
+
+# Keep the allocation alive for the walltime. `wait` (not bare sleep) so the
+# SIGTERM trap fires promptly instead of being queued behind an uninterruptible
+# sleep.
+sleep infinity &
+wait $!
