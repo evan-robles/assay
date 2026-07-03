@@ -27,6 +27,7 @@ REPO="$HOME/chem-skills"; cd "$REPO"
 GEN_FILE="$REPO/.sweep_gen"
 NODES_FILE="$REPO/.sweep_nodes"
 DONE_FILE="$REPO/.sweep_done"
+NSEL_FILE="$REPO/.sweep_nsel"      # desired node count for the NEXT holder clone
 POLL="${ASSAY_AUTORELAUNCH_POLL:-30}"
 
 log(){ echo "[$(date '+%H:%M:%S')] autorelaunch: $*"; }
@@ -60,6 +61,47 @@ sys.exit(0)
 PY
 }
 
+# How many models are NOT yet at REPEAT (i.e. still need compute)? A model that
+# is fully done resume-skips instantly and needs ~0 node time, so the NEXT
+# allocation only needs one node per UNFINISHED model. We publish that count to
+# .sweep_nsel; the node-holder's self-clone reads it to shrink `select=` as models
+# finish (frees nodes at each 1h cycle boundary). Floor of 1 so we never request
+# select=0. Print ONLY the integer on stdout.
+unfinished_models() {
+    activate
+    python - "$SUITE" "$REPEAT" "${MODELS[@]}" <<'PY'
+import sys, glob
+from pathlib import Path
+suite, n = Path(sys.argv[1]), int(sys.argv[2]); models = sys.argv[3:]
+mols = [d for d in suite.iterdir() if d.is_dir()]
+need = 0
+for m in models:
+    mslug = m.replace(":","_").replace("/","_")
+    # a model is "unfinished" if ANY molecule has < n result.json
+    if any(len(glob.glob(str(mol/mslug/"*"/"result.json"))) < n for mol in mols):
+        need += 1
+print(max(1, need))
+PY
+}
+
+# Refresh .sweep_nsel with the current unfinished-model count so the next holder
+# clone allocates exactly that many nodes (never more than it had).
+publish_nsel() {
+    local n; n=$(unfinished_models 2>/dev/null | tail -1 | tr -dc '0-9')
+    [ -n "$n" ] || return 0
+    echo "$n" > "$NSEL_FILE"
+}
+
+# qdel every RUNNING/QUEUED assay node-holder (used on full completion to release
+# the final allocation immediately instead of idling to walltime).
+qdel_holders() {
+    local ids
+    ids=$(qstat -u "$USER" 2>/dev/null | awk '/assay-nod/{print $1}')
+    for j in $ids; do
+        qdel "$j" >/dev/null 2>&1 && log "qdel holder $j" || true
+    done
+}
+
 # A node-holder job is RUNNING (its nodes in .sweep_nodes are actually alive)?
 # CRITICAL gate: never relaunch against a DEAD allocation. Between an old
 # holder's walltime death and its clone starting (queued), .sweep_nodes still
@@ -91,8 +133,15 @@ from collect_results import collect_repeats,_print_repeat_table,write_grouped_cs
 s=Path(sys.argv[1]); n=int(sys.argv[2]); rows=collect_repeats(s,n=n)
 _print_repeat_table(rows); write_grouped_csv(rows, s/"summary.csv", base=s, n=n); print("wrote", s/"summary.csv")
 PY
+        # Release the final allocation immediately (don't idle to walltime). The
+        # .sweep_done marker above already tells any holder NOT to re-clone; this
+        # kills the still-running one so its nodes free up now.
+        qdel_holders
         break
     fi
+    # Keep the next-clone node count in step with how many models still need
+    # compute, so each fresh allocation shrinks as models complete.
+    publish_nsel
     gen=$(cat "$GEN_FILE" 2>/dev/null || echo "")
     running=$(pgrep -f "tools/parallel_suite.sh $SUITE" | wc -l | tr -d ' ')
     # Only (re)launch when: gen exists, a holder is RUNNING (live nodes), the

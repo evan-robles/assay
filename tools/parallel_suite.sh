@@ -123,13 +123,24 @@ echo "           ${#SPECS[@]} molecule(s) × $REPEAT repeat(s); models run in pa
 # Count COMPLETED runs for a (molecule-dir, model): timestamped run folders under
 # <moldir>/<model_slug>/ that contain a result.json. Used for RESUME so a re-run
 # after a killed/expired job only fills the shortfall toward REPEAT instead of
-# redoing (or piling on top of) work already done. An ERRORED result.json still
-# counts as "attempted" here — it occupies a rep slot; use FORCE=1 to ignore
-# existing runs and always run the full REPEAT afresh.
+# redoing (or piling on top of) work already done. A scored PASS/FAIL result.json
+# counts as "attempted" and occupies a rep slot; use FORCE=1 to ignore existing
+# runs and always run the full REPEAT afresh.
+#
+# EXCEPTION — dead-node artifacts do NOT count: a result.json flagged
+# error="remote_host_unreachable" is an INFRASTRUCTURE fault (the compute node
+# died mid-run; the driver wrote an ERROR record, exit 2), never a real attempt.
+# Counting it would let a dead allocation "fill" all the rep slots with garbage
+# (the 2026-07-03 fukui incident). Skipping it here means resume re-runs that slot
+# against live nodes. Matched by a cheap grep of the JSON (no jq dependency).
 _completed_runs() {  # $1 = moldir, $2 = model_slug  -> integer count
-  local moldir="$1" mslug="$2" n=0 d
+  local moldir="$1" mslug="$2" n=0 d rj
   for d in "$moldir/$mslug"/*/; do
-    [ -f "${d}result.json" ] && n=$((n+1))
+    rj="${d}result.json"
+    [ -f "$rj" ] || continue
+    # Skip dead-node infrastructure errors so the slot is re-run.
+    grep -q '"error"[[:space:]]*:[[:space:]]*"remote_host_unreachable"' "$rj" && continue
+    n=$((n+1))
   done
   echo "$n"
 }
@@ -164,9 +175,18 @@ run_model_serial() {  # $1 = model, $2 = node — process all molecules×repeats
       rep=$(( have + r ))   # label continues from what exists (for the /tmp log name)
       # --out-dir places the run under <molecule>/<model>/<timestamp>/ (matching
       # run_suite.py) and points the engine-reference cache at the molecule folder.
+      # IMPORTANT: the driver exits NONZERO on a scored FAIL (e.g. a weak model
+      # submits a final_report with no real engine call → Layer B fail, exit 1).
+      # A FAIL is DATA, not a fatal error — the result.json is still written and
+      # counts as a rep slot. Under `set -e`, an unguarded nonzero here would kill
+      # this model's entire worker and freeze it mid-worklist (this is exactly how
+      # gpt-4.1-nano/gpt-4o stalled at aniline). Guard with `|| rc=$?` so the loop
+      # records the outcome and keeps going to the next rep/molecule.
+      rc=0
       CHEMKIT_REMOTE_HOST="$node" \
         python "$DRIVER" --spec "$spec" --live --model "$model" --out-dir "$moldir" \
-        > "/tmp/run_${mol}_${msafe}_${rep}.log" 2>&1
+        > "/tmp/run_${mol}_${msafe}_${rep}.log" 2>&1 || rc=$?
+      [ "$rc" -ne 0 ] && echo "[parallel]   $mol [$model] rep $rep: driver exit=$rc (FAIL scored or error — continuing; see /tmp/run_${mol}_${msafe}_${rep}.log)"
     done
   done
   echo "[parallel]   model $model done."

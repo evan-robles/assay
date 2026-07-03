@@ -1,44 +1,131 @@
-case,model,expect,mode,n_pass,n_error,n_runs,pass_rate,modal_verdict,fail_tally,method,solvent,functional,basis,tier,value_field,truth_value,reported_value_latest
+case,model,expect,mode,n_pass,n_error,n_runs,pass_rate,modal_verdict,fail_tally,method,solvent,functional,basis,tier,value_field,truth_value,reported_value_latest,total_s_mean,total_s_std,total_s_se,llm_s_mean,engine_s_mean
 model: argo:claude-haiku-4.5
-acrolein,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,
-aniline,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
-benzaldehyde,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
-ferrocene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,21
-formaldehyde,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4
-furan,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9
-nitrobenzene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
-phenol,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,
-pyridine,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,11
+model latency: llm_s=15.64 ± 1.45 (SE 0.22) [n=45]  turns=2.11 ± 0.61 (SE 0.09) [n=45]  tool_calls=1.07 ± 0.45 (SE 0.07) [n=45]
+acrolein,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,,48.9,7.66,3.42,14.94,33.96
+aniline,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,117.78,1.71,0.76,16.82,100.96
+benzaldehyde,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,250.42,17.31,7.74,15.63,234.79
+ferrocene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,GFN2-xTB,,,,,n_atoms,21,21,20.8,1.24,0.55,14.83,5.97
+formaldehyde,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4,23.32,1.86,0.83,14.4,8.92
+furan,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9,43.14,1.41,0.63,14.92,28.22
+nitrobenzene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,189.25,4.54,2.03,16.48,172.78
+phenol,argo:claude-haiku-4.5,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,13,108.31,51.16,22.88,16.19,91.9
+pyridine,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,11,78.77,1.1,0.49,16.57,62.2
 
 model: argo:claude-opus-4.8
-acrolein,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,
-aniline,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,
-benzaldehyde,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
-ferrocene,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,21
-formaldehyde,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4
-furan,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9
-nitrobenzene,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
-phenol,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,
-pyridine,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,
+model latency: llm_s=27.99 ± 6.61 (SE 1.0) [n=44]  turns=2.0 ± 0.0 (SE 0.0) [n=44]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=44]
+acrolein,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,8,67.93,11.18,5.0,30.31,37.62
+aniline,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,132.0,3.97,1.78,27.19,104.81
+benzaldehyde,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,264.78,13.49,6.03,33.82,230.96
+ferrocene,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,21,34.86,9.25,4.14,27.04,7.82
+formaldehyde,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4,34.26,2.39,1.07,24.25,10.01
+furan,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,,59.96,5.44,2.43,30.98,28.97
+nitrobenzene,argo:claude-opus-4.8,compute,live,4,1,5,0.8,PASS,ERRORED (data corruption in transit) x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,208.85,7.69,3.85,30.95,177.9
+phenol,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,13,136.37,2.11,0.94,24.87,111.5
+pyridine,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,11,83.33,2.65,1.19,23.11,60.22
 
 model: argo:claude-sonnet-4.6
-acrolein,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,8
-aniline,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
-benzaldehyde,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
-ferrocene,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,21
-formaldehyde,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4
-furan,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9
-nitrobenzene,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14
-phenol,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,13
-pyridine,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,11
+model latency: llm_s=38.07 ± 5.11 (SE 0.77) [n=44]  turns=2.27 ± 0.45 (SE 0.07) [n=44]  tool_calls=1.02 ± 0.15 (SE 0.02) [n=44]
+acrolein,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,8,72.48,8.66,3.87,35.74,36.73
+aniline,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,145.73,7.71,3.45,42.48,103.25
+benzaldehyde,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,266.0,8.01,3.58,40.51,225.5
+ferrocene,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,21,46.88,5.95,2.66,39.05,7.83
+formaldehyde,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4,42.94,1.32,0.59,32.92,10.02
+furan,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9,64.1,6.99,3.13,35.13,28.36
+nitrobenzene,argo:claude-sonnet-4.6,compute,live,4,1,5,0.8,PASS,ERRORED (data corruption in transit) x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,217.47,7.07,3.54,41.85,175.62
+phenol,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,13,145.4,1.84,0.82,36.52,108.88
+pyridine,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,11,99.95,2.05,0.92,39.15,60.8
+
+model: argo:gemini-2.5-flash
+model latency: llm_s=23.39 ± 9.15 (SE 1.36) [n=45]  turns=2.33 ± 0.48 (SE 0.07) [n=45]  tool_calls=1.31 ± 0.47 (SE 0.07) [n=45]
+acrolein,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,8,60.4,11.84,5.29,24.02,34.98
+aniline,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,128.25,14.45,6.46,24.8,103.44
+benzaldehyde,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,256.35,10.67,4.77,27.05,227.41
+ferrocene,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,,27.07,8.53,3.81,20.72,6.34
+formaldehyde,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,4,33.92,10.47,4.68,21.89,9.57
+furan,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,,56.56,11.67,5.22,26.7,28.61
+nitrobenzene,argo:gemini-2.5-flash,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,170.54,89.74,40.13,26.76,143.08
+phenol,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,13,131.56,11.28,5.05,17.83,110.51
+pyridine,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,11,84.53,7.47,3.34,20.77,61.14
+
+model: argo:gemini-2.5-pro
+model latency: llm_s=29.79 ± 11.58 (SE 1.73) [n=45]  turns=2.47 ± 0.55 (SE 0.08) [n=45]  tool_calls=1.09 ± 0.29 (SE 0.04) [n=45]
+acrolein,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,,61.8,11.56,5.17,26.67,35.12
+aniline,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,126.7,15.76,7.05,25.62,101.08
+benzaldehyde,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,273.49,18.58,8.31,35.25,237.62
+ferrocene,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,,29.74,7.1,3.18,23.52,6.22
+formaldehyde,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,,47.43,22.8,10.2,37.62,9.82
+furan,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9,60.92,9.23,4.13,31.31,29.0
+nitrobenzene,argo:gemini-2.5-pro,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,165.78,81.12,36.28,24.73,140.32
+phenol,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,,144.86,8.41,3.76,29.93,114.93
+pyridine,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,,94.54,10.91,4.88,33.46,61.08
+
+model: argo:gpt-4.1-nano
+model latency: llm_s=7.05 ± 3.03 (SE 0.45) [n=45]  turns=4.22 ± 1.18 (SE 0.18) [n=45]  tool_calls=2.69 ± 1.12 (SE 0.17) [n=45]
+acrolein,argo:gpt-4.1-nano,compute,live,4,0,5,0.8,PASS,integrity verdict surfaced x3; method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,8,38.37,20.86,9.33,4.78,29.49
+aniline,argo:gpt-4.1-nano,compute,live,1,0,5,0.2,FAIL,method x4; charge x4; multiplicity x4; functional x4; basis x4; tier x4; integrity verdict surfaced x3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,30.79,47.28,21.14,5.78,19.93
+benzaldehyde,argo:gpt-4.1-nano,compute,live,4,0,5,0.8,PASS,integrity verdict surfaced x4; method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,192.61,104.4,46.69,9.81,178.98
+ferrocene,argo:gpt-4.1-nano,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; integrity verdict surfaced x5,GFN2-xTB,,,,,n_atoms,21,,7.91,1.6,0.71,4.89,0.0
+formaldehyde,argo:gpt-4.1-nano,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x5,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,,8.59,2.23,1.0,7.86,0.0
+furan,argo:gpt-4.1-nano,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x5,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,,8.5,2.41,1.08,7.53,0.0
+nitrobenzene,argo:gpt-4.1-nano,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,7.28,1.44,0.65,6.56,0.0
+phenol,argo:gpt-4.1-nano,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x5,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,,9.92,3.84,1.72,9.01,0.0
+pyridine,argo:gpt-4.1-nano,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x5,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,,8.31,0.47,0.21,7.25,0.0
+
+model: argo:gpt-4o
+model latency: llm_s=5.78 ± 1.55 (SE 0.23) [n=45]  turns=2.62 ± 0.53 (SE 0.08) [n=45]  tool_calls=1.02 ± 0.15 (SE 0.02) [n=45]
+acrolein,argo:gpt-4o,compute,live,3,0,5,0.6,PASS,method x2; charge x2; multiplicity x2; functional x2; basis x2; tier x2; integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,,33.17,20.97,9.38,6.08,25.73
+aniline,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,113.93,8.29,3.71,7.04,106.89
+benzaldehyde,argo:gpt-4o,compute,live,2,0,5,0.4,FAIL,method x3; charge x3; multiplicity x3; functional x3; basis x3; tier x3; integrity verdict surfaced x3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,114.2,114.79,51.34,5.95,90.3
+ferrocene,argo:gpt-4o,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; integrity verdict surfaced x5,GFN2-xTB,,,,,n_atoms,21,,5.62,0.78,0.35,5.37,0.0
+formaldehyde,argo:gpt-4o,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x5,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,,5.35,1.54,0.69,5.02,0.0
+furan,argo:gpt-4o,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x5,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,,6.11,1.86,0.83,5.73,0.0
+nitrobenzene,argo:gpt-4o,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x5,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,4.92,1.47,0.66,4.67,0.0
+phenol,argo:gpt-4o,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x5,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,,6.53,0.94,0.42,6.19,0.0
+pyridine,argo:gpt-4o,compute,live,0,0,5,0.0,FAIL,method x5; charge x5; multiplicity x5; functional x5; basis x5; tier x5; integrity verdict surfaced x5,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,,6.37,1.7,0.76,6.0,0.0
+
+model: argo:gpt-5.5
+model latency: llm_s=39.26 ± 46.91 (SE 6.99) [n=45]  turns=2.24 ± 0.93 (SE 0.14) [n=45]  tool_calls=1.13 ± 0.89 (SE 0.13) [n=45]
+acrolein,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,,57.24,7.43,3.32,21.9,35.34
+aniline,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,124.35,3.85,1.72,22.71,101.64
+benzaldehyde,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,259.18,15.22,6.81,27.81,231.37
+ferrocene,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,,141.13,103.71,46.38,135.07,6.06
+formaldehyde,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,,34.13,4.45,1.99,24.71,9.41
+furan,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,,53.09,0.74,0.33,24.33,28.76
+nitrobenzene,argo:gpt-5.5,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,177.18,64.21,28.72,35.07,141.77
+phenol,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,,145.56,6.91,3.09,33.17,112.39
+pyridine,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,,89.37,6.82,3.05,28.57,60.8
 
 model: argo:o3
-acrolein,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,
-aniline,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,
-benzaldehyde,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,
-ferrocene,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,
-formaldehyde,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,
-furan,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,
-nitrobenzene,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,
-phenol,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,
-pyridine,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,
+model latency: llm_s=30.22 ± 17.78 (SE 2.65) [n=45]  turns=2.78 ± 0.79 (SE 0.12) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+acrolein,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,,66.24,7.44,3.33,29.44,36.8
+aniline,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,136.35,11.77,5.26,31.0,105.34
+benzaldehyde,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,254.39,12.33,5.51,18.97,235.43
+ferrocene,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,,31.5,3.32,1.48,24.87,6.63
+formaldehyde,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,,61.2,47.54,21.26,51.23,9.97
+furan,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,,55.82,7.55,3.38,27.33,28.5
+nitrobenzene,argo:o3,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,172.25,85.47,38.22,25.87,146.33
+phenol,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,,141.32,7.37,3.3,31.49,109.83
+pyridine,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,,94.02,6.42,2.87,31.82,62.19
+
+model: argo:o4-mini
+model latency: llm_s=38.51 ± 7.51 (SE 1.13) [n=44]  turns=2.55 ± 0.66 (SE 0.1) [n=44]  tool_calls=1.05 ± 0.21 (SE 0.03) [n=44]
+acrolein,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,8,,70.64,8.92,3.99,34.8,35.84
+aniline,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,145.27,5.91,2.64,39.9,105.36
+benzaldehyde,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,14,271.19,15.2,6.8,37.38,233.8
+ferrocene,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,n_atoms,21,21,41.34,8.25,3.69,33.55,7.79
+formaldehyde,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,4,,46.39,7.41,3.32,36.71,9.67
+furan,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,9,9,76.42,18.87,8.44,41.35,34.82
+nitrobenzene,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,14,,216.35,6.22,2.78,39.15,177.2
+phenol,argo:o4-mini,compute,live,4,1,5,0.8,PASS,ERRORED (data corruption in transit) x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,13,13,148.5,7.15,3.57,39.41,109.1
+pyridine,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,n_atoms,11,,108.95,5.74,2.57,44.47,64.47
+
+# engine (DFT compute) wall-time per molecule — TASK-bound (independent of the calling model)
+engine_s[acrolein]: 34.16 ± 10.7 (SE 1.51) [n=50]
+engine_s[aniline]: 95.27 ± 28.67 (SE 4.05) [n=50]
+engine_s[benzaldehyde]: 212.61 ± 64.6 (SE 9.14) [n=50]
+engine_s[ferrocene]: 5.47 ± 3.02 (SE 0.43) [n=50]
+engine_s[formaldehyde]: 7.74 ± 3.93 (SE 0.56) [n=50]
+engine_s[furan]: 23.52 ± 12.58 (SE 1.78) [n=50]
+engine_s[nitrobenzene]: 125.45 ± 81.45 (SE 11.76) [n=48]
+engine_s[phenol]: 86.45 ± 47.1 (SE 6.73) [n=49]
+engine_s[pyridine]: 49.29 ± 24.98 (SE 3.53) [n=50]

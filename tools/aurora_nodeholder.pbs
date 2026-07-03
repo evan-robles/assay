@@ -37,12 +37,15 @@ NODES_FILE="$REPO/.sweep_nodes"
 READY_FILE="$REPO/.sweep_ready"
 GEN_FILE="$REPO/.sweep_gen"        # generation counter — bumped each (re)allocation
 DONE_FILE="$REPO/.sweep_done"      # login-side writes this when the sweep completes
+NSEL_FILE="$REPO/.sweep_nsel"      # login-side writes desired node count for the clone
 STATE_FILE="$REPO/.holder_resubmits"
 
 # Self-resubmit caps (mirrors the MD submit_multi.sh guards).
 MAX_RESUBMITS="${ASSAY_MAX_RESUBMITS:-100}"
-# Node count for the clone — inherit whatever THIS job was given (so a select=5
-# job re-clones as select=5). Fall back to the directive default.
+# Node count for the clone — DEFAULT is whatever THIS job was given (so a select=5
+# job re-clones as select=5). If the login-side autorelaunch has published a
+# smaller count to .sweep_nsel (= number of models still needing compute), the
+# clone shrinks to that instead (see do_clone). Shrink-only: never grows past this.
 NSEL=$(sort -u "$PBS_NODEFILE" | wc -l | tr -d ' ')
 
 # Publish the unique allocated compute-node hostnames + bump the generation so a
@@ -58,35 +61,65 @@ cat "$NODES_FILE" | sed 's/^/    /'
 echo "  Self-cloning on SIGTERM (walltime) until .sweep_done exists."
 echo "════════════════════════════════════════════════════════════════════"
 
-# ── SIGTERM handler: clone this job so the allocation continues past walltime ──
-# PBS sends SIGTERM shortly before the hard walltime kill. On receipt: if the
-# sweep is already done, exit clean; else qsub a fresh copy of THIS script (same
-# node count) so a new allocation comes up and the login-side relauncher resumes
-# the sweep against it. Guarded by a resubmit-count cap so it can't loop forever.
+# ── Self-clone: submit the NEXT allocation EARLY (before this one dies) ────────
+# The clone enters the PBS queue from scratch and may wait behind other jobs. To
+# avoid an idle GAP between cycles, submit it ~CLONE_LEAD_SEC before walltime so
+# its queue-wait overlaps the tail of THIS cycle (and it may already be RUNNING
+# when this one dies). Cloning is done AT MOST ONCE per holder (the _cloned
+# guard), whether triggered by the early timer or by the SIGTERM fallback.
+# CLONE_LEAD_SEC default 600 (10 min). WALLTIME_SEC must match the #PBS walltime.
+CLONE_LEAD_SEC="${ASSAY_CLONE_LEAD_SEC:-600}"
+WALLTIME_SEC="${ASSAY_WALLTIME_SEC:-3600}"   # 01:00:00; keep in sync with directive
+EARLY_SLEEP=$(( WALLTIME_SEC - CLONE_LEAD_SEC ))
+[ "$EARLY_SLEEP" -lt 30 ] && EARLY_SLEEP=30
+
 _cloned=0
-handle_term() {
-    [ "$_cloned" -eq 1 ] && return; _cloned=1
-    echo "[holder] SIGTERM at walltime (gen=$gen)."
+do_clone() {   # submit exactly one clone; guarded + respects .sweep_done + cap
+    [ "$_cloned" -eq 1 ] && return 0
     if [ -f "$DONE_FILE" ]; then
-        echo "[holder] .sweep_done present — sweep complete, NOT cloning. Exiting."
-        rm -f "$STATE_FILE"; exit 0
+        echo "[holder] .sweep_done present — sweep complete, NOT cloning."
+        return 1
     fi
     rc=$(cat "$STATE_FILE" 2>/dev/null || echo 0)
     if [ "$rc" -ge "$MAX_RESUBMITS" ]; then
-        echo "[holder] hit MAX_RESUBMITS ($MAX_RESUBMITS) — NOT cloning."; exit 4
+        echo "[holder] hit MAX_RESUBMITS ($MAX_RESUBMITS) — NOT cloning."
+        return 1
     fi
+    _cloned=1
     rc=$(( rc + 1 )); echo "$rc" > "$STATE_FILE"
-    echo "[holder] cloning self (resubmit #$rc, select=$NSEL)…"
-    ( cd "$REPO" && qsub -l select="$NSEL" tools/aurora_nodeholder.pbs ) \
+    # Shrink-to-unfinished: the login-side autorelaunch publishes the number of
+    # models still needing compute to .sweep_nsel. Clone with that many nodes so
+    # finished models stop holding nodes. Guard rails: must be a positive integer,
+    # never MORE than this job had (shrink only, never grow), floor 1.
+    clone_sel="$NSEL"
+    want=$(tr -dc '0-9' < "$NSEL_FILE" 2>/dev/null)
+    if [ -n "$want" ] && [ "$want" -ge 1 ] 2>/dev/null; then
+        if [ "$want" -le "$NSEL" ]; then clone_sel="$want"
+        else clone_sel="$NSEL"; fi
+    fi
+    echo "[holder] submitting clone EARLY (resubmit #$rc, select=$clone_sel [had $NSEL, wanted ${want:-n/a}], lead=${CLONE_LEAD_SEC}s)…"
+    ( cd "$REPO" && qsub -l select="$clone_sel" tools/aurora_nodeholder.pbs ) \
         && echo "[holder] clone submitted." \
-        || echo "[holder] clone qsub FAILED."
-    # brief grace so PBS logs flush before the hard kill
-    sleep 5
+        || { echo "[holder] clone qsub FAILED."; _cloned=0; }
+}
+
+# SIGTERM fallback: if walltime is hit before/without the early submit (e.g.
+# CLONE_LEAD_SEC misconfigured, or PBS killed early), still clone on the way out.
+handle_term() {
+    echo "[holder] SIGTERM at walltime (gen=$gen)."
+    do_clone
+    sleep 5   # brief grace so PBS logs flush before the hard kill
+    exit 0
 }
 trap handle_term TERM INT
 
-# Keep the allocation alive for the walltime. `wait` (not bare sleep) so the
-# SIGTERM trap fires promptly instead of being queued behind an uninterruptible
-# sleep.
+# Phase 1: hold until ~CLONE_LEAD_SEC before walltime, then submit the clone EARLY
+echo "[holder] holding ${EARLY_SLEEP}s, then submitting clone ~${CLONE_LEAD_SEC}s before walltime…"
+sleep "$EARLY_SLEEP" &
+wait $!
+do_clone
+
+# Phase 2: keep holding the (still-alive) allocation until PBS SIGTERM at walltime.
+echo "[holder] clone away; holding remaining ~${CLONE_LEAD_SEC}s until walltime."
 sleep infinity &
 wait $!

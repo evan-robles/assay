@@ -107,6 +107,60 @@ _REPO = Path(__file__).resolve().parent.parent
 _RUNS_DIR = _REPO / "benchmarks" / "runs"
 
 
+class RemoteHostUnreachable(RuntimeError):
+    """The engine could not run because the remote compute host
+    (CHEMKIT_REMOTE_HOST) was unreachable over ssh — e.g. the PBS allocation
+    holding those nodes expired mid-sweep, so `ssh <node> …` fails at the
+    transport layer (rc 255 / connection refused / no route / timeout) BEFORE the
+    chemistry ever executes.
+
+    This is an INFRASTRUCTURE fault, NOT a model fidelity failure and NOT a
+    chemistry (non-)convergence. It must never be scored as a FAIL and must never
+    consume a repeat slot: a run that hits it is flagged ERRORED (exit 2) with no
+    scored result, so resume re-runs that slot once live nodes are back. Without
+    this, a dead node makes every attempt score `engine_s=0.0` FAIL and pollute
+    the benchmark with artifacts (see the 2026-07-03 fukui dead-node incident)."""
+
+
+# ssh transport-failure signatures. `ssh` exits 255 for ANY connection-level
+# failure; the stderr strings catch cases where a wrapper remaps the code. These
+# indicate the HOST was unreachable, distinct from the remote command running and
+# failing (a real chemistry error, which returns the engine's own nonzero code
+# with chemistry stderr). Matched case-insensitively against the captured stderr.
+_SSH_UNREACHABLE_MARKERS = (
+    "connection refused",
+    "connection timed out",
+    "connection closed",
+    "no route to host",
+    "could not resolve hostname",
+    "name or service not known",
+    "operation timed out",
+    "host is down",
+    "network is unreachable",
+    "permission denied",           # key/agent lost with the allocation
+    "ssh: connect to host",
+    "kex_exchange_identification",
+    "broken pipe",
+)
+
+
+def _is_ssh_unreachable(returncode: int, stderr: str) -> bool:
+    """True if a nonzero engine subprocess looks like an ssh TRANSPORT failure to
+    the remote compute host (dead allocation), not a chemistry error.
+
+    Only meaningful when CHEMKIT_REMOTE_HOST is set (engine calls are ssh-wrapped
+    by _maybe_ssh). rc 255 is ssh's canonical connection-failure code; we also
+    scan stderr for the classic connection-error phrases in case the code is
+    remapped. A normal engine chemistry failure runs ON the (reachable) node and
+    returns the engine's own code with chemistry stderr, so it won't match."""
+    if not os.environ.get("CHEMKIT_REMOTE_HOST", "").strip():
+        return False  # engine ran locally; any failure is a real (chem) error
+    if returncode == 255:
+        return True
+    low = (stderr or "").lower()
+    return any(mark in low for mark in _SSH_UNREACHABLE_MARKERS)
+
+
 def _scratch_tempdir():
     """A TemporaryDirectory for engine --out paths.
 
@@ -591,6 +645,19 @@ def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratc
     """
     _SCRATCH = Path(scratch)
     if proc.returncode != 0:
+        # FIRST: is this an ssh TRANSPORT failure to a dead compute node (expired
+        # allocation), rather than a chemistry error? If so it is an infrastructure
+        # fault — raise a distinct exception so main() flags the run ERRORED (exit
+        # 2, no scored result, no repeat slot consumed) instead of scoring a bogus
+        # engine_s=0.0 FAIL against the model. This must fire even for
+        # tolerate_failure specs: a dead node is never an "expected chemistry
+        # failure". (See the 2026-07-03 fukui dead-node incident.)
+        if _is_ssh_unreachable(proc.returncode, proc.stderr):
+            raise RemoteHostUnreachable(
+                f"CHEMKIT_REMOTE_HOST={os.environ.get('CHEMKIT_REMOTE_HOST','')!r} "
+                f"unreachable over ssh (rc={proc.returncode}): "
+                f"{(proc.stderr or '').strip()[:300]}"
+            )
         # A chemistry failure (non-convergence, integrity gate abort, or an
         # outright engine/xtb crash) exits nonzero. For an expect=failure spec
         # this is the EXPECTED outcome, so callers pass tolerate_failure=True to
@@ -1807,6 +1874,14 @@ def run_live_agent(spec: Dict[str, Any],
                         )
                     _eng_s += time.monotonic() - _teng
                     tool_out = json.dumps(last_result_json)
+                except RemoteHostUnreachable:
+                    # Dead compute node (expired allocation): do NOT swallow this
+                    # into a tool-error the agent then "reports" (that path is what
+                    # produced the engine_s=0.0 FAIL artifacts). Propagate so
+                    # main() flags the whole run ERRORED and excludes it — the slot
+                    # is re-run on resume once live nodes return.
+                    _dump_transcript()
+                    raise
                 except Exception as e:  # noqa: BLE001
                     tool_out = json.dumps({"error": str(e)})
                 messages.append({"role": "tool", "tool_call_id": call.id,
@@ -2264,7 +2339,8 @@ def main() -> int:
             _max_retries = max(0, int(os.environ.get("CHEMKIT_LIVE_MAX_RETRIES", "5")))
         except ValueError:
             _max_retries = 5
-        for _attempt in range(_max_retries + 1):
+        try:
+          for _attempt in range(_max_retries + 1):
             agent_run = run_live_agent(spec, run_dir=run_dir, model=model)
             if agent_run is None:
                 break  # agent died (not transport corruption) — handled below
@@ -2279,6 +2355,24 @@ def main() -> int:
                 print(f"[live] encoding corruption persisted after "
                       f"{_max_retries} retries — giving up; run will be flagged "
                       f"ERRORED and excluded from scoring.")
+        except RemoteHostUnreachable as e:
+            # The compute node died mid-run (expired PBS allocation). This is an
+            # infrastructure fault, NOT a model failure: flag the run ERRORED
+            # (exit 2), write an ERROR result.json so collect_results excludes it
+            # from the pass-rate, and — critically — record error='remote_host_
+            # unreachable' so parallel_suite's resume does NOT count this as a
+            # filled repeat slot (it re-runs the slot once live nodes return).
+            print(f"\n==> ERROR: remote compute host unreachable — "
+                  f"{e}\n    Flagged ERRORED and excluded from scoring "
+                  f"(not a model failure); the repeat slot will be re-run.")
+            (run_dir / "result.json").write_text(json.dumps({
+                "mode": mode, "layer_A_determinism": det_ok,
+                "overall": "ERROR", "exit_code": 2, "scored": False,
+                "error": "remote_host_unreachable",
+                "error_detail": str(e),
+            }, indent=2))
+            print(f"\nArtifacts: {run_dir}")
+            return _restore_tee(2)
     if agent_run is None and args.agent_run:
         agent_run = json.loads(Path(args.agent_run).read_text())
     if agent_run is None and args.live:
