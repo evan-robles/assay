@@ -1,0 +1,131 @@
+case,model,expect,mode,n_pass,n_error,n_runs,pass_rate,modal_verdict,fail_tally,method,solvent,functional,basis,tier,value_field,truth_value,reported_value_latest,total_s_mean,total_s_std,total_s_se,llm_s_mean,engine_s_mean
+model: argo:claude-haiku-4.5
+model latency: llm_s=13.32 ± 4.22 (SE 0.63) [n=45]  turns=2.36 ± 0.48 (SE 0.07) [n=45]  tool_calls=1.02 ± 0.15 (SE 0.02) [n=45]
+aniline,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,5.30482,34.15,8.83,3.95,15.83,18.32
+benzene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,6.63109,24.14,3.05,1.37,13.27,10.87
+ethylene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,7.43572,21.98,8.03,3.59,17.44,4.54
+formaldehyde,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,5.86967,15.41,2.5,1.12,10.85,4.57
+furan,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,6.25736,22.47,3.52,1.58,13.31,8.92
+oxygen,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x4,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,5.28806,16.1,1.19,0.53,11.85,4.25
+pyridine,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,6.13981,25.39,2.59,1.16,13.57,11.82
+tempo,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,110.01,3.12,1.39,12.42,97.59
+water,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,8.94067,15.32,1.01,0.45,11.34,3.98
+
+model: argo:claude-opus-4.8
+model latency: llm_s=22.67 ± 6.82 (SE 1.02) [n=45]  turns=2.0 ± 0.0 (SE 0.0) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,5.30482,39.32,6.15,2.75,20.71,18.62
+benzene,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,6.63109,30.43,2.2,0.98,19.71,10.71
+ethylene,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,7.43572,24.37,5.4,2.42,19.79,4.58
+formaldehyde,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,5.86967,25.73,4.8,2.15,21.19,4.54
+furan,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,6.25736,31.29,6.03,2.7,22.37,8.93
+oxygen,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,5.28806,34.89,13.14,5.88,30.49,4.4
+pyridine,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,6.13981,30.84,1.89,0.85,19.0,11.85
+tempo,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,124.68,6.83,3.05,26.97,97.71
+water,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,8.94067,27.77,6.77,3.03,23.83,3.93
+
+model: argo:claude-sonnet-4.6
+model latency: llm_s=29.89 ± 3.75 (SE 0.56) [n=45]  turns=2.53 ± 0.5 (SE 0.08) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,5.30482,47.71,6.97,3.12,29.43,18.28
+benzene,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,6.63109,42.88,5.3,2.37,32.04,10.84
+ethylene,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,7.43572,34.11,6.44,2.88,29.6,4.52
+formaldehyde,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,5.86967,32.4,2.89,1.29,27.81,4.59
+furan,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,6.25736,37.31,2.61,1.17,28.35,8.97
+oxygen,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,5.28806,33.69,2.87,1.28,29.41,4.28
+pyridine,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,6.13981,41.47,2.21,0.99,29.63,11.84
+tempo,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,132.43,4.51,2.02,32.77,99.65
+water,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,8.94067,33.84,2.63,1.18,29.97,3.87
+
+model: argo:gemini-2.5-flash
+model latency: llm_s=10.35 ± 3.95 (SE 0.59) [n=45]  turns=2.29 ± 0.51 (SE 0.08) [n=45]  tool_calls=1.29 ± 0.51 (SE 0.08) [n=45]
+aniline,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,5.30482,32.3,12.9,5.77,12.26,15.88
+benzene,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,6.63109,20.35,2.86,1.28,9.56,10.79
+ethylene,argo:gemini-2.5-flash,compute,live,4,0,5,0.8,PASS,solvent x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,7.43572,14.62,3.48,1.56,7.97,4.75
+formaldehyde,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,5.86967,13.81,2.93,1.31,8.62,4.55
+furan,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,6.25736,19.35,2.27,1.01,9.35,8.71
+oxygen,argo:gemini-2.5-flash,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; reported homo_lumo_gap_eV x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,5.28806,12.2,1.77,0.79,8.5,3.47
+pyridine,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,6.13981,23.23,4.46,1.99,11.07,11.53
+tempo,argo:gemini-2.5-flash,compute,live,4,0,5,0.8,PASS,solvent x1,b3lyp/def2-tzvp,1.0,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,118.74,20.24,9.05,13.89,103.31
+water,argo:gemini-2.5-flash,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; reported homo_lumo_gap_eV x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,8.94067,15.99,5.52,2.47,11.92,3.2
+
+model: argo:gemini-2.5-pro
+model latency: llm_s=19.65 ± 6.0 (SE 0.89) [n=45]  turns=2.4 ± 0.65 (SE 0.1) [n=45]  tool_calls=1.29 ± 0.55 (SE 0.08) [n=45]
+aniline,argo:gemini-2.5-pro,compute,live,2,0,5,0.4,FAIL,method x3; charge x3; multiplicity x3; functional x3; basis x3; tier x3; reported homo_lumo_gap_eV x3; integrity verdict surfaced x3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,,28.7,11.75,5.26,16.63,10.33
+benzene,argo:gemini-2.5-pro,compute,live,1,0,5,0.2,FAIL,method x4; charge x4; multiplicity x4; functional x4; basis x4; tier x4; reported homo_lumo_gap_eV x4; integrity verdict surfaced x4,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,,30.12,9.94,4.45,25.82,3.04
+ethylene,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,7.43572,29.08,7.19,3.22,22.14,6.94
+formaldehyde,argo:gemini-2.5-pro,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; reported homo_lumo_gap_eV x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,,21.8,6.34,2.84,17.84,3.73
+furan,argo:gemini-2.5-pro,compute,live,3,0,5,0.6,PASS,method x2; charge x2; multiplicity x2; functional x2; basis x2; tier x2; reported homo_lumo_gap_eV x2; integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,6.25736,25.14,4.64,2.07,18.83,5.37
+oxygen,argo:gemini-2.5-pro,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; reported homo_lumo_gap_eV x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,5.28806,24.37,6.42,2.87,20.22,3.43
+pyridine,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,6.13981,32.16,2.11,0.94,20.48,11.68
+tempo,argo:gemini-2.5-pro,compute,live,4,0,5,0.8,PASS,reported homo_lumo_gap_eV x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,113.43,2.7,1.21,16.61,96.82
+water,argo:gemini-2.5-pro,compute,live,3,0,5,0.6,PASS,reported homo_lumo_gap_eV x2; method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,-8.60372,22.76,3.72,1.66,18.25,3.09
+
+model: argo:gpt-4.1-nano
+model latency: llm_s=4.26 ± 1.97 (SE 0.29) [n=45]  turns=2.67 ± 1.02 (SE 0.15) [n=45]  tool_calls=1.42 ± 0.78 (SE 0.12) [n=45]
+aniline,argo:gpt-4.1-nano,compute,live,1,0,5,0.2,FAIL,reported homo_lumo_gap_eV x4; integrity verdict surfaced x3; method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,5.30482,25.25,11.31,5.06,6.03,12.98
+benzene,argo:gpt-4.1-nano,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,6.63109,17.38,3.24,1.45,4.49,11.04
+ethylene,argo:gpt-4.1-nano,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x3,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,7.43572,7.72,0.78,0.35,3.17,4.55
+formaldehyde,argo:gpt-4.1-nano,compute,live,4,0,5,0.8,PASS,integrity verdict surfaced x4; method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; reported homo_lumo_gap_eV x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,5.86967,6.53,1.23,0.55,2.18,3.72
+furan,argo:gpt-4.1-nano,compute,live,3,0,5,0.6,PASS,integrity verdict surfaced x5; method x2; charge x2; multiplicity x2; functional x2; basis x2; tier x2; reported homo_lumo_gap_eV x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,0,13.08,4.03,1.8,5.21,5.31
+oxygen,argo:gpt-4.1-nano,compute,live,4,0,5,0.8,PASS,integrity verdict surfaced x4; reported homo_lumo_gap_eV x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,5.28806,8.15,1.81,0.81,3.64,4.27
+pyridine,argo:gpt-4.1-nano,compute,live,3,0,5,0.6,PASS,integrity verdict surfaced x5; method x2; charge x2; multiplicity x2; functional x2; basis x2; tier x2; reported homo_lumo_gap_eV x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,,16.06,11.44,5.11,5.33,7.09
+tempo,argo:gpt-4.1-nano,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,104.49,4.92,2.2,4.59,99.27
+water,argo:gpt-4.1-nano,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x4,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,8.94067,8.88,4.74,2.12,3.7,3.94
+
+model: argo:gpt-4o
+model latency: llm_s=5.23 ± 2.72 (SE 0.4) [n=45]  turns=2.16 ± 0.37 (SE 0.05) [n=45]  tool_calls=1.02 ± 0.15 (SE 0.02) [n=45]
+aniline,argo:gpt-4o,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; reported homo_lumo_gap_eV x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,5.30482,23.44,8.38,3.75,7.31,14.78
+benzene,argo:gpt-4o,compute,live,3,0,5,0.6,PASS,method x2; charge x2; multiplicity x2; functional x2; basis x2; tier x2; reported homo_lumo_gap_eV x2; integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,6.63109,14.71,3.32,1.49,6.86,6.59
+ethylene,argo:gpt-4o,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; reported homo_lumo_gap_eV x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,,8.87,0.81,0.36,4.6,3.65
+formaldehyde,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,5.86967,10.41,2.77,1.24,5.04,4.74
+furan,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,6.25736,13.38,0.95,0.42,4.5,8.88
+oxygen,argo:gpt-4o,compute,live,3,0,5,0.6,PASS,method x2; charge x2; multiplicity x2; functional x2; basis x2; tier x2; reported homo_lumo_gap_eV x2; integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,,10.73,2.37,1.06,6.94,2.56
+pyridine,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,6.13981,15.96,0.73,0.33,4.07,11.89
+tempo,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,103.8,5.17,2.31,3.99,99.81
+water,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,8.94067,7.65,0.28,0.12,3.74,3.91
+
+model: argo:gpt-5.5
+model latency: llm_s=17.1 ± 2.67 (SE 0.4) [n=45]  turns=2.02 ± 0.15 (SE 0.02) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,5.30482,35.78,8.68,3.88,17.38,18.4
+benzene,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,6.63109,29.59,2.68,1.2,18.72,10.87
+ethylene,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,7.43572,20.52,1.76,0.79,15.96,4.55
+formaldehyde,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,5.86967,20.67,2.55,1.14,16.01,4.65
+furan,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,6.25736,26.44,3.61,1.61,17.5,8.94
+oxygen,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,5.28806,21.1,2.8,1.25,16.82,4.27
+pyridine,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,6.13981,27.76,3.11,1.39,15.95,11.81
+tempo,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,118.55,2.98,1.33,18.93,99.62
+water,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,8.94067,20.52,2.19,0.98,16.62,3.9
+
+model: argo:o3
+model latency: llm_s=22.71 ± 7.24 (SE 1.08) [n=45]  turns=3.0 ± 1.02 (SE 0.15) [n=45]  tool_calls=1.13 ± 0.34 (SE 0.05) [n=45]
+aniline,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,5.30482,40.26,6.8,3.04,21.56,18.69
+benzene,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,6.63109,28.81,6.68,2.99,17.93,10.88
+ethylene,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,7.43572,31.8,5.85,2.62,26.29,5.51
+formaldehyde,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,5.86967,28.43,10.64,4.76,22.9,5.52
+furan,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,6.25736,35.27,11.08,4.96,24.52,10.75
+oxygen,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,5.28806,30.25,3.53,1.58,24.2,6.04
+pyridine,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,6.13981,29.68,2.77,1.24,17.87,11.81
+tempo,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,123.29,13.16,5.88,24.0,99.28
+water,argo:o3,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,8.94067,29.86,10.22,4.57,25.11,4.75
+
+model: argo:o4-mini
+model latency: llm_s=30.88 ± 7.84 (SE 1.17) [n=45]  turns=3.16 ± 1.17 (SE 0.17) [n=45]  tool_calls=1.56 ± 0.97 (SE 0.14) [n=45]
+aniline,argo:o4-mini,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; reported homo_lumo_gap_eV x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.30482,5.30482,51.59,21.75,9.73,32.49,16.33
+benzene,argo:o4-mini,compute,live,4,0,5,0.8,PASS,method x1; charge x1; multiplicity x1; functional x1; basis x1; tier x1; reported homo_lumo_gap_eV x1; integrity verdict surfaced x1,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.63109,,44.12,13.63,6.1,32.89,9.34
+ethylene,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,7.43572,7.43572,33.22,4.15,1.85,28.31,4.67
+formaldehyde,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.86967,5.86967,34.45,8.45,3.78,29.65,4.56
+furan,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.25736,6.25736,34.88,9.35,4.18,25.3,8.88
+oxygen,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,5.28806,5.28806,41.08,3.05,1.36,36.07,4.32
+pyridine,argo:o4-mini,compute,live,3,0,5,0.6,PASS,method x2; charge x2; multiplicity x2; functional x2; basis x2; tier x2; reported homo_lumo_gap_eV x2; integrity verdict surfaced x2,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,6.13981,,41.08,9.05,4.05,32.93,7.19
+tempo,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,3.87242,3.87242,125.91,10.6,4.74,29.38,95.82
+water,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,b3lyp/def2-tzvp,,b3lyp,def2-tzvp,,homo_lumo_gap_eV,8.94067,8.94067,35.39,3.72,1.66,30.87,3.86
+
+# engine (DFT compute) wall-time per molecule — TASK-bound (independent of the calling model)
+engine_s[aniline]: 16.26 ± 8.35 (SE 1.18) [n=50]
+engine_s[benzene]: 9.5 ± 3.93 (SE 0.56) [n=50]
+engine_s[ethylene]: 4.83 ± 1.31 (SE 0.19) [n=50]
+engine_s[formaldehyde]: 4.52 ± 1.16 (SE 0.16) [n=50]
+engine_s[furan]: 8.36 ± 2.8 (SE 0.4) [n=50]
+engine_s[oxygen]: 4.13 ± 1.5 (SE 0.21) [n=50]
+engine_s[pyridine]: 10.85 ± 3.24 (SE 0.46) [n=50]
+engine_s[tempo]: 98.89 ± 4.88 (SE 0.69) [n=50]
+engine_s[water]: 3.84 ± 0.99 (SE 0.14) [n=50]
