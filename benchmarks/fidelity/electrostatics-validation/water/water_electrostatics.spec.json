@@ -2,7 +2,7 @@
   "name": "water_electrostatics",
   "skill": "electrostatics",
   "xyz": "benchmarks/fidelity/electrostatics-validation/water/water.xyz",
-  "prompt": "Run the electrostatics task on water using the GFN2-xTB method in the gas phase. Report the dipole moment in Debye as the headline value (the electrostatics task also returns a total energy and partial charges \u2014 do NOT report those as the headline value), and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the electrostatics task on water using the GFN2-xTB method in the gas phase. Report the dipole moment in Debye as the headline value (the electrostatics task also returns a total energy and partial charges \u2014 do NOT report those as the headline value), and state the method used. Use charge 0 and multiplicity 1. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "xtb"

@@ -151,7 +151,53 @@ format) keyed by system+property, plus a machine-readable
 
 ---
 
-## 7. Wk1 action checklist
+## 7. Sweep-results integrity gate (BEFORE committing any summary.csv)
+
+> **Binding.** A fidelity sweep runs unattended across many short PBS
+> allocations (see `tools/aurora_*`). Allocations expire and nodes die mid-run,
+> so a raw `summary.csv` can be contaminated by **infrastructure artifacts** that
+> masquerade as model failures. NEVER commit a sweep `summary.csv` (or report its
+> pass-rates) until it passes BOTH checks below. This exists because the
+> 2026-07-03 fukui run initially reported gpt-4o=0.22 / gpt-4.1-nano=0.20, which
+> were dominated by dead-node artifacts, not model behavior.
+
+**Check 1 — purge dead-node artifacts (rc=255).** When `CHEMKIT_REMOTE_HOST`
+(the compute node) dies mid-run, the engine `ssh` fails at the transport layer
+(**rc=255** / "connection refused" / "no route to host" / "timed out") *before
+any chemistry runs*. The agent is handed that error, writes a "calculation
+failed" report, and it scores as a bogus `engine_s=0.0` FAIL. These are NOT model
+failures.
+- Scan every FAIL run's `transcript.json` for a tool result containing
+  `"engine run failed (rc=255)"` (equivalently, a new-driver `result.json` with
+  `error="remote_host_unreachable"`).
+- **Delete** those run dirs and **re-run** the freed slots on a LIVE allocation
+  (the fixed `fidelity_driver.py` now flags them ERROR/exit-2 and
+  `parallel_suite.sh` `_completed_runs` no longer counts them, so a clean re-run
+  refills them automatically).
+- Re-scan until **zero rc=255** remain, THEN regenerate `summary.csv`.
+
+**Check 2 — confirm every rc=1 (engine-ran) FAIL is scientifically valid.** A
+FAIL where the engine actually executed and exited nonzero (**rc=1**, engine
+`.out` present) must be inspected — it is only legitimate benchmark data if it
+reflects genuine *model* behavior, not a harness/spec bug.
+- Read each rc=1 run's engine `.out` and the agent's `chemkit` tool `args`.
+- **Valid (KEEP):** the model made a real fidelity error — e.g. it invented a
+  nonexistent CLI flag (`--phase`, `--geometry`, `--convergence`,
+  `--environment` were seen on 2026-07-03) that argparse rejected, or passed a
+  wrong charge/mult. These SHOULD score FAIL; they are the signal the benchmark
+  measures.
+- **Invalid (FIX, don't keep):** the failure is a spec/engine/harness defect (a
+  correct invocation the engine mishandled, a bad reference input, an env
+  problem) — fix the root cause and re-run; do not let it count against the model.
+- Record the rc=1 classification (which molecules, which flag/mistake) in the
+  commit message so the pass-rate is auditable.
+
+Only after Check 1 = 0 remaining and every Check 2 rc=1 is confirmed valid may
+the corrected `summary.csv` be committed.
+
+---
+
+## 8. Wk1 action checklist
 
 - [ ] Approve property-class list (§2) and per-class target N.
 - [ ] Lock the anchor molecule list (§3) and gather `.xyz` inputs via

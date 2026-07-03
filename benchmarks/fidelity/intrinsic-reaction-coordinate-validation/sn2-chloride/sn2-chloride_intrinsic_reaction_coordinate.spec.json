@@ -2,7 +2,7 @@
   "name": "sn2-chloride_irc",
   "skill": "intrinsic-reaction-coordinate",
   "xyz": "benchmarks/fidelity/intrinsic-reaction-coordinate-validation/sn2-chloride/sn2-chloride.xyz",
-  "prompt": "Run the intrinsic-reaction-coordinate task on the sn2-chloride transition-state geometry using the PM7 (mopac) method in the gas phase with charge -1. Report the forward and reverse endpoint energies, the energy drops in each direction, and whether the two endpoints are distinct. State the method and charge used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the intrinsic-reaction-coordinate task on the sn2-chloride transition-state geometry using the PM7 (mopac) method in the gas phase with charge -1. Report the forward and reverse endpoint energies, the energy drops in each direction, and whether the two endpoints are distinct. State the method and charge used. Use multiplicity 1. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "mopac",

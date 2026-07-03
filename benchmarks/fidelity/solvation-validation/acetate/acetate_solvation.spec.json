@@ -2,7 +2,7 @@
   "name": "acetate_solvation",
   "skill": "solvation",
   "xyz": "benchmarks/fidelity/solvation-validation/acetate/acetate.xyz",
-  "prompt": "Run the solvation task on the acetate anion (CH3COO-, charge -1) using the GFN2-xTB method in implicit water solvent. Report the solvation free energy delta_G_solv in kcal/mol as the headline value (the solvation task also returns this quantity in eV/hartree and the separate gas- and solution-phase energies \u2014 do NOT report those as the headline value), and state the method and charge used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the solvation task on the acetate anion (CH3COO-, charge -1) using the GFN2-xTB method in implicit water solvent. Report the solvation free energy delta_G_solv in kcal/mol as the headline value (the solvation task also returns this quantity in eV/hartree and the separate gas- and solution-phase energies \u2014 do NOT report those as the headline value), and state the method and charge used. Use multiplicity 1. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "xtb"
