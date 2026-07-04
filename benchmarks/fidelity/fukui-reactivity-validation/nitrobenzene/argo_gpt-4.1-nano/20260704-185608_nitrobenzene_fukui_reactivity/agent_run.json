@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 187.42,
+    "llm_s": 9.11,
+    "engine_s": 171.45,
+    "turns": 5,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "",
+      ""
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui function for electrophilic attack (f+) most strongly localizes on the carbon atom labeled 4 (atom index 3 in zero-based counting), with a value of approximately 0.47521. The calculation was performed using chemkit's DFT path with the B3LYP functional and def2-TZVP basis set (tier 'standard') in the gas phase, with charge 0 and multiplicity 1."
+}

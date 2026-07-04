@@ -1,0 +1,22 @@
+# chemkit live log
+# subcommand : fukui
+# args       : /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpb90v50_d/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpb90v50_d/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_o4-mini/20260704-183000_formaldehyde_fukui_reactivity
+# started    : 20260704-183017
+# ============================================================
+usage: chemkit fukui [-h] --method {xtb,mopac,dft,hf} [--charge CHARGE]
+                     [--mult MULTIPLICITY] [--solvent SOLVENT]
+                     [--solvent-model {ddcosmo,cpcm,iefpcm}]
+                     [--tier {fast,standard,accurate}]
+                     [--functional FUNCTIONAL] [--basis BASIS] [--density-fit]
+                     [--out OUT] [--accept-defaults]
+                     [--stdout {json,path,none}] [--allow-unconverged]
+                     [--verbose VERBOSE] [--cation-mult CATION_MULT]
+                     [--anion-mult ANION_MULT] [--no-plot]
+                     input
+chemkit fukui: error: the following arguments are required: --method
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

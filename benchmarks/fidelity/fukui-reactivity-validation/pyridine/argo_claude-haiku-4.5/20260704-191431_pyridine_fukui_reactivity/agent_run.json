@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 80.54,
+    "llm_s": 20.07,
+    "engine_s": 59.89,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity (f\u207a, f\u207b, dual descriptor) calculated for pyridine using DFT at the B3LYP/def2-TZVP level (tier standard, PySCF), gas phase, charge 0, multiplicity 1. Geometry: user-supplied fixed structure (11 atoms). The most electrophilic site is the nitrogen atom with f\u207a = 0.4842; the most nucleophilic site is carbon (atom 4, ortho position) with f\u207b = 0.1183. All three SCF states (neutral, cation, anion) converged; charge conservation checks (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000) passed. No warnings reported. The headline value reported is the highest f\u207a (nitrogen, most electrophilic).</prose>\n<parameter name=\"n_atoms\">11"
+}

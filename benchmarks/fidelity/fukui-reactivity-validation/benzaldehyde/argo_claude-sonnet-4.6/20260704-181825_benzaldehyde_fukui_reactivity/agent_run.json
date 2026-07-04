@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 277.08,
+    "llm_s": 44.5,
+    "engine_s": 231.94,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for benzaldehyde (14 atoms) using the fukui-reactivity skill at the B3LYP/def2-TZVP level of theory (PySCF RKS, tier 'standard', exact 4-centre integrals \u2014 no density fitting), in the gas phase, charge 0, multiplicity 1. The N\u00b11 states used doublet multiplicity (cation +1, anion \u22121). Partial charges were obtained via the Mulliken scheme (PySCF). Three separate DFT SCF runs were performed (neutral, cation, anion), all converged cleanly; integrity.trustworthy = true, no warnings reported.\n\nHeadline result: the most electrophilic atom (highest f\u207a, site of nucleophilic attack) is Atom 3 (carbonyl carbon C), with f\u207a = 0.39938965. The most nucleophilic atom (highest f\u207b, site of electrophilic attack) is Atom 1 (carbonyl oxygen O), with f\u207b = 0.23839906. These results are fully consistent with the known chemistry of benzaldehyde: the carbonyl carbon is electrophilic and susceptible to nucleophilic addition, while the oxygen is the Lewis-basic/nucleophilic center. Charge conservation checks passed: sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000.\n\nCommand: cli.py fukui benzaldehyde.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1\nOutput: benzaldehyde_fukui_dft.json; bar chart plot also generated."
+}

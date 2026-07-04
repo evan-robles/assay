@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 263.89,
+    "llm_s": 39.2,
+    "engine_s": 224.09,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary  \nProperty: Condensed Fukui functions (f+ electrophilic, f\u2013 nucleophilic, dual descriptor) for phenol (13 atoms).  \nLevel of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP with **exact four-center integrals** (density fitting OFF) in PySCF 2.x.  \nGeometry provenance: single-point charges on the user-supplied phenol.xyz (no re-optimization); the N, N+1, and N\u2013 states were computed at the same fixed geometry (DFT//DFT).  \nEnvironment: gas phase (no implicit solvent).  \nElectronic state: charge 0, multiplicity 1 (singlet parent); cation and anion states were computed as doublets (charge \u00b11, mult 2).  \nSoftware/backend: chemkit `fukui-reactivity` skill \u2192 PySCF.  \nConvergence & warnings: SCF cycles converged for all three charge states.  The engine issued three WARNINGS (verbatim):  \n\u2022 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n\u2022 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n\u2022 \"common header present\"  \nIntegrity verdict: trustworthy = true.  \nLive log: the run streamed to a `fukui_<timestamp>.out` file (printed when the job started); result JSON saved at /home/erobles/chem-skills/.fidelity_scratch/tmpv32gk8gi/live.json and bar-chart PNG at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_o3/20260704-201458_phenol_fukui_reactivity/agent_call_02_plot.png.\n\nSelected results (Mulliken scheme, indexes 0-based):  \n\u2022 Most electrophilic site: atom 2 (C) with f\u207a = 2.1028319  \n\u2022 Most nucleophilic site: atom 0 (O) with f\u207b = 0.16201477  \nFull f\u207a, f\u207b, f\u2070, and dual-descriptor arrays are included in the JSON file above.\n\nHeadline numeric value  \nThe largest electrophilic Fukui index (f\u207a) obtained is:\n\n2.1028319"
+}

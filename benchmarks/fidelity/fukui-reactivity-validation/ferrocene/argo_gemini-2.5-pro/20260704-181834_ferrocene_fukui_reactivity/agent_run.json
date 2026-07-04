@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.53,
+    "llm_s": 18.37,
+    "engine_s": 9.54,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of ferrocene was performed using the GFN2-xTB semi-empirical tight-binding method in the gas phase, with a charge of 0 and a multiplicity of 1.\n\nThe results indicate that the iron atom (Fe, atom 11) is the site most susceptible to both electrophilic and nucleophilic attack.\n*   **Site most susceptible to nucleophilic attack (f-)**: The iron atom (Fe, atom 11) with an f- value of 0.25938.\n*   **Site most susceptible to electrophilic attack (f+)**: The iron atom (Fe, atom 11) with an f+ value of 0.22885.\n\nThe calculation proceeded without warnings and passed all integrity checks. The sum of f+ and f- indices were confirmed to be 1.0000, consistent with a converged calculation.\n\n**Calculation Details:**\n*   **Property:** Fukui reactivity indices (f+, f-)\n*   **Level of theory:** GFN2-xTB\n*   **Geometry:** The calculation was performed on the user-provided geometry from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`.\n*   **Environment:** Gas phase\n*   **Charge & Multiplicity:** 0 and 1\n*   **Software:** xtb\n*   **Provenance:** The result is computed.\n*   **Integrity:** The calculation is trustworthy. The live output log was written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_gemini-2.5-pro/20260704-181834_ferrocene_fukui_reactivity/agent_call_01.out`"
+}

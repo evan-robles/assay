@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 67.21,
+    "llm_s": 6.17,
+    "engine_s": 60.47,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of pyridine** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Partial charges scheme: Mulliken (PySCF).\n\n- **Most electrophilic site**: Atom **N** (1-based index 1, symbol \"N\", f\u207a = **0.48423**).\n- **Most nucleophilic site**: Atom **C** (1-based index 4, symbol \"C\", f\u207b = **0.11826**).\n\nSCF converged. All f\u207a/f\u207b descriptors sum to 1.0000, confirming charge conservation.\nWarnings surfaced:\n1. \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. \"common header present\"\n\nNo major irregularities reported. Reactivity plots available at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_gpt-4o/20260704-190828_pyridine_fukui_reactivity/agent_call_01_plot.png`."
+}

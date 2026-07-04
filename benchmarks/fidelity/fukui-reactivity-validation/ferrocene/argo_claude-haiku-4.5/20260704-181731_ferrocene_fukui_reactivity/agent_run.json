@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.24,
+    "llm_s": 13.64,
+    "engine_s": 5.97,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": "true</integrity_trustworthy>\n<parameter name=\"n_atoms\">21",
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for ferrocene were computed using GFN2-xTB (semi-empirical tight-binding) in gas phase, charge 0, multiplicity 1 (neutral ground state). The calculation computed Mulliken partial charges for the neutral (N), cation (N\u22121, multiplicity 2), and anion (N+1, multiplicity 2) states, deriving Fukui indices f\u207a (nucleophilicity), f\u207b (electrophilicity), and the dual descriptor (f\u207a \u2212 f\u207b) per atom. The iron center was identified as the most reactive site: f\u207a(Fe) = 0.22886 and f\u207b(Fe) = 0.25938, indicating strong nucleophilic character (negative dual descriptor = \u22120.030527). All integrity checks passed; charge conservation held for both f\u207a and f\u207b indices (sum \u2248 1.0). No warnings. A visualization bar chart was generated. Software: xtb. Geometry: input XYZ file (ferrocene.xyz, 21 atoms), not pre-optimized.</prose>\n<parameter name=\"value\">0.25938191"
+}

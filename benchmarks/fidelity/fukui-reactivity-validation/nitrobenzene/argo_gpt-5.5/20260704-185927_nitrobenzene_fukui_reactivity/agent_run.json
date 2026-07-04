@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 207.32,
+    "llm_s": 27.89,
+    "engine_s": 178.89,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Nitrobenzene Fukui reactivity result** \u2014 computed with chemkit `fukui-reactivity` using DFT tier `standard` with explicit **B3LYP/def2-TZVP** (`--functional b3lyp --basis def2-tzvp`), **gas phase** (`solvent: null`), charge 0, multiplicity 1. Geometry: user-supplied fixed XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`; no geometry optimization was reported by this task. Partial charges: Mulliken charges from PySCF. The N\u22121 cation state used charge +1, multiplicity 2; the N+1 anion state used charge \u22121, multiplicity 2.\n\nHeadline result: the **most electrophilic site** is atom **4** (1-based label), **C**, with **f+ = 0.4964178**. The **most nucleophilic site** is atom **5** (1-based label), **C**, with **f\u2212 = 0.1072882**.\n\nFull returned site descriptors, in input atom order (`symbol`, atom label 1-based):\n- 1 O: f+ 0.47317276, f\u2212 0.097015524, f0 0.28509414, dual 0.37615724\n- 2 O: f+ 0.47344363, f\u2212 0.096773921, f0 0.28510877, dual 0.37666971\n- 3 N: f+ -0.45670088, f\u2212 0.017243458, f0 -0.21972871, dual -0.47394434\n- 4 C: f+ 0.4964178, f\u2212 -0.014292037, f0 0.24106288, dual 0.51070984\n- 5 C: f+ 0.11562656, f\u2212 0.1072882, f0 0.11145738, dual 0.0083383543\n- 6 C: f+ 0.11588204, f\u2212 0.10723661, f0 0.11155932, dual 0.0086454311\n- 7 C: f+ 0.17412423, f\u2212 0.094922441, f0 0.13452334, dual 0.07920179\n- 8 C: f+ 0.1742294, f\u2212 0.094892499, f0 0.13456095, dual 0.079336903\n- 9 C: f+ 0.28913575, f\u2212 0.0083116096, f0 0.14872368, dual 0.28082414\n- 10 H: f+ -0.23168969, f\u2212 0.075212029, f0 -0.078238832, dual -0.30690172\n- 11 H: f+ -0.23181693, f\u2212 0.075202557, f0 -0.078307186, dual -0.30701949\n- 12 H: f+ -0.13372477, f\u2212 0.083883283, f0 -0.024920743, dual -0.21760805\n- 13 H: f+ -0.13379393, f\u2212 0.083881905, f0 -0.024956012, dual -0.21767583\n- 14 H: f+ -0.12430597, f\u2212 0.072428004, f0 -0.025938984, dual -0.19673398\n\nIntegrity verdict from chemkit: `trustworthy: true` (`status: ok`). Warnings/integrity warning-details returned by the tool are reproduced verbatim in the warnings field. Plot path returned by chemkit: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_gpt-5.5/20260704-185927_nitrobenzene_fukui_reactivity/agent_call_01_plot.png`. Exact CLI invocation returned by chemkit: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout path /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpjf1lrml6/live.json`. A live `.out` log path was not included in the chemkit JSON returned to me, so I cannot quote an exact `.out` path without fabricating it."
+}

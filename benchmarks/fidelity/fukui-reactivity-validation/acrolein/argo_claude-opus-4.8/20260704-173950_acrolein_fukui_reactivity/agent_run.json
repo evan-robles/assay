@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 76.54,
+    "llm_s": 26.13,
+    "engine_s": 49.55,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of acrolein (CH2=CH-CHO)** \u2014 condensed Fukui functions from finite-difference Mulliken population analysis of the neutral, cation (N-1), and anion (N+1) states.\n\n**Method-provenance block**\n- **Property:** Condensed Fukui indices (f+, f-, f0) and dual descriptor per atom, from Mulliken charges (PySCF scheme).\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (functional and basis explicitly set to b3lyp / def2-tzvp, matching the standard tier). Exact four-center two-electron integrals (density fitting OFF \u2014 chemkit default).\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`, used as-is (single-point energies at the three charge states; no geometry re-optimization at this level).\n- **Solvent / environment:** **Gas phase** (no implicit solvent; `--accept-defaults` was passed to consent to the documented gas-phase default).\n- **Charge / multiplicity:** Parent neutral, charge 0, multiplicity 1. Cation state: charge +1, multiplicity 2 (doublet, derived). Anion state: charge -1, multiplicity 2 (doublet, derived). Open-shell N\u00b11 states treated as UKS.\n- **Software:** PySCF (via chemkit `fukui` engine subcommand).\n- **Convergence / caveats:** Integrity status **ok**, trustworthy = **true**. Charge conservation checks passed: sum(f+) = 1.0000 and sum(f-) = 1.0000.\n\n**Results (8 atoms: O, C, C, C, H, H, H, H \u2014 1-based labels)**\n- **Most electrophilic site (largest f+):** atom 4 (C), **f+ = 0.64232** \u2014 this is the terminal \u03b2-carbon of the vinyl group (CH2=), the expected Michael-acceptor position for nucleophilic attack on acrolein.\n- **Most nucleophilic site (largest f-):** atom 1 (O), **f- = 0.39389**.\n- f+ vector: [0.40136, 0.022255, 0.43405, 0.64232, -0.15726, -0.20720, -0.062117, -0.073408]\n- f- vector: [0.39389, 0.0059884, 0.091403, 0.087370, 0.085961, 0.18568, 0.084486, 0.065226]\n- dual descriptor: [0.0074780, 0.016267, 0.34264, 0.55495, -0.24322, -0.39288, -0.14660, -0.13863] \u2014 most positive (most electrophilic) at atom 4 (C).\n\n**Headline value:** most-electrophilic f+ = 0.64232 at atom 4 (C).\n\n**Warnings reported by the engine (verbatim):**\n- fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- schema_header: common header present\n\n(These are the engine's integrity-check entries at severity \"warning\"; all three passed \u2014 ok=true.)\n\n**Reproducibility:** Command run: `cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 --accept-defaults <acrolein.xyz>`. Result JSON written to `acrolein_fukui_dft.json`; a per-atom bar-chart PNG was also written by the engine. Note the Fukui indices are Mulliken-population-based (basis-set dependent) and are relative reactivity descriptors, not absolute energies."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 262.98,
+    "llm_s": 31.92,
+    "engine_s": 230.43,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Benzaldehyde Fukui reactivity indices (f+, f-, dual descriptor) \u2014 DFT, tier standard (B3LYP/def2-TZVP, exact four-center integrals) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: single-point calculation on the input .xyz (user-supplied) with no re-optimization. SCF converged for neutral, cation, and anion (integrity.status ok, trustworthy true). Warnings reported verbatim:\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\nMost electrophilic site: atom 3 (C) with Fukui plus f+ = 0.39938963 (atom_label_1based = 3). The fukui-reactivity was run via `chemkit fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz --method dft --tier standard --charge 0 --mult 1 --out /home/erobles/chem-skills/.fidelity_scratch/tmp8vxol1jd/live.json --stdout path`. The live .out log was written to `fukui_<timestamp>.out` in the working directory."
+}

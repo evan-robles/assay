@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.6,
+    "llm_s": 14.51,
+    "engine_s": 6.09,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis was performed on ferrocene using the GFN2-xTB semi-empirical tight-binding method in the gas phase, with a charge of 0 and multiplicity of 1.\n\nThe results indicate that the iron atom (Fe, atom 11) is the site most susceptible to both nucleophilic and electrophilic attack.\n\n*   **Susceptibility to electrophilic attack (nucleophilicity):** The iron atom is the most nucleophilic site, with the largest Fukui index for electrophilic attack (f-) of 0.25938. This index quantifies the change in electron density when an electron is removed, highlighting where the molecule is most likely to donate an electron.\n*   **Susceptibility to nucleophilic attack (electrophilicity):** The iron atom is also the most electrophilic site, with the largest Fukui index for nucleophilic attack (f+) of 0.22885. This index reflects the change in electron density upon electron addition, indicating the most favorable site for accepting an electron.\n\nThe calculation was performed successfully, and the results are deemed trustworthy by the engine's integrity checks. No warnings were reported."
+}

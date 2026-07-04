@@ -1,0 +1,150 @@
+# chemkit live log
+# subcommand : fukui
+# args       : --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --multiplicity 1 --verbose 2 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpyemvv0cs/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --multiplicity 1 --verbose 2 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpyemvv0cs/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_gpt-4.1-nano/20260704-174445_acrolein_fukui_reactivity
+# started    : 20260704-174501
+# ============================================================
+# agent model: argo:gpt-4.1-nano
+
+# result written to: /home/erobles/chem-skills/.fidelity_scratch/tmpyemvv0cs/live.json
+# plot: /home/erobles/chem-skills/.fidelity_scratch/tmpyemvv0cs/live.png
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "fukui",
+  "method": "b3lyp/def2-tzvp",
+  "program": "dft",
+  "input_file": "/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz",
+  "n_atoms": 8,
+  "atoms": [
+    "O",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --multiplicity 1 --verbose 2 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpyemvv0cs/live.json",
+  "partial_charges_scheme": "Mulliken (PySCF)",
+  "charges_neutral": [
+    -0.2876380005087622,
+    -0.05879567581195122,
+    0.11920623507809047,
+    -0.23417552039979572,
+    0.13072536395668433,
+    0.06934865078254049,
+    0.13095267965963142,
+    0.13037626724355333
+  ],
+  "charges_cation": [
+    0.10624815647202279,
+    -0.05280724055600938,
+    0.210609332232516,
+    -0.14680570516332914,
+    0.2166867869277036,
+    0.25502825563205844,
+    0.21543848874313198,
+    0.19560192571190527
+  ],
+  "charges_anion": [
+    -0.6890021925921648,
+    -0.08105078130873622,
+    -0.314840493217595,
+    -0.8764965389467951,
+    0.2879848659620853,
+    0.2765515524619879,
+    0.19306967583236045,
+    0.20378391180885114
+  ],
+  "cation_charge": 1,
+  "cation_multiplicity": 2,
+  "anion_charge": -1,
+  "anion_multiplicity": 2,
+  "fukui_plus": [
+    0.40136419208340257,
+    0.022255105496785,
+    0.43404672829568547,
+    0.6423210185469994,
+    -0.15725950200540095,
+    -0.20720290167944744,
+    -0.06211699617272903,
+    -0.0734076445652978
+  ],
+  "fukui_minus": [
+    0.393886156980785,
+    0.0059884352559418375,
+    0.09140309715442552,
+    0.08736981523646659,
+    0.08596142297101927,
+    0.18567960484951795,
+    0.08448580908350056,
+    0.06522565846835193
+  ],
+  "fukui_zero": [
+    0.3976251745320938,
+    0.014121770376363418,
+    0.2627249127250555,
+    0.364845416891733,
+    -0.03564903951719084,
+    -0.010761648414964742,
+    0.011184406455385765,
+    -0.004090993048472935
+  ],
+  "dual_descriptor": [
+    0.007478035102617575,
+    0.016266670240843162,
+    0.34264363114125995,
+    0.5549512033105328,
+    -0.24322092497642023,
+    -0.3928825065289654,
+    -0.1466028052562296,
+    -0.13863330303364974
+  ],
+  "most_electrophilic": {
+    "atom_index_0based": 3,
+    "atom_label_1based": 4,
+    "symbol": "C",
+    "f_plus": 0.6423210185469994
+  },
+  "most_nucleophilic": {
+    "atom_index_0based": 0,
+    "atom_label_1based": 1,
+    "symbol": "O",
+    "f_minus": 0.393886156980785
+  },
+  "plot": "/home/erobles/chem-skills/.fidelity_scratch/tmpyemvv0cs/live.png",
+  "functional": "b3lyp",
+  "basis": "def2-tzvp",
+  "schema_version": 1,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "fukui_charge_conservation_f+",
+        "ok": true,
+        "severity": "warning",
+        "detail": "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+      },
+      {
+        "name": "fukui_charge_conservation_f-",
+        "ok": true,
+        "severity": "warning",
+        "detail": "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      }
+    ]
+  }
+}

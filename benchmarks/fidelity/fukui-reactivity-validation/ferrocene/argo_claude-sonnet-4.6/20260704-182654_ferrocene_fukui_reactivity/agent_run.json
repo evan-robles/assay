@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 60.12,
+    "llm_s": 52.13,
+    "engine_s": 7.37,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of ferrocene was performed using the GFN2-xTB semi-empirical tight-binding method (Bannwarth et al., JCTC 2019), gas phase, charge 0, multiplicity 1 (neutral singlet). The N\u22121 (cation) state used charge +1, multiplicity 2; the N+1 (anion) state used charge \u22121, multiplicity 2. Partial charges were computed via the Mulliken scheme under GFN2-xTB. The geometry was taken as-is from the user-supplied ferrocene.xyz (21 atoms: Fe, 10 C, 10 H). No solvent was applied (gas phase).\n\nHeadline result: The iron center (atom 11) is both the most electrophilic (f\u207a = 0.22885456) and most nucleophilic (f\u207b = 0.25938191) site, with a negative dual descriptor (\u0394f = \u22120.030527), indicating net nucleophilic character at Fe. All Cp carbon atoms show small symmetric Fukui values (~0.0136) and all H atoms ~0.0635, reflecting the D\u2085h symmetry of ferrocene. The reported headline value is f\u207b(Fe) = 0.25938191 (most nucleophilic site).\n\nIntegrity: status = ok, trustworthy = true. sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000 \u2014 both conservation checks passed. No warnings reported by the engine.\n\nCLI invocation: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --method xtb --charge 0 --mult 1\nPlot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-sonnet-4.6/20260704-182654_ferrocene_fukui_reactivity/agent_call_01_plot.png"
+}

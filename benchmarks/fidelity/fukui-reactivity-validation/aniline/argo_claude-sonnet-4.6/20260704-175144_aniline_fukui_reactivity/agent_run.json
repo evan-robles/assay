@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 150.46,
+    "llm_s": 47.78,
+    "engine_s": 102.0,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for aniline (14 atoms) using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. Three SCF calculations were run (neutral N, cation N\u22121 doublet, anion N+1 doublet) using Mulliken partial charges to construct the Fukui functions. All SCF calculations converged; all integrity checks passed (sum(f+) = 1.0000, sum(f\u2212) = 1.0000); integrity.trustworthy = true. No warnings were reported.\n\nHeadline results:\n- Most electrophilic site: C3 (ortho carbon), f+ = 2.2975867\n- Most nucleophilic site: N1 (amino nitrogen), f\u2212 = 0.20452359\n- Dual descriptor at C3: 2.2310153\n\nThese results are consistent with aniline's well-known ortho/para-directing character in electrophilic aromatic substitution and the nucleophilicity of the amino nitrogen.\n\nMethod: DFT, tier 'standard' (B3LYP/def2-TZVP), PySCF RKS, exact four-center integrals (no density fitting), gas phase, charge 0, multiplicity 1.\nCLI: cli.py fukui aniline.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1\nOutput: aniline_fukui_dft.json"
+}

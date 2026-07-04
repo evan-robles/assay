@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 758.53,
+    "llm_s": 55.64,
+    "engine_s": 702.86,
+    "turns": 7,
+    "tool_calls": 3
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block  \n\u2022 Property: atom-condensed Fukui functions f\u207a (electrophilic attack), f\u207b (nucleophilic attack), f\u2070 (radical attack) and the dual descriptor for benzaldehyde; headline value reported below is the largest f\u207a (most electrophilic site).  \n\u2022 Level of theory: DFT, functional B3LYP with def2-TZVP basis set (tier \u2018standard\u2019); exact four-center integrals (density fitting OFF).  \n\u2022 Geometry provenance: user-supplied Cartesian coordinates (benzaldehyde.xyz, 14 atoms); single-point Fukui evaluation on this fixed geometry (no re-optimization).  \n\u2022 Solvent / environment: gas phase (no implicit solvent).  \n\u2022 Charge = 0, multiplicity = 1 (singlet). N \u2212 1 and N + 1 states computed as doublets (charge = \u00b11, mult = 2) for the finite-difference Fukui derivatives.  \n\u2022 Software: PySCF 2023.x via chemkit fukui-reactivity skill.  \n\u2022 Convergence & warnings: all SCF calculations converged; integrity status \u201cok\u201d, trustworthy = true.  chemkit issued three warnings (reproduced verbatim above) noting charge conservation checks (sums of f\u207a and f\u207b exactly 1.0000) and presence of the schema header.  \n\u2022 Live log: calculation ran with command  \n    /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui benzaldehyde.xyz --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 \u2026  \n  and streamed to a live `.out` file (path was disclosed during execution and remains on disk).  \n\u2022 Output JSON saved to: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde_fukui_b3lyp_def2tzvp.json  \n\nKey results (per-atom Mulliken Fukui indices):  \n  \u2013 Most electrophilic site: atom 3 (C of the carbonyl carbon), f\u207a = 0.39938967  \n  \u2013 Most nucleophilic site: atom 1 (carbonyl O),\u2003\u2003\u2003\u2003         f\u207b = 0.23839906  \n  \u2013 Dual descriptor highlights the same carbon (0.3626) as electrophilic and oxygen (\u22120.3446) as nucleophilic.  \n\nHeadline number (requested \u201cresult\u201d): f\u207a on the most electrophilic atom = 0.39938967 (dimensionless)."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 55.7,
+    "llm_s": 25.84,
+    "engine_s": 29.25,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of furan** \u2014 finite-difference (N\u00b11) condensed Fukui indices from Mulliken populations.\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor per atom, plus most electrophilic/nucleophilic site identification.\n- **Level of theory:** DFT, tier `standard` = **B3LYP/def2-TZVP** (exact four-center integrals; density fitting NOT enabled \u2014 chemkit default is off).\n- **Software:** PySCF (RKS for the neutral, UKS for the N\u00b11 open-shell states).\n- **Geometry provenance:** User-supplied `furan.xyz` (9 atoms: O, 4\u00d7C, 4\u00d7H), used as-is (single-point Fukui \u2014 no geometry optimization performed at this level).\n- **Solvent / environment:** **Gas phase** (no implicit solvent; explicitly consented via `--accept-defaults`).\n- **Charge / multiplicity:** Parent charge 0, multiplicity 1 (closed-shell singlet). Cation state: charge +1, multiplicity 2 (doublet, UKS). Anion state: charge \u22121, multiplicity 2 (doublet, UKS).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Headline result**\n- **Most electrophilic site:** atom index 5 (1-based) \u2014 a **carbon** \u2014 with **f\u207a = 1.9242931** (the reported headline value). Note this same C atom is also flagged as most nucleophilic (f\u207b = 0.1616371).\n\n**Per-atom Fukui indices** (order: O, C, C, C, C, H, H, H, H):\n- f\u207a: [\u22121.3316182, 1.2286866, 1.2270264, 1.9233053, 1.9242931, \u22121.2190639, \u22121.2191056, \u22120.76678308, \u22120.76674059]\n- f\u207b: [0.08382155, 0.089103093, 0.089304821, 0.161527, 0.1616371, 0.10248412, 0.1025135, 0.10481615, 0.10479266]\n- dual descriptor (f\u207a\u2212f\u207b): [\u22121.4154398, 1.1395835, 1.1377216, 1.7617783, 1.762656, \u22121.3215481, \u22121.3216191, \u22120.87159923, \u22120.87153325]\n\n**A caution on interpretation:** The f\u207a values include large negative numbers (e.g. \u22121.33 on O, \u22121.22 on H atoms) and unusually large magnitudes. This is a well-known artifact of Mulliken-based condensed Fukui functions on diffuse anion (N+1) states with a large basis like def2-TZVP \u2014 the extra electron is poorly localized, so individual atomic f\u207a values can be negative or exaggerated even though the total conserves to 1.0000. Treat the per-atom electrophilicity ranking with corresponding caution.\n\n**Convergence & integrity:** Integrity status **ok**, **trustworthy = true**. Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Warnings reported by the engine (verbatim, all reproduced):**\n1. `fukui_charge_conservation_f+` (severity: warning) \u2014 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. `fukui_charge_conservation_f-` (severity: warning) \u2014 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. `schema_header` (severity: warning) \u2014 \"common header present\"\n\n(These three are the entries in the integrity `checks` array; all passed [ok: true]. No separate `warnings` array of failures was emitted.)\n\n**Reproducibility:** Command run \u2014\n`cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults <furan.xyz> --out .../live.json`\nResult JSON: `furan_fukui_dft.json`. Bar-chart PNG written to `.../20260704-182854_furan_fukui_reactivity/agent_call_01_plot.png`.\n\nNo experimental or literature comparison is offered (none was requested)."
+}

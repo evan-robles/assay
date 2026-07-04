@@ -1,0 +1,136 @@
+{
+  "task": "fukui",
+  "method": "b3lyp/def2-tzvp",
+  "program": "dft",
+  "input_file": "/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz",
+  "n_atoms": 8,
+  "atoms": [
+    "O",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --charge 0 --mult 1 --density-fit /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmptnn_ks_t/live.json",
+  "partial_charges_scheme": "Mulliken (PySCF)",
+  "charges_neutral": [
+    -0.28762914,
+    -0.05873491,
+    0.1188495,
+    -0.23469252,
+    0.13099614,
+    0.069531621,
+    0.13113035,
+    0.13054895
+  ],
+  "charges_cation": [
+    0.10625823,
+    -0.052872601,
+    0.21035521,
+    -0.14734144,
+    0.21695619,
+    0.25523173,
+    0.21564609,
+    0.19576659
+  ],
+  "charges_anion": [
+    -0.68852191,
+    -0.078273523,
+    -0.31518972,
+    -0.87026334,
+    0.2851421,
+    0.27521079,
+    0.19026792,
+    0.20162767
+  ],
+  "cation_charge": 1,
+  "cation_multiplicity": 2,
+  "anion_charge": -1,
+  "anion_multiplicity": 2,
+  "fukui_plus": [
+    0.40089278,
+    0.019538612,
+    0.43403922,
+    0.63557082,
+    -0.15414596,
+    -0.20567917,
+    -0.059137569,
+    -0.071078722
+  ],
+  "fukui_minus": [
+    0.39388736,
+    0.0058623091,
+    0.091505709,
+    0.087351076,
+    0.085960055,
+    0.18570011,
+    0.084515734,
+    0.065217641
+  ],
+  "fukui_zero": [
+    0.39739007,
+    0.012700461,
+    0.26277246,
+    0.36146095,
+    -0.034092953,
+    -0.009989531,
+    0.012689082,
+    -0.0029305406
+  ],
+  "dual_descriptor": [
+    0.0070054116,
+    0.013676303,
+    0.34253351,
+    0.54821974,
+    -0.24010602,
+    -0.39137929,
+    -0.1436533,
+    -0.13629636
+  ],
+  "most_electrophilic": {
+    "atom_index_0based": 3,
+    "atom_label_1based": 4,
+    "symbol": "C",
+    "f_plus": 0.63557082
+  },
+  "most_nucleophilic": {
+    "atom_index_0based": 0,
+    "atom_label_1based": 1,
+    "symbol": "O",
+    "f_minus": 0.39388736
+  },
+  "plot": "/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_gemini-2.5-pro/20260704-174220_acrolein_fukui_reactivity/agent_call_01_plot.png",
+  "functional": "b3lyp",
+  "basis": "def2-tzvp",
+  "schema_version": 1,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "fukui_charge_conservation_f+",
+        "ok": true,
+        "severity": "warning",
+        "detail": "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+      },
+      {
+        "name": "fukui_charge_conservation_f-",
+        "ok": true,
+        "severity": "warning",
+        "detail": "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      }
+    ]
+  }
+}

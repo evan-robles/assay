@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 90.29,
+    "llm_s": 30.6,
+    "engine_s": 59.13,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [ok: true]",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [ok: true]",
+      "schema_header (severity: warning): common header present [ok: true]"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity \u2014 Pyridine\n\n**Method-provenance block**\n- **Property:** Condensed (atom-resolved) Fukui functions f\u207a, f\u207b, f\u2070, and the dual descriptor, derived from Mulliken (PySCF) partial charges of the neutral, cation (N\u22121), and anion (N+1) states.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (chemkit tier `standard`, which expands to exactly this functional/basis; functional and basis were also passed explicitly). Density fitting was **OFF** (exact four-center integrals; the default).\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz`, used **as-is** (single-point energies at the fixed input geometry; no re-optimization at this level).\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge & multiplicity:** Parent charge 0, multiplicity 1 (closed-shell RKS). The finite-difference states were computed automatically: cation charge +1, multiplicity 2 (UKS doublet); anion charge \u22121, multiplicity 2 (UKS doublet).\n- **Software:** PySCF (via chemkit `fukui` subcommand).\n- **Convergence / integrity:** SCF states converged; integrity status **ok**, **trustworthy = true**. The f\u207a and f\u207b condensed sums both equal 1.0000 (charge conservation satisfied \u2014 good sign that the N\u00b11 states converged properly).\n\n**Results (11 atoms; order: N, C, C, C, C, C, H, H, H, H, H)**\n\n- **Most electrophilic site (largest f\u207a):** the **nitrogen** (atom 1, N), **f\u207a = 0.48423** \u2014 this is the headline number. It is the site most susceptible to nucleophilic attack / most stabilizing of added electron density.\n- **Most nucleophilic site (largest f\u207b):** a **ring carbon** (atom 4, C), **f\u207b = 0.11826** \u2014 most susceptible to electrophilic attack.\n\nPer-atom Fukui values (rounded):\n- **f\u207a:** N 0.4842, C 0.3245, C 0.1403, C 0.1404, C 0.2996, C 0.2995, H \u22120.1415, H \u22120.1337, H \u22120.1337, H \u22120.1398, H \u22120.1398\n- **f\u207b:** N 0.0641, C 0.0062, C 0.1182, C 0.1183, C 0.1121, C 0.1120, H 0.0828, H 0.0982, H 0.0982, H 0.0950, H 0.0949\n- **dual descriptor (f\u207a\u2212f\u207b):** N +0.4201, C +0.3183, C +0.0221, C +0.0221, C +0.1876, C +0.1875, H \u22120.2244, H \u22120.2319, H \u22120.2318, H \u22120.2348, H \u22120.2348 (positive \u2192 electrophilic-preferring; negative \u2192 nucleophilic-preferring). The strongly positive dual descriptor on nitrogen confirms it as the dominant electrophilic center.\n\n**Warnings (verbatim from the engine's integrity checks):**\n1. fukui_charge_conservation_f+ (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check passed (ok: true).\n2. fukui_charge_conservation_f- (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check passed (ok: true).\n3. schema_header (severity: warning): \"common header present\" \u2014 check passed (ok: true).\n\nThere is no separate `warnings` array in the result JSON beyond these integrity checks; all three integrity checks passed.\n\n**Notes on scope:** Condensed Fukui functions from Mulliken populations are basis-set-dependent and inherit the well-known ambiguities of Mulliken partitioning; treat the per-atom values as qualitative/relative reactivity indices rather than precise physical observables. No experimental or literature comparison is offered.\n\n**Reproducibility:**\n- Command: `chemkit_engine/cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --stdout json <pyridine.xyz> --out live.json`\n- Result JSON written to `pyridine_fukui_dft.json`; bar-chart PNG at `.../20260704-191756_pyridine_fukui_reactivity/agent_call_01_plot.png`.\n- A live `<subcommand>_<timestamp>.out` log is streamed to the run directory during execution for real-time monitoring."
+}

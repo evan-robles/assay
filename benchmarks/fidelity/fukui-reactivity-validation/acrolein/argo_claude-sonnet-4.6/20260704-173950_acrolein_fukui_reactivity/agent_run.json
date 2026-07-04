@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 85.98,
+    "llm_s": 36.11,
+    "engine_s": 49.11,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for acrolein computed at DFT B3LYP/def2-TZVP (PySCF RKS), tier 'standard', gas phase, charge 0, multiplicity 1. No density fitting (exact four-centre integrals). Partial charges via Mulliken (PySCF). N\u00b11 states: cation (charge +1, mult 2), anion (charge \u22121, mult 2). Geometry from user-supplied .xyz, not re-optimized. All integrity checks passed (trustworthy=true, status=ok). Sum(f+)=1.0000, sum(f-)=1.0000. No engine warnings. Headline value reported is the maximum f+ (electrophilic Fukui index), located on atom 4 (C, the \u03b2-carbon): f+=0.64232102. Most nucleophilic site: atom 1 (O), f-=0.39388616. Dual descriptor maximum: atom 4, \u0394f=0.55495. Results fully consistent with acrolein's known 1,4-Michael-acceptor reactivity."
+}

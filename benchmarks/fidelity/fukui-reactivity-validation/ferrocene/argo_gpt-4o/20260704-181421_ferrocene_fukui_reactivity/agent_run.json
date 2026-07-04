@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 10.77,
+    "llm_s": 4.77,
+    "engine_s": 6.0,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity of Ferrocene** \u2014 computed using **GFN2-xTB**, a semi-empirical tight-binding method, in the gas phase. Input: ferrocene.xyz with charge 0 and multiplicity 1. Software: xtb backend.\n\n### Results:\n- **Most electrophilic atom:** Fe (Iron), f\u207a = 0.22885456.\n- **Most nucleophilic atom:** Fe (Iron), f\u207b = **0.25938191**.\n\n### Method Details:\n- Charge conservation checks were successful: Sum(f\u207a) = 1.0000 and Sum(f\u207b) = 1.0000 (warnings note expected ~1.0 value).\n- Basis: Mulliken charges (as used in GFN2-xTB).\n\nWarnings surfaced:\n1. sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n2. sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n3. Common header present.\n\nPlot and numerical outputs were saved. All integrity checks passed. Calculation logging was saved. File paths: \"/home/.../\"."
+}

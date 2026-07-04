@@ -1,0 +1,29 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 40.11,
+    "llm_s": 29.94,
+    "engine_s": 9.66,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: Atom\u2010resolved Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor of formaldehyde; headline value reported here is the largest electrophilic Fukui index f\u207a.\nLevel of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP with exact four-center integrals (density fitting off by default) in PySCF.\nGeometry provenance: fixed experimental geometry supplied by the user (file \u201c/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz\u201d); no re-optimization \u2014 single-point N, N \u00b1 1 charge calculations (`B3LYP/def2-TZVP//input geometry`).\nSolvent / environment: gas phase (no implicit solvent model requested).\nCharge & multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation and anion computed as doublets (charges \u00b11, multiplicity 2) per default Fukui protocol.\nSoftware: PySCF (via chemkit fukui-reactivity skill).\nConvergence & caveats: All three SCF calculations converged; integrity.status = \"ok\", integrity.trustworthy = true.  No engine warnings were reported (warnings array empty).  Integrity self-checks report sum(f\u207a)=1.0000 and sum(f\u207b)=1.0000 (as expected).\n\nKey numerical results (Mulliken partitioning, atom order O(1) C(2) H(3) H(4)):\n\u2022 f\u207a = [0.46813824, 0.70839130, \u22120.088269392, \u22120.088260145]\n\u2022 f\u207b = [0.46742464, 0.11244422, 0.21007563, 0.21005551]\n\u2022 Dual descriptor \u0394f = [0.00071359555, 0.59594709, \u22120.29834503, \u22120.29831566]\nMost electrophilic site: atom 2 (C), f\u207a = 0.70839130 (reported as headline value).\nMost nucleophilic site: atom 1 (O), f\u207b = 0.46742464.\n\nReproducibility\nCommand (from cli_invocation):\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout json /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpgvpzmxp_/live.json\n\nThe full result JSON is at \u201c/home/erobles/chem-skills/.fidelity_scratch/tmpgvpzmxp_/live.json\u201d.  The live PySCF/chemkit stdout and SCF progress were streamed during the run to the automatically generated log file (name beginning with \u201cfukui_\u201d and timestamp) in the working directory.\n\nNo warnings reported.\n\n"
+}

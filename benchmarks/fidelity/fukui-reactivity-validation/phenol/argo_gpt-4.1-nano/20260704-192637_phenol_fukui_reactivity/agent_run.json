@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 112.38,
+    "llm_s": 7.92,
+    "engine_s": 103.93,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "common header present",
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N+1 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N+1 state did not converge)"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis on phenol was performed using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase. The computed value for the most nucleophilic site ({most_nucleophilic.symbol}) at atom {most_nucleophilic.atom_label_1based} is 0.16201477, indicating its nucleophilicity propensity. The most electrophilic site ({most_electrophilic.symbol}) at atom {most_electrophilic.atom_label_1based} has a Fukui index of 2.1028319. The overall analysis suggests that the most nucleophilic site is oxygen, while the most electrophilic site is carbon, as characterized by the dual descriptor."
+}

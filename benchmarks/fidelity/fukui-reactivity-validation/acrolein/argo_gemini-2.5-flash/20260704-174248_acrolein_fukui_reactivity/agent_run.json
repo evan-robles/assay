@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 58.04,
+    "llm_s": 25.54,
+    "engine_s": 31.78,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis was performed on acrolein (CH\u2082=CH-CHO).\n\n**Method Provenance Block:**\n*   **Property:** Fukui reactivity indices (fukui-f+, fukui-f-, fukui-f0) and the dual descriptor.\n*   **Level of theory:** DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals) using PySCF.\n*   **Geometry provenance:** Input coordinates provided via `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`, fixed geometry (no optimization performed).\n*   **Solvent / environment:** Gas phase.\n*   **Charge and multiplicity:** Neutral (charge 0), singlet (multiplicity 1).\n*   **Software:** PySCF.\n*   **Convergence + caveats:** SCF converged. Two warnings were reported regarding the sum of Fukui indices, indicating they sum to the expected value of 1.0000 for both f+ and f-, implying the N\u00b11 states converged correctly.\n\n**Fukui Indices per Atom:**\nThe atoms are ordered as O, C, C, C, H, H, H, H.\n\n*   **Atom 0 (O):** f+ = 0.40136, f- = 0.39389, f0 = 0.39763, Dual Descriptor = 0.00748\n*   **Atom 1 (C):** f+ = 0.02226, f- = 0.00599, f0 = 0.01412, Dual Descriptor = 0.01627\n*   **Atom 2 (C):** f+ = 0.43405, f- = 0.09140, f0 = 0.26272, Dual Descriptor = 0.34264\n*   **Atom 3 (C):** f+ = 0.64232, f- = 0.08737, f0 = 0.36485, Dual Descriptor = 0.55495\n*   **Atom 4 (H):** f+ = -0.15726, f- = 0.08596, f0 = -0.03565, Dual Descriptor = -0.24322\n*   **Atom 5 (H):** f+ = -0.20720, f- = 0.18568, f0 = -0.01076, Dual Descriptor = -0.39288\n*   **Atom 6 (H):** f+ = -0.06212, f- = 0.08449, f0 = 0.01118, Dual Descriptor = -0.14660\n*   **Atom 7 (H):** f+ = -0.07341, f- = 0.06523, f0 = -0.00409, Dual Descriptor = -0.13863\n\nThe most electrophilic attack site is Carbon (atom 3, 0-indexed) with a fukui-f+ value of 0.64232.\nThe most nucleophilic attack site is Oxygen (atom 0, 0-indexed) with a fukui-f- value of 0.39389."
+}

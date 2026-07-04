@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 268.09,
+    "llm_s": 38.5,
+    "engine_s": 229.04,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for benzaldehyde were obtained with the chemkit `fukui-reactivity` skill.\n\nMethod-provenance block\nProperty: condensed Fukui functions f\u207a (electrophilic) and f\u207b (nucleophilic) per atom, plus dual descriptor and most reactive sites.\nLevel of theory: DFT, B3LYP/def2-TZVP (density-fitted four-center integrals were NOT used \u2013 exact ERIs as per chemkit default).\nGeometry provenance: user-supplied benzaldehyde.xyz (no re-optimization; single-point charges on the fixed geometry \u2192 fukui from finite-difference N\u00b11 single points).\nSolvent / environment: gas phase (no implicit solvent).\nCharge & multiplicity: neutral singlet (charge 0, multiplicity 1); N\u22121 and N+1 states were both doublets (charge \u00b11, mult 2) by default.\nSoftware: PySCF 2.x via chemkit backend (fukui subcommand).\nConvergence & caveats: all three single-point SCFs converged; integrity.trustworthy = true.  Warnings streamed by chemkit are reproduced verbatim below.\n\nKey results (atomic indices 0-based, labels 1-based)\n\u2022 Most electrophilic site: atom 3 (C, index 2) with f\u207a = 0.39938965.\n\u2022 Most nucleophilic site: atom 1 (O, index 0) with f\u207b = 0.23839906.\nComplete vectors are in benzaldehyde_fukui_b3lyp_def2tzvp.json together with the bar-chart PNG.\n\nLive log: the SCF/Fukui calculation streamed to a file created at run start (path echoed by the skill); consult it for full SCF cycles and timing.\n\nVerbatim warnings from chemkit result\n\u2013 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 common header present"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 225.31,
+    "llm_s": 41.39,
+    "engine_s": 183.92,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of nitrobenzene was completed successfully. The results identify the most likely sites for electrophilic and nucleophilic attack.\n\nThe site most susceptible to **nucleophilic attack** (where f+ is maximal) is atom C4, the carbon atom bonded to the nitro group, with an f+ value of 0.49642.\nThe site most susceptible to **electrophilic attack** (where f- is maximal) is atom C5, a meta-carbon atom, with an f- value of 0.10729.\n\n### Method and Provenance\n\n*   **Property**: Fukui reactivity indices (f+ and f-), used to predict sites of electrophilic and nucleophilic attack.\n*   **Level of Theory**: Density Functional Theory (DFT) using the **B3LYP functional** and the **def2-TZVP basis set** (corresponding to chemkit's `tier 'standard'`). The calculation was performed with the PySCF software package.\n*   **Geometry**: The calculation was performed on the fixed geometry provided in the `nitrobenzene.xyz` file.\n*   **Environment**: The calculation was run in the **gas phase**.\n*   **Charge and Multiplicity**: The neutral molecule was calculated with a charge of 0 and a multiplicity of 1. The required cation and anion states were calculated accordingly.\n*   **Convergence**: The underlying single-point energy calculations for the neutral, cation, and anion species all converged successfully. No warnings were reported by the engine.\n\nThe analysis indicates that a nucleophile is most likely to attack the carbon atom of the C-N bond, while an electrophile is most likely to attack one of the meta carbons of the benzene ring."
+}

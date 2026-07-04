@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.42,
+    "llm_s": 29.39,
+    "engine_s": 6.39,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity for ferrocene** \u2014 computed with **GFN2-xTB** (`--method xtb`; semi-empirical tight-binding) using the user-supplied geometry `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` as-is, **gas phase** (no solvent; `solvent: null`), charge 0, multiplicity 1. Backend/program reported by chemkit: `xtb`. The cation and anion states used for the finite-difference Fukui indices were charge +1/multiplicity 2 and charge -1/multiplicity 2, respectively. Integrity verdict: `trustworthy: true`.\n\nHeadline result: the most electrophilic site is **atom 11 (Fe)** with **f+ = 0.22885456**. The most nucleophilic site is also **atom 11 (Fe)** with **f- = 0.25938191**. The condensed radical Fukui value at Fe is **f0 = 0.24411824**, and the dual descriptor at Fe is **-0.030527354**.\n\nSelected per-atom values are in the returned result arrays; the plot was written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_gpt-5.5/20260704-182217_ferrocene_fukui_reactivity/agent_call_01_plot.png`.\n\nExact chemkit CLI invocation reported by the engine: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpvochxwb9/live.json`.\n\nWarnings/check details surfaced verbatim from the tool result:\n- `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `common header present`\n\nNote: the returned JSON did not expose a live `.out` log path, so I cannot truthfully report one beyond the artifacts listed above."
+}

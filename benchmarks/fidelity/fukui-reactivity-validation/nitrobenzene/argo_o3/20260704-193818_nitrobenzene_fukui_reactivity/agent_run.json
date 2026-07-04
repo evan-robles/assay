@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 380.31,
+    "llm_s": 34.3,
+    "engine_s": 345.44,
+    "turns": 6,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance block\n\u2022 Property: Atom-resolved Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor; headline value is the largest electrophilic Fukui index f\u207a.\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (tier \u201cstandard\u201d), exact four-center integrals (density fitting off).\n\u2022 Geometry provenance: user-supplied nitrobenzene.xyz; single-point calculations only (DFT//input geometry).\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\u2022 Charge 0, multiplicity 1; cation (+1, doublet) and anion (\u20131, doublet) states generated automatically.\n\u2022 Software/backend: chemkit \"fukui-reactivity\" skill (PySCF 2.4.0).\n\u2022 Convergence & caveats: All three SCFs converged; integrity.status = ok, trustworthy = true.\n\nKey results (14 atoms, 0-based indices)\nMost electrophilic site: atom 3 (C) with f\u207a = 0.49641781\nMost nucleophilic site: atom 4 (C) with f\u207b = 0.10728820\n\nLive .out log written during execution to:\n  /home/erobles/chem-skills/.fidelity_scratch/tmpx9v724sa/live.out\n(available for inspection via e.g. `tail -f`.)\n\nWarnings (verbatim):\n\u2022 fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 schema_header: common header present\n\nThe calculation passed all integrity checks and is marked trustworthy."
+}

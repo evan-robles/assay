@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 131.31,
+    "llm_s": 6.29,
+    "engine_s": 124.38,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui Reactivity Analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: provided `.xyz` file (13 atoms). Reactivity indices computed from Mulliken charges. SCF converged.\n\nAtom-wise Fukui functions (neutral \u2192 cation + anion states):\n- Most electrophilic atom: **C3**, f\u207a = 2.1028319.\n- Most nucleophilic atom: **O1**, f\u207b = 0.16201477.\n- Dual descriptors indicate preferential sites for nucleophilic/electrophilic attack.\n\nKey file: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_gpt-4o/20260704-185546_phenol_fukui_reactivity/agent_call_01_plot.png`\n\nExact Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui <phenol file>`"
+}

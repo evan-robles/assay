@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 60.82,
+    "llm_s": 32.43,
+    "engine_s": 28.37,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property: Condensed Fukui functions (f\u207a, f\u207b, dual) for each atom in furan; most-electrophilic site reported here (f\u207a on atom 5).\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (tier \u2018standard\u2019), no density fitting (exact four-center integrals).\n\u2022 Geometry provenance: user-supplied Cartesian coordinates (file `furan.xyz`), used as-is (single-point calculations on the fixed geometry; no re-optimization). Notation: DFT//input-XYZ.\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\u2022 Charge 0, multiplicity 1 (closed-shell singlet). N \u00b1 1 states: cation (+1, doublet) and anion (\u20131, doublet) were computed automatically for the Fukui analysis.\n\u2022 Software: chemkit (PySCF backend) \u2014 functional \u2018b3lyp\u2019, basis \u2018def2-tzvp\u2019.\n\u2022 Convergence & caveats: all three SCF calculations converged; integrity.status = \u201cok\u201d, trustworthy = true. Engine warnings (verbatim):\n  \u2013 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n  \u2013 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n  \u2013 common header present\n  (The f\u207a/f\u207b charge sums equal 1.0000, so these warnings are informational rather than indicating a problem.)\n\u2022 Live log: calculation ran with live output streamed to `fukui_<timestamp>.out` in the working directory; you can `tail -f` this file for full SCF and analysis details.\n\nHeadline result\nMost electrophilic site (highest f\u207a): atom 5 (C) with f\u207a = 1.9242931 (dimensionless).\n\nAll per-atom Fukui indices, Mulliken charges of neutral/cation/anion states, and the bar-chart PNG are available in the saved JSON and plot files referenced above."
+}

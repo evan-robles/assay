@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 30.7,
+    "llm_s": 22.43,
+    "engine_s": 7.62,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity (condensed Fukui functions) \u2014 ferrocene**\n\n**Method provenance block**\n- **Property:** Condensed (finite-difference) Fukui functions f\u207a, f\u207b, dual descriptor per atom, from Mulliken partial charges of the neutral (N), cation (N\u22121), and anion (N+1) states.\n- **Level of theory:** GFN2-xTB (Grimme semi-empirical tight-binding method; no basis set and no functional in the Gaussian sense). Program: xtb.\n- **Geometry provenance:** User-supplied structure `ferrocene.xyz` (21 atoms), used as-is \u2014 this Fukui run is a set of single-point energy/charge evaluations at that fixed geometry; no geometry optimization was performed by this skill.\n- **Solvent / environment:** Gas phase (no implicit solvent; `--solvent` omitted).\n- **Charge / multiplicity:** Neutral parent charge 0, multiplicity 1 (as requested). Cation state: charge +1, multiplicity 2. Anion state: charge \u22121, multiplicity 2 (auto-derived from the singlet parent).\n- **Software/backend:** xtb (GFN2-xTB), via chemkit `fukui` subcommand.\n- **Partial-charge scheme:** Mulliken (GFN2-xTB).\n\n**Command:** `.../cli.py fukui --method xtb --charge 0 --mult 1 .../ferrocene.xyz --out ...`\n\n**Results (dimensionless condensed Fukui indices):**\n- **Most nucleophilic site (largest f\u207b):** Fe (atom label 11, 0-based index 10), **f\u207b = 0.25938** \u2014 the headline value reported.\n- **Most electrophilic site (largest f\u207a):** Fe (atom label 11), **f\u207a = 0.22885**.\n- The dual descriptor is most negative (most nucleophilic character) at Fe (\u22120.030527); the ten ring C/H atoms all carry small, near-symmetric values (f\u207a/f\u207b \u2248 0.012\u20130.063), consistent with ferrocene's D5d symmetry.\n\n**Convergence / integrity:** The engine reports `integrity.status = \"ok\"` and `trustworthy = true`. All integrity checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (charge conservation satisfied \u2014 the N\u00b11 states converged), and the schema header is present.\n\n**Warnings:** No warnings were emitted (the `warnings` array is empty). The three \"integrity checks\" listed carry `severity: warning` but all passed (`ok: true`), so they are pass conditions, not raised warnings.\n\n**Reproducibility artifacts:** Result JSON written to `ferrocene_fukui_xtb.json`; a per-atom bar chart (f\u207a/f\u207b/dual) was written to `.../20260704-181929_ferrocene_fukui_reactivity/agent_call_01_plot.png`. The live `.out` log is streamed to the caller's working directory during the run.\n\n**Scope note:** GFN2-xTB is a semi-empirical method whose strength is geometries, conformers, and relative/qualitative trends rather than chemical-accuracy absolute values; condensed Fukui indices from it are best read as qualitative reactivity rankings. Values reported to 5 significant figures per the raw tool output. No experimental or literature comparison is offered."
+}

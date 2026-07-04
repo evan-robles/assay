@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 248.6,
+    "llm_s": 23.03,
+    "engine_s": 224.95,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui dual-descriptor reactivity indices for benzaldehyde were computed at the DFT level of theory using B3LYP/def2-TZVP (tier standard, no density fitting) in the gas phase, charge 0, multiplicity 1. The calculation used PySCF as the backend and Mulliken population analysis to extract partial charges at the neutral, cation (N\u22121, doublet), and anion (N+1, doublet) states. All three electronic-state SCF converged successfully, and charge conservation checks (\u03a3(f\u207a) = 1.0000, \u03a3(f\u207b) = 1.0000) passed, confirming the integrity of the Fukui index calculation. The most electrophilic site is the ipso-carbon (C3, ortho to the aldehyde), with f\u207a = 0.3994; the most nucleophilic site is the carbonyl oxygen (O1), with f\u207b = 0.2384. The carbonyl carbon (C2) shows negative Fukui indices, consistent with its high oxidation state. A full atom-by-atom breakdown of f\u207a, f\u207b, f\u2070, and the dual descriptor (\u0394f) is provided above. Output files include the result JSON and a PNG bar chart of reactivity indices per atom. No warnings were reported. The calculation method (B3LYP/def2-TZVP, PySCF, gas phase) is fully reproducible from the provided command line and output path.</prose>\n<parameter name=\"value\">null"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 125.06,
+    "llm_s": 19.34,
+    "engine_s": 105.02,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Indices for Aniline** \u2014 DFT, **B3LYP/def2-TZVP** (PySCF), gas phase, charge 0, multiplicity 1 (neutral parent); cation and anion states computed at multiplicity 2. Geometry: input structure from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`, used as-is (single-point calculation, not optimized). SCF converged for all three electron-count states (neutral, N\u22121, N+1). Mulliken partial charges used to compute Fukui indices per atom.\n\n**Most electrophilic site:** Carbon atom 3 (ortho/ipso position), f\u207a = 2.298.\n**Most nucleophilic site:** Nitrogen atom 1 (amino group), f\u207b = 0.205.\n\nFull Fukui indices (f\u207a, f\u207b, f\u2070, dual descriptor) reported for all 14 atoms. Charge conservation checks passed (sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000, no convergence drift). A Fukui bar chart was generated and saved. These results indicate the expected ortho/para-directing character of the electron-donating amino group, with the ortho carbons showing the strongest electrophilic character and the nitrogen the strongest nucleophilic character.\n\n**Command:** `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp58g84e71/live.json`\n\n**Output files:** Result JSON at `/home/erobles/chem-skills/.fidelity_scratch/tmp58g84e71/live.json`; Fukui bar chart at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_claude-haiku-4.5/20260704-174843_aniline_fukui_reactivity/agent_call_01_plot.png`.</prose>\n<parameter name=\"value\">2.298"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 55.25,
+    "llm_s": 25.97,
+    "engine_s": 28.68,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan Fukui reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, no density fitting) in PySCF (via chemkit), gas phase, charge 0, multiplicity 1. Geometry: user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz` (single-point, no relaxation). SCF converged. Integrity: status OK, trustworthy = true. Integrity checks: fukui_charge_conservation_f+ (warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"; fukui_charge_conservation_f- (warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"; schema_header (warning): \"common header present\". Results (Mulliken scheme): fukui_plus = [-1.3316182, 1.2286866, 1.2270264, 1.9233053, 1.9242931, -1.2190639, -1.2191056, -0.76678308, -0.76674059]; fukui_minus = [0.08382155, 0.089103093, 0.089304821, 0.161527, 0.1616371, 0.10248412, 0.1025135, 0.10481615, 0.10479266]; dual_descriptor = [-1.4154398, 1.1395835, 1.1377216, 1.7617783, 1.762656, -1.3215481, -1.321619, -0.87159923, -0.87153325]. Most electrophilic atom: #5 (C) with f+ = 1.9242931; most nucleophilic atom: #5 (C) with f- = 0.1616371."
+}

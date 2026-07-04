@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 154.83,
+    "llm_s": 50.81,
+    "engine_s": 103.35,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of aniline was performed using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (tier `standard`) in the gas phase. The calculation used a charge of 0 and a multiplicity of 1, and was performed on the user-provided geometry without re-optimization. The calculation was completed successfully using the PySCF program, and all integrity checks passed.\n\nThe results indicate:\n*   The site most susceptible to **electrophilic attack** (the most nucleophilic site, highest f\u207b) is the **Nitrogen atom (N1)**, with a Fukui index (f\u207b) of **0.20452**.\n*   The site most susceptible to **nucleophilic attack** (the most electrophilic site, highest f\u207a) is **Carbon atom C3**, with a Fukui index (f\u207a) of **2.2976**.\n\nThe full Fukui indices (f\u207a, f\u207b, and f\u2070) have been computed for all atoms and are available. No warnings were reported by the engine."
+}

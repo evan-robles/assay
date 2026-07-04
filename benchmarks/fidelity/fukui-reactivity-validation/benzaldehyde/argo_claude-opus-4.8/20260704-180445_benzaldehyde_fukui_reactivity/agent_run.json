@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 281.76,
+    "llm_s": 27.04,
+    "engine_s": 254.07,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of benzaldehyde (C6H5CHO)** \u2014 condensed Fukui functions from finite-difference of Mulliken atomic charges (N, N\u22121, N+1 states).\n\n**Method-provenance block**\n- **Property:** Condensed-to-atom Fukui indices (f+ electrophilic, f\u2212 nucleophilic, f0, and the dual descriptor), partitioned via Mulliken (PySCF) atomic charges.\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (exact four-center two-electron integrals; density fitting was OFF by default).\n- **Software:** PySCF (via chemkit `fukui` subcommand). Program label: dft.\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz` (14 atoms), used **as-is** \u2014 a single-point protocol; no geometry optimization was performed at any level.\n- **Solvent / environment:** **Gas phase** (no implicit solvent; solvent = null).\n- **Charge / multiplicity:** Parent neutral, **charge 0, multiplicity 1**. Cation (N\u22121) state: charge +1, multiplicity 2 (doublet); Anion (N+1) state: charge \u22121, multiplicity 2 (doublet). Open-shell N\u00b11 states treated with UKS.\n- **Convergence / integrity:** Engine integrity status = **ok**, **trustworthy = true**. Charge-conservation checks passed: sum(f+) = 1.0000 and sum(f\u2212) = 1.0000, and the common schema header is present.\n\n**Headline results**\n- **Most electrophilic site (max f+):** atom index 2 (0-based) / label 3 (1-based), a **carbon**, with **f+ = 0.39939** \u2014 this is the headline value.\n- **Most nucleophilic site (max f\u2212):** atom index 0 / label 1, the **carbonyl oxygen**, with **f\u2212 = 0.23840**.\n\nPer-atom arrays (order = O, C, C, C, C, C, C, C, H, H, H, H, H, H):\n- f+ = [0.37884, \u22120.35167, 0.39939, 0.21162, 0.33722, 0.28476, 0.27923, 0.35871, \u22120.11586, \u22120.20261, \u22120.12696, \u22120.13404, \u22120.13691, \u22120.18173]\n- f\u2212 = [0.23840, \u22120.0070528, 0.036754, 0.083318, 0.053710, \u22120.0023210, 0.058253, 0.082354, 0.060315, 0.058687, 0.074200, 0.066011, 0.071542, 0.12583]\n- dual descriptor \u0394f = [0.14045, \u22120.34462, 0.36264, 0.12830, 0.28351, 0.28708, 0.22098, 0.27636, \u22120.17618, \u22120.26129, \u22120.20116, \u22120.20005, \u22120.20845, \u22120.30756]\n\n**Warnings:** The result JSON's `warnings` array \u2014 none was present as a top-level `warnings` field; the integrity block's three checks all passed (severity \"warning\" but ok=true), namely: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\", \"sum(f\u2212) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\", and \"common header present\". No error or non-convergence warnings were reported (clean run).\n\n**Reproducibility:** Command run \u2014 `cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout path <benzaldehyde.xyz> --out .../live.json`. Result JSON written to `benzaldehyde_fukui_dft.json`; the live PySCF `.out` log was streamed to the run directory during execution, and a per-atom bar-chart PNG was written to the run's `..._plot.png`.\n\nNote: Fukui indices are model-dependent, condensed via Mulliken population analysis (basis-set sensitive) at a fixed, non-optimized geometry in gas phase; treat them as relative reactivity trends rather than absolute quantities. No experimental/literature comparison is offered."
+}

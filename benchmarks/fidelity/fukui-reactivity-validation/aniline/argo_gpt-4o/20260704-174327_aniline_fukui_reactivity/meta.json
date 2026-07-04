@@ -1,0 +1,16 @@
+{
+  "spec_name": "aniline_fukui_reactivity",
+  "spec_path": "/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline_fukui_reactivity.spec.json",
+  "skill": "fukui-reactivity",
+  "input": "/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz",
+  "input_kind": "xyz",
+  "mode": "live",
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ],
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "git_commit": "fc8ef5d",
+  "timestamp": "2026-07-04T17:43:27"
+}

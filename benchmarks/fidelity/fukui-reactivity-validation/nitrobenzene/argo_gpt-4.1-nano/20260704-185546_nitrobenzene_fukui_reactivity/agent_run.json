@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.57,
+    "llm_s": 3.75,
+    "engine_s": 0.0,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "chemkit: error: unrecognized arguments: --convergence /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz",
+      "run `chemkit fukui --help-json` for all valid flags",
+      "chemkit: chemkit engine exited non-zero"
+    ],
+    "integrity_trustworthy": false,
+    "provenance": "calculated"
+  },
+  "prose": ""
+}

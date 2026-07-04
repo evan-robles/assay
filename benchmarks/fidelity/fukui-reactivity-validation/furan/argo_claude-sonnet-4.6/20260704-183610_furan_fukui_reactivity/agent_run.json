@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 71.26,
+    "llm_s": 40.55,
+    "engine_s": 30.09,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for furan computed at DFT, tier 'standard' (B3LYP/def2-TZVP, PySCF RKS), gas phase, charge 0, multiplicity 1. Density fitting was OFF (exact four-center integrals). Geometry: user-supplied furan.xyz, no re-optimization (single-point Fukui). N\u00b11 states: cation charge +1 mult 2, anion charge -1 mult 2. Partial charges via Mulliken (PySCF). Integrity: trustworthy=true, sum(f+)=1.0000, sum(f-)=1.0000. No warnings reported. Headline value is the highest f+ (most electrophilic site): C5 (atom index 4, 0-based), f+ = 1.9242931. The alpha-carbons (C4, C5) dominate the electrophilic and nucleophilic Fukui response, consistent with furan's known 2,5-reactivity in electrophilic aromatic substitution. Note: Mulliken partitioning with large basis sets (def2-TZVP) can yield Fukui values outside [0,1]; this is a known artifact of the charge scheme rather than a convergence failure."
+}

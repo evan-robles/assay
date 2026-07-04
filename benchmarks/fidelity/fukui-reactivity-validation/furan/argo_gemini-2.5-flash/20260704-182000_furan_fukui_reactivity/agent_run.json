@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 50.86,
+    "llm_s": 20.75,
+    "engine_s": 29.47,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for furan were computed using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (tier `standard`) with the PySCF program. The calculation was performed in the gas phase with a charge of 0 and a multiplicity of 1. The input geometry was provided from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`. The calculation converged successfully. The sum of fukui_plus indices was 1.0000, and the sum of fukui_minus indices was 1.0000, indicating proper charge conservation for the N\u00b11 states.\n\nThe most electrophilic site was identified as Carbon (atom 5) with an f_plus value of 1.9242931.\nThe most nucleophilic site was also identified as Carbon (atom 5) with an f_minus value of 0.1616371."
+}

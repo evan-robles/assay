@@ -1,0 +1,31 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.76,
+    "llm_s": 4.52,
+    "engine_s": 29.15,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "The calculations produced some warnings related to charge conservation in Fukui indices, indicating potential convergence issues for N\u00b11 states but the results are still considered usable with caution."
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": ""
+}

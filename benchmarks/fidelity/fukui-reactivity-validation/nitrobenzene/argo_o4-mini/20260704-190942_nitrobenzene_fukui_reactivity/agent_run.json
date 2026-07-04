@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 213.77,
+    "llm_s": 40.91,
+    "engine_s": 172.31,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Nitrobenzene Fukui reactivity** \u2014 DFT, tier standard (B3LYP/def2-TZVP, exact four-center integrals), in PySCF via chemkit\u2019s DFT engine; gas phase; charge 0; multiplicity 1. Geometry: fixed user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz` (no optimization). Partial charges by Mulliken (PySCF). SCF converged cleanly; no warnings reported. The most electrophilic atom is C\u2084 (f\u207a = 0.4964178) and the most nucleophilic atom is C\u2085 (f\u207b = 0.1072882).\n\nCommand:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout none --out nitrobenzene_fukui_dft_standard.json`\n\nOutput JSON: `nitrobenzene_fukui_dft_standard.json`\nPlot PNG: `nitrobenzene_fukui_reactivity_plot.png`\nLive log: `fukui_<timestamp>.out` (streaming during the run, in the cwd)."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 146.71,
+    "llm_s": 35.74,
+    "engine_s": 110.45,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis \u2014 Phenol\n\n### Method Provenance Block\n\n| Field | Value |\n|---|---|\n| **Property** | Fukui indices (f\u207a, f\u207b, f\u2070, dual descriptor) per atom |\n| **Level of theory** | DFT, tier `standard` \u2014 **B3LYP / def2-TZVP** (PySCF RKS) |\n| **Density fitting** | OFF \u2014 exact four-centre integrals used (no RI approximation) |\n| **Geometry provenance** | User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz`; geometry used as-is (single-point Fukui, no re-optimization) |\n| **Solvent / environment** | **Gas phase** (no `--solvent` flag; null in result) |\n| **Charge / multiplicity** | 0 / 1 (closed-shell singlet, RKS) |\n| **N\u00b11 states** | Cation: charge +1, mult 2 (doublet); Anion: charge \u22121, mult 2 (doublet) |\n| **Partial charges** | Mulliken (PySCF) |\n| **Software** | PySCF (chemkit DFT backend) |\n| **Convergence** | \u2705 `status: ok`, `trustworthy: true` |\n\n---\n\n### Fukui Index Results (per atom, 1-based labelling)\n\nAtom indices follow the order in the `.xyz` file: **O(1), C(2)\u2013C(7), H(8)\u2013H(13)**.\n\n| # | Symbol | f\u207a (electrophilic) | f\u207b (nucleophilic) | f\u2070 (radical) | Dual (f\u207a\u2212f\u207b) |\n|---|---|---|---|---|---|\n| 1 | O | \u22120.99514 | **+0.16201** | \u22120.41656 | \u22121.15715 |\n| 2 | C | +0.39933 | +0.04877 | +0.22405 | +0.35056 |\n| 3 | C | **+2.10283** | +0.07097 | **+1.08690** | **+2.03186** |\n| 4 | C | +1.61968 | +0.07050 | +0.84509 | +1.54918 |\n| 5 | C | \u22120.34201 | +0.02670 | \u22120.15765 | \u22120.36871 |\n| 6 | C | \u22120.28911 | +0.02095 | \u22120.13408 | \u22120.31006 |\n| 7 | C | +1.30798 | +0.12352 | +0.71575 | +1.18446 |\n| 8 | H | \u22120.73392 | +0.08232 | \u22120.32580 | \u22120.81624 |\n| 9 | H | \u22120.27466 | +0.08815 | \u22120.09325 | \u22120.36280 |\n| 10 | H | \u22120.91706 | +0.08111 | \u22120.41798 | \u22120.99817 |\n| 11 | H | \u22120.62992 | +0.08049 | \u22120.27471 | \u22120.71040 |\n| 12 | H | \u22120.29592 | +0.09350 | \u22120.10121 | \u22120.38941 |\n| 13 | H | +0.04790 | +0.05101 | +0.04946 | \u22120.00311 |\n\n**Charge conservation checks:**\n- sum(f\u207a) = 1.0000 \u2705\n- sum(f\u207b) = 1.0000 \u2705\n\n---\n\n### Key Reactivity Summary\n\n| Site | Finding |\n|---|---|\n| **Most electrophilic site** | **C3** (atom 3, f\u207a = **+2.1028319**) \u2014 the ortho carbon relative to the OH group is the dominant site for nucleophilic attack on the ring |\n| **Most nucleophilic site** | **O1** (atom 1, f\u207b = **+0.16201**) \u2014 the hydroxyl oxygen is the leading site for electrophilic attack / donation |\n| **Radical attack** | **C3** (f\u2070 = +1.087) also dominant for radical reactivity |\n| **Dual descriptor** | Positive dual at C3, C4, C7 (electrophilic character); negative dual at O1 (nucleophilic character) \u2014 consistent with phenol's well-known ortho/para-directing OH group |\n\n---\n\n### Integrity & Warnings\n\n- `integrity.status`: **ok**\n- `integrity.trustworthy`: **true**\n- Integrity checks passed (charge conservation for f\u207a and f\u207b, schema header): all \u2705\n- **No warnings reported** in the result JSON.\n\n---\n\n### Reproducibility\n\n- **CLI invocation:** `cli.py fukui /home/erobles/.../phenol.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1`\n- **Result JSON:** `phenol_fukui_dft.json`\n- **Bar chart plot:** `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-sonnet-4.6/20260704-191703_phenol_fukui_reactivity/agent_call_01_plot.png`\n- **Headline value** (largest f\u207a): **2.1028319** at C3 (atom index 3, 1-based)"
+}

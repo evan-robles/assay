@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 177.95,
+    "llm_s": 55.02,
+    "engine_s": 122.38,
+    "turns": 6,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui electrophilicity index (f+)\nLevel of theory: DFT, B3LYP/def2-TZVP (tier \u2018standard\u2019), PySCF RKS with exact four-center integrals (no density fitting), gas phase, charge 0, multiplicity 1. Geometry: user-supplied pyridine.xyz (no re-optimization; single-point calculations on the fixed geometry for N, N\u00b11 charge states; cation/anion doublets generated automatically). No solvent (explicitly gas phase).\n\nCalculation used chemkit skill `fukui-reactivity` (engine subcommand `fukui`). Live SCF output was written during the run to a timestamped `.out` file; final structured results stored in `pyridine_fukui_dft.json` (see `cli_invocation` in JSON for full command line).\n\nConvergence & warnings: SCF cycles converged for all three charge states. The integrity checker reports:\n\u2022 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n\u2022 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n\u2022 \"common header present\"\nAll checks passed; integrity.trustworthy = true.\n\nResult (headline): The most electrophilic site is atom 1 (N) with f\u207a = 0.48422572 (dimensionless).\n\nNo experimental comparison was requested or provided.\n"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.0,
+    "llm_s": 26.11,
+    "engine_s": 9.89,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for formaldehyde was completed successfully. The calculation was performed using density functional theory (DFT) with the B3LYP functional and the def2-TZVP basis set (tier 'standard'). The molecule was treated in the gas phase with a charge of 0 and a multiplicity of 1, using the geometry provided in the input file. The calculation was carried out with the PySCF engine. The engine's integrity checks passed, and the result is considered trustworthy. No warnings were reported.\n\nThe Fukui indices (f+, f-, f\u2080) predict the site-specific reactivity towards nucleophilic, electrophilic, and radical attack, respectively. The computed values for each atom are:\n\n*   **Atom 0 (Oxygen)**:\n    *   f+ (nucleophilic attack): 0.46814\n    *   f- (electrophilic attack): 0.46742\n    *   f\u2080 (radical attack): 0.46778\n*   **Atom 1 (Carbon)**:\n    *   f+ (nucleophilic attack): 0.70839\n    *   f- (electrophilic attack): 0.11244\n    *   f\u2080 (radical attack): 0.41042\n*   **Atom 2 (Hydrogen)**:\n    *   f+ (nucleophilic attack): -0.08827\n    *   f- (electrophilic attack): 0.21008\n    *   f\u2080 (radical attack): 0.06090\n*   **Atom 3 (Hydrogen)**:\n    *   f+ (nucleophilic attack): -0.08826\n    *   f- (electrophilic attack): 0.21006\n    *   f\u2080 (radical attack): 0.06090\n\nBased on these results, the carbon atom (Atom 1) is the most susceptible to nucleophilic attack (highest f+), and the oxygen atom (Atom 0) is the most susceptible to electrophilic attack (highest f-)."
+}

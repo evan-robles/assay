@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 145.56,
+    "llm_s": 31.29,
+    "engine_s": 113.73,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: atom\u2013condensed Fukui functions (f+, f\u2212, dual descriptor) and identification of the most electrophilic (largest f+) and most nucleophilic (largest f\u2212) sites in phenol.\nLevel of theory: DFT, B3LYP/def2-TZVP (no density fitting) in PySCF  (invoked through chemkit\u2019s fukui-reactivity skill, tier explicitly set via --functional b3lyp and --basis def2-tzvp).\nGeometry provenance: single-point population analyses on the user-supplied geometry /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz (no re-optimization performed; calculation is therefore DFT//input-XYZ).\nSolvent / environment: gas phase (no implicit solvation model requested).\nCharge & multiplicity: charge 0, multiplicity 1 (closed-shell singlet).  N\u20131 and N+1 states were computed as doublets (charge +1 and \u22121, multiplicity 2) for the finite-difference Fukui derivatives.\nSoftware: chemkit v\u27c2 (backend PySCF) via `chemkit fukui`.\nConvergence & warnings: SCF cycles for the neutral, cation, and anion all converged; integrity status ok, trustworthy = true.  The following warnings were issued verbatim by the engine:\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nLive log: the SCF and charge-analysis progress was written live to a `.out` file whose path is recorded in the `cli_invocation` working directory (same stem as the JSON result written to phenol_fukui_dft.json); it can be inspected for full details.\n\nResult (electrophilic site)\nThe largest electrophilic Fukui index (f+) is 2.1028319 on atom 3 (C, 0-based index 2) of phenol.\n\nConsequently, the headline value reported above is this maximum f+ = 2.1028319 (unitless)."
+}

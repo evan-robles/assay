@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.38,
+    "llm_s": 17.77,
+    "engine_s": 30.93,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": "null</smiles>\n<parameter name=\"integrity_trustworthy\">true",
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Acrolein**\n\n**Method Provenance:**\n- **Property:** Fukui indices (electrophilic f\u207a, nucleophilic f\u207b, and dual descriptor)\n- **Level of theory:** DFT, tier `standard` (B3LYP/def2-TZVP) \n- **Geometry:** User-supplied acrolein.xyz (fixed geometry, not optimized at DFT)\n- **Solvent/environment:** Gas phase\n- **Charge and multiplicity:** Neutral ground state (charge 0, multiplicity 1); cation and anion states (charge \u00b11, multiplicity 2) computed for nucleophilic and electrophilic indices\n- **Partial charges:** Mulliken scheme (PySCF)\n- **Software:** PySCF DFT backend\n- **Convergence:** SCF converged for all three states (neutral, cation, anion). Fukui charge conservation checks passed: sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000.\n\n**Key Results:**\n\nThe most electrophilic site is the terminal C=C carbon (atom 4, index 3), with **f\u207a = 0.64232102**. The most nucleophilic site is the oxygen (atom 1, index 0), with **f\u207b = 0.39388616**. The dual descriptor highlights C4 (0.5549) and C3 (0.3426) as strongly electrophilic, consistent with acrolein's \u03b1,\u03b2-unsaturated carbonyl character.\n\n**Command:** `chemkit fukui --method dft --tier standard --charge 0 --mult 1 --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`\n\n**Integrity:** trustworthy = true. All convergence and charge conservation checks passed.</prose>\n<parameter name=\"value\">0.64232102"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 252.08,
+    "llm_s": 46.34,
+    "engine_s": 205.71,
+    "turns": 5,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of aniline\nMethod provenance: DFT at tier \u201cstandard\u201d \u2013 B3LYP/def2-TZVP (no density fitting) in PySCF 2.x, gas phase, charge 0, multiplicity 1. Geometry: fixed at the provided aniline.xyz coordinates (no re-optimization). Single-point calculations were performed for the neutral (N), cation (N\u20131, doublet) and anion (N+1, doublet) states; Fukui functions were derived from Mulliken charges following the standard finite-difference scheme (f\u207a = q(N) \u2013 q(N\u20131), f\u207b = q(N+1) \u2013 q(N)).\n\nConvergence & warnings: all three SCF calculations converged; integrity.status = ok, trustworthy = true.\nThe engine issued three warnings (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nKey results (atomic indices are 1-based):\nMost electrophilic site: atom 3 (C)\u2003f\u207a = 2.2975867\nMost nucleophilic site: atom 1 (N)\u2003f\u207b = 0.20452359\n\nSelected Fukui indices (f\u207a / f\u207b / dual descriptor f\u00b2):\n1 N  1.6696628  0.20452359  1.4651392\n3 C  2.2975867  0.066571393  2.2310153\n\u2026 (full arrays in result JSON)\n\nLive run artifacts: the calculation was executed with the command captured in the result\u2019s cli_invocation string (see JSON) and streamed live to the automatically generated .out log in the working directory; this log can be inspected for full SCF details. Output files include the JSON (`aniline_fukui2.json`) and a PNG bar-chart of atomic Fukui values (`agent_call_02_plot.png`).\n\nOverall, the computed Fukui functions identify the para carbon (atom 3) as the most electrophilic center and the amino nitrogen (atom 1) as the most nucleophilic site under gas-phase conditions at the B3LYP/def2-TZVP level."
+}

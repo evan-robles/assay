@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 198.69,
+    "llm_s": 21.64,
+    "engine_s": 176.48,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for nitrobenzene were computed using DFT at tier `standard` (B3LYP/def2-TZVP, exact four-center integrals, PySCF), gas phase, charge 0, multiplicity 1. The geometry was the user-supplied .xyz file (no relaxation); Fukui indices were derived from Mulliken partial charges of the neutral singlet, cation (N\u22121, doublet), and anion (N+1, doublet) states, all SCF-converged. The most electrophilic site is atom 3 (C at the ipso position, directly bonded to the NO\u2082 group) with f\u207a = 0.496; the most nucleophilic site is atom 4 (C at the ortho position) with f\u207b = 0.107. Per-atom Fukui indices (f\u207a, f\u207b, f\u2070) and dual descriptors are provided in the full output. Charge conservation checks passed (\u03a3f\u207a = \u03a3f\u207b = 1.0). No warnings reported.</prose>\n<parameter name=\"warnings\">[]"
+}

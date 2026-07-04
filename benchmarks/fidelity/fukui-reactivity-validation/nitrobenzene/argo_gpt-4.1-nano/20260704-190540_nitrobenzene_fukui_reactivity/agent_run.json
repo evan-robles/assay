@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 184.64,
+    "llm_s": 6.09,
+    "engine_s": 178.55,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui-reactivity calculation on nitrobenzene was performed using DFT at the B3LYP/def2-TZVP level in the gas phase. The calculation was based on the geometry provided in the xyz file located at: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz. Charge was set to 0 and multiplicity to 1.\n\nResult:\n- Most electrophilic site: Atom 4 (C) with F+ = 0.49642\n- Most nucleophilic site: Atom 5 (C) with F\u2212 = 0.10729\n- Zero Fukui values suggest low reactivity in those regions, with some charge drift warnings indicating the N \u00b1 1 states may not have fully converged.\n\nThe method used was \"b3lyp/def2-tzvp\" in the chemkit's DFT backend, with a tier 'standard', and the calculation was a single-point in the gas phase.\n\nWarnings from the calculation:\n- \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"sum(f\u2212) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"common header present\""
+}

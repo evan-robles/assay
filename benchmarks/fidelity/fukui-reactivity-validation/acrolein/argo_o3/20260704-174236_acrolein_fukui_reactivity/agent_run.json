@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 117.57,
+    "llm_s": 47.98,
+    "engine_s": 68.93,
+    "turns": 5,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Condensed Fukui reactivity indices for acrolein**  \nLevel of theory: DFT, B3LYP/def2-TZVP (no density fitting) in PySCF 2.x  \nGeometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`; single-point charges on this fixed geometry for the neutral (N), cation (N\u20131), and anion (N+1) states (no re-optimization, i.e. DFT//input-XYZ).  \nEnvironment: gas phase (no implicit solvent).  \nCharge/multiplicity: neutral singlet (0,1); cation (+1,2); anion (\u20131,2).  \nSCF cycles for all three charge states converged (PySCF default thresholds).  \nLive log was streamed to the calculation\u2019s `.out` file (path echoed at launch; available at run time in the working directory).  \n\nHeadline results (Mulliken-charge-based f indices, atom order as in the input file O1 C2 C3 C4 H5 H6 H7 H8):\n\u2022 f\u207a  =  [0.40136419, 0.022255106, 0.43404673, 0.64232102, \u20130.15725950, \u20130.20720290, \u20130.062116996, \u20130.073407645]  \n\u2022 f\u207b  =  [0.39388616, 0.0059884353, 0.091403097, 0.087369815, 0.085961423, 0.18567960, 0.084485809, 0.065225658]  \n\u2022 f\u2070  =  [0.39762517, 0.014121770, 0.26272491, 0.36484542, \u20130.035649040, \u20130.010761648, 0.011184406, \u20130.004090993]  \n\u2022 Dual = [0.0074780351, 0.01626667, 0.34264363, 0.55495120, \u20130.24322092, \u20130.39288251, \u20130.14660281, \u20130.13863330]\n\nMost electrophilic site: atom 4 (C, index 3) with f\u207a = 0.64232102.  \nMost nucleophilic site: atom 1 (O, index 0) with f\u207b = 0.39388616.  \n\nTool invocation: `chemkit fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 \u2026`  \nOutput JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmplez3uxt0/live.json`  \nPlot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_o3/20260704-174236_acrolein_fukui_reactivity/agent_call_02_plot.png`  \n\nWarnings reported by the engine (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 common header present  \n\nThe calculation passed all integrity checks and is flagged as trustworthy. The data above are therefore reported as computed values at the stated level of theory."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 67.57,
+    "llm_s": 37.2,
+    "engine_s": 29.76,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) \u2014 PASS",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) \u2014 PASS",
+      "common header present \u2014 PASS"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for furan were computed at the DFT level using B3LYP/def2-TZVP (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. Density fitting was OFF (exact four-center integrals). The geometry was the user-supplied furan.xyz (fixed; no re-optimization). Three SCFs were run: neutral (charge 0, mult 1), cation (charge +1, mult 2), and anion (charge \u22121, mult 2). Partial charges used the Mulliken scheme (PySCF). The headline value reported is the maximum f+ (most electrophilic site): atom 5 (C), f+ = 1.9242931. The integrity check passed: status=ok, trustworthy=true; sum(f+) = sum(f-) = 1.0000. All three integrity checks passed. No engine warnings were issued. The dual descriptor confirms C4 and C5 as the primary electrophilic/nucleophilic sites; oxygen (atom 1) shows a negative dual descriptor consistent with HOMO-dominated (nucleophilic) character. Negative Mulliken f+ on hydrogen atoms are a known artifact of Mulliken population analysis."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 66.28,
+    "llm_s": 36.29,
+    "engine_s": 29.37,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of furan was performed using DFT at the tier 'standard' level of theory (B3LYP functional, def2-TZVP basis set) in the gas phase, with a charge of 0 and multiplicity of 1, as requested. The calculation was carried out with the PySCF program.\n\nThe results identify the most reactive sites for electrophilic and nucleophilic attack based on the Fukui functions (f- and f+), which are derived from changes in electron density upon adding or removing an electron.\n\n- The site most susceptible to **nucleophilic attack** (the most electrophilic site) is carbon atom 5, with a Fukui+ (f+) value of 1.9242931.\n- The site most susceptible to **electrophilic attack** (the most nucleophilic site) is also carbon atom 5, with a Fukui- (f-) value of 0.1616371.\n\nThe calculation completed successfully and reported no warnings. The sum of f+ and f- values were both conserved to approximately 1.0, indicating a reliable result for the neutral, cationic, and anionic states."
+}

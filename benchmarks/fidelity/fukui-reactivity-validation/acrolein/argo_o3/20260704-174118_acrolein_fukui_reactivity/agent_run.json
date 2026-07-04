@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 76.22,
+    "llm_s": 41.28,
+    "engine_s": 34.25,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property: condensed Fukui functions \u2013 electrophilic (f\u207a), nucleophilic (f\u207b), radial (f\u2070 = \u00bd(f\u207a+f\u207b)); most-reactive atomic sites identified. Units: electrons (dimensionless, \u03a3f\u00b1 \u2248 1).\n\u2022 Level of theory: DFT, functional B3LYP with def2-TZVP basis (tier \u2018standard\u2019), no density fitting (exact four-center integrals).\n\u2022 Geometry provenance: user-supplied acrolein coordinates (`acrolein.xyz`, 8 atoms); single-point vertical ionizations (N\u00b11) on this fixed geometry (`DFT//B3LYP/def2-TZVP`). No additional optimization performed.\n\u2022 Solvent / environment: gas phase (no continuum solvation).\n\u2022 Charge 0, multiplicity 1 (singlet); cation and anion states were doublets (charge \u00b11, mult 2).\n\u2022 Software: chemkit fukui-reactivity skill (backend: PySCF 2.x via chemkit-mcp).\n\u2022 Convergence & caveats: all three SCFs (N, N\u22121, N+1) converged; integrity status ok, trustworthy = true.\n  Warnings (verbatim):\n  \u2013 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n  \u2013 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n  \u2013 common header present\n\u2022 Live engine log streamed to `fukui_<timestamp>.out` in the working directory; result JSON saved at /home/erobles/chem-skills/.fidelity_scratch/tmpowi6dngy/live.json.\n\nHeadline numerical outcome\nMost electrophilic site: atom 4 (C, \u03b2-carbon) with f\u207a = 0.64232102 (reported above under value).\nMost nucleophilic site: atom 1 (O) with f\u207b = 0.39388616.\n\nThese results were computed, not experimental."
+}

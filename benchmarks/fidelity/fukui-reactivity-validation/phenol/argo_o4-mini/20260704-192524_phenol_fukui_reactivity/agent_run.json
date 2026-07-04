@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 146.87,
+    "llm_s": 37.11,
+    "engine_s": 109.23,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui\u2010Reactivity** \u2014 Fukui reactivity descriptors computed at DFT//input\u2010geometry: B3LYP/def2-TZVP (tier standard, no density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: single\u2010point evaluation on the user\u2010supplied phenol.xyz (no relaxation). SCF converged for neutral, cation (charge +1, mult 2), and anion (charge \u20131, mult 2) states; no warnings reported.\n\nMulliken\u2010based Fukui+ (electrophilic) and Fukui\u2013 (nucleophilic) indices per atom:\n\u2022 Fukui+ = [\u20130.99513677, 0.39933187, 2.1028319, 1.6196806, \u20130.34200644, \u20130.28910826, 1.3079753, \u20130.73391778, \u20130.27465614, \u20130.91706058, \u20130.62991625, \u20130.29591676, 0.047899336]  \n\u2022 Fukui\u2013 = [0.16201477, 0.048772551, 0.070972379, 0.070498539, 0.026704972, 0.020949414, 0.12351549, 0.082321145, 0.088147788, 0.081105985, 0.080487046, 0.09349577, 0.051014152]  \n\nMost electrophilic site: C (atom 3) with f\u208a = 2.1028319  \nMost nucleophilic site: O (atom 1) with f\u208b = 0.16201477  \n\nReproducibility:  \n\u2022 CLI invocation:  \n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --method dft --tier standard --charge 0 --mult 1 --out /home/erobles/chem-skills/.fidelity_scratch/tmplu1a82gs/live.json  \n\u2022 Output JSON: /home/erobles/chem-skills/.fidelity_scratch/tmplu1a82gs/live.json  \n\u2022 Live log (streaming now): fukui_<timestamp>.out in the working directory  \n\nNo warnings were reported.  \nintegrity.trustworthy = true  \nprovenance = computed"
+}

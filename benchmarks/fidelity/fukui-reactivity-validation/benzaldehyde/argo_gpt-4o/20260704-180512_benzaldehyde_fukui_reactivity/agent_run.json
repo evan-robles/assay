@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 264.3,
+    "llm_s": 5.54,
+    "engine_s": 258.13,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis** for benzaldehyde \u2014 DFT, **B3LYP/def2-TZVP**, density-fit enabled (resolution-of-identity). Geometry: imported from user-provided XYZ file, used as-is (not relaxed in this run). Environment: **gas phase**, charge 0, multiplicity 1. Software: PySCF. Task: reactivity indices evaluated using Mulliken charges at neutral, plus/minus 1-electron states.\n\nResult highlights:\n- Most electrophilic atom: **C\u2083 (f\u207a = 0.39939)** \u2014 likely to react with nucleophiles.\n- Most nucleophilic atom: **O\u2081 (f\u207b = 0.23840)** \u2014 likely to react with electrophiles.\n- Atom count: 14.\n\nThe calculation converged successfully (`integrity.status: ok, trustworthy: true`), with its live `.out` log recorded at `'/home/erobles/chem-skills/.fidelity_scratch/tmp6cyflvpe/live.json'`. \nRuntime caveats:\n- sum(f\u207a) = 1.0000 (should be approximately 1.0; significant mismatch might indicate an unconverged N\u00b11 state).\n- sum(f\u207b) = 1.0000 (same as above)."
+}

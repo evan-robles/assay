@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 107.3,
+    "llm_s": 44.71,
+    "engine_s": 62.04,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for pyridine were computed using DFT at the B3LYP/def2-TZVP level (tier 'standard', PySCF RKS, exact four-center integrals \u2014 no density fitting), in the gas phase, charge 0, multiplicity 1. The N\u22121 (cation) state used charge +1, multiplicity 2; the N+1 (anion) state used charge \u22121, multiplicity 2. Partial charges were obtained via the Mulliken scheme (PySCF). The finite-difference Fukui indices f+, f\u2212, f0, and the dual descriptor were computed for all 11 atoms (N, C\u00d75, H\u00d75). Integrity status: ok, trustworthy: true; all checks passed (\u03a3f+ = \u03a3f\u2212 = 1.0000). No warnings reported.\n\nHeadline result: the most electrophilic atom is N (atom 1) with f+ = 0.48422572; the most nucleophilic heavy atom is C (atom 4) with f\u2212 = 0.11826260. Full per-atom Fukui indices and dual descriptors are reported in the detailed table above."
+}

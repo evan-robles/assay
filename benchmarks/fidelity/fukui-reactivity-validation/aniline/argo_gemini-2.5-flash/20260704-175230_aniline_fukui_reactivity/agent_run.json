@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 125.34,
+    "llm_s": 24.0,
+    "engine_s": 100.66,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui reactivity indices for aniline were computed using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (PySCF), in the gas phase, with a charge of 0 and a multiplicity of 1. The geometry was sourced from the user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` file, and the calculation was performed as a single point on this geometry without density fitting.\n\n**Fukui Reactivity Indices for Aniline**\n\n*   **Most Electrophilic Site (highest f+):** Carbon atom at index 2 (1-based label 3) with an f+ value of 2.2975867.\n*   **Most Nucleophilic Site (highest f-):** Nitrogen atom at index 0 (1-based label 1) with an f- value of 0.20452359.\n\n**Fukui Indices per Atom (f+, f-, f0)**\n*   **Atom 0 (N):** f+ = 1.6696628, f- = 0.20452359, f0 = 0.93709321\n*   **Atom 1 (C):** f+ = -1.9009183, f- = -0.0037260934, f0 = -0.95232219\n*   **Atom 2 (C):** f+ = 2.2975867, f- = 0.066571393, f0 = 1.182079\n*   **Atom 3 (C):** f+ = 2.2965637, f- = 0.066588805, f0 = 1.1815763\n*   **Atom 4 (C):** f+ = -0.28837102, f- = 0.0083458972, f0 = -0.14001256\n*   **Atom 5 (C):** f+ = -0.28784778, f- = 0.0083790983, f0 = -0.13973434\n*   **Atom 6 (C):** f+ = 1.4031744, f- = 0.10973255, f0 = 0.7564535\n*   **Atom 7 (H):** f+ = -0.35138763, f- = 0.08199599, f0 = -0.13469582\n*   **Atom 8 (H):** f+ = -0.35134383, f- = 0.082013935, f0 = -0.13466495\n*   **Atom 9 (H):** f+ = -0.82107488, f- = 0.076354671, f0 = -0.3723601\n*   **Atom 10 (H):** f+ = -0.82130627, f- = 0.0763456, f0 = -0.37248033\n*   **Atom 11 (H):** f+ = 0.099263011, f- = 0.087365768, f0 = -0.12766188\n*   **Atom 12 (H):** f+ = 0.22322807, f- = 0.067758118, f0 = -0.34156281\n*   **Atom 13 (H):** f+ = 0.22324527, f- = 0.067750673, f0 = -0.34170703"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 137.03,
+    "llm_s": 25.24,
+    "engine_s": 111.27,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of phenol** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**), in **PySCF** (`dft` backend). Method string as reported by the engine: `b3lyp/def2-tzvp`. Density fitting was OFF (exact four-center integrals; the flag was not passed). **Gas phase** (no solvent; `solvent: null`). Parent charge 0, multiplicity 1 (closed-shell RKS). The N\u22121 cation and N+1 anion states were computed at charge +1 / multiplicity 2 and charge \u22121 / multiplicity 2 respectively (both doublets, UKS). Partial-charge scheme: Mulliken (PySCF).\n\nGeometry provenance: the calculation used the user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (13 atoms: O, 6\u00d7C, 6\u00d7H) as-is \u2014 this is a finite-difference Fukui analysis (three single-point SCFs at that fixed geometry for the neutral, cation, and anion); the geometry was not re-optimized.\n\n**Headline result \u2014 condensed Fukui indices (Mulliken-based, from the frozen-geometry N, N\u00b11 single points):**\n- **Most electrophilic site (largest f\u207a):** atom index 3 (1-based), a carbon, with **f\u207a = 2.1028319** \u2014 this is the site most susceptible to nucleophilic attack.\n- **Most nucleophilic site (largest f\u207b):** atom index 1 (1-based), the **oxygen**, with **f\u207b = 0.16201477** \u2014 the site most susceptible to electrophilic attack.\n\nFull per-atom arrays (order O, C, C, C, C, C, C, H, H, H, H, H, H) are available in the result JSON for f\u207a (`fukui_plus`), f\u207b (`fukui_minus`), f\u2070 (`fukui_zero`), and the dual descriptor (`dual_descriptor`).\n\nNote on interpretation: several f\u207a / dual-descriptor magnitudes are large and both positive and negative. This is characteristic of Mulliken-based condensed Fukui functions computed with a large, diffuse-capable basis (def2-TZVP) \u2014 Mulliken population partitioning is basis-sensitive and the individual atomic values (especially for the N+1 anion state, whose Mulliken charges here are physically extreme, e.g. \u22122.29 on a carbon) should be read as qualitative reactivity trends, not quantitative densities. The identification of the electrophilic carbon (largest f\u207a) and nucleophilic oxygen (largest f\u207b) is the robust deliverable.\n\n**Convergence / integrity:** integrity status = **ok**, **trustworthy = true**. Integrity checks (all passed):\n- `fukui_charge_conservation_f+`: ok \u2014 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `fukui_charge_conservation_f-`: ok \u2014 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `schema_header`: ok \u2014 \"common header present\"\n\nBoth Fukui charge-conservation sums equal 1.0000, indicating the N\u00b11 SCF states converged. **The engine's `warnings` array was empty \u2014 no warnings were reported.**\n\n**Reproducibility:** exact command (`cli_invocation`): `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpkka5en1o/live.json`. Result JSON written to `phenol_fukui_dft.json`; per-atom bar chart (f\u207a/f\u207b/dual) written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-opus-4.8/20260704-191242_phenol_fukui_reactivity/agent_call_01_plot.png`. A live `.out` log is streamed to the caller's working directory during the run for real-time monitoring (`tail -f`). No experimental/literature comparison is offered."
+}

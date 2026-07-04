@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 260.31,
+    "llm_s": 32.73,
+    "engine_s": 226.96,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzaldehyde Fukui reactivity** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals) in PySCF (via chemkit), gas phase, charge 0, multiplicity 1. Geometry: read from user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz`, single-point calculation (no optimization). SCF converged for the neutral, cationic, and anionic states; no warnings reported. Partial charges (Mulliken) used to compute fukui indices. Most electrophilic site: C3 (atom label 3) with f\u207a = 0.39938967; most nucleophilic site: O1 (atom label 1) with f\u207b = 0.23839906. Live log is being written to `fukui_20260704-181256.out` (tail -f to monitor). Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --stdout path --out benzaldehyde_fukui_dft.json`."
+}

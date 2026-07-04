@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 140.74,
+    "llm_s": 38.35,
+    "engine_s": 101.73,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui reactivity analysis** \u2014 fukui-reactivity; DFT, tier `standard` (B3LYP/def2-TZVP, no density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: input from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`, used as-is (single point). SCF converged; integrity checks passed (trustworthy = true); no warnings reported. Most electrophilic site: carbon atom 3 (f+ = 2.2975867). Most nucleophilic site: nitrogen atom 1 (f\u2212 = 0.20452359). Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --method dft --tier standard --charge 0 --mult 1 --stdout none --out /home/erobles/chem-skills/.fidelity_scratch/tmpzci6k7bj/live.json`. Output JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmpzci6k7bj/live.json`. The live .out log was streaming to `fukui_<timestamp>.out` in the run directory."
+}

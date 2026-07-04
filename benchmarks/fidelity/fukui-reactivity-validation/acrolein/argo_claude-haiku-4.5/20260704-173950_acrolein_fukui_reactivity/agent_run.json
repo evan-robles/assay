@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 70.22,
+    "llm_s": 20.52,
+    "engine_s": 48.75,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Acrolein** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, PySCF), gas phase, charge 0, multiplicity 1. Geometry: input coordinates from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz` (single-point, not relaxed). Fukui indices calculated via response to +1 (cation, doublet) and \u22121 (anion, doublet) perturbations using Mulliken partial charges. SCF converged for neutral, cation, and anion states. Charge-conservation checks (\u2211f\u207a and \u2211f\u207b) passed. Integrity status: ok, trustworthy. **Key findings:** Most electrophilic site (highest f\u207a) is atom 4 (terminal vinyl C) with f\u207a = 0.642; most nucleophilic site (highest f\u207b) is atom 1 (carbonyl O) with f\u207b = 0.394. Dual descriptor analysis indicates the terminal vinyl carbon (atom 4, f\u207a \u2212 f\u207b = +0.555) prefers nucleophilic attack, consistent with acrolein's known \u03b1,\u03b2-unsaturated carbonyl reactivity. A bar chart of Fukui indices per atom was generated and is available at the provided plot path. No warnings reported. All convergence checks passed."
+}

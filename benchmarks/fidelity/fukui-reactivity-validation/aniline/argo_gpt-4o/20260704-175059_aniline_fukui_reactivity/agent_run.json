@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 108.3,
+    "llm_s": 6.11,
+    "engine_s": 101.53,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis for aniline** was performed at the **DFT level** with the B3LYP/def2-TZVP functional and basis set using PySCF in the **gas phase**. Charge and multiplicity: 0, 1 respectively. Geometry: fixed from the input file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (no further relaxation). Fukui functions were computed as Mulliken populations on neutral, cationic (-1e charge, doublet), and anionic (+1 e charge, doublet) states. The most electrophilic site is **C3** with $f^+$ descriptor **2.29759**; the most nucleophilic site is **N1** with $f^\u2212$ descriptor **0.20452**. Total f+/f\u2212 conservation checks passed.\n\nWarnings (verbatim):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present \nSoftware/version: PySCF.\nLive log file generated at `/home/erobles/chem-skills/.fidelity_scratch/tmpralqku4i/live.json`."
+}

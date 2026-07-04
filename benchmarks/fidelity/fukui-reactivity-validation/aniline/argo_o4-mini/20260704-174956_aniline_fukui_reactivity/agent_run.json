@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 147.64,
+    "llm_s": 42.74,
+    "engine_s": 104.23,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui reactivity indices** \u2014 Condensed atom-wise Fukui reactivity indices (f\u207a for electrophilic attack, f\u207b for nucleophilic attack, dual descriptor) computed at DFT level, **B3LYP/def2-TZVP** (tier `standard`, exact integrals, density fitting off) in PySCF via chemkit, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`, single-point evaluation (no geometry relaxation). SCF converged for the neutral, cation, and anion states; integrity status = ok, trustworthy = true. Most electrophilic atom: C3 (atom label 3) with f\u207a = 2.2975867. Most nucleophilic atom: N1 (atom label 1) with f\u207b = 0.20452359. No solvation model (gas phase). Warnings (verbatim): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); common header present. Files: JSON output at `/home/erobles/chem-skills/.fidelity_scratch/tmp58cvr6qh/live.json`; bar-chart plot at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_o4-mini/20260704-174956_aniline_fukui_reactivity/agent_call_01_plot.png`. CLI command: `chemkit fukui-reactivity --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp58cvr6qh/live.json`."
+}

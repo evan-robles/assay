@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 116.32,
+    "llm_s": 56.3,
+    "engine_s": 59.49,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for pyridine (11 atoms: N + 5C + 5H) using DFT at the B3LYP/def2-TZVP level (PySCF RKS, tier 'standard'), gas phase, charge 0, multiplicity 1. Density fitting was OFF (exact four-centre integrals). Partial charges were obtained via the Mulliken scheme (PySCF). The N\u00b11 states used doublet multiplicity (cation charge +1, mult 2; anion charge \u22121, mult 2). All three SCFs (neutral, cation, anion) converged. Integrity status: ok, trustworthy: true.\n\nHeadline result \u2014 most electrophilic site: Atom 1 (N), f\u207a = 0.48422572.\nMost nucleophilic site: Atom 4 (C, para to N), f\u207b = 0.11826260.\n\nFull per-atom Fukui indices (B3LYP/def2-TZVP, gas phase, Mulliken):\n\nAtom | Symbol | f\u207a       | f\u207b       | f\u2070       | Dual \u0394f\n-----|--------|----------|----------|----------|----------\n1    | N      | +0.48423 | +0.06412 | +0.27417 | +0.42010\n2    | C      | +0.32447 | +0.00619 | +0.16533 | +0.31828\n3    | C      | +0.14032 | +0.11823 | +0.12928 | +0.02209\n4    | C      | +0.14040 | +0.11826 | +0.12933 | +0.02213\n5    | C      | +0.29963 | +0.11207 | +0.20585 | +0.18756\n6    | C      | +0.29948 | +0.11201 | +0.20574 | +0.18747\n7    | H      | \u22120.14151 | +0.08285 | \u22120.02933 | \u22120.22436\n8    | H      | \u22120.13368 | +0.09818 | \u22120.01775 | \u22120.23186\n9    | H      | \u22120.13366 | +0.09818 | \u22120.01774 | \u22120.23184\n10   | H      | \u22120.13982 | +0.09496 | \u22120.02243 | \u22120.23478\n11   | H      | \u22120.13985 | +0.09495 | \u22120.02245 | \u22120.23479\n\nCharge conservation: sum(f\u207a) = 1.0000 \u2705, sum(f\u207b) = 1.0000 \u2705. Warnings array: empty \u2014 clean run. No engine warnings reported."
+}

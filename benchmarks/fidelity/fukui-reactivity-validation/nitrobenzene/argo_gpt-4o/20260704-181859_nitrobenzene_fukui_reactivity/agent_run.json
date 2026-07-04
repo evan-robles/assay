@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 176.59,
+    "llm_s": 5.25,
+    "engine_s": 170.7,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui indices for nitrobenzene** \u2014 Calculated using DFT (method: B3LYP/def2-TZVP) with PySCF in the gas phase (solvent omitted). The analysis was performed on the submitted structure (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz) without additional geometry optimization. Charge = 0, multiplicity = 1.\n\n### Results\n- Atom with most electrophilic property (f\u207a): Carbon atom (C) at position 4 with a Fukui index f\u207a = 0.49642.\n- Warnings (verbatim): ['sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)','sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)','common header present']\n\nThe calculation method was PySCF B3LYP/def2-TZVP for DFT (relaxed tier: standard), performed via chemkit's fukui-reactivity skill. It was a direct calculation without using implicit solvation. Integrity results mark the result as trustworthy, but drift in Fukui sums is flagged."
+}

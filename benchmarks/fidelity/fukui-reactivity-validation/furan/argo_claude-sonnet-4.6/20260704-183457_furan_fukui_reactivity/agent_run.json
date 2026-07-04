@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 71.88,
+    "llm_s": 42.18,
+    "engine_s": 29.08,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for furan using DFT at the B3LYP/def2-TZVP level of theory (PySCF RKS; exact four-centre integrals, no density fitting), tier 'standard', gas phase, charge 0, multiplicity 1. The N\u22121 cation state was computed at charge +1, multiplicity 2 (doublet); the N+1 anion state at charge \u22121, multiplicity 2 (doublet). Fukui indices were derived from finite differences of Mulliken partial charges (PySCF). The integrity check reports status='ok', trustworthy=true; sum(f+)=1.0000 and sum(f-)=1.0000, confirming charge conservation. No warnings were reported. The headline value reported is the largest f+ (electrophilic Fukui index), located on atom 5 (C, beta-carbon): f+ = 1.9242931. The most nucleophilic site by f- is also atom 5: f- = 0.1616371. The dual descriptor at atom 5 is 1.762656 (positive, electrophile-preferred). Oxygen (atom 1) has a negative dual descriptor (\u22121.415440), consistent with its nucleophilic character. Note that Mulliken-partitioned Fukui indices can yield values outside [0,1] \u2014 the relative ordering carries the physical meaning. Output artifacts: result JSON 'furan_fukui_dft.json'; bar chart at the run directory. CLI: cli.py fukui furan.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1."
+}

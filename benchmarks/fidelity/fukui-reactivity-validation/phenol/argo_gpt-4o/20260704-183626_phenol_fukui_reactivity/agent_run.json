@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 117.13,
+    "llm_s": 5.46,
+    "engine_s": 111.05,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol fukui analysis (reactivity indices)** \u2014 DFT calculation using the B3LYP functional and def2-TZVP basis in PySCF (density fitting enabled), **gas phase**, charge 0, multiplicity 1. The parent molecule coordinates were read from: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz`. The most electrophilic atom was determined to be C at atom index 2 (third atom in the system) with Fukui plus index `f+ = 2.10283`, and the most nucleophilic atom is O at atom index 0 (first atom in the system) with Fukui minus index `f- = 0.16201`.\n\nWarnings: 1. **sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)** 2. **sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)** 3. **common header present**  \nCommand used: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --method dft --functional b3lyp --basis def2-tzvp --solvent none --charge 0 --mult 1 --accept-defaults --out /home/erobles/chem-skills/.fidelity_scratch/tmphsa6h4wd/live.json`. Plot available at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_gpt-4o/20260704-183626_phenol_fukui_reactivity/agent_call_01_plot.png`."
+}

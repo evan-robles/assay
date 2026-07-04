@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 65.85,
+    "llm_s": 37.15,
+    "engine_s": 28.11,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity of furan was computed with chemkit\u2019s fukui-reactivity skill using DFT at the B3LYP/def2-TZVP level (tier \u201cstandard\u201d) in the gas phase on the supplied experimental geometry (no re-optimization). Charge 0, multiplicity 1; N\u00b11 states treated as doublets. PySCF carried out three converged SCF calculations; no convergence failures reported.  \n\nLargest electrophilic Fukui index f\u207a = 1.9242931 (dimensionless) located on carbon atom 5 (index 4). This atom is also the most nucleophilic site (f\u207b = 0.1616371).  \n\nWarnings from chemkit:  \n\u2022 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n\u2022 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n\u2022 \"common header present\"  \n\nEngine integrity.trustworthy: true.  \nLive log was written during execution to fukui_<timestamp>.out and the full JSON result is stored at /home/erobles/chem-skills/.fidelity_scratch/tmpgezhey4k/live.json.  "
+}

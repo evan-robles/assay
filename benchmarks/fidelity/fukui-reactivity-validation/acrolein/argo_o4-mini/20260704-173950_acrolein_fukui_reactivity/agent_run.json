@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 79.17,
+    "llm_s": 29.33,
+    "engine_s": 49.11,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Acrolein Fukui-reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, no density fitting, RKS) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: read from the provided acrolein.xyz (no geometry optimization; single-point calculation). SCF converged without notable issues. Mulliken charges were used to compute the Fukui indices. The maximum electrophilic Fukui index (f+) is 0.64232102 at the fourth atom (C4), identifying it as the most electrophilic site; the maximum nucleophilic Fukui index (f-) is 0.39388616 at the first atom (O1), identifying it as the most nucleophilic site. Results written to acrolein_fukui_dft.json and a bar chart plot at the path indicated by the JSON. Warnings (from integrity checks):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present"
+}

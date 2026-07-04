@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 110.36,
+    "llm_s": 47.91,
+    "engine_s": 61.91,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Fukui reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, plain RKS/exact integrals, no density fitting) in PySCF; gas phase, charge 0, multiplicity 1. Geometry: single-point on the user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz` (no prior optimization). Partial charges: Mulliken (PySCF). SCF converged for neutral (charge 0), cation (charge +1, mult 2), and anion (charge \u20131, mult 2) states. Warnings: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); common header present. Most electrophilic site: N (atom 1) with f\u207a = 0.48422572. Most nucleophilic site: C (atom 4) with f\u207b = 0.11826260. Result JSON: `pyridine_fukui_standard.json`. CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz --method dft --tier standard --charge 0 --mult 1 --out /home/erobles/chem-skills/.fidelity_scratch/tmpiybhclie/live.json`."
+}

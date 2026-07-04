@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 275.42,
+    "llm_s": 20.37,
+    "engine_s": 254.38,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzaldehyde Fukui Reactivity Analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, exact four-center integrals) in PySCF, gas phase, charge 0, multiplicity 1 (neutral). Cation and anion states calculated at charge +1 and \u22121, respectively, both multiplicity 2. Geometry: input `.xyz` file, single-point calculation (no geometry optimization). SCF converged for all three states. Fukui conservation checks passed: \u03a3(f\u207a) = 1.0000, \u03a3(f\u207b) = 1.0000. \n\n**Most Electrophilic Site:** Atom 3 (C in benzene ring, ortho to CHO), f\u207a = 0.39939.\n\n**Most Nucleophilic Site:** Atom 1 (O in carbonyl), f\u207b = 0.23840.\n\n**Dual Descriptor (f\u207a \u2212 f\u207b):** O (atom 0) = +0.14046 (electrophilic); C\u2081 (atom 1, ipso) = \u22120.34462 (nucleophilic); C\u2082 (atom 2, ortho) = +0.36264 (strong electrophilic); C\u2083 (atom 3, meta) = +0.12830; C\u2084 (atom 4, para) = +0.28351; other aromatics range +0.14 to +0.29. All hydrogens negative (\u22120.18 to \u22120.31), indicating nucleophilic character.\n\n**Per-Atom Mulliken Charges (Neutral):** O = \u22120.3086 (most negative, nucleophilic); aromatic C atoms \u22120.067 to +0.097; H atoms +0.071 to +0.140.\n\n**Interpretation:** Benzaldehyde's carbonyl oxygen is the primary nucleophilic site. The ortho carbons on the benzene ring are the most electrophilic. This pattern aligns with expected electrophilic aromatic substitution at ortho and para positions, modulated by the electron-withdrawing aldehyde group.\n\n**Plot:** Generated and saved. Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --charge 0 --mult 1 --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz`. No convergence warnings or fallbacks. All integrity checks passed (trustworthy = true)."
+}

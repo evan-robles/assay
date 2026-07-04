@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.14,
+    "llm_s": 14.07,
+    "engine_s": 9.42,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity indices for formaldehyde have been computed using DFT at the B3LYP/def2-TZVP level of theory (tier `standard`) with PySCF, in the gas phase, with a charge of 0 and multiplicity of 1. The geometry was taken from the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz` file without further optimization. Density fitting was not used.\n\nHere are the computed Fukui indices for each atom:\n\n*   **Oxygen (O)**:\n    *   f+ (electrophilic attack): 0.46814\n    *   f- (nucleophilic attack): 0.46742\n    *   f0 (radical attack): 0.46778\n    *   Dual Descriptor (f2): 0.00071\n\n*   **Carbon (C)**:\n    *   f+ (electrophilic attack): 0.70839\n    *   f- (nucleophilic attack): 0.11244\n    *   f0 (radical attack): 0.41042\n    *   Dual Descriptor (f2): 0.59595\n\n*   **Hydrogen (H) [atom 3]**:\n    *   f+ (electrophilic attack): -0.08827\n    *   f- (nucleophilic attack): 0.21008\n    *   f0 (radical attack): 0.06090\n    *   Dual Descriptor (f2): -0.29835\n\n*   **Hydrogen (H) [atom 4]**:\n    *   f+ (electrophilic attack): -0.08826\n    *   f- (nucleophilic attack): 0.21006\n    *   f0 (radical attack): 0.06090\n    *   Dual Descriptor (f2): -0.29832\n\nBased on these indices:\n*   The **most electrophilic site** is the **Carbon (C)** atom (atom index 1, 0-based), with an f+ value of 0.70839.\n*   The **most nucleophilic site** is the **Oxygen (O)** atom (atom index 0, 0-based), with an f- value of 0.46742."
+}

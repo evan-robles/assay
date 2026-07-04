@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 41.25,
+    "llm_s": 11.9,
+    "engine_s": 28.74,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity calculation for furan was performed using the chemkit `fukui-reactivity` skill.\n\n**Fukui Reactivity Indices for Furan** \u2014 DFT, **B3LYP/def2-TZVP** (PySCF), **gas phase**, charge 0, multiplicity 1. Geometry: built from user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`, fixed geometry. SCF converged.\n\nThe most electrophilic site is Carbon (atom 5, 0-indexed as 4) with a Fukui f+ index of 1.9242931. The most nucleophilic site is also Carbon (atom 5, 0-indexed as 4) with a Fukui f- index of 0.1616371. The partial charges were calculated using the Mulliken scheme (PySCF)."
+}

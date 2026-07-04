@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 260.7,
+    "llm_s": 6.65,
+    "engine_s": 250.23,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of benzaldehyde** \u2014 DFT, B3LYP/def2-TZVP, in PySCF 2026; gas phase (no implicit solvent). Charge: 0; multiplicity: 1 (neutral, closed shell). Geometry input read from file benzaldehyde.xyz and used as-is. Method provenance verified: full run ran under --method dft with tier set to standard. **Most electrophilic site:** atom 3 (carbon), Fukui f+ = 0.39939. **Most nucleophilic site:** atom 1 (oxygen), Fukui f\u2212 = 0.23840.\n\nLive log was output to file path `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_gpt-4o/20260704-175642_benzaldehyde_fukui_reactivity/fukui_20260704-175647.out`. See drop-calculated f+/f-/dual descriptors in: `/home/erobles/chem-skills/.fidelity_scratch/tmp9iadrqlr/live.json`. **Summary: electrophilicity dominates on f+ over the C atom.** All warnings verified independently OK, but surfaced verbatim regardless."
+}

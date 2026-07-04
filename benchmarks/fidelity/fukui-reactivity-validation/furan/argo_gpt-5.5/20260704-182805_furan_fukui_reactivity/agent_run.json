@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 60.31,
+    "llm_s": 30.96,
+    "engine_s": 28.73,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan Fukui reactivity \u2014 computed result.**\n\n**Method/provenance:** Fukui indices from DFT at tier `standard` (**B3LYP/def2-TZVP**) using chemkit\u2019s `fukui-reactivity` task / PySCF-backed DFT path, **gas phase** (`solvent: null`), charge 0 and multiplicity 1 for the neutral parent. Geometry: user-supplied XYZ used from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz` (9 atoms). N\u22121 cation state: charge +1, multiplicity 2; N+1 anion state: charge \u22121, multiplicity 2. Partial charges scheme: Mulliken (PySCF). No density-fitting flag was used. Software version was not returned by the tool.\n\n**Headline result:** most electrophilic site by `f+` is atom **5** (1-based), **C**, with `f_plus = 1.9242931`. The most nucleophilic site by `f-` is also atom **5** (1-based), **C**, with `f_minus = 0.1616371`.\n\nPer-atom results in input order (`O, C, C, C, C, H, H, H, H`):\n\n| atom | element | f+ | f\u2212 | f0 | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | O | -1.3316182 | 0.08382155 | -0.62389834 | -1.4154398 |\n| 2 | C | 1.2286866 | 0.089103093 | 0.65889485 | 1.1395835 |\n| 3 | C | 1.2270264 | 0.089304821 | 0.65816562 | 1.1377216 |\n| 4 | C | 1.9233053 | 0.161527 | 1.0424161 | 1.7617783 |\n| 5 | C | 1.9242931 | 0.1616371 | 1.0429651 | 1.762656 |\n| 6 | H | -1.2190639 | 0.10248412 | -0.55828991 | -1.3215481 |\n| 7 | H | -1.2191056 | 0.1025135 | -0.55829603 | -1.3216191 |\n| 8 | H | -0.76678308 | 0.10481615 | -0.33098346 | -0.87159923 |\n| 9 | H | -0.76674059 | 0.10479266 | -0.33097396 | -0.87153325 |\n\n**Integrity / caveats:** engine `integrity.trustworthy = true`. The result JSON did not contain a separate `warnings` array, but the integrity checks included these warning-severity details verbatim:\n- `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `common header present`\n\n**Artifacts / reproducibility:**\n- Exact CLI invocation returned by chemkit: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --out /home/erobles/chem-skills/.fidelity_scratch/tmpvzrg5fls/live.json`\n- Plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_gpt-5.5/20260704-182805_furan_fukui_reactivity/agent_call_01_plot.png`\n- Output JSON path from invocation: `/home/erobles/chem-skills/.fidelity_scratch/tmpvzrg5fls/live.json`\n- A live `.out` log path was not included in the returned tool JSON, so I am not fabricating one."
+}

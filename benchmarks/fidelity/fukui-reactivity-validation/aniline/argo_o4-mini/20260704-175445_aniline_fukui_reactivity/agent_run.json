@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 137.79,
+    "llm_s": 34.15,
+    "engine_s": 102.93,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity (f+, f\u2013, dual descriptor) of aniline**  Method: DFT, tier `standard` (B3LYP/def2-TZVP, no density fitting) in PySCF via chemkit; gas phase; charge 0; multiplicity 1.  Geometry: taken from user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (no geometry optimization).  SCF converged cleanly. No warnings reported. Integrity checks (all OK, but flagged as \u201cwarning\u201d severity for charge conservation, see below) did not affect trustworthiness.  Results (Mulliken scheme):  \u2022 Most electrophilic site: atom 3 (C), f\u207a = 2.2975867  \u2022 Most nucleophilic site: atom 1 (N), f\u207b = 0.20452359\n\nCommand run:\n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui \\\n  /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz \\\n  --method dft --tier standard --charge 0 --mult 1 \\\n  --stdout json --out aniline_fukui_standard.json\n```\nLive log file is being written to `fukui_20260704-175445.out` (you can `tail -f` it).\nOutput JSON: `aniline_fukui_standard.json`\n\nIntegrity checks (from JSON\u2019s `integrity.checks`):\n- fukui_charge_conservation_f+: \u201csum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d\n- fukui_charge_conservation_f-: \u201csum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d\n- schema_header: \u201ccommon header present\u201d"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.08,
+    "llm_s": 6.33,
+    "engine_s": 6.14,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The calculation requested was the Fukui-reactivity analysis for ferrocene. It was carried out using the **GFN2-xTB** method (semi-empirical tight-binding quantum chemical approach) with the program xtb. The test was done in the **gas phase**, assuming charge 0 and multiplicity 1. Partial charges and environmental effects were modeled using Mulliken charges under the GFN2-xTB scheme. The highest electrophilic reactivity is concentrated on the Fe atom, with its Fukui plus index being **f\u207a (most electrophilic): 0.22885456**. Similarly, its electrophilic nature dominates other indicators **although nucleophilicity or integrative hybrid stands** mentioned per lists/progress."
+}

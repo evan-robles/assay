@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 55.09,
+    "llm_s": 26.03,
+    "engine_s": 28.39,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of furan** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**), explicitly overriding functional=b3lyp and basis=def2-tzvp; **gas phase** (no solvent, `--accept-defaults` used to consent to gas phase); charge 0, multiplicity 1. Backend: PySCF (RKS for the neutral N-electron state; the N\u22121 cation and N+1 anion were computed at charge +1/mult 2 and charge \u22121/mult 2 respectively, as UKS open-shell doublets). Exact four-center integrals (density fitting OFF by default). Geometry: user-supplied `.xyz` (`furan.xyz`, 9 atoms: O, 4\u00d7C, 4\u00d7H), used as-is \u2014 this was a single-point Fukui analysis (three SCF states at fixed geometry), **not** a geometry optimization. Partial-charge scheme: Mulliken (PySCF).\n\n**Headline result \u2014 most electrophilic site:** atom 5 (1-based), a carbon, with **f\u207a = 1.9242931** (condensed Fukui electrophilicity index, dimensionless). The most nucleophilic site is also atom 5 (C) with f\u207b = 0.1616371.\n\nSelected per-atom condensed Fukui descriptors (atom order: O1, C2, C3, C4, C5, H6, H7, H8, H9):\n- f\u207a (electrophilic attack susceptibility): [\u22121.3316, 1.2287, 1.2270, 1.9233, 1.9243, \u22121.2191, \u22121.2191, \u22120.7668, \u22120.7667]\n- f\u207b (nucleophilic character): [0.0838, 0.0891, 0.0893, 0.1615, 0.1616, 0.1025, 0.1025, 0.1048, 0.1048]\n- f\u2070 (radical): [\u22120.6239, 0.6589, 0.6582, 1.0424, 1.0430, \u22120.5583, \u22120.5583, \u22120.3310, \u22120.3310]\n- dual descriptor (f\u207a\u2212f\u207b): [\u22121.4154, 1.1396, 1.1377, 1.7618, 1.7627, \u22121.3215, \u22121.3216, \u22120.8716, \u22120.8715]\n\nNote that several f\u207a/f\u2070 values are negative \u2014 a known artifact that can arise from Mulliken condensed-Fukui indices computed from separate charged-state SCF calculations; these are the raw values the engine returned.\n\n**Integrity:** engine reports status `ok`, **trustworthy: true**. The two Fukui charge-conservation checks both passed (sum(f\u207a)=1.0000, sum(f\u207b)=1.0000), indicating the N\u00b11 states converged.\n\n**Warnings (verbatim, all three engine integrity checks \u2014 all passed):**\n1. fukui_charge_conservation_f+ (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. fukui_charge_conservation_f- (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. schema_header (severity: warning): \"common header present\"\n\n**Reproducibility.** Exact command run by the engine: `cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --stdout json .../furan.xyz --out .../live.json`. Result JSON written to `/home/erobles/furan_fukui_dft.json`; bar-chart plot at `.../20260704-182758_furan_fukui_reactivity/agent_call_01_plot.png`. A live `<fukui>_<timestamp>.out` log is streamed to the run directory during execution (tail-able in real time) and can be surfaced on request. No experimental/literature comparison is offered."
+}

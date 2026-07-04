@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 166.0,
+    "llm_s": 42.22,
+    "engine_s": 123.24,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for aniline was completed using DFT at the B3LYP/def2-TZVP level of theory (tier `standard`) in the gas phase. The calculation was performed on the provided geometry with a charge of 0 and a multiplicity of 1. The Fukui functions, which indicate the propensity of a site to undergo nucleophilic or electrophilic attack, were computed from single-point energy calculations on the neutral, cation, and anion states.\n\n**Calculation Details:**\n*   **Property**: Fukui reactivity indices (f+, f-, f0) and dual descriptor\n*   **Level of theory**: DFT, B3LYP/def2-TZVP (tier `standard`), using exact four-center integrals (no density fitting).\n*   **Geometry**: Fixed geometry from the user-provided `aniline.xyz` file.\n*   **Environment**: Gas phase\n*   **Charge & Multiplicity**: Charge 0, Multiplicity 1 (neutral); Charge +1, Multiplicity 2 (cation); Charge -1, Multiplicity 2 (anion)\n*   **Software**: PySCF\n*   **Integrity**: The calculation passed all integrity checks, and the sum of the Fukui indices was conserved.\n\n**Results:**\n\nThe analysis identifies the most reactive sites in the aniline molecule:\n\n*   The site most susceptible to **nucleophilic attack** (most electrophilic) is atom **C3**, with a Fukui index (f+) of **2.2976**.\n*   The site most susceptible to **electrophilic attack** (most nucleophilic) is atom **N1**, with a Fukui index (f-) of **0.20452**.\n\nA plot visualizing the Fukui indices on each atom has been generated at: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_gemini-2.5-pro/20260704-185546_aniline_fukui_reactivity/agent_call_01_plot.png`"
+}

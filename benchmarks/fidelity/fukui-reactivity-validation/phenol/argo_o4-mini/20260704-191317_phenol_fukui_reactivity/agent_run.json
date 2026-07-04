@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 154.05,
+    "llm_s": 44.21,
+    "engine_s": 109.32,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui reactivity indices** \u2014 Chemical reactivity property; DFT **B3LYP/def2-TZVP** (tier standard), exact two-electron integrals (no density fitting), gas phase (no solvent), charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz`, single-point Fukui calculation (no geometry relaxation). Computed with chemkit\u2019s `fukui-reactivity` (PySCF backend). SCF converged for the neutral, cation (doublet), and anion (doublet) states. CLI invocation:\n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui \\\n  /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz \\\n  --method dft --functional b3lyp --basis def2-tzvp --tier standard \\\n  --charge 0 --mult 1 --stdout none \\\n  --out /home/erobles/chem-skills/.fidelity_scratch/tmpeg1p4ht6/live.json\n```\nLive log (streaming as the job ran):  \n`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/fukui_20260704-191317.out`  (you can `tail -f` this file).  \n\nResult:  \n- Most electrophilic site: atom 3 (carbon) with Fukui index f\u207a = 2.1028319 (dimensionless)  \n- Most nucleophilic site: atom 1 (oxygen) with Fukui index f\u207b = 0.16201477 (dimensionless)  \n\nWarnings (all surfacing the engine\u2019s integrity checks verbatim):  \n- \u201cfukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d  \n- \u201cfukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d  \n- \u201cschema_header: common header present\u201d  "
+}

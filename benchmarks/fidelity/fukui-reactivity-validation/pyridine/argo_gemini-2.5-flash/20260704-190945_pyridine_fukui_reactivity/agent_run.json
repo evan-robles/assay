@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 79.19,
+    "llm_s": 18.9,
+    "engine_s": 59.71,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for pyridine was performed using the `chemkit` tool.\n\n**Fukui Reactivity Indices** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: built from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz`; this was a single point calculation on the fixed geometry. SCF converged.\n\nThe most electrophilic site is the Nitrogen atom (atom index 0, label 1) with an f+ value of **0.48422572**.\nThe most nucleophilic site is a Carbon atom (atom index 3, label 4) with an f- value of **0.1182626**.\n\nThe full Fukui indices are:\nf+: `[0.48422572, 0.32447226, 0.14032093, 0.14039586, 0.29962626, 0.29947707, -0.1415132, -0.1336841, -0.13365905, -0.1398163, -0.13984545]`\nf-: `[0.064122671, 0.0061877146, 0.11823139, 0.1182626, 0.11206595, 0.11200985, 0.08284851, 0.098179487, 0.09818226, 0.094960093, 0.094949479]`\nf0: `[0.2741742, 0.16532999, 0.12927616, 0.12932923, 0.2058461, 0.20574346, -0.029332343, -0.017752307, -0.017738394, -0.022428103, -0.022447986]`"
+}

@@ -1,0 +1,31 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 241.35,
+    "llm_s": 7.38,
+    "engine_s": 230.84,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "The calculation warning highlights that the sum of Fukui functions for both F+ and F- states are equal to 1.0000, which suggests a large drift indicating that an N+1 state did not fully converge, but these are warnings, not errors."
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity on benzaldehyde was computed using the chemkit tool with a DFT (B3LYP/def2-TZVP) method in the gas phase, charge 0, multiplicity 1. The most electrophilic site is carbon atom 3, and the most nucleophilic site is oxygen atom 1. The result value for the most reactive parameters is approximately 0.36023 (no units specified; are relative indices)."
+}

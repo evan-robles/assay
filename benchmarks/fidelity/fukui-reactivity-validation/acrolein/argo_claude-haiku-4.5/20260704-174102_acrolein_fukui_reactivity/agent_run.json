@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 54.12,
+    "llm_s": 18.52,
+    "engine_s": 34.89,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity descriptors were computed for acrolein using DFT with B3LYP/def2-TZVP in the gas phase (charge 0, multiplicity 1, neutral parent; cation and anion states at multiplicities 2 each). The calculation used PySCF with Mulliken charge partitioning on the user-supplied acrolein.xyz geometry (single-point, not optimized at DFT). The cation and anion states both converged successfully, with charge-conservation checks confirming f\u207a and f\u207b summing correctly to 1.0 each. Integrity status: ok, trustworthy. The most electrophilic site is C (atom index 3, terminal vinyl carbon) with Fukui f\u207a = 0.6423 and dual descriptor = 0.5549, indicating strong preference for nucleophilic addition. The most nucleophilic site is O (atom index 0, carbonyl oxygen) with Fukui f\u207b = 0.3939. Output files written to /home/erobles/chem-skills/.fidelity_scratch/tmp8zgkt_w0/live.json and a PNG bar chart to /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_claude-haiku-4.5/20260704-174102_acrolein_fukui_reactivity/agent_call_01_plot.png."
+}

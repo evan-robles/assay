@@ -1,0 +1,29 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 141.63,
+    "llm_s": 31.81,
+    "engine_s": 109.28,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: Atom-condensed Fukui functions (f\u207a electrophilic susceptibility, f\u207b nucleophilic susceptibility) and dual descriptor for phenol.\nLevel of theory: DFT, tier \"standard\" \u2192 B3LYP/def2-TZVP (no density fitting) in PySCF.\nGeometry provenance: single-point calculations on the user-supplied phenol.xyz geometry (no re-optimization).\nSolvent / environment: gas phase (no implicit solvent).\nCharge & multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation state (+1, doublet), anion state (\u20131, doublet).\nSoftware: chemkit \u2192 PySCF backend (DFT module, version as in engine), fukui-reactivity skill.\nConvergence & warnings: SCF cycles for neutral, cation, and anion all converged; integrity.status = \"ok\", trustworthy = true. No warnings were reported (result JSON `warnings` array empty). Integrity checks (charge conservation for f\u207a/f\u207b, header) all passed.\n\nSelected results (atom index is 0-based, label 1-based from input .xyz):\n\u2022 Most electrophilic site (max f\u207a): atom 2 (label 3, C) with f\u207a = 2.1028319.\n\u2022 Most nucleophilic site (max f\u207b): atom 0 (label 1, O) with f\u207b = 0.16201477.\n\nFull arrays (13 atoms):\nf\u207a = [\u22120.99513677, 0.39933188, 2.1028319, 1.6196806, \u22120.34200644, \u22120.28910824, 1.3079753, \u22120.73391779, \u22120.27465615, \u22120.91706058, \u22120.62991625, \u22120.29591677, 0.047899338]\nf\u207b = [ 0.16201477, 0.048772551, 0.070972379, 0.070498539, 0.026704972, 0.020949414, 0.12351549, 0.082321145, 0.088147788, 0.081105985, 0.080487046, 0.09349577, 0.051014152]\nDual descriptor = [\u22121.1571515, 0.35055933, 2.0318595, 1.549182, \u22120.36871142, \u22120.31005766, 1.1844598, \u22120.81623893, \u22120.36280394, \u22120.99816656, \u22120.7104033, \u22120.38941254, \u22120.0031148145]\n\nReproducibility\nLive log (streamed during run): `/home/erobles/chem-skills/.fidelity_scratch/tmpiybm_6x0/phenol_fukui_20260704-200257.out`\nResult JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmpiybm_6x0/live.json`\nCommand: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout json /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpiybm_6x0/live.json`\n\nThe reported Fukui indices are computed values; provenance: computed."
+}

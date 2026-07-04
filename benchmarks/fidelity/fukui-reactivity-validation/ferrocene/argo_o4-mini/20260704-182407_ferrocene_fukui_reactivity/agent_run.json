@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 38.7,
+    "llm_s": 31.9,
+    "engine_s": 6.13,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene fukui-reactivity descriptor** \u2014 GFN2-xTB (semi-empirical tight-binding), single-point (no geometry optimization) on the supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` geometry, gas phase, charge 0, multiplicity 1. Partial charges (Mulliken scheme) were computed for the neutral, cation (+1, mult 2), and anion (\u22121, mult 2) states to derive the Fukui+ and Fukui\u2212 indices. Software: xtb (GFN2-xTB) via chemkit CLI invocation:\n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz \\\n  --method xtb --charge 0 --mult 1 --out ferrocene_xtb_fukui.json --stdout path\n```\nConvergence: SCF converged; integrity.status ok, trustworthy true. Warnings: none reported. Result: the most electrophilic site is atom 11 (Fe) with Fukui+ = 0.22885456; the most nucleophilic site is also atom 11 (Fe) with Fukui\u2212 = 0.25938191. Output JSON: `ferrocene_xtb_fukui.json` (contains full per-atom fukui+, fukui\u2212, fukui\u2070, dual-descriptor arrays)."
+}

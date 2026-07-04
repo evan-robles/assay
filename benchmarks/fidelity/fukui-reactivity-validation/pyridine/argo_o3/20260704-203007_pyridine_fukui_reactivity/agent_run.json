@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 182.29,
+    "llm_s": 57.32,
+    "engine_s": 124.39,
+    "turns": 5,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: Atom\u2010condensed Fukui indices (f+, f\u2212, f0) and dual descriptor for pyridine; most electrophilic & nucleophilic sites identified.\nLevel of theory: DFT, functional B3LYP with def2-TZVP basis set (tier \u201cstandard\u201d); exact four-center integrals (density fitting not used) in PySCF v?.\nGeometry provenance: single-point Fukui evaluation on user-supplied Cartesian geometry \u201c/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz\u201d \u2014 no re-optimization at DFT (DFT//input-XYZ).\nSolvent / environment: gas phase (no implicit solvation).\nCharge & multiplicity: 0, 1 (closed-shell singlet for neutral; cation/anion doublets generated automatically).\nSoftware: chemkit fukui-reactivity skill (engine subcommand \u201cfukui\u201d) calling PySCF for DFT and Mulliken charge analysis; schema_version 1.\nConvergence & caveats: all three SCF single-points (N, N\u20131, N+1) converged; integrity.status = \u201cok\u201d; trustworthy = true.\nWarnings (verbatim from result):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f\u2212) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nThe live PySCF log was streamed to the working directory as a fukui_YYYYMMDD-hhmmss.out file during execution (available for inspection). Result JSON: pyridine_fukui_b3lyp_def2tzvp.json.\n\nKey numerical results (Mulliken charges \u2192 condensed indices)\nAtom (index, element)    f+          f\u2212          f0          dual\n1 N(0)                   0.48422572  0.064122671 0.27417420  0.42010305\n2 C(1)                   0.32447226  0.006187715 0.16532999  0.31828454\n3 C(2)                   0.14032092  0.11823139  0.12927615  0.022089536\n4 C(3)                   0.14039587  0.11826260  0.12932924  0.022133276\n5 C(4)                   0.29962626  0.11206595  0.20584611  0.18756030\n6 C(5)                   0.29947707  0.11200985  0.20574346  0.18746722\n7\u201311 H                   (negative f+ values; see JSON)\nMost electrophilic site: atom 1 (N), f+ = 0.48422572 (reported under value).\nMost nucleophilic site: atom 4 (C), f\u2212 = 0.11826260.\n\nThese results were computed as described; no experimental data were consulted.\n"
+}

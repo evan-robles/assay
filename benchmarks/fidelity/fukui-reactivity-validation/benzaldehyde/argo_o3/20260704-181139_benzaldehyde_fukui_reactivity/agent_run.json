@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 527.75,
+    "llm_s": 67.17,
+    "engine_s": 459.91,
+    "turns": 7,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\n\u2022 Property: Fukui reactivity indices (f\u207a, f\u207b, f\u2070, dual descriptor) and identification of the most electrophilic (largest f\u207a) and most nucleophilic (largest f\u207b) atoms in benzaldehyde.\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (tier \u2018standard\u2019); exact four-center integrals (density fitting not invoked).\n\u2022 Geometry provenance: user-supplied Cartesian coordinates (`benzaldehyde.xyz`); single-point charges for N, N+1, and N\u22121 states \u2013 no further geometry relaxation (DFT//input-XYZ).\n\u2022 Solvent / environment: gas phase (no implicit solvation model).\n\u2022 Charge / multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation and anion both treated as doublets (charge \u00b11, multiplicity 2).\n\u2022 Software: chemkit fukui-reactivity skill (backend: PySCF 2.x).\n\u2022 Convergence & caveats: all three SCF calculations converged; integrity status \u201cok\u201d, trustworthy = true.  \n  Warnings reported by the engine are reproduced verbatim below.\n\nKey results (per-atom Mulliken-based Fukui indices; atom labels refer to the input ordering)\n  \u2013 Most electrophilic site (max f\u207a): atom 3 (C)\u2003f\u207a = 0.39938967  \n  \u2013 Most nucleophilic site (max f\u207b): atom 1 (O)\u2003f\u207b = 0.23839906  \n\nThe headline value provided above (0.39938967) is the largest condensed electrophilic Fukui index f\u207a for benzaldehyde under the stated computational conditions.\n\nAll warnings from the tool (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 common header present  \n\nLive log & files\nThe calculation\u2019s live PySCF output was streamed to a `.out` file announced at run start (available for inspection; tail with `tail -f`). The full JSON result is saved as `benzaldehyde_fukui_dft.json`, and the bar-chart of Fukui indices is at the path in the `plot` field of that JSON. All artifacts are retained for reproducibility."
+}

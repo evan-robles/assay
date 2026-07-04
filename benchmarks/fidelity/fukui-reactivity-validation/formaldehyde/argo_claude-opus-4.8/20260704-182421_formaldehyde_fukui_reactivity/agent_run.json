@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 45.57,
+    "llm_s": 32.17,
+    "engine_s": 9.77,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of formaldehyde (CH2O) via chemkit fukui-reactivity skill (engine subcommand `fukui`).\n\nMETHOD PROVENANCE BLOCK\n- Property: Condensed Fukui functions (f+, f-, f0), dual descriptor, and identification of the most electrophilic/nucleophilic atoms, from finite-difference (N+/-1) Mulliken population analysis.\n- Level of theory: DFT, B3LYP/def2-TZVP (chemkit tier `standard` = B3LYP/def2-TZVP; functional and basis were also passed explicitly). Density fitting OFF (default) -> exact four-center integrals.\n- Backend: PySCF (RKS for the neutral closed-shell N state; UKS for the open-shell doublet N+/-1 states).\n- Geometry provenance: user-supplied /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz (4 atoms: O, C, H, H). Used as-is (single points at this fixed geometry; not re-optimized at this level).\n- Solvent/environment: gas phase (no --solvent; solvent = null in the result).\n- Charge/multiplicity: neutral parent charge 0, multiplicity 1. Cation (N-1): charge +1, multiplicity 2. Anion (N+1): charge -1, multiplicity 2.\n- Population scheme: Mulliken (PySCF).\n\nRESULTS (per-atom order [O, C, H, H]):\n- f+ (nucleophile susceptibility): [0.46813824, 0.70839130, -0.088269392, -0.088260145]\n- f- (electrophile susceptibility): [0.46742464, 0.11244422, 0.21007563, 0.21005551]\n- f0 (radical): [0.46778144, 0.41041776, 0.060903121, 0.060897683]\n- dual descriptor (f+ - f-): [0.00071359555, 0.59594709, -0.29834503, -0.29831566]\n\nHEADLINE: Most electrophilic site = carbon (atom index 1 0-based / atom 2 1-based), f+ = 0.7083913 -- consistent with nucleophilic addition at the carbonyl carbon. Most nucleophilic site = oxygen (atom 1), f- = 0.46742464.\n\nINTEGRITY & CONVERGENCE: integrity.status = ok, integrity.trustworthy = true. All integrity checks passed: fukui_charge_conservation_f+ (sum(f+) = 1.0000), fukui_charge_conservation_f- (sum(f-) = 1.0000) -- charge conservation satisfied, indicating the N+/-1 states converged -- and schema_header present. The result JSON contained NO `warnings` array, so no engine warnings were reported (clean run).\n\nREPRODUCIBILITY: cli_invocation = /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 --stdout path <formaldehyde.xyz> --out <live.json>. Result JSON written to /home/erobles/formaldehyde_fukui_dft.json; per-atom bar chart PNG written under the input directory (agent_call_01_plot.png). Note: relative energies/orbital comparisons are only valid within this same method/basis.\n\nNo experimental or literature comparison is offered (none requested)."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 128.47,
+    "llm_s": 18.63,
+    "engine_s": 109.17,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for aniline computed using DFT at the B3LYP/def2-TZVP level (tier 'standard') with PySCF, gas phase, charge 0, multiplicity 1. The calculation evaluated the neutral molecule and its N\u22121 cation (doublet) and N+1 anion (doublet) to derive per-atom Fukui indices (f\u207a, f\u207b, f\u2070) and dual descriptor via Mulliken partial-charge analysis. The most electrophilic site is C3 (ortho position) with f\u207a = 2.298, and the most nucleophilic is N1 with f\u207b = 0.205. All charge-conservation checks passed; SCF converged. Input geometry from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz (single-point, not re-optimized at DFT). The calculated indices reflect aniline's known electrophilicity at the aromatic ortho/para carbons due to resonance activation by the amine donor. No warnings reported.</prose>\n<parameter name=\"value\">2.298"
+}

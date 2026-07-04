@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 100.76,
+    "llm_s": 39.59,
+    "engine_s": 60.61,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for pyridine (11 atoms: N + 5C + 5H) at the DFT level using B3LYP/def2-TZVP (tier 'standard', PySCF RKS), gas phase, charge 0, multiplicity 1. Density fitting was OFF (exact four-center integrals). Geometry was the user-supplied .xyz, used as-is (no DFT re-optimization). Fukui indices were derived from finite differences of Mulliken partial charges for the N (neutral), N+1 (anion, charge -1, mult 2), and N-1 (cation, charge +1, mult 2) states.\n\nHeadline result: f+ (electrophilic Fukui) is maximized at Atom 1 (N) = 0.48422572. f- (nucleophilic Fukui) is maximized at Atom 4 (C) = 0.11826260. Sigma f+ = 1.0000 and Sigma f- = 1.0000 (charge-conservation checks passed). Integrity: status ok, trustworthy true. No warnings reported. The nitrogen atom is clearly the most electrophilic site; the ring carbons carry distributed nucleophilic character consistent with known pyridine reactivity."
+}

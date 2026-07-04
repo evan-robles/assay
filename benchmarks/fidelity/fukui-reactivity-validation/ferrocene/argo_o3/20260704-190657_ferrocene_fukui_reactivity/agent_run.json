@@ -1,0 +1,29 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.67,
+    "llm_s": 27.61,
+    "engine_s": 6.45,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\nProperty: condensed Fukui functions f+ (electrophilic attack), f\u2212 (nucleophilic attack), f0 (radical attack), and dual descriptor per atom; identification of the most electrophilic and most nucleophilic sites.\nLevel of theory: GFN2-xTB (semi-empirical tight-binding method; no Gaussian basis set, no DFT functional).\nGeometry provenance: fixed input coordinates supplied by user (file \u201c/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz\u201d); single-point evaluation only (no geometry optimization) \u2192 notation GFN2-xTB//input-XYZ.\nSolvent / environment: gas phase (no implicit solvation model requested).\nCharge and multiplicity: charge = 0, multiplicity = 1 (closed-shell singlet); cation/anion states were treated as doublets (default for N\u00b11 from a singlet).\nSoftware: xtb backend as run via chemkit \u201cfukui-reactivity\u201d skill (exact CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --mult 1 <input>). Version was not reported in the result JSON.\nConvergence & warnings: SCF calculations for the neutral, cation, and anion states all converged (integrity.status = \"ok\", trustworthy = true). Result JSON contained no entries in its `warnings` array; no engine warnings were reported. Charge-conservation checks for \u03a3f+ and \u03a3f\u2212 both passed (ok=true, detail \"sum(f\u00b1) = 1.0000\").\n\nKey numerical results (per-atom values in e):\n\u2022 Most electrophilic site (largest f+):  Fe atom (index 11, 1-based)  f+ = 0.22885456\n\u2022 Most nucleophilic site (largest f\u2212):   Fe atom (index 11, 1-based)  f\u2212 = 0.25938191\n\u2022 Dual descriptor on Fe (f+ \u2212 f\u2212):      \u22120.030527354 (negative \u2192 Fe favors nucleophilic behavior over electrophilic)\n\nThe full set of 21-atom f+, f\u2212, f0, and dual-descriptor arrays, the Mulliken charges of the N, N\u00b11 states, and the automatically generated bar-chart PNG are available in the output JSON and plot file written by chemkit (see paths below).\n\nReproducibility artifacts:\n\u2022 Output JSON (full results): /home/erobles/chem-skills/.fidelity_scratch/tmpovt_8zkb/live.json\n\u2022 Bar-chart PNG: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_o3/20260704-190657_ferrocene_fukui_reactivity/agent_call_01_plot.png\n\u2022 Live engine log (.out) was streamed during execution to the working directory (path shown in terminal during run; available on request).\n\nNo experimental comparison is provided because the user requested only the computed Fukui reactivity indices.\n\nHeadline result (most electrophilic f+ on Fe): 0.22885456 e (GFN2-xTB, gas phase)."
+}

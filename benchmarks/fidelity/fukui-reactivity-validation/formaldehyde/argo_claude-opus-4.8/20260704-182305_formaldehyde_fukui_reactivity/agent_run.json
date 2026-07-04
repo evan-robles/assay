@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 37.17,
+    "llm_s": 26.69,
+    "engine_s": 9.84,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [severity: warning, ok: true]",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [severity: warning, ok: true]",
+      "schema_header: common header present [severity: warning, ok: true]"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui-reactivity analysis of formaldehyde (H2C=O)** \u2014 condensed Fukui functions from finite-difference (\u0394N = \u00b11) Mulliken population analysis.\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a electrophilic, f\u207b nucleophilic, f\u2070, and the dual descriptor) per atom, derived from Mulliken partial charges of the neutral, cation (N\u22121) and anion (N+1) states.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`, which expands to exactly B3LYP/def2-TZVP as requested). Density fitting was OFF (default) \u2014 exact four-center two-electron integrals (plain RKS/UKS).\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`), 4 atoms [O, C, H, H]. Used as-is \u2014 this is a single-point Fukui analysis at the supplied geometry; no geometry optimization was performed (energies/charges computed at the fixed input geometry).\n- **Solvent/environment:** **Gas phase** (no solvent).\n- **Charge & multiplicity:** Parent charge 0, multiplicity 1 (closed-shell singlet, RKS). The N\u22121 cation was computed at charge +1, multiplicity 2 (doublet, UKS); the N+1 anion at charge \u22121, multiplicity 2 (doublet, UKS).\n- **Software:** PySCF (via chemkit `fukui` subcommand).\n- **Charge scheme:** Mulliken (PySCF).\n\n**Results (dimensionless condensed Fukui indices)**\nPer-atom order [O, C, H, H]:\n- f\u207a (electrophilic attack susceptibility): O = 0.46814, **C = 0.70839**, H = \u22120.08827, H = \u22120.08826\n- f\u207b (nucleophilic / susceptibility to electrophile): O = 0.46742, C = 0.11244, H = 0.21008, H = 0.21006\n- f\u2070: O = 0.46778, C = 0.41042, H = 0.06090, H = 0.06090\n- dual descriptor (f\u207a \u2212 f\u207b): O = 0.00071, C = 0.59595, H = \u22120.29835, H = \u22120.29832\n\n**Headline finding:** The **most electrophilic site is the carbonyl carbon (atom 2, C)** with **f\u207a = 0.70839** \u2014 chemically consistent with nucleophilic addition occurring at the carbonyl carbon. The most nucleophilic site is the oxygen (atom 1, O) with f\u207b = 0.46742. The positive dual descriptor on C (+0.59595) confirms it as the preferred site for nucleophilic attack, while the negative dual descriptors on the hydrogens mark them as electrophile-favoring sites.\n\n**Convergence / integrity:** integrity status = **ok**, **trustworthy = true**. Charge conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (both ~1.0 as expected \u2014 no evidence the N\u00b11 states failed to converge).\n\n**Warnings (reproduced verbatim, all severity \"warning\", all ok=true):**\n1. fukui_charge_conservation_f+: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. fukui_charge_conservation_f-: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. schema_header: \"common header present\"\n\n**Reproducibility:** exact command \u2014 `cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 <formaldehyde.xyz> --out \u2026/live.json`. Result JSON written to `formaldehyde_fukui_dft.json`; bar-chart PNG at `\u2026/20260704-182305_formaldehyde_fukui_reactivity/agent_call_01_plot.png`. A live `.out` log was streamed during the run.\n\nNote: Fukui indices are dimensionless and method/charge-scheme dependent (Mulliken charges are basis-set-sensitive); they indicate relative site reactivity trends, not absolute quantities. No experimental/literature comparison is offered."
+}
