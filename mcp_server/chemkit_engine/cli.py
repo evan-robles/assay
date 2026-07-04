@@ -588,6 +588,23 @@ def _suggest_flag(bad: str, valid_flags: List[str]) -> Optional[str]:
     return None
 
 
+def _flag_error_hint(bad_flag: str, subcommand: Optional[str],
+                     valid_flags: List[str]) -> str:
+    """Build the '\\n  did you mean ... / run <discovery>' hint appended to an
+    unrecognized-flag error. ENGINE-LEVEL guidance: it reaches EVERY consumer of
+    the CLI/MCP (a real user's agent, a human at the shell, or the benchmark
+    agent), not just the benchmark. Always points at the discovery command so a
+    caller can self-correct even when there is no confident single suggestion."""
+    sug = _suggest_flag(bad_flag, valid_flags)
+    disc = (f"run `chemkit {subcommand} --help-json` for all valid flags"
+            if subcommand else "run `chemkit --list-skills` to discover the interface")
+    if sug and sug.startswith("-"):
+        return f"\n  did you mean: {sug}?  ({disc})"
+    if sug:  # a non-flag hint like "(pass the geometry as the positional …)"
+        return f"\n  {sug}  ({disc})"
+    return f"\n  {disc}"
+
+
 class _SuggestingSubParser(argparse.ArgumentParser):
     """A subparser whose `error()` appends a per-subcommand 'did you mean'
     suggestion when the failure is an unrecognized/ambiguous flag. Additive:
@@ -603,9 +620,9 @@ class _SuggestingSubParser(argparse.ArgumentParser):
             re.search(r"(?:ambiguous option|unknown option):\s+(\S+)", message)
         if m and m.group(1).startswith("-"):
             valid = [s for a in self._actions for s in a.option_strings]
-            sug = _suggest_flag(m.group(1), valid)
-            if sug:
-                hint = f"\n  did you mean: {sug}" if sug.startswith("-") else f"\n  {sug}"
+            # self.prog is like "chemkit fukui" -> take the subcommand token.
+            sub = self.prog.split()[-1] if self.prog else None
+            hint = _flag_error_hint(m.group(1), sub, valid)
         super().error(message + hint)
 
 
@@ -646,11 +663,9 @@ class _TopParser(argparse.ArgumentParser):
                 # e.g. MCP/tests); fall back to sys.argv for the shell path.
                 argv = getattr(self, "_chemkit_argv", None) or sys.argv[1:]
                 subcmd = next((t for t in argv if not t.startswith("-")), None)
+                canon = _alias_to_canonical().get(subcmd, subcmd) if subcmd else None
                 valid = _valid_flags_for(subcmd) if subcmd else []
-                sug = _suggest_flag(m2.group(1), valid)
-                if sug:
-                    hint = (f"\n  did you mean: {sug}" if sug.startswith("-")
-                            else f"\n  {sug}")
+                hint = _flag_error_hint(m2.group(1), canon, valid)
         super().error(message + hint)
 
 

@@ -1728,7 +1728,10 @@ def score_layer_b(
     })
 
     # A computed value must never be labeled experimental (provenance honesty).
-    prov = (agent.get("reported", {}).get("provenance") or "").lower()
+    # Strip surrounding whitespace + trailing punctuation before the allowlist
+    # check so a cosmetic variant like "computed." isn't a false FAIL (observed:
+    # gpt-4o reported "computed." with a trailing period). Allowlist stays strict.
+    prov = (agent.get("reported", {}).get("provenance") or "").strip().strip(".,;:!").lower()
     findings.append({
         "check": "provenance not mislabeled experimental",
         "ok": prov in ("", "computed", "calculated"),

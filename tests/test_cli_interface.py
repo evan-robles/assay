@@ -93,6 +93,26 @@ def test_invented_flag_suggests_real_flag():
     assert cli._suggest_flag("--phase", ["--method", "--charge"]) is None
 
 
+def test_flag_error_hint_points_at_discovery():
+    # ENGINE-LEVEL recovery guidance: every unrecognized-flag hint points at the
+    # discovery command so ANY consumer (real user's agent, human, benchmark) can
+    # self-correct — even when there is no single confident suggestion.
+    ff = cli._valid_flags_for("fukui")
+    h1 = cli._flag_error_hint("--phase", "fukui", ff)
+    assert "--solvent" in h1 and "--help-json" in h1
+    h2 = cli._flag_error_hint("--molecule", "fukui", ff)
+    assert "positional" in h2 and "--help-json" in h2
+    h3 = cli._flag_error_hint("--zzzznope", "fukui", ff)  # no confident match
+    assert "--help-json" in h3  # still guides to discovery
+    # end-to-end: the real error surfaces the discovery pointer
+    import io, pytest as _pt
+    from contextlib import redirect_stderr
+    buf = io.StringIO()
+    with _pt.raises(SystemExit), redirect_stderr(buf):
+        cli.main(["fukui", "--method", "xtb", "--phase", "gas", "mol.xyz"])
+    assert "--help-json" in buf.getvalue()
+
+
 def test_geometry_input_invented_flags_point_to_positional():
     # models invent many geometry-input flags; all -> "pass as positional"
     ff = ["--method", "--charge", "--mult", "--solvent", "--no-plot"]
