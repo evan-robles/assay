@@ -1101,6 +1101,47 @@ def _method_matches(intended_token: str, reported: str) -> bool:
     return intended_token.lower() in reported.lower() or reported != ""
 
 
+def _method_matches_strict(intended_token: str, reported: str) -> bool:
+    """STRICT method match for picking WHICH engine call to score (unlike the
+    lenient _method_matches used for the pass/fail check). An agent may make
+    several chemkit calls in one run — e.g. the intended DFT call PLUS an extra
+    xtb call for comparison. The scorer must grade the call that matches the
+    SPEC's intended method, not blindly the last one, or a model that computes
+    correctly and then explores would fail (observed: o3 ran the right
+    b3lyp/def2-tzvp fukui, then an xtb single-point, and got scored on xtb)."""
+    reported = (reported or "").strip().lower()
+    if not reported:
+        return False
+    exact = _METHOD_DISPLAY.get(intended_token)
+    if exact:
+        return reported == exact.lower()
+    # dft/hf: the reported method string embeds the functional (e.g.
+    # 'b3lyp/def2-tzvp' for dft). xtb/mopac report 'GFN2-xTB'/'PM7', which must
+    # NOT count as a dft/hf match. So require it is NOT a semiempirical label.
+    semi = {"gfn2-xtb", "pm7"}
+    if reported in semi:
+        return False
+    return True  # any ab-initio-looking method string satisfies a dft/hf intent
+
+
+def _select_scored_result(engine_results: List[Dict[str, Any]],
+                          spec: Dict[str, Any]) -> Dict[str, Any]:
+    """Pick which engine result to score from ALL calls made in a run.
+
+    Prefer the LAST call whose method matches the spec's intended method (so an
+    agent that runs the right calculation and then makes extra exploratory calls
+    is graded on the right one). Fall back to the last result if none matches
+    (then the method check legitimately fails). Empty list -> {}."""
+    if not engine_results:
+        return {}
+    intended_method = (spec.get("intended", {}) or {}).get("method")
+    if intended_method:
+        for res in reversed(engine_results):
+            if _method_matches_strict(intended_method, res.get("method", "")):
+                return res
+    return engine_results[-1]
+
+
 def _result_field(result: Dict[str, Any], key: str) -> Any:
     """Read a field that may live at the top level or inside code_specific."""
     if key in result:
@@ -2000,6 +2041,7 @@ def run_live_agent(spec: Dict[str, Any],
             )
 
     last_result_json: Dict[str, Any] = {}
+    engine_results: List[Dict[str, Any]] = []  # EVERY chemkit engine result, in order
     call_n = 0
     # Per-run timing (wall-clock seconds). total = whole agent loop; llm = time
     # spent in client.chat.completions.create (model latency+thinking); engine =
@@ -2036,7 +2078,11 @@ def run_live_agent(spec: Dict[str, Any],
                       f"(total={_total_s:.1f}s llm={_llm_s:.1f}s engine={_eng_s:.1f}s "
                       f"turns={turn + 1} tool_calls={call_n})")
                 _dump_transcript()
-                _cs = last_result_json.get("code_specific") or {}
+                # Score the engine call matching the SPEC's intended method (an
+                # agent may run the right calc then make extra exploratory calls;
+                # don't grade it on the wrong one). Falls back to the last call.
+                scored_result = _select_scored_result(engine_results, spec)
+                _cs = scored_result.get("code_specific") or {}
                 return {
                     # Which agent produced this run, and over what endpoint —
                     # recorded so agent_run.json is self-identifying (you can tell
@@ -2054,15 +2100,15 @@ def run_live_agent(spec: Dict[str, Any],
                         "tool_calls": call_n,
                     },
                     "result_json": {
-                        "method": last_result_json.get("method"),
-                        "charge": last_result_json.get("charge"),
-                        "multiplicity": last_result_json.get("multiplicity"),
-                        "solvent": last_result_json.get("solvent"),
+                        "method": scored_result.get("method"),
+                        "charge": scored_result.get("charge"),
+                        "multiplicity": scored_result.get("multiplicity"),
+                        "solvent": scored_result.get("solvent"),
                         # Level-of-theory knobs for Layer-A scoring (DFT/HF).
                         # functional/basis are top-level; tier/solvent_model live
                         # in code_specific.
-                        "functional": last_result_json.get("functional"),
-                        "basis": last_result_json.get("basis"),
+                        "functional": scored_result.get("functional"),
+                        "basis": scored_result.get("basis"),
                         "tier": _cs.get("tier"),
                         "solvent_model": _cs.get("solvent_model"),
                     },
@@ -2107,6 +2153,11 @@ def run_live_agent(spec: Dict[str, Any],
                             model=model,
                         )
                     _eng_s += time.monotonic() - _teng
+                    # Record EVERY successful engine result so the scorer can pick
+                    # the call matching the spec's intended method (not blindly the
+                    # last), letting a model run the right calc + then explore.
+                    if isinstance(last_result_json, dict) and last_result_json:
+                        engine_results.append(last_result_json)
                     tool_out = json.dumps(last_result_json)
                 except RemoteHostUnreachable:
                     # Dead compute node (expired allocation): do NOT swallow this

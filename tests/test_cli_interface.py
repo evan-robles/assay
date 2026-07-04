@@ -166,6 +166,30 @@ def test_valid_call_still_parses():
     assert e.value.code == 0
 
 
+def test_scored_result_selects_intended_method():
+    # An agent may run the intended DFT calc and THEN an exploratory xtb call.
+    # The scorer must grade the DFT call, not the last (xtb) one. (Regression for
+    # the o3 fukui case: right b3lyp/def2-tzvp run, then an xtb single-point.)
+    import importlib, sys as _s
+    _b = str(Path(__file__).parent.parent / "benchmarks")
+    if _b not in _s.path:
+        _s.path.insert(0, _b)
+    fd = importlib.import_module("fidelity_driver")
+    dft = {"method": "b3lyp/def2-tzvp", "program": "dft"}
+    xtb = {"method": "GFN2-xTB", "program": "xtb"}
+    spec = {"intended": {"method": "dft", "functional": "b3lyp",
+                         "basis": "def2-tzvp", "tier": "standard"}}
+    assert fd._select_scored_result([dft, xtb], spec)["method"] == "b3lyp/def2-tzvp"
+    # xtb-intended spec picks xtb; no-match falls back to last; empty -> {}
+    assert fd._select_scored_result([dft, xtb], {"intended": {"method": "xtb"}})["method"] == "GFN2-xTB"
+    assert fd._select_scored_result([dft, xtb], {"intended": {"method": "mopac"}})["method"] == "GFN2-xTB"
+    assert fd._select_scored_result([], spec) == {}
+    # strict matcher: xtb/pm7 never satisfy a dft/hf intent
+    assert fd._method_matches_strict("dft", "GFN2-xTB") is False
+    assert fd._method_matches_strict("dft", "b3lyp/def2-tzvp") is True
+    assert fd._method_matches_strict("xtb", "GFN2-xTB") is True
+
+
 def test_tools_cli_consistency_still_clean():
     # the canonical subcommand set must still match the server TOOLS mapping
     tools_subs = [
