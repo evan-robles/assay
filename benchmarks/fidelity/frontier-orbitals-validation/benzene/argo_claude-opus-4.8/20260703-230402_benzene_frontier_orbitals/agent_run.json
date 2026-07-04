@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.56,
+    "llm_s": 18.7,
+    "engine_s": 10.85,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier-orbital analysis** (HOMO\u2013LUMO gap and Koopmans descriptors).\n\n**Method-provenance block**\n- **Property:** Frontier orbital energies and HOMO\u2013LUMO gap (headline: `homo_lumo_gap_eV`).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP/def2-TZVP** (density-fitting/RI is on by default in chemkit \u2014 an approximation to the two-electron integrals). Backend: **PySCF** (RKS, closed-shell).\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz`, 12 atoms: C\u2086H\u2086). Used **as-is** \u2014 this was a single point at the supplied geometry; no geometry optimization was performed at this or any level.\n- **Solvent / environment:** **Gas phase** (`solvent: null`) \u2014 no implicit solvation.\n- **Charge / multiplicity:** charge **0**, multiplicity **1** (neutral closed-shell singlet), as specified.\n- **Software:** PySCF (`pyscf`).\n- **Convergence:** SCF **converged** (`scf_converged: true`) in 8 cycles.\n\n**Results (eV)**\n- **HOMO = \u22127.0468329 eV** (index 20)\n- **LUMO = \u22120.41574728 eV** (index 21)\n- **HOMO\u2013LUMO gap = 6.6310857 eV** (headline value)\n- Note: benzene's HOMO and LUMO are each (near-)degenerate pairs, as reflected in the neighboring orbitals \u2014 HOMO\u22121 = \u22127.0473344 eV (essentially degenerate with the HOMO), and LUMO+1 = \u22120.41513054 eV (essentially degenerate with the LUMO). This gap is a Koopmans-style orbital gap, not an excitation (TD-DFT) energy.\n- Koopmans descriptors: vertical IP = 7.0468329 eV, vertical EA = 0.41574728 eV, electronegativity = 3.7312901 eV, chemical hardness = 3.3155428 eV, chemical softness = 0.30160974 eV\u207b\u00b9, electrophilicity index = 2.0995847 eV.\n- Total electronic energy = \u2212232.33724 Hartree (\u22126322.2183 eV). Note this is the electronic energy zero (bare nuclei + electrons) and is only directly comparable to other same-method (B3LYP/def2-TZVP) values.\n\n**Integrity:** The engine reports `integrity.status: \"ok\"` and `trustworthy: true`; all checks passed (energy finite, SCF converged, schema header and headline present).\n\n**Warnings:** The result JSON contained no `warnings` array / no warnings were reported \u2014 clean run.\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpa0966j5k/live.json`\n- Result JSON written to `/home/erobles/chem-skills/.fidelity_scratch/tmpa0966j5k/live.json`.\n\nNo experimental/literature comparison is offered; ask if you'd like one and I'll verify a source first."
+}

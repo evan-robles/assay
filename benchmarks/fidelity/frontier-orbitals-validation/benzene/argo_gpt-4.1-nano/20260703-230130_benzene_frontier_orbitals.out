@@ -1,0 +1,26 @@
+[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:gpt-4.1-nano via argo-proxy http://127.0.0.1:60639/v1
+[live] normalized tool args (split space-mashed tokens): ['--method dft', '--functional b3lyp', '--basis def2-TZVP', '--tier standard', '--charge 0', '--multiplicity 1', '--environment gas phase', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz'] -> ['--method', 'dft', '--functional', 'b3lyp', '--basis', 'def2-TZVP', '--tier', 'standard', '--charge', '0', '--multiplicity', '1', '--environment', 'gas', 'phase', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz']
+[live] agent calls chemkit: frontier-orbitals ['--method', 'dft', '--functional', 'b3lyp', '--basis', 'def2-TZVP', '--tier', 'standard', '--charge', '0', '--multiplicity', '1', '--environment', 'gas', 'phase', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz']
+[live] normalized tool args (split space-mashed tokens): ['--method dft', '--functional b3lyp', '--basis def2-TZVP', '--tier standard', '--charge 0', '--multiplicity 1', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz'] -> ['--method', 'dft', '--functional', 'b3lyp', '--basis', 'def2-TZVP', '--tier', 'standard', '--charge', '0', '--multiplicity', '1', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz']
+[live] agent calls chemkit: frontier-orbitals ['--method', 'dft', '--functional', 'b3lyp', '--basis', 'def2-TZVP', '--tier', 'standard', '--charge', '0', '--multiplicity', '1', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz']
+[live] agent submitted final_report. (total=19.1s llm=4.8s engine=11.2s turns=3 tool_calls=2)
+
+[Layer B - invocation fidelity]
+  [PASS] method  {'intended': 'dft', 'got': 'b3lyp/def2-TZVP'}
+  [PASS] charge  {'intended': 0, 'got': 0}
+  [PASS] multiplicity  {'intended': 1, 'got': 1}
+  [PASS] solvent  {'intended': None, 'got': None}
+  [PASS] functional  {'intended': 'b3lyp', 'got': 'b3lyp'}
+  [PASS] basis  {'intended': 'def2-tzvp', 'got': 'def2-TZVP'}
+  [PASS] tier  {'intended': 'standard', 'got': 'standard'}
+
+[Layer C - reporting fidelity]
+  [PASS] reported homo_lumo_gap_eV  {'truth': 6.6310857, 'reported': 6.63108, 'tol': 0.05}
+  [PASS] warnings preserved  {'truth_count': 0, 'preserved_count': 0, 'in_array': 0, 'in_prose_only': 0, 'missing_count': 0, 'sim_threshold': 0.97}
+  [WARN] integrity verdict surfaced  {'truth': True, 'reported': None}
+  [PASS] provenance not mislabeled experimental  {'got': '(unstated)'}
+
+==> OVERALL: PASS
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/argo_gpt-4.1-nano/20260703-230130_benzene_frontier_orbitals

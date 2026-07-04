@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.79,
+    "llm_s": 24.24,
+    "engine_s": 4.55,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital single-point calculation on formaldehyde (CH\u2082O, 4 atoms) using DFT at the B3LYP/def2-TZVP level of theory (chemkit tier 'standard', density-fitted) via PySCF, in the gas phase, charge 0, multiplicity 1. Geometry taken from user-supplied .xyz file; not re-relaxed at this level (single point). SCF converged in 8 cycles. No warnings reported. HOMO = \u22127.6523067 eV, LUMO = \u22121.7826355 eV, HOMO\u2013LUMO gap = 5.8696712 eV (Koopmans-style orbital gap, not an excitation energy). Total electronic energy = \u2212114.55325 Hartree. Integrity: trustworthy = true, all checks passed."
+}

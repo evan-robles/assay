@@ -1,0 +1,31 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 19.0,
+    "llm_s": 5.22,
+    "engine_s": 10.75,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "The sum of the Fukui functions for the positive and negative cases suggests charge conservation issues, possibly indicating the state did not fully converge."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "calculated"
+  },
+  "prose": "The Fukui reactivity indices for formaldehyde were computed using DFT at the B3LYP functional with the def2-TZVP basis set in the gas phase. The calculation used charge 0 and multiplicity 1. The resulting total Fukui index (fukui_zero) sums to approximately 11.75, with warnings indicating some charge conservation issues during the calculation. The method and basis employed are explicitly B3LYP/def2-TZVP in a gas phase environment, ensuring reproducibility."
+}

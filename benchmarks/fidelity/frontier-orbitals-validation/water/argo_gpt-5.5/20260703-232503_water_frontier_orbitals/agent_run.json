@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.16,
+    "llm_s": 17.32,
+    "engine_s": 3.84,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water frontier-orbital result** \u2014 Property: HOMO\u2013LUMO gap from a frontier-orbitals DFT single-point calculation. Level of theory: tier `standard`, **B3LYP/def2-TZVP** as returned by chemkit (`method`: `b3lyp/def2-tzvp`). Geometry: user-supplied fixed XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` (3 atoms); no geometry optimization was reported for this task. Environment: **gas phase** (`solvent`: null). Charge 0, multiplicity 1. Software/backend: PySCF (`program`: `pyscf`; version not reported by the tool). SCF convergence: converged = true in 7 cycles. Warnings: no warnings reported in the tool result. Integrity verdict: `integrity.trustworthy = true`. Provenance: computed.\n\nMethod used: chemkit `frontier-orbitals` skill with DFT, B3LYP functional, def2-TZVP basis, tier `standard`, gas phase, charge 0, multiplicity 1.\n\nComputed orbital energies: HOMO = -8.6037183 eV; LUMO = 0.33695037 eV; **HOMO\u2013LUMO gap = 8.9406687 eV**. This is a Koopmans-style orbital gap from the calculation, not an experimental excitation energy.\n\nReproducibility: input file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz`; CLI invocation returned by tool: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmptexhh3x4/live.json`. Live `.out` log path: not returned in the chemkit result, so I am not inventing one."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 105.31,
+    "llm_s": 6.36,
+    "engine_s": 98.95,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity analysis of aniline was computed using DFT with the B3LYP functional and def2-TZVP basis set (tier 'standard') in the gas phase. Input geometry was read from the provided file (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz), with charge 0 and multiplicity 1. Mulliken charges were used to calculate the electrophilic and nucleophilic reactivity indices. The most electrophilic site identified is the carbon atom labeled 3 in the molecule with a Fukui-plus index of 2.2975867, and the most nucleophilic site is the nitrogen atom labeled 1 with a Fukui-minus index of 0.20452359. Warnings reported include: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\", \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\", and \"common header present.\" These warnings indicate that the calculation results are trustworthy, but could still reflect sensitivity in the N\u00b11 states."
+}

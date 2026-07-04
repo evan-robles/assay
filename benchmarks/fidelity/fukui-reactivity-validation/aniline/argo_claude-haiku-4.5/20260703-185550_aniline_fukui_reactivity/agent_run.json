@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 115.36,
+    "llm_s": 17.76,
+    "engine_s": 97.6,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui Reactivity Analysis \u2014 DFT (B3LYP/def2-TZVP)**\n\nFukui indices were computed for aniline using density-functional theory at the B3LYP functional with the def2-TZVP basis set (tier `standard`, density-fit via PySCF). The calculation was performed on the gas-phase molecular structure at charge 0, multiplicity 1, with additional single-point evaluations at charge +1 (cationic, multiplicity 2) and charge \u22121 (anionic, multiplicity 2) to compute the Fukui functions via the finite-difference scheme.\n\n**Key results:**\n- **Most electrophilic site (f\u207a):** Carbon at position 3 (ortho to nitrogen), f\u207a = 2.298\n- **Most nucleophilic site (f\u207b):** Nitrogen (atom 1), f\u207b = 0.205\n\nThe large positive f\u207a value at the ortho carbon indicates this site is susceptible to nucleophilic attack (characteristic of the nitrogen's electron-donating effect on the aromatic ring). The nitrogen's positive f\u207b indicates its lone pair is available for electrophilic addition.\n\nPartial charges were derived using the Mulliken population analysis in PySCF. All SCF calculations converged. The Fukui charge-conservation checks verified sum(f\u207a) = 1.000 and sum(f\u207b) = 1.000, confirming rigorous charge-balance across the three electronic states.\n\nNo warnings were reported. Geometry was a single point on the user-supplied aniline structure; no optimization was performed in this task. Full results including all atomic Fukui indices (f\u207a, f\u207b, f\u2070) and the dual descriptor are available above. A visualization plot has been generated and saved."
+}

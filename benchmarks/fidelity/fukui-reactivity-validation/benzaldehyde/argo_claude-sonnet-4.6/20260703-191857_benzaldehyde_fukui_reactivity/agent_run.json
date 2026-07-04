@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 257.94,
+    "llm_s": 34.81,
+    "engine_s": 223.13,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of benzaldehyde using DFT at tier 'standard' (B3LYP/def2-TZVP, PySCF RKS), gas phase, charge 0, multiplicity 1. Geometry: user-supplied .xyz, fixed (no re-optimization). N\u00b11 states: cation (charge +1, mult 2), anion (charge \u22121, mult 2). Partial charges via Mulliken (PySCF). 14 atoms total. Calculation converged; integrity status ok, trustworthy: true. Headline value reported is the maximum f+ (most electrophilic site): atom 3 (C, carbonyl carbon), f+ = 0.39938967. Most nucleophilic site: atom 1 (O, carbonyl oxygen), f\u2212 = 0.23839906. Integrity checks: fukui_charge_conservation_f+ sum = 1.0000 \u2705; fukui_charge_conservation_f- sum = 1.0000 \u2705; schema_header present \u2705. All engine-reported warnings surfaced verbatim above."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 212.85,
+    "llm_s": 28.74,
+    "engine_s": 184.11,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: Condensed Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, and identification of the most electrophilic (f\u207a) and nucleophilic (f\u207b) atomic sites for nitrobenzene. Headline numerical value reported here is the largest electrophilic Fukui index f\u207a.\nLevel of theory: DFT, tier \u201cstandard\u201d \u2192 B3LYP/def2-TZVP with RI approximation (density fitting) in PySCF 2.5.0.\nGeometry: fixed user-supplied nitrobenzene.xyz (no further optimisation); single-point calculations on neutral (N), cation (N+1, doublet), and anion (N\u22121, doublet) states \u2013 i.e. DFT//exp-geom protocol.\nSolvent: gas phase (no implicit solvent).\nCharge/multiplicity: 0 / 1 (neutral), +1 / 2 (cation), \u20131 / 2 (anion).\nConvergence: SCF converged for all three charge states. Engine integrity verdict: trustworthy.\nWarnings (verbatim):\n \u2013 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n \u2013 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n \u2013 common header present\nReproducibility: live log was written to `fukui_20260703-195927.out` (still available); full command recorded in the JSON. Output files: `nitrobenzene_fukui.json`, accompanying plot image.\n\nKey results\n\u2022 Maximum electrophilic Fukui index f\u207a = 0.4964178 on atom 4 (1-based index, C atom).\n\u2022 Maximum nucleophilic Fukui index f\u207b = 0.1072882 on atom 5 (C atom).\n\u2022 Dual descriptor highlights atom 4 as the primary electrophilic site (\u0394f = 0.51070984).\n\nComputed data should be interpreted qualitatively; Fukui indices depend on method, basis, and charge partitioning scheme.\n"
+}

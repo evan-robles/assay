@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.51,
+    "llm_s": 23.94,
+    "engine_s": 4.56,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital single-point calculation on ethylene (C\u2082H\u2084, 6 atoms) using DFT at the B3LYP/def2-TZVP level (tier 'standard', density-fitted) in PySCF. Gas phase, charge 0, multiplicity 1. Geometry taken directly from the user-supplied .xyz file (no re-optimization). SCF converged in 6 cycles. No warnings reported. Integrity status: ok, trustworthy: true.\n\nHOMO (index 7): \u22127.6155818 eV\nLUMO (index 8): \u22120.17986527 eV\nHOMO\u2013LUMO gap: 7.4357165 eV (headline result)\n\nTotal electronic energy: \u221278.623486 Hartree (\u22122139.4541 eV).\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz"
+}

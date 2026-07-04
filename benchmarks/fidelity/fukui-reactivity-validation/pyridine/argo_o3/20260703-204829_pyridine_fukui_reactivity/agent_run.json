@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 100.65,
+    "llm_s": 39.55,
+    "engine_s": 61.1,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary (reproducible):\nProperty: Fukui reactivity indices (f+ \u2194 electrophilic attack; f\u2013 \u2194 nucleophilic attack) for pyridine, with highlight on the most electrophilic site.\nLevel of theory: DFT, tier `standard` = B3LYP/def2-TZVP, density-fitted (PySCF backend).\nGeometry provenance: fixed \u2011 used the user-supplied Cartesian coordinates in /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz without additional optimisation (single-point population analyses on that geometry).\nEnvironment: gas phase (no implicit solvent).\nCharge / multiplicity: 0, 1 (closed-shell singlet); cation/anion calculations employed charge \u00b11, multiplicity 2 as required by the finite-difference Fukui protocol.\nSoftware: chemkit fukui-reactivity skill (PySCF v2 back-end; Mulliken charges).\nConvergence & caveats: SCF for the N, N+1 and N\u20131 states all reported convergence; integrity.checks report status \"ok\" (trustworthy = true). 3 warnings were issued by the engine and are reproduced verbatim below.  \nLive log: the run was launched with\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz --out \u2026/live.json\nand streamed to a live file fukui_20260703-204829.out in the caller\u2019s working directory (path was displayed at launch and can be tailed for full SCF / population details).\n\nResult\nThe largest electrophilic Fukui function value (f+) was found on atom 1 (N) of pyridine:\n  f+(N1) = 0.48422572 (dimensionless)\n\nWarnings (verbatim from tool):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nNo additional warnings were reported; integrity.trustworthy = true.\n\nAll files produced (live.json, *.out log, and the plotted Fukui surface PNG) are available under /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/ and the timestamped subdirectory 20260703-204829_pyridine_fukui_reactivity.  The run can be fully reproduced by rerunning the CLI command above on the same .xyz geometry."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 68.89,
+    "llm_s": 33.76,
+    "engine_s": 35.13,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for acrolein (CH2=CH-CHO) were computed using the fukui-reactivity chemkit skill at the DFT level with the B3LYP functional and def2-TZVP basis set (tier 'standard') in PySCF. The calculation used the user-supplied geometry at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz without re-optimization (single-point only). System: gas phase, charge 0, multiplicity 1. N\u00b11 states: cation (charge +1, mult 2) and anion (charge \u22121, mult 2). Partial charges by Mulliken scheme (PySCF).\n\nAll three SCF calculations converged. Charge conservation checks passed: \u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000. Integrity status: trustworthy = true.\n\nKey results (per-atom Fukui indices):\n- Most electrophilic site: C4 (\u03b2-carbon), f\u207a = 0.64232102 \u2014 the dominant site for nucleophilic (Michael) addition\n- Most nucleophilic site: O1 (carbonyl oxygen), f\u207b = 0.39388616 \u2014 dominant site for electrophilic activation\n- Dual descriptor for C4: +0.5549512 (strongly electrophilic character confirmed)\n\nFull per-atom results:\nAtom | f\u207a        | f\u207b        | f\u2070        | Dual\nO1   | 0.40136   | 0.39389   | 0.39763   | +0.00748\nC2   | 0.02226   | 0.00599   | 0.01412   | +0.01627\nC3   | 0.43405   | 0.09140   | 0.26272   | +0.34264\nC4   | 0.64232   | 0.08737   | 0.36485   | +0.55495\nH5   | \u22120.15726  | 0.08596   | \u22120.03565  | \u22120.24322\nH6   | \u22120.20720  | 0.18568   | \u22120.01076  | \u22120.39288\nH7   | \u22120.06212  | 0.08449   | +0.01118  | \u22120.14660\nH8   | \u22120.07341  | 0.06523   | \u22120.00409  | \u22120.13863\n\nNo warnings reported by the engine (all integrity checks passed informational). The headline value reported is the largest f\u207a (C4 \u03b2-carbon), 0.64232102."
+}

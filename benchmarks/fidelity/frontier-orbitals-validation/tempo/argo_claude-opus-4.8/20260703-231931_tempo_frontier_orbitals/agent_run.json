@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 119.86,
+    "llm_s": 24.53,
+    "engine_s": 95.33,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Frontier-Orbital Analysis of TEMPO\n\n**Method-provenance block**\n- **Property:** Frontier molecular-orbital energies (HOMO/LUMO) and HOMO\u2013LUMO gap.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard` expands to B3LYP/def2-TZVP), run in **PySCF**. Because the system is open-shell (multiplicity 2), this is an **unrestricted (UKS)** calculation. Density fitting is on by chemkit default.\n- **Geometry provenance:** User-supplied structure `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz` (29 atoms). The geometry was used **as-is** \u2014 this is a single-point frontier-orbital evaluation, not a re-optimization at DFT.\n- **Solvent / environment:** **Gas phase** (no implicit-solvation model; `solvent: null`).\n- **Charge / multiplicity:** charge **0**, multiplicity **2** (doublet radical \u2014 TEMPO is a persistent nitroxide radical, so this is the correct spin state).\n- **Software:** PySCF (program reported as `pyscf`).\n- **Convergence:** SCF **converged** in 12 cycles. Integrity verdict: **trustworthy = true**, status `ok`.\n\n**Headline result**\n- **HOMO\u2013LUMO gap = 3.8724 eV** (headline value).\n\n**Supporting frontier data (eV):**\n- HOMO (index 86, occ 1.0) = \u22126.3375\n- LUMO (index 87, occ 0.0) = \u22122.4651\n- HOMO\u22121 = \u22126.9287, HOMO\u22122 = \u22127.3058\n- LUMO+1 = +0.58632, LUMO+2 = +0.59688\n- Total electronic energy = \u2212483.88366 Hartree (= \u221213167.145 eV = \u2212303641.58 kcal/mol); energy zero = electronic energy (bare nuclei + electrons).\n\n**Koopmans-derived descriptors (eV):** vertical IP = 6.3375, vertical EA = 2.4651, electronegativity = 4.4013, chemical hardness = 1.9362, chemical softness = 0.51647 /eV, electrophilicity index = 5.0025. Note these are Koopmans-style orbital estimates, not excitation energies.\n\n**Warnings:** The engine returned **no warnings** (the `warnings` array was empty \u2014 clean run). All four integrity checks passed (energy_finite ok, scf_converged ok, schema_header ok, schema_headline ok).\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 2 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`\n- The engine wrote its live result JSON to `/home/erobles/chem-skills/.fidelity_scratch/tmpb558bu8_/live.json`. A `frontier_<timestamp>.out` live log is streamed to the caller's working directory during the run.\n\nNo experimental or literature comparison is offered \u2014 this is a computed result only. Ask if you'd like a verified reference value and I will check a source first."
+}

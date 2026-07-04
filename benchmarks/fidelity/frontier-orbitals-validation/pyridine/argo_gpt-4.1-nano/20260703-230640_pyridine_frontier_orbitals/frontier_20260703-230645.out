@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : frontier
+# args       : --method dft --functional b3lyp --basis def2-tzvp --tier standard --environment gas phase --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmphh_irl23/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --environment gas phase --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmphh_irl23/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/argo_gpt-4.1-nano/20260703-230640_pyridine_frontier_orbitals
+# started    : 20260703-230645
+# ============================================================
+usage: chemkit [-h] [--version]
+               {sp,opt,freq,binding,redox,confsearch,frontier,electrostatics,solvation,logp,profile,pka,build,resolve,fukui,ts,irc,rxn-energy,scan,orbitals}
+               ...
+chemkit: error: unrecognized arguments: --environment phase /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

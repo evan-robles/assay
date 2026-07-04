@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 113.5,
+    "llm_s": 18.63,
+    "engine_s": 94.87,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": -6.3375439,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I performed a frontier-orbitals calculation on the TEMPO molecule using Density Functional Theory (DFT) with the B3LYP functional and the def2-TZVP basis set (tier 'standard'). The calculation was performed in the gas phase with a charge of 0 and a multiplicity of 2. The SCF calculation converged in 12 cycles. The resulting frontier orbital energies are:\nHOMO: -6.3375439 eV\nLUMO: -2.4651235 eV"
+}

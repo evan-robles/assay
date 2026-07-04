@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.89,
+    "llm_s": 30.59,
+    "engine_s": 6.29,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices \u2014 semi-empirical tight-binding (GFN2-xTB) in xtb via chemkit. Property: Mulliken-charge-based Fukui functions (f+ and f\u2013) at a fixed geometry. Geometry provenance: read from user-supplied /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz (no geometry optimization). Environment: gas phase implicit only. Charge 0, multiplicity 1. Software: xtb (called by chemkit engine). Command: \"/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp8pcqywoo/live.json\". Convergence and caveats: integrity.trustworthy = true; warnings surfaced verbatim below. Warnings: 1) sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) 2) sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) 3) common header present. Results: most electrophilic site: Fe (atom 11) with f+ = 0.22885456; most nucleophilic site: Fe (atom 11) with f\u2013 = 0.25938191."
+}

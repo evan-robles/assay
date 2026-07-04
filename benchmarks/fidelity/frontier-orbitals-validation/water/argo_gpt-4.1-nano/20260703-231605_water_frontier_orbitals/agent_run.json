@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 17.34,
+    "llm_s": 7.19,
+    "engine_s": 3.92,
+    "turns": 4,
+    "tool_calls": 3
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.94067,
+    "n_atoms": 3,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": ""
+  },
+  "prose": "The HOMO\u2013LUMO gap of water is 8.94067 eV, calculated using DFT with the B3LYP functional and def2-TZVP basis set in the gas phase at charge 0 and multiplicity 1. The geometry was taken from the XYZ structure provided, and the SCF convergence was achieved in 7 cycles."
+}

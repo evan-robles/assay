@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.31,
+    "llm_s": 22.29,
+    "engine_s": 10.01,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of formaldehyde was successfully performed using Density Functional Theory (DFT) with the B3LYP functional and the def2-TZVP basis set (tier 'standard'). The calculation was carried out in the gas phase with a charge of 0 and a multiplicity of 1.\n\nThe results indicate:\n*   The most electrophilic site, and therefore the most susceptible to nucleophilic attack, is the Carbon atom (atom 2), with a Fukui(+) index of 0.70839.\n*   The most nucleophilic site, indicating susceptibility to electrophilic attack, is the Oxygen atom (atom 1), with a Fukui(-) index of 0.46742.\n\nThe complete set of computed Fukui indices for the atoms (O, C, H, H) are:\n*   f(+): [0.46814, 0.70839, -0.08827, -0.08826]\n*   f(-): [0.46742, 0.11244, 0.21008, 0.21006]\n*   f(0): [0.46778, 0.41042, 0.06090, 0.06090]\n\nThe calculation's integrity was reported as trustworthy, and no warnings were issued."
+}

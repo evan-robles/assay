@@ -1,0 +1,99 @@
+{
+  "mode": "live",
+  "expect": "compute",
+  "layer_A_determinism": true,
+  "timing": {
+    "total_s": 118.23,
+    "llm_s": 17.1,
+    "engine_s": 101.13,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "layer_B_invocation": [
+    {
+      "check": "method",
+      "ok": true,
+      "severity": "error",
+      "intended": "dft",
+      "got": "b3lyp/def2-tzvp"
+    },
+    {
+      "check": "charge",
+      "ok": true,
+      "severity": "error",
+      "intended": 0,
+      "got": 0
+    },
+    {
+      "check": "multiplicity",
+      "ok": true,
+      "severity": "error",
+      "intended": 2,
+      "got": 2
+    },
+    {
+      "check": "solvent",
+      "ok": true,
+      "severity": "error",
+      "intended": null,
+      "got": null
+    },
+    {
+      "check": "functional",
+      "ok": true,
+      "severity": "error",
+      "intended": "b3lyp",
+      "got": "b3lyp"
+    },
+    {
+      "check": "basis",
+      "ok": true,
+      "severity": "error",
+      "intended": "def2-tzvp",
+      "got": "def2-tzvp"
+    },
+    {
+      "check": "tier",
+      "ok": true,
+      "severity": "error",
+      "intended": "standard",
+      "got": "standard"
+    }
+  ],
+  "layer_C_reporting": [
+    {
+      "check": "reported homo_lumo_gap_eV",
+      "ok": true,
+      "severity": "error",
+      "truth": 3.8724203,
+      "reported": 3.8724203,
+      "tol": 0.05
+    },
+    {
+      "check": "warnings preserved",
+      "ok": true,
+      "severity": "error",
+      "truth_count": 0,
+      "preserved_count": 0,
+      "in_array": 0,
+      "in_prose_only": 0,
+      "missing_count": 0,
+      "sim_threshold": 0.97
+    },
+    {
+      "check": "integrity verdict surfaced",
+      "ok": true,
+      "severity": "warning",
+      "truth": true,
+      "reported": true
+    },
+    {
+      "check": "provenance not mislabeled experimental",
+      "ok": true,
+      "severity": "error",
+      "got": "computed"
+    }
+  ],
+  "overall": "PASS",
+  "exit_code": 0
+}

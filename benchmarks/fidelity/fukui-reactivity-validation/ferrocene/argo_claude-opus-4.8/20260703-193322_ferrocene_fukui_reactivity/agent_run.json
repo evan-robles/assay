@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 30.59,
+    "llm_s": 24.64,
+    "engine_s": 5.95,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis of Ferrocene\n\n**Method-provenance block**\n- **Property:** Condensed Fukui reactivity descriptors (f\u207a, f\u207b, f\u2070, dual descriptor) from finite-difference of Mulliken atomic charges across the N, N+1, and N\u22121 electron states.\n- **Level of theory:** **GFN2-xTB** (semi-empirical tight-binding; no basis set and no functional in the Gaussian-basis/DFT sense \u2014 geometries/relative-trend regime, not chemical-accuracy absolute energies).\n- **Software/backend:** xtb (via chemkit `fukui` skill).\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`, used **as-is** (this task performs single-point charge evaluations at the fixed input geometry; it does not relax the structure).\n- **Environment:** **Gas phase** (solvent = null; no implicit/continuum model, no explicit solvent).\n- **Charge / multiplicity:** Neutral reference state **charge 0, multiplicity 1** (as requested). The finite-difference states were the cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2), both open-shell doublets.\n- **Partial-charge scheme:** Mulliken (GFN2-xTB).\n- **System:** 21 atoms (2\u00d7 C\u2085H\u2085 rings + 1 Fe).\n\n**Headline result**\nThe most reactive site by both electrophilic and nucleophilic Fukui indices is the **iron center (atom index 11, 1-based; symbol Fe)**:\n- **Most nucleophilic site (largest f\u207b):** Fe, **f\u207b = 0.25938191** (this is the headline value).\n- **Most electrophilic site (largest f\u207a):** Fe, **f\u207a = 0.22885456**.\n\nThe Fe dual descriptor is \u22120.030527354 (f\u207a \u2212 f\u207b < 0, consistent with a net nucleophilic/electron-donor character at the metal). The ten C and ten H sites carry much smaller, near-degenerate descriptor values (C: f\u207b \u2248 0.0122, f\u207a \u2248 0.0136; H: f\u207b \u2248 0.0619, f\u207a \u2248 0.0635), reflecting the D\u2085d symmetry of the two equivalent cyclopentadienyl rings.\n\n**Convergence / integrity**\nThe engine's integrity check returned **status: ok, trustworthy: true**. All three checks passed. Reproduced verbatim, the warning-severity check details are:\n- \"fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"schema_header: common header present\"\n\nBoth charge-conservation sums equal 1.0000, indicating the N\u00b11 states converged cleanly.\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmptsw3w8b8/live.json`\n- Plot written to: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-opus-4.8/20260703-193322_ferrocene_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental or literature comparison is offered; this is a computed result. Ask if you'd like me to look one up (I'd verify a source first)."
+}

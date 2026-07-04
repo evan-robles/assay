@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.38,
+    "llm_s": 17.44,
+    "engine_s": 11.94,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital analysis** \u2014 Property: HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n\n**Method / provenance block:**\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (density fitting is on by default in chemkit \u2014 an approximation to the two-electron integrals). Backend: **PySCF**.\n- **Geometry provenance:** user-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`), 11 atoms (N, 5\u00d7C, 5\u00d7H). Used as-is \u2014 this was a single point at the supplied geometry; no geometry optimization was performed at this (or any) level.\n- **Environment:** **gas phase** (no implicit solvation; `solvent: null`).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (closed-shell singlet, as requested).\n- **Convergence:** SCF **converged** in 10 cycles.\n\n**Headline result:**\n- **HOMO\u2013LUMO gap = 6.1398131 eV**\n- HOMO = \u22127.2525992 eV (index 20), LUMO = \u22121.112786 eV (index 21)\n- Total electronic energy = \u2212248.3782 hartree (\u22126758.7152 eV; \u2212155859.68 kcal/mol); energy zero = electronic energy (bare nuclei + electrons)\n- n_orbitals = 216; n_occupied = 21\n\nAdditional frontier orbitals (eV): HOMO\u22122 = \u22128.0425195, HOMO\u22121 = \u22127.4731156, LUMO+1 = \u22120.67231536, LUMO+2 = 1.1781069.\nKoopmans-derived descriptors (eV): vertical IP = 7.2525992, vertical EA = 1.112786, electronegativity = 4.1826926, chemical hardness = 3.0699066, chemical softness = 0.32574281 /eV, electrophilicity index = 2.8494218.\n\n**Warnings:** none reported (the result JSON contained no `warnings` array / no engine warnings). **Integrity:** the engine reports `status: ok`, `trustworthy: true` (checks passed: energy finite, SCF converged, schema header present, headline field present and numeric).\n\n**Reproducibility:** command run \u2014 `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 <pyridine.xyz> --out .../live.json`. A live `<subcommand>_<timestamp>.out` log is streamed to the caller's cwd during the run and is self-contained (header + final result JSON).\n\nNo experimental/literature comparison is offered \u2014 provenance here is *computed*, not measured. Let me know if you'd like a verified reference value for comparison."
+}

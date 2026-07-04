@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 22.23,
+    "llm_s": 13.35,
+    "engine_s": 8.88,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan HOMO\u2013LUMO gap (Koopmans-style orbital gap)** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, density-fitted RI/RIJK) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz` (9 atoms: 1 O, 4 C, 4 H), used as-is (single-point calculation, not re-optimized at DFT). SCF converged in 9 cycles. **Headline gap: 6.2574 eV** (HOMO = \u22126.3598 eV, LUMO = \u22120.1024 eV). This is an orbital-energy gap in the DFT framework, not an excitation energy. Koopmans-style ionization potential (vertical IP) = 6.3598 eV; electron affinity (EA) = 0.1024 eV. All integrity checks passed (trustworthy: true). No warnings reported. Orbital visualizations (`.molden`, `.cube` files) available in the calculation directory.</prose>\n<parameter name=\"n_atoms\">9"
+}

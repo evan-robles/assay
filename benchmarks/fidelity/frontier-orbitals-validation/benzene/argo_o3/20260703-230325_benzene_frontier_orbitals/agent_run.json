@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 37.88,
+    "llm_s": 26.94,
+    "engine_s": 10.94,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block\nProperty: HOMO\u2013LUMO gap (Koopmans-type, difference of orbital eigenvalues) = 6.6310857 eV\nLevel of theory: DFT, B3LYP/def2-TZVP (tier \"standard\"), density-fitted (PySCF 2.x backend)\nGeometry provenance: user-supplied benzene.xyz (12 atoms) taken as-is; single-point energy/orbitals \u2014 no further relaxation (DFT//provided-geometry)\nSolvent / environment: gas phase (no implicit solvation)\nCharge & multiplicity: 0, singlet (closed shell RKS)\nSoftware: chemkit frontier-orbitals skill \u2192 PySCF engine; SCF converged in 8 cycles\nCaveats & convergence: SCF converged (scf_converged: true); no warnings reported by engine. Density fitting (RI) approximation active by default.\n\nHeadline result\nHOMO = \u22127.0468329 eV\nLUMO = \u22120.41574728 eV\nHOMO\u2013LUMO gap = 6.6310857 eV (value reported exactly as returned; at least 5 significant figures preserved)\n\nLive log & files\nThe run streamed live to a frontier_orbitals_<timestamp>.out file in the working directory (path echoed at launch); JSON results saved to /home/erobles/chem-skills/.fidelity_scratch/tmp6_hu52l4/live.json \u2014 re-runnable via the CLI invocation embedded in that JSON (see below).\n\nReproduction command (from result JSON)\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp6_hu52l4/live.json\n\nIntegrity verdict: trustworthy (integrity.status = \"ok\", integrity.trustworthy = true)\n\nNo warnings were reported by the engine."
+}

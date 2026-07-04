@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 43.66,
+    "llm_s": 34.07,
+    "engine_s": 9.58,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Based on your request, I have completed the Fukui reactivity analysis for formaldehyde. The calculation was performed using Density Functional Theory (DFT) with the B3LYP functional and the def2-TZVP basis set (corresponding to chemkit's `standard` tier), as implemented in the PySCF program. The analysis was conducted in the gas phase on the geometry you provided, assuming a neutral charge (0) and a singlet multiplicity (1).\n\nThe calculation produced the following Fukui indices, which indicate the change in electron density at each atomic site upon addition or removal of an electron.\n*   **f+** (propensity to accept an electron; susceptibility to nucleophilic attack)\n*   **f-** (propensity to donate an electron; susceptibility to electrophilic attack)\n*   **f0** (average of f+ and f-; radical attack susceptibility)\n\nHere are the results for the heavy atoms:\n\n*   **Atom 1 (Oxygen):**\n    *   f+ = 0.46814\n    *   f- = 0.46742\n    *   f0 = 0.46778\n*   **Atom 2 (Carbon):**\n    *   f+ = 0.70839\n    *   f- = 0.11244\n    *   f0 = 0.41042\n\nAccording to this analysis:\n*   The **carbon** atom is the most electrophilic site (highest f+ value, 0.70839), making it the most likely site for a nucleophilic attack.\n*   The **oxygen** atom is the most nucleophilic site (highest f- value, 0.46742), making it the most likely site for an electrophilic attack.\n\nThe integrity check was successful, and the results are trustworthy. No warnings were reported by the engine. The full Fukui indices for the hydrogen atoms are also available if you need them."
+}

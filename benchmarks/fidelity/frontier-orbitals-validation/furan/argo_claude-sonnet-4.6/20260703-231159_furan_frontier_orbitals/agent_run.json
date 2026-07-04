@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.41,
+    "llm_s": 27.49,
+    "engine_s": 8.93,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on furan. Property: HOMO\u2013LUMO gap (Koopmans-style orbital energy gap). Level of theory: DFT, tier 'standard' \u2192 B3LYP/def2-TZVP (PySCF RKS, density-fitted). Geometry: user-supplied furan.xyz, single-point (not re-optimized at DFT). Environment: gas phase. Charge 0, multiplicity 1. SCF converged in 9 cycles. No warnings reported. Integrity: status ok, trustworthy true. HOMO = \u22126.3597638 eV (index 17), LUMO = \u22120.1024036 eV (index 18), HOMO\u2013LUMO gap = 6.2573602 eV. Total electronic energy = \u2212230.11429 Hartree. CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --charge 0 --mult 1 furan.xyz"
+}

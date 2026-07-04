@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 113.68,
+    "llm_s": 13.73,
+    "engine_s": 99.96,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital calculation for TEMPO has been completed. The calculation was performed using Density Functional Theory (DFT) with the B3LYP functional and the def2-TZVP basis set (tier `standard`) in the gas phase, as you requested. A charge of 0 and a multiplicity of 2 were used. The geometry was taken from the provided file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`.\n\nThe calculation was performed with the PySCF program. The Self-Consistent Field (SCF) procedure converged successfully. No warnings were reported by the engine.\n\nThe results are as follows:\n*   **HOMO energy**: -6.3375 eV\n*   **LUMO energy**: -2.4651 eV\n*   **HOMO-LUMO gap**: 3.8724 eV"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.14,
+    "llm_s": 19.35,
+    "engine_s": 9.72,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for formaldehyde have been calculated.\n\n**Fukui Reactivity Indices for Formaldehyde** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: built from user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`, used as-is for single-point calculations. The N+1 system was calculated with charge 1, multiplicity 2; the N-1 system was calculated with charge -1, multiplicity 2. SCF converged.\n\n**Results:**\nThe partial charges were calculated using the Mulliken scheme (PySCF).\nThe Fukui indices for each atom are as follows:\n\n*   **Atom 1 (O):**\n    *   f+: 0.46813824\n    *   f-: 0.46742464\n    *   f0: 0.46778144\n    *   Dual Descriptor: 0.00071359555\n*   **Atom 2 (C):**\n    *   f+: 0.7083913\n    *   f-: 0.11244422\n    *   f0: 0.41041776\n    *   Dual Descriptor: 0.59594709\n*   **Atom 3 (H):**\n    *   f+: -0.088269392\n    *   f-: 0.21007563\n    *   f0: 0.060903121\n    *   Dual Descriptor: -0.29834503\n*   **Atom 4 (H):**\n    *   f+: -0.088260145\n    *   f-: 0.21005551\n    *   f0: 0.060897683\n    *   Dual Descriptor: -0.29831566\n\nThe most electrophilic site is **Carbon (Atom 2)** with an f+ value of 0.7083913.\nThe most nucleophilic site is **Oxygen (Atom 1)** with an f- value of 0.46742464.\n\nThe live log is being written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_gemini-2.5-flash/20260703-192739_formaldehyde_fukui_reactivity/fukui_20260703-192746.out`."
+}

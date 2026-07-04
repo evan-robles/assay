@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 294.75,
+    "llm_s": 40.21,
+    "engine_s": 254.55,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitting RIJK) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: single-point on the user-supplied benzaldehyde.xyz (no geometry relaxation). SCF converged. Warnings (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nMost electrophilic site: C atom 3 (one-based indexing) with f\u207a = 0.39938964.\nMost nucleophilic site: O atom 1 with f\u207b = 0.23839906.\n\nReproducibility:\n\u2022 Command:\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpujj4n187/live.json\n\u2022 Result JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmpujj4n187/live.json`\n\nintegrity.trustworthy: true\nprovenance: computed"
+}

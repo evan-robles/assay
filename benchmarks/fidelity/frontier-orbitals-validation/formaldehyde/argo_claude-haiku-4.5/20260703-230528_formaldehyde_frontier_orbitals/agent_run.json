@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 12.05,
+    "llm_s": 7.37,
+    "engine_s": 4.69,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde frontier-orbital properties** \u2014 DFT, **B3LYP/def2-TZVP** (PySCF), **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `.xyz` file at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz` (4 atoms: O, C, H, H), used as-is (single-point calculation, not re-optimized). SCF converged in 8 cycles. \n\n**Frontier-orbital energies (Koopmans-style ionization/electron-affinity):**\n- HOMO (index 7): **\u22127.652 eV**\n- LUMO (index 8): **\u22121.783 eV**\n- **HOMO\u2013LUMO gap: 5.870 eV**\n\n**Koopmans descriptors (derived from orbital energies):**\n- Vertical ionization potential: 7.652 eV\n- Vertical electron affinity: 1.783 eV\n- Electronegativity: 4.717 eV\n- Chemical hardness: 2.935 eV\n- Chemical softness: 0.341 eV\u207b\u00b9\n- Electrophilicity index: 3.791 eV\n\n**Total electronic energy:** \u22123117.153 eV (\u2212114.553 Hartree, \u221271883 kcal/mol).\n\n**Software:** PySCF with B3LYP functional and def2-TZVP basis set. No warnings reported. All integrity checks passed (energy finite, SCF converged, schema valid).\n\n**Command:** `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz`\n"
+}

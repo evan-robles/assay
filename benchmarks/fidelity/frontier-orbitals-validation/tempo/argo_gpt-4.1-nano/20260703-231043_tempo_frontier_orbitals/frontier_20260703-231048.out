@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : frontier
+# args       : --method dft --functional b3lyp --basis def2-tzvp --tier standard --phase gas --multiplicity 2 --charge 0 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpqp_d56cr/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --phase gas --multiplicity 2 --charge 0 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpqp_d56cr/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/argo_gpt-4.1-nano/20260703-231043_tempo_frontier_orbitals
+# started    : 20260703-231048
+# ============================================================
+usage: chemkit [-h] [--version]
+               {sp,opt,freq,binding,redox,confsearch,frontier,electrostatics,solvation,logp,profile,pka,build,resolve,fukui,ts,irc,rxn-energy,scan,orbitals}
+               ...
+chemkit: error: unrecognized arguments: --phase /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

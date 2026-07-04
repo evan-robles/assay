@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : build
+# args       : aniline /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp__w30yhl/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli build aniline /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp__w30yhl/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/argo_gpt-4.1-nano/20260703-225930_aniline_frontier_orbitals
+# started    : 20260703-225935
+# ============================================================
+usage: chemkit [-h] [--version]
+               {sp,opt,freq,binding,redox,confsearch,frontier,electrostatics,solvation,logp,profile,pka,build,resolve,fukui,ts,irc,rxn-energy,scan,orbitals}
+               ...
+chemkit: error: unrecognized arguments: /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

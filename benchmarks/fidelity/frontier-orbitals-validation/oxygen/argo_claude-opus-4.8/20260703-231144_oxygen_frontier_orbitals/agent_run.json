@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.37,
+    "llm_s": 19.03,
+    "engine_s": 4.33,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen (O\u2082) frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, PySCF, density fitting on by chemkit default), **gas phase** (no solvent model). Charge 0, multiplicity 3 (triplet ground state) \u2014 treated as open-shell (UKS). Geometry: user-supplied file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz` (2 atoms, O\u2013O), used as-is (single point at the provided geometry; not re-optimized). SCF converged in 7 cycles.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 5.2881 eV** (Koopmans-style orbital gap, not an excitation energy).\n\nSupporting frontier-orbital energies:\n- HOMO (index 15) = \u22128.87396 eV\n- LUMO (index 16) = \u22123.58590 eV\n- HOMO\u22121 (14) = \u22128.87396 eV; LUMO+1 (17) = \u22123.58590 eV (the degenerate \u03c0* pairs expected for triplet O\u2082)\n- Total electronic energy = \u2212150.38872 hartree (\u22124092.2855 eV = \u221294370.346 kcal/mol). This is the bare electronic energy (nuclei + electrons); it is a same-method/same-basis quantity only comparable to other B3LYP/def2-TZVP electronic energies \u2014 do not subtract against xtb/PM7/HF/other-functional energies.\n\nKoopmans-derived descriptors (from HOMO/LUMO): vertical IP = 8.8740 eV, vertical EA = 3.5859 eV, electronegativity = 6.2299 eV, chemical hardness = 2.6440 eV, chemical softness = 0.37821 eV\u207b\u00b9, electrophilicity index = 7.3396 eV.\n\n**Method/software:** PySCF, B3LYP functional, def2-TZVP basis (semi-local hybrid DFT). Note that Koopmans-style orbital energies from a hybrid functional are approximate estimators of IP/EA, not rigorous ionization energies.\n\n**Warnings:** The engine returned no warnings (the `warnings` array was absent/empty \u2014 clean run). **Integrity:** the engine reports `integrity.status = \"ok\"` and **`trustworthy: true`**; all checks passed (energy finite, SCF converged, schema header/headline present).\n\n**Reproducibility:** command run \u2014 `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 3 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`. The engine wrote its result JSON to `/home/erobles/chem-skills/.fidelity_scratch/tmpyx_zo3oc/live.json`. No unsolicited experimental comparison is offered \u2014 ask if you'd like one and I'll verify a source first."
+}

@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 120.25,
+    "llm_s": 17.76,
+    "engine_s": 102.49,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity analysis on aniline was performed using the chemkit tools. The calculation used Density Functional Theory (DFT) with the B3LYP functional and the def2-TZVP basis set (tier `standard`). The environment was the gas phase, with a charge of 0 and a multiplicity of 1. The geometry was taken from the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` file. Partial charges were determined using the Mulliken scheme in PySCF.\n\nThe most electrophilic site (highest f+ value) is carbon atom 3 (index 2) with an f+ value of 2.2975867.\nThe most nucleophilic site (highest f- value) is nitrogen atom 1 (index 0) with an f- value of 0.20452359.\n\nThe calculation log was streamed live to a file named similar to `fukui-reactivity_<timestamp>.out` in the current working directory."
+}

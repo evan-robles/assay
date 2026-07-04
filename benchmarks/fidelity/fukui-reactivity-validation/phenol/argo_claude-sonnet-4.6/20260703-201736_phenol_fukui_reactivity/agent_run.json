@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 146.9,
+    "llm_s": 40.34,
+    "engine_s": 106.56,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for phenol were computed using DFT at the B3LYP/def2-TZVP level (tier 'standard', density-fit RI) in PySCF, gas phase, charge 0, multiplicity 1. The N+1 (anion, charge \u22121, mult 2) and N\u22121 (cation, charge +1, mult 2) states were computed by finite difference of Mulliken partial charges.\n\nGeometry: user-supplied phenol.xyz, used as-is (single-point on fixed geometry; no re-optimization at DFT).\n\nKey results:\n- Most electrophilic site: Atom 3 (C), f\u207a = 2.1028319 \u2014 headline value reported.\n- Most nucleophilic site: Atom 1 (O), f\u207b = 0.16201477.\n- Charge conservation: sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000. Both checks passed.\n- Integrity: trustworthy = true; all integrity checks passed.\n- No engine warnings reported.\n\nThe results are chemically consistent with phenol's known ortho/para-directing character: ring carbons ortho and para to the hydroxyl group (atoms 3, 4, 7) carry the largest f\u207a values, while the oxygen (atom 1) is the most nucleophilic site by f\u207b.\n\nPlot saved to: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-sonnet-4.6/20260703-201736_phenol_fukui_reactivity/agent_call_01_plot.png"
+}

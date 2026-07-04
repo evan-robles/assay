@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 118.08,
+    "llm_s": 16.13,
+    "engine_s": 101.95,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui Reactivity Analysis** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, density-fitted), PySCF backend, **gas phase**, charge 0 (neutral ground state), multiplicity 1. Cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2) computed for f\u207a and f\u207b. Geometry: user-supplied aniline.xyz (14 atoms). SCF converged; charge conservation checks (\u03a3 f\u207a = 1.000, \u03a3 f\u207b = 1.000) passed, indicating stable N\u00b11 states.\n\n**Key findings**: Electrophilically most favorable site = **C-3 (ortho position, f\u207a = 2.298)**; nucleophilically most favorable site = **N (f\u207b = 0.205)**. Dual descriptor maximum at C-3 (\u0394f = 2.231), indicating strong electrophilic character at the ortho carbon. These indices reveal that the amino group strongly activates the ortho and para positions toward nucleophilic aromatic attack, with the ortho carbon (C-3) as the dominant reactive site. The nitrogen itself is moderately nucleophilic.\n\n**Mulliken partial charge distribution** and all per-atom Fukui indices (f\u207a, f\u207b, dual descriptor) computed. Visualization saved to live plot path.\n\n**Command used**: `cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --solvent gas-phase --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`\n\n**No warnings reported.** Integrity status: trustworthy.</prose>\n<parameter name=\"n_atoms\">14"
+}

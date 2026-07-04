@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.35,
+    "llm_s": 23.31,
+    "engine_s": 11.03,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital single-point calculation on benzene at DFT B3LYP/def2-TZVP (tier 'standard', PySCF RKS), gas phase, charge 0, multiplicity 1. Geometry taken from user-supplied .xyz file (not re-optimised at this level). SCF converged in 8 cycles. No warnings reported. Integrity: trustworthy = true, all checks passed. HOMO = \u22127.0468329 eV (index 20), LUMO = \u22120.41574728 eV (index 21), HOMO\u2013LUMO gap = 6.6310857 eV (Koopmans-style orbital gap). Vertical IP = 7.0468 eV, vertical EA = 0.41575 eV. Total electronic energy = \u2212232.33724 Hartree."
+}

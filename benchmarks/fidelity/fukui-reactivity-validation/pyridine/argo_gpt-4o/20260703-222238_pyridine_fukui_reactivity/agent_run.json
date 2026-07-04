@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 62.7,
+    "llm_s": 4.57,
+    "engine_s": 58.13,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for pyridine were computed at the DFT level of theory using the B3LYP functional with the def2-TZVP basis set (tier `standard`) in the gas phase, with charge 0 and multiplicity 1. The calculation was performed using the PySCF backend via the `fukui-reactivity` skill. The Mulliken partial charges were extracted for the neutral molecule, as well as cationic (+1) and anionic (\u22121) forms (multiplicity 2 for ionized states). For electrophilicity, the greatest Fukui function (f+) was found for nitrogen (atom 1) with a value of **0.48423**. For nucleophilicity, the largest Fukui function (f\u2212) was found for carbon (atom 4) with a value of 0.11826."
+}

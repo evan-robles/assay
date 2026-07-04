@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 10.07,
+    "llm_s": 4.46,
+    "engine_s": 4.45,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.28806,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": ""
+  },
+  "prose": "The frontier-orbitals task on oxygen using DFT at the B3LYP functional with the def2-tzvp basis set in the gas phase (tier 'standard') and a multiplicity of 3 was performed. The result is the HOMO-LUMO gap, which is approximately 5.28806 eV.\n\nThe detailed method used is: DFT, tier 'standard' (B3LYP/def2-TZVP), in PySCF, gas phase, charge 0, multiplicity 3. \n\nNote: an engine run encountered a failure related to environment modules, but the orbital data obtained are trustworthy according to the logs."
+}

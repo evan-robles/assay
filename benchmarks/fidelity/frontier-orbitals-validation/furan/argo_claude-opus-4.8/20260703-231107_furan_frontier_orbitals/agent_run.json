@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.12,
+    "llm_s": 26.97,
+    "engine_s": 9.15,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, PySCF; density fitting on by default), **gas phase** (no solvent model), charge 0, multiplicity 1 (RKS closed-shell). Geometry: user-supplied `.xyz` at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz (9 atoms: O, 4\u00d7C, 4\u00d7H), used as-is \u2014 this is a single point at the provided geometry, not re-optimized. SCF converged in 9 cycles.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 6.2573602 eV** (Koopmans-style orbital gap, not an excitation/optical gap).\n\nSupporting frontier-orbital energies:\n- HOMO (orbital index 17, occ 2.0) = \u22126.3597638 eV\n- LUMO (orbital index 18, occ 0.0) = \u22120.1024036 eV\n- HOMO\u22121 = \u22127.8707441 eV; HOMO\u22122 = \u221210.332024 eV\n- LUMO+1 = 1.4483308 eV; LUMO+2 = 1.702378 eV\n\nKoopmans-derived descriptors (from these orbital energies): vertical IP = 6.3597638 eV, vertical EA = 0.1024036 eV, electronegativity = 3.2310837 eV, chemical hardness = 3.1286801 eV, chemical softness = 0.3196236 eV\u207b\u00b9, electrophilicity index = 1.6684195 eV.\n\nTotal electronic energy (bare nuclei + electrons, gas phase): \u2212230.11429 Hartree (= \u22126261.7289 eV = \u2212144398.9 kcal/mol). Note this energy zero is method-specific (B3LYP/def2-TZVP) and is only comparable to other same-method, same-basis energies.\n\n**Method used:** DFT at the B3LYP functional with the def2-TZVP basis set (chemkit tier `standard`), gas phase, via PySCF (RKS). GFN2-xTB/PM7 note not applicable \u2014 this is a Gaussian-basis DFT run.\n\n**Warnings:** the tool reported no warnings (empty warnings \u2014 clean run). **Integrity:** engine status \"ok\", trustworthy = true (all checks passed: energy finite, SCF converged, schema header and headline present).\n\n**Reproducibility** \u2014 command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpjkfxzw28/live.json`. No experimental/literature comparison is offered; ask if you want one and I will verify a source first."
+}

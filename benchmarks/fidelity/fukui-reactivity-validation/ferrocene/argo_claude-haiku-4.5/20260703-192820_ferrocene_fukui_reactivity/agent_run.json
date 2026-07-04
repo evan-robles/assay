@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 19.18,
+    "llm_s": 13.24,
+    "engine_s": 5.95,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui Reactivity Analysis** \u2014 Semi-empirical tight-binding, **GFN2-xTB** (xtb engine), **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied (ferrocene.xyz), used as-is (single-point analysis on fixed geometry).\n\n**Fukui Descriptor Results** (Mulliken partial charges, GFN2-xTB level):\n\nThe most electrophilic atom is **Fe (atom 11, index 10-based)** with f\u207a = **0.22885456**.\n\nThe most nucleophilic atom is also **Fe (atom 11, index 10-based)** with f\u207b = **0.25938191**.\n\nThe Fukui reactivity indices were computed by calculating partial charges (Mulliken scheme) on three systems: the neutral molecule (charge 0, multiplicity 1), the cation (charge +1, multiplicity 2), and the anion (charge \u22121, multiplicity 2). The Fukui functions f\u207a (electrophilic reactivity) and f\u207b (nucleophilic reactivity) were derived from the differences in these charges:\n\n- **f\u207a** = charge(neutral) \u2212 charge(cation), measuring susceptibility to electron addition\n- **f\u207b** = charge(anion) \u2212 charge(neutral), measuring susceptibility to electron removal\n- **f\u2070** = (f\u207a + f\u207b) / 2, the dual-descriptor average\n\n**Atom-by-atom results** (per the result JSON):\n\n**Iron center (atom 11):**\n- f\u207a = 0.22885456 (electrophilic)\n- f\u207b = 0.25938191 (nucleophilic)\n- f\u2070 = 0.24411824\n- Dual descriptor = \u22120.030527354 (slightly nucleophilic in character)\n\n**Cyclopentadienyl rings (atoms 1\u20135, 12\u201316):**\n- f\u207a \u2248 0.013638 (carbon atoms) / 0.063476 (hydrogen atoms)\n- f\u207b \u2248 0.012179 (carbon atoms) / 0.061883 (hydrogen atoms)\n- Carbon is least reactive; hydrogen is moderately reactive\n\n**Method & Convergence:**\n- xtb GFN2-xTB: charge-transfer tight-binding semi-empirical method, no basis set, no density-fitting approximation needed\n- All three electronic states (neutral, +1 cation, \u22121 anion) converged stably\n- Charge-conservation check passed: \u03a3(f\u207a) = 1.0000 \u2713, \u03a3(f\u207b) = 1.0000 \u2713\n- Integrity status: **ok** (trustworthy: true)\n\n**Interpretation:**\nThe iron center dominates both electrophilic (f\u207a) and nucleophilic (f\u207b) reactivity, indicating it is the primary site for interactions with both electron-accepting and electron-donating reagents. The dual descriptor (f\u207a \u2212 f\u207b = \u22120.0305) is slightly negative, suggesting a mild tendency toward nucleophilic character. The cyclopentadienyl ligands (especially hydrogens) show modest reactivity compared to the metal.\n\n**Output files:**\n- Result JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmptmecddun/live.json`\n- Reactivity plot (visualization): `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-haiku-4.5/20260703-192820_ferrocene_fukui_reactivity/agent_call_01_plot.png`\n\n**Exact command:**\n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmptmecddun/live.json\n```"
+}

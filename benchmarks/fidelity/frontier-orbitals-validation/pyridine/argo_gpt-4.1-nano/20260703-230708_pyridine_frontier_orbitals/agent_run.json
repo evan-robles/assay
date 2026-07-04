@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 4.62,
+    "llm_s": 3.3,
+    "engine_s": 0.0,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": null,
+    "n_atoms": 0,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": ""
+  },
+  "prose": "The orbitals calculation on pyridine using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase could not be completed due to a missing script. Therefore, no result is available to report."
+}

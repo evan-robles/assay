@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 137.3,
+    "llm_s": 31.21,
+    "engine_s": 106.09,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for Aniline were computed using Density Functional Theory (DFT) with the tier `standard` (B3LYP/def2-TZVP functional/basis set, with density fitting enabled by default in PySCF) in the gas phase. The molecule was treated with a charge of 0 and a multiplicity of 1. The geometry was sourced from the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` file. The calculation converged successfully.\n\nThe computed Fukui indices for each atom are as follows:\n\n| Atom Index | Symbol | Fukui f+ (electrophilic) | Fukui f- (nucleophilic) | Fukui f0 (radical) | Dual Descriptor (f- - f+) |\n|:----------:|:------:|:------------------------:|:-----------------------:|:------------------:|:-------------------------:|\n|     1      |   N    |         1.66966          |         0.20452         |      0.93709       |         -1.46514          |\n|     2      |   C    |        -1.90092          |        -0.00373         |     -0.95232       |         1.89719           |\n|     3      |   C    |         2.29759          |         0.06657         |      1.18208       |         -2.23102          |\n|     4      |   C    |         2.29656          |         0.06659         |      1.18158       |         -2.22997          |\n|     5      |   C    |        -0.28837          |         0.00835         |     -0.14001       |         0.29672           |\n|     6      |   C    |        -0.28785          |         0.00838         |     -0.13973       |         0.29623           |\n|     7      |   C    |         1.40317          |         0.10973         |      0.75645       |         -1.29344          |\n|     8      |   H    |        -0.35139          |         0.08199         |     -0.13470       |         0.43338           |\n|     9      |   H    |        -0.35134          |         0.08201         |     -0.13466       |         0.43336           |\n|     10     |   H    |        -0.82107          |         0.07635         |     -0.37236       |         0.89743           |\n|     11     |   H    |        -0.82131          |         0.07634         |     -0.37248       |         0.89765           |\n|     12     |   H    |        -0.34269          |         0.08737         |     -0.12766       |         0.43006           |\n|     13     |   H    |        -0.75088          |         0.06776         |     -0.34156       |         0.81864           |\n|     14     |   H    |        -0.75116          |         0.06775         |     -0.34171       |         0.81892           |\n\nThe most electrophilic site is Carbon atom 3 (f+ = 2.29759), and the most nucleophilic site is Nitrogen atom 1 (f- = 0.20452).\n\nThe full CLI invocation was: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpwqb2nufg/live.json`\nA plot of the Fukui indices is available at: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_gemini-2.5-flash/20260703-190045_aniline_fukui_reactivity/agent_call_01_plot.png`"
+}

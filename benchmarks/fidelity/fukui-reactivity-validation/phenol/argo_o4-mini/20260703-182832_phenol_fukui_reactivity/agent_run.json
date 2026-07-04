@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 148.99,
+    "llm_s": 40.4,
+    "engine_s": 108.59,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui reactivity descriptors** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitted RIJK) in PySCF, gas phase (no implicit solvation), charge 0, multiplicity 1.\nGeometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (single-point calculations on neutral, cationic, and anionic states; no geometry relaxation at DFT).\nSCF converged for neutral, cation, and anion.\nWarnings (verbatim):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\nCommand recorded:\n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui \\\n  --method dft --functional b3lyp --basis def2-tzvp \\\n  --charge 0 --multiplicity 1 --solvent gas \\\n  /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz \\\n  --out /home/erobles/chem-skills/.fidelity_scratch/tmpm4vswm31/live.json\n```\nResults (Mulliken scheme, dimensionless):\n- Most electrophilic site: C (atom 3) with f\u208a = 2.1028319\n- Most nucleophilic site: O (atom 1) with f\u208b = 0.16201477\nFiles:\n- Input geometry: phenol.xyz\n- Reactivity plot: \u2026/20260703-182832_phenol_fukui_reactivity/agent_call_01_plot.png\n"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 135.63,
+    "llm_s": 25.06,
+    "engine_s": 110.57,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui reactivity \u2014 computed result.**\n\n**Method/provenance:** Fukui indices from DFT single-point charge analysis using **B3LYP/def2-TZVP**; chemkit tier requested: `standard`; backend/program reported by chemkit: `dft`; gas phase (`solvent: null`); charge 0, multiplicity 1 for neutral phenol. Geometry/input: user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` with 13 atoms; the tool result does not report any geometry relaxation. Partial-charge scheme: **Mulliken (PySCF)**. Cation state used by the task: charge +1, multiplicity 2; anion state used by the task: charge \u22121, multiplicity 2.\n\n**Headline Fukui result:** the most electrophilic site reported by chemkit is **atom 3 (1-based), C**, with **f+ = 2.1028319**. The most nucleophilic site is **atom 1 (1-based), O**, with **f\u2212 = 0.16201477**.\n\n**Per-atom values, in input atom order:**\n- f+ = [-0.99513677, 0.39933188, 2.1028319, 1.6196806, -0.34200645, -0.28910827, 1.3079753, -0.73391778, -0.27465615, -0.91706058, -0.62991625, -0.29591676, 0.047899338]\n- f\u2212 = [0.16201477, 0.048772551, 0.070972379, 0.070498539, 0.026704972, 0.020949414, 0.12351549, 0.082321145, 0.088147788, 0.081105985, 0.080487046, 0.09349577, 0.051014152]\n- f0 = [-0.416561, 0.22405222, 1.0869021, 0.84508956, -0.15765074, -0.13407943, 0.7157454, -0.32579832, -0.093254182, -0.4179773, -0.2747146, -0.10121049, 0.049456745]\n- dual descriptor = [-1.1571515, 0.35055933, 2.0318595, 1.549182, -0.36871142, -0.31005768, 1.1844598, -0.81623893, -0.36280394, -0.99816657, -0.7104033, -0.38941253, -0.003114814]\n\n**Integrity/trust:** chemkit reported `integrity.trustworthy: true`.\n\n**Warnings / integrity warning-severity checks surfaced verbatim:**\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\n**Artifacts/provenance:** plot file: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_gpt-5.5/20260703-200204_phenol_fukui_reactivity/agent_call_01_plot.png`. Exact CLI reported by chemkit: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp1vgwdbmz/live.json`. A live `.out` log path was not present in the returned chemkit result JSON, so I am not fabricating one."
+}

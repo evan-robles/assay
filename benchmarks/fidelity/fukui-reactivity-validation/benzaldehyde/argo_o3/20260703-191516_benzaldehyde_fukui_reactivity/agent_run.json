@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 268.9,
+    "llm_s": 21.93,
+    "engine_s": 246.97,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property: atom-condensed Fukui functions (f+ electrophilic, f\u2013 nucleophilic, f0 radical) and the dual descriptor for benzaldehyde; headline value reported here is the largest electrophilic Fukui index f+.\n\u2022 Level of theory: DFT, tier \u2018standard\u2019 = B3LYP/def2-TZVP with density fitting (PySCF default).\n\u2022 Geometry provenance: single-point population analyses on the fixed Cartesian coordinates supplied in /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz (no further relaxation; notation DFT//input-xyz).\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\u2022 Charge = 0, multiplicity = 1 (closed-shell singlet for the N-electron reference; N \u00b1 1 states were computed as doublets for f\u00b1).\n\u2022 Software: PySCF 2.x (via chemkit fukui-reactivity skill).\n\u2022 Convergence & caveats: SCF cycles for N, N+1, and N\u20131 states all converged; integrity.status = ok, trustworthy = true. The engine emitted three warnings, reproduced verbatim above. No fall-backs were triggered.\n\nReproducibility\nCommand (from result.cli_invocation):\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py \\\n      fukui --method dft --tier standard --charge 0 --mult 1 \\\n      /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz \\\n      --out /home/erobles/chem-skills/.fidelity_scratch/tmpztqlvy09/live.json\nLive engine output was streamed to a file named fukui_<timestamp>.out in the working directory during execution; the JSON result and plotted Fukui surfaces are saved at the paths shown in the result object.\n\nKey numerical results\n\u2022 Atom count: 14\n\u2022 Most electrophilic site: atom 3 (0-based index 2, carbonyl carbon)  f+ = 0.39938969\n\u2022 Most nucleophilic site: atom 1 (0-based index 0, carbonyl oxygen)  f\u2013 = 0.23839906\nComplete f+/f\u2013/f0 vectors and the dual descriptor are available in the output JSON."
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 11.07,
+    "llm_s": 9.9,
+    "engine_s": 0.0,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": null,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": false,
+    "provenance": "computed"
+  },
+  "prose": "The execution of the `orbitals` skill for the frontier-orbitals task failed. The system reported that a required script file, `orbitals.py`, could not be found, which prevented the calculation from running. The error message was: `can's open file '/home/erobles/chem-skills/skills/orbitals/scripts/orbitals.py': [Errno 2] No such file or directory`.\n\nSince the tool failed to execute, no frontier orbital energies can be provided. This is an issue with the tool's environment or installation, not with the inputs to the calculation."
+}

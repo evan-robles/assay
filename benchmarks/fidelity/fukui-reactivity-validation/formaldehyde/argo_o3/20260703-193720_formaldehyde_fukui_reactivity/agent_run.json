@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.79,
+    "llm_s": 39.74,
+    "engine_s": 10.05,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: most electrophilic condensed Fukui function f\u207a on formaldehyde (headline value is the largest f\u207a component)\nLevel of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP (density-fitted) in PySCF\nGeometry provenance: supplied Cartesian coordinates from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz; single-point N, N + 1, and N \u2013 1 calculations \u2013 no further optimisation (DFT//given xyz)\nSolvent / environment: gas phase (no implicit solvent)\nCharge & multiplicity: neutral singlet (0, 1) reference; cation (+1, doublet) and anion (\u20131, doublet) states for f \u00b1 evaluation\nSoftware: chemkit fukui-reactivity skill (PySCF backend; version as bundled with chemkit)\nConvergence & caveats: SCF cycles converged for all three charge states. Engine reported three warnings (verbatim below). Sum-rule checks passed (\u03a3f\u207a = \u03a3f\u207b = 1.0000). No other warnings.\nLive .out log: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_o3/20260703-193720_formaldehyde_fukui_reactivity/agent_call_01.out (written live during the run; still available for inspection).\n\nResults (Mulliken partitioning)\nAtom-wise f\u207a  = [0.46814 (O), 0.70839 (C), \u20130.08827 (H), \u20130.08826 (H)]\nAtom-wise f\u207b  = [0.46742 (O), 0.11244 (C),  0.21008 (H),  0.21006 (H)]\nDual descriptor \u0394f = f\u207a \u2013 f\u207b = [0.00071, 0.59595, \u20130.29835, \u20130.29832]\n\nMost electrophilic site (max f\u207a): atom 2 (C) with f\u207a = 0.7083913\nMost nucleophilic site (max f\u207b): atom 1 (O) with f\u207b = 0.46742464\n\nVerbatim warnings from engine\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present"
+}

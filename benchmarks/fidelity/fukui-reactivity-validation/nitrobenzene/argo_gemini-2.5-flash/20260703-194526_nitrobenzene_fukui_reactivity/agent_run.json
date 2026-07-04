@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 221.77,
+    "llm_s": 44.42,
+    "engine_s": 177.35,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for nitrobenzene have been computed using Density Functional Theory.\n\n**Fukui Reactivity Indices for Nitrobenzene**\n\n- **Property:** Fukui Reactivity Indices (f+, f-, f0, and dual descriptor)\n- **Level of theory:** DFT, B3LYP/def2-TZVP (density-fit, tier `standard`)\n- **Geometry provenance:** Single-point calculation on geometry built from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz.\n- **Solvent / environment:** Gas phase\n- **Charge and multiplicity:** Neutral: charge 0, multiplicity 1. Cation: charge 1, multiplicity 2. Anion: charge -1, multiplicity 2.\n- **Software:** PySCF\n- **Convergence + caveats:** SCF converged for all states.\n\n**Fukui Indices per Atom (Mulliken Partial Charges):**\n\n| Atom Index (1-based) | Symbol | f+ (electrophilic) | f- (nucleophilic) | f0 (radical) | Dual Descriptor (f+ - f-) |\n|----------------------|--------|--------------------|-------------------|--------------|---------------------------|\n| 1                    | O      | 0.47317            | 0.09702           | 0.28509      | 0.37616                   |\n| 2                    | O      | 0.47344            | 0.09677           | 0.28511      | 0.37667                   |\n| 3                    | N      | -0.45670           | 0.01724           | -0.21973     | -0.47394                  |\n| 4                    | C      | 0.49642            | -0.01429          | 0.24106      | 0.51071                   |\n| 5                    | C      | 0.11563            | 0.10729           | 0.11146      | 0.00834                   |\n| 6                    | C      | 0.11588            | 0.10724           | 0.11156      | 0.00865                   |\n| 7                    | C      | 0.17412            | 0.09492           | 0.13452      | 0.07920                   |\n| 8                    | C      | 0.17423            | 0.09489           | 0.13456      | 0.07934                   |\n| 9                    | C      | 0.28914            | 0.00831           | 0.14872      | 0.28082                   |\n| 10                   | H      | -0.23169           | 0.07521           | -0.07824     | -0.30690                  |\n| 11                   | H      | -0.23182           | 0.07520           | -0.07831     | -0.30702                  |\n| 12                   | H      | -0.13372           | 0.08388           | -0.02492     | -0.21761                  |\n| 13                   | H      | -0.13379           | 0.08388           | -0.02496     | -0.21768                  |\n| 14                   | H      | -0.12431           | 0.07243           | -0.02594     | -0.19673                  |\n\n**Most Electrophilic Site:** Atom 4 (C) with f+ = 0.49642.\n**Most Nucleophilic Site:** Atom 5 (C) with f- = 0.10729.\n\nThe calculation produced output JSON at `nitrobenzene_fukui.json`. A live `.out` log file was also generated alongside the JSON file, e.g., `fukui_dft_<timestamp>.out`, which can be inspected for full computational details.\n"
+}

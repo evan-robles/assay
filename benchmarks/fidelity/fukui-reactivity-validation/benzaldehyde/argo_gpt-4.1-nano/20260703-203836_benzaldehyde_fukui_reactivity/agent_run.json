@@ -1,0 +1,31 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 227.29,
+    "llm_s": 8.19,
+    "engine_s": 216.01,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-TZVP",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "The sum of Fukui functions f+ and f- both equal 1.0000, with a note that a large drift suggests an N+1 or N\u22121 state may not have fully converged, indicating some caution in interpreting the absolute values."
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis on benzaldehyde was successfully computed using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase. The analysis provides various reactive indices and visualizations, including the most electrophilic and nucleophilic sites. The method used was B3LYP/def2-TZVP at the DFT program level. Warnings: The sum of Fukui functions f+ and f- both equal 1.0000, with a note that a large drift suggests an N+1 or N\u22121 state may not have fully converged, indicating some caution in interpreting the absolute values."
+}

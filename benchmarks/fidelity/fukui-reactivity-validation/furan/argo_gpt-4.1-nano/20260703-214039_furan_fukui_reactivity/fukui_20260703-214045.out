@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : fukui
+# args       : --method dft --functional b3lyp --basis def2-tzvp --tier standard --phase gas --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpqq2mk26p/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --phase gas --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpqq2mk26p/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_gpt-4.1-nano/20260703-214039_furan_fukui_reactivity
+# started    : 20260703-214045
+# ============================================================
+usage: chemkit [-h] [--version]
+               {sp,opt,freq,binding,redox,confsearch,frontier,electrostatics,solvation,logp,profile,pka,build,resolve,fukui,ts,irc,rxn-energy,scan,orbitals}
+               ...
+chemkit: error: unrecognized arguments: --phase /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

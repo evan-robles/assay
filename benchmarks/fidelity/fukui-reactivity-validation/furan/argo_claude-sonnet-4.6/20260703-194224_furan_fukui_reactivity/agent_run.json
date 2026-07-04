@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 73.14,
+    "llm_s": 41.51,
+    "engine_s": 28.58,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of furan computed using DFT at the B3LYP/def2-TZVP level (tier 'standard', PySCF RKS, density-fit), gas phase, charge 0, multiplicity 1. Cation: charge +1, multiplicity 2; anion: charge \u22121, multiplicity 2. Fukui indices derived via finite-difference Mulliken charge partitioning across the neutral, cation (N\u22121), and anion (N+1) states. Geometry: user-supplied furan.xyz, single-point (not re-optimized). All three SCFs converged. Integrity: trustworthy=true, all checks passed (\u03a3f\u207a=1.0000, \u03a3f\u207b=1.0000). No warnings reported. Headline value reported: maximum f\u207a = 1.9242931 at C5 (atom 5, 0-based index 4), identifying it as the most electrophilic site. The most nucleophilic site (highest f\u207b = 0.1616371) is also C5. By symmetry, C4 is essentially equivalent. Dual descriptor confirms C4/C5 as dominant electrophilic centers. Live log: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_claude-sonnet-4.6/20260703-194224_furan_fukui_reactivity/fukui_20260703-194231.out"
+}

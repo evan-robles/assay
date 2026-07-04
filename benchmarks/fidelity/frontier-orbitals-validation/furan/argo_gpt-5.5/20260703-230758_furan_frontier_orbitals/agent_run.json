@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.35,
+    "llm_s": 11.45,
+    "engine_s": 8.91,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbital result** \u2014 Property: HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy). Method used: chemkit `frontier-orbitals` with DFT tier `standard`, explicitly **B3LYP/def2-TZVP**, PySCF backend. Geometry: fixed user-supplied XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz` (9 atoms); this was a single-point orbital calculation, not a geometry optimization. Environment: gas phase (`solvent`: null in the result). Charge 0, multiplicity 1. SCF converged in 9 cycles. No warnings were reported by the tool.\n\nHeadline result: **HOMO\u2013LUMO gap = 6.2573602 eV**.\n- HOMO = -6.3597638 eV\n- LUMO = -0.1024036 eV\n- Total electronic energy = -230.11429 hartree = -6261.7289 eV\n\nReproducibility: chemkit CLI invocation returned by the tool: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --multiplicity 1 --solvent gas /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpgosafxrz/live.json`.\n\nEngine integrity verdict: `integrity.trustworthy = true`. Provenance: computed."
+}

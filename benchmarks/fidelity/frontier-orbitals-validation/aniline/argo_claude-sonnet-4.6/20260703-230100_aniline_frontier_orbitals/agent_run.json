@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 42.1,
+    "llm_s": 27.99,
+    "engine_s": 14.12,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier orbital calculation on aniline (14 atoms) using DFT, tier 'standard' (B3LYP/def2-TZVP, density-fitted) in PySCF. Gas phase, charge 0, multiplicity 1. Single point on the user-supplied geometry (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz); geometry was not re-optimized at this level. SCF converged in 9 cycles. No warnings reported. Integrity check: trustworthy = true.\n\nHeadline result \u2014 HOMO\u2013LUMO gap: 5.3048177 eV (Koopmans-theorem orbital eigenvalue difference; not a vertical excitation energy).\n\nHOMO (index 24): \u22125.553772 eV\nLUMO (index 25): \u22120.2489544 eV\nTotal electronic energy: \u2212287.71578 Hartree (\u22127829.1453 eV)\nOccupied orbitals: 25 of 259 total\n\nKoopmans descriptors: vertical IP = 5.5538 eV, vertical EA = 0.2490 eV, electronegativity = 2.9014 eV, chemical hardness = 2.6524 eV, chemical softness = 0.3770 eV\u207b\u00b9, electrophilicity index = 1.5868 eV."
+}

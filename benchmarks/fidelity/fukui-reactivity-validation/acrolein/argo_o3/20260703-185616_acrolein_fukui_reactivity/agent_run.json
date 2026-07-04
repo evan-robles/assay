@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 58.93,
+    "llm_s": 25.16,
+    "engine_s": 33.78,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance \u2014 fukui-reactivity descriptors for acrolein\n1. Property: Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor; identification of the most electrophilic and most nucleophilic atomic sites.\n2. Level of theory: DFT tier `standard` \u2192 B3LYP/def2-TZVP (density-fitted RIJK) in PySCF 2.x.\n3. Geometry provenance: fixed input geometry supplied as `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`; no re-optimization (single-point energies at N, N+1 and N\u20131 electron counts).\n4. Solvent / environment: gas phase (no implicit or explicit solvation).\n5. Charge & multiplicity: neutral singlet for the N-electron reference (charge 0, multiplicity 1); corresponding doublets for the \u00b11 states (charge +1, mult 2; charge \u20131, mult 2).\n6. Software/backend: chemkit `fukui-reactivity` skill (PySCF engine, B3LYP functional, def2-TZVP basis, density fitting on by default).\n7. Convergence & warnings: all three SCF calculations converged; integrity status \"ok\" (trustworthy = true).  Warnings returned by the engine (verbatim):\n   \u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n   \u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n   \u2022 common header present\n   No SCF failures reported.\n\nLive run log: the engine streamed its output to the standard chemkit live log file in the caller\u2019s working directory (named `fukui_<timestamp>.out`); this file was written during execution and can be inspected with `tail -f` for full SCF and Mulliken-charge details.  The structured result JSON is at `/home/erobles/chem-skills/.fidelity_scratch/tmphlx7vezp/live.json`; plot image saved as\n`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_o3/20260703-185616_acrolein_fukui_reactivity/agent_call_01_plot.png`.\n\nHeadline results (Mulliken scheme):\n\u2022 Most electrophilic atom: C4 (index 3, symbol C) with f\u207a = 0.64232102.\n\u2022 Most nucleophilic atom: O1 (index 0, symbol O) with f\u207b = 0.39388616.\n\nFull Fukui vectors (per atom, O\u2013C\u2013C\u2013C\u2013H\u2013H\u2013H\u2013H):\n  f\u207a = [0.40136, 0.02226, 0.43405, 0.64232, \u20130.15726, \u20130.20720, \u20130.06212, \u20130.07341]\n  f\u207b = [0.39389, 0.00599, 0.09140, 0.08737, 0.08596, 0.18568, 0.08449, 0.06523]\n  f\u2070 = [0.39763, 0.01412, 0.26272, 0.36485, \u20130.03565, \u20130.01076, 0.01118, \u20130.00409]\n  Dual descriptor \u0394f = [0.00748, 0.01627, 0.34264, 0.55495, \u20130.24322, \u20130.39288, \u20130.14660, \u20130.13863]\n\nThe dual descriptor confirms electrophilic reactivity is localized predominantly at the \u03b2-carbon (C4), while nucleophilic attack is favored at the carbonyl oxygen, in line with chemical intuition for \u03b1,\u03b2-unsaturated carbonyls."
+}

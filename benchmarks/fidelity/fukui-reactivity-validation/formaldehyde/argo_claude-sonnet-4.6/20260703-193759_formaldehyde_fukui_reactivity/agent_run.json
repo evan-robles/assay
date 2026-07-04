@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 42.65,
+    "llm_s": 32.76,
+    "engine_s": 9.89,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for formaldehyde (CH\u2082O) were computed at the DFT level using B3LYP/def2-TZVP (tier 'standard', PySCF RKS, density-fit RI), gas phase, charge 0, multiplicity 1. The N+1 (anion) and N-1 (cation) states used multiplicity 2 (doublet). Partial charges were obtained via Mulliken population analysis (PySCF). The geometry was taken as-is from the user-supplied formaldehyde.xyz without re-optimization.\n\nResults:\n- Atom 1 (O): f+ = 0.46813824, f- = 0.46742464, f0 = 0.46778144, \u0394f = +0.00071360\n- Atom 2 (C): f+ = 0.70839130, f- = 0.11244422, f0 = 0.41041776, \u0394f = +0.59594709\n- Atom 3 (H): f+ = -0.088269392, f- = 0.21007563, f0 = 0.060903121, \u0394f = -0.29834503\n- Atom 4 (H): f+ = -0.088260145, f- = 0.21005551, f0 = 0.060897683, \u0394f = -0.29831566\n\nMost electrophilic site: C (atom 2), f+ = 0.70839 \u2192 susceptible to nucleophilic attack (the electrophilic carbonyl carbon).\nMost nucleophilic site: O (atom 1), f- = 0.46742 \u2192 susceptible to electrophilic attack (oxygen lone pairs).\n\nIntegrity: trustworthy = true; sum(f+) = 1.0000, sum(f-) = 1.0000 (both passed charge conservation checks).\n\nWarnings reproduced verbatim:\n1. 'sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)' \u2014 PASSED\n2. 'sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)' \u2014 PASSED\n3. 'common header present' \u2014 PASSED\n\nThe headline value reported is the largest f+ (most electrophilic site, carbon): 0.70839."
+}

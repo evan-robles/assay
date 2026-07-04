@@ -1,0 +1,31 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 19.66,
+    "llm_s": 19.39,
+    "engine_s": 0.0,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "engine run failed (rc=255):"
+    ],
+    "integrity_trustworthy": false,
+    "provenance": "computed"
+  },
+  "prose": "The requested fukui-reactivity calculation for nitrobenzene could not be completed because the engine was unable to access the provided structure file path:\n\n/ home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz\n\nEngine warning (verbatim):\nengine run failed (rc=255):\n\nWithout a valid, accessible structure file (or an alternative such as a SMILES string or explicit coordinates from which I could build the geometry), the computation could not be launched at the specified B3LYP/def2-TZVP (tier `standard`) level in the gas phase (charge 0, multiplicity 1). Please supply a correct path or molecular specification, and I will rerun the calculation and provide a full, standards-compliant report."
+}

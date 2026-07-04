@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 30.36,
+    "llm_s": 25.7,
+    "engine_s": 4.65,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital (HOMO\u2013LUMO) gap of formaldehyde \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0, multiplicity 1.  \nGeometry: fixed experimental/formatted structure supplied by user (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz`).  This run was a single-point energy/orbital evaluation at that geometry (notation: DFT//given xyz).  \nSCF converged in 8 cycles; no engine warnings were reported (`warnings` array empty).  Integrity checks report status `ok`; trustworthy = true.  \nLive calculation log was written during execution to a `frontier_orbitals_<timestamp>.out` file in the current working directory; the exact command executed (as echoed in the result JSON\u2019s `cli_invocation`) was:\n```\n/\u2026/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz --out \u2026/live.json\n```\nHeadline result (Koopmans-style orbital gap): 5.8696712 eV.  No implicit solvent model was requested; calculation performed in the gas phase.  \nNo warnings reported."
+}

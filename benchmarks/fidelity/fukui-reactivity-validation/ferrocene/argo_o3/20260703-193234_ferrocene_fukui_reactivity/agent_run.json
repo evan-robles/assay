@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.32,
+    "llm_s": 25.68,
+    "engine_s": 8.64,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary (to reproduce this result)\nProperty: Atom-condensed Fukui functions (f+ for electrophilic attack, f\u2212 for nucleophilic attack, f0, and dual descriptor) of ferrocene; headline value reported below is the largest electrophilic Fukui index, f+ = 0.22885456 on the Fe centre (atom 11 in the input ordering).\nLevel of theory: GFN2-xTB (semi-empirical tight-binding; no Gaussian basis, no DFT functional).\nGeometry provenance: single-point charge analyses on the user-supplied ferrocene geometry located at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz; no further geometry optimisation was carried out (fukui-reactivity does single-point evaluations on the fixed N, N+1, and N\u20131 states).\nSolvent / environment: gas phase (no implicit solvation model).\nCharge and multiplicity: neutral state 0/1 (closed-shell singlet); cation state +1/2, anion state \u22121/2 (open-shell doublets handled with UKS).\nSoftware/backend: xtb (via chemkit fukui-reactivity skill; xTB program, version as packaged in chemkit backend).\nConvergence & caveats: SCF calculations for N, N+1, and N\u20131 states converged; integrity.status = \"ok\", integrity.trustworthy = true. The integrity checker issued three WARNINGS (reproduced verbatim below). No additional warnings were reported.\nLive log: the xtb standard output/error for this run was streamed to the caller\u2019s working directory; its full path was printed at job launch and can be tailed for step-by-step SCF details. The result JSON is at /home/erobles/chem-skills/.fidelity_scratch/tmpu92umths/live.json; the Fukui bar-plot image is at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_o3/20260703-193234_ferrocene_fukui_reactivity/agent_call_01_plot.png.\n\nHeadline result\nMost electrophilic site: Fe (atom 11); f+ = 0.22885456 (dimensionless)\nMost nucleophilic site: Fe (atom 11); f\u2212 = 0.25938191 (dimensionless)\n\nWarnings from engine (verbatim)\n\u2022 fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 schema_header: common header present"
+}

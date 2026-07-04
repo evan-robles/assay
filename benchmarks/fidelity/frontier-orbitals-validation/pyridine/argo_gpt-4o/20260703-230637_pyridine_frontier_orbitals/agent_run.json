@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 16.06,
+    "llm_s": 4.16,
+    "engine_s": 11.89,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "common header present",
+      "headline field 'homo_lumo_gap_eV' = 6.139813146380218 (present and numeric)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine HOMO\u2013LUMO gap** \u2014 DFT, **B3LYP/def2-TZVP** (density fit) was used in PySCF in the **gas phase**. The calculation employed neutral charge (0) and singlet multiplicity (1). The geometry was taken directly from the provided pyridine.xyz file; this was **NOT re-optimized in this task** but used as-is. The SCF cycle converged within 10 steps. A Koopmans-style frontier orbitals analysis was performed, revealing **HOMO = \u22127.2526 eV, LUMO = \u22121.1128 eV**, and the HOMO\u2013LUMO gap was reported as approximately **6.1398 eV** in electronic energy terms. Calculation can be re-run using this command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --solvent none /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp8sgtlbja/live.json`. Analysis verified and integrity checks passed as trustworthy."
+}

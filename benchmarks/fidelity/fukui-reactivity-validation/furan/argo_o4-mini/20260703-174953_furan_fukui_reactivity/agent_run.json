@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 76.26,
+    "llm_s": 47.31,
+    "engine_s": 28.95,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan Fukui reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`, single-point (no relaxation). Mulliken partial charges (PySCF) were used for neutral (N), cationic (N \u2013 1), and anionic (N + 1) states to compute Fukui functions. SCF converged for all three states. Warnings: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge), sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge), common header present. The most electrophilic site is C 5 with f\u207a = 1.9242931; the most nucleophilic site is also C 5 with f\u207b = 0.1616371 (dual descriptor at C 5 = 1.762656)."
+}

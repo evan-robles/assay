@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 283.74,
+    "llm_s": 32.77,
+    "engine_s": 250.98,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis was performed on benzaldehyde using Density Functional Theory (DFT) at the `tier 'standard'` level, which corresponds to the B3LYP functional with the def2-TZVP basis set, employing a density-fitting approximation. The calculation was run in the gas phase for the neutral molecule (charge 0, multiplicity 1) using the PySCF program. The input geometry was used as-is, without further optimization.\n\nThe results predict the most likely sites for different types of chemical attack based on the calculated Fukui indices:\n\n*   **Most electrophilic site (for nucleophilic attack):** The carbon atom at index 3 (C3), with the highest Fukui f+ index of 0.39939.\n*   **Most nucleophilic site (for electrophilic attack):** The oxygen atom at index 1 (O1), with the highest Fukui f- index of 0.23840.\n\nThe calculation was successful, and the engine reported no warnings. The results are considered trustworthy."
+}

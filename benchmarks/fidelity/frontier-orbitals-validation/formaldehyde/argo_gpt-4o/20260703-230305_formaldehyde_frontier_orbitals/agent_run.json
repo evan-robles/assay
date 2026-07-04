@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.19,
+    "llm_s": 7.47,
+    "engine_s": 4.62,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde Frontier-Orbital Gap** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: used as provided from the input file (`formaldehyde.xyz`).\n\nSCF converged after 8 cycles. The calculated HOMO energy is \u22127.65231 eV, the LUMO energy is \u22121.78264 eV, and the HOMO\u2013LUMO gap is **5.86967 eV**. \n\nCommand executed: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --solvent gas /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpxi2u1063/live.json`. Live log was written to `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/argo_gpt-4o/20260703-230305_formaldehyde_frontier_orbitals/frontier_20260703-230310.out`.\n\nThe calculation was marked trustworthy by the integrity check (status: OK)."
+}

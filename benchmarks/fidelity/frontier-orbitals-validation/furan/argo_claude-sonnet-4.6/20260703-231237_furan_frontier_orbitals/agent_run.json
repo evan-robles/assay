@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.51,
+    "llm_s": 27.61,
+    "engine_s": 8.9,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on furan (C\u2084H\u2084O, 9 atoms) using DFT at tier 'standard' (B3LYP/def2-TZVP, density-fit RI) in PySCF. Gas phase, charge 0, multiplicity 1 (closed-shell singlet). Geometry: user-supplied .xyz file at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz; single-point calculation (no re-optimization at this level). SCF converged in 9 cycles. No warnings reported. Integrity: trustworthy=true, all checks passed. HOMO = -6.3597638 eV (index 17), LUMO = -0.1024036 eV (index 18). Headline result: HOMO-LUMO gap = 6.2573602 eV. Koopmans-derived descriptors: vertical IP = 6.3598 eV, vertical EA = 0.1024 eV, electronegativity = 3.2311 eV, chemical hardness = 3.1287 eV, softness = 0.3196 eV\u207b\u00b9, electrophilicity = 1.6684 eV. Total electronic energy = -230.11429 Hartree (-6261.7289 eV), gas-phase electronic energy, not comparable across methods."
+}

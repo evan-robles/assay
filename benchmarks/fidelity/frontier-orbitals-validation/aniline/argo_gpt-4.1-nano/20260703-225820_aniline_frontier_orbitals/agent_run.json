@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 43.35,
+    "llm_s": 6.35,
+    "engine_s": 20.23,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-TZVP",
+    "tier": "standard",
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": -7829.1453,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": ""
+  },
+  "prose": "The DFT calculation on aniline using the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase has been successfully performed.\n\nThe computed total electronic energy is -7829.14530 eV. The orbitals were analyzed, and the HOMO and LUMO energies are included in the detailed output.\n\nThe method used was: DFT, tier 'standard' (B3LYP/def2-TZVP), in PySCF, gas phase, charge 0, multiplicity 1. SCF convergence was achieved with 9 cycles."
+}

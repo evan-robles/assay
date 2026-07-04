@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 119.6,
+    "llm_s": 16.51,
+    "engine_s": 103.09,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for aniline was performed using the `fukui-reactivity` skill in chemkit.\n\n**Property:** Fukui reactivity indices (electrophilic, nucleophilic, and radical attack)\n**Level of theory:** DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) using PySCF\n**Geometry provenance:** Built from the user-provided XYZ file (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`)\n**Solvent / environment:** gas phase\n**Charge and multiplicity:** charge 0, multiplicity 1\n**Software + version:** PySCF (version not explicitly stated in output)\n**Convergence + caveats:** The integrity checks indicate that the sums of f+ and f- indices are approximately 1.0000, suggesting that the N\u00b11 states converged appropriately.\n\nThe most electrophilic atom is carbon (atom index 2, label 3) with a Fukui f+ index of 2.2975867.\nThe most nucleophilic atom is nitrogen (atom index 0, label 1) with a Fukui f- index of 0.20452359."
+}

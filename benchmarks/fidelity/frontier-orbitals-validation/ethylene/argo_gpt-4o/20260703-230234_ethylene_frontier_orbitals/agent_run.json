@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.89,
+    "llm_s": 5.82,
+    "engine_s": 0.0,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": null,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "engine run failed (rc=1):\nLmod Warning: ONEAPI_DEVICE_SELECTOR has been set to\n\"opencl:gpu;level_zero:gpu\"\nto enable Triton-XPU, vLLM, Ray, and dpctl functionality.\n\nIf you encounter issues, you can revert to:\n  export ONEAPI_DEVICE_SELECTOR=\"level_zero:gpu\"\n\nIf you do need to revert, please email support@alcf.anl.gov\nso we can track and address compatibility issues.\n\nWhile processing the following module(s):\n    Module fullname      Module Filename\n    ---------------      ---------------\n    frameworks/2025.3.1  /opt/aurora/26.26.0/modulefiles/frameworks/2025.3.1.lua",
+      "chemkit: error: unrecognized arguments: --geometry"
+    ],
+    "integrity_trustworthy": false,
+    "provenance": "computed"
+  },
+  "prose": "The calculation failed due to an unrecognized argument (--geometry) in the input command. No orbital results were generated for ethylene using the requested method. Warning details included module compatibility messages and the chemkit tool's error message: 'chemkit: error: unrecognized arguments: --geometry.'"
+}

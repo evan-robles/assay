@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.56,
+    "llm_s": 17.05,
+    "engine_s": 6.51,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis was performed on ferrocene using the GFN2-xTB semi-empirical tight-binding method in the gas phase, at the user-specified charge of 0 and multiplicity of 1.\n\nThe results indicate that the site most susceptible to electrophilic attack (the most nucleophilic site) is the iron atom (Fe, atom index 10, label 11). The condensed-to-atom Fukui index for this site, *f*\u207b, is 0.25938. The calculation was completed successfully and the engine's integrity check passed. No warnings were reported."
+}

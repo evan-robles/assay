@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.62,
+    "llm_s": 29.04,
+    "engine_s": 4.58,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital energies for ethylene were computed at the DFT level using the B3LYP functional with the def2-TZVP basis set (tier 'standard'), via PySCF through the chemkit frontier-orbitals skill. The calculation was a single point on the user-supplied geometry (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz), in the gas phase, charge 0, multiplicity 1. The SCF converged in 6 cycles. No warnings were reported. Integrity check: trustworthy = true (all checks passed).\n\nResults:\n- HOMO energy: \u22127.6155818 eV (index 7, occupation 2.0)\n- LUMO energy: \u22120.17986527 eV (index 8, occupation 0.0)\n- HOMO\u2013LUMO gap: 7.4357165 eV (headline value)\n- Total energy: \u221278.623486 Hartree (\u22122139.4541 eV)\n\nKoopmans-theorem derived quantities:\n- Vertical IP: 7.6156 eV\n- Vertical EA: 0.1799 eV\n- Electronegativity: 3.8977 eV\n- Chemical hardness: 3.7179 eV\n- Chemical softness: 0.2690 eV\u207b\u00b9\n- Electrophilicity index: 2.0431 eV\n\nThe total energy is defined relative to the B3LYP/def2-TZVP energy zero and must not be compared across methods or basis sets. The gap is a Koopmans-style orbital gap, not an excitation energy."
+}

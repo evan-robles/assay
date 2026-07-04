@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.87,
+    "llm_s": 7.81,
+    "engine_s": 11.07,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene Frontier-Orbital Energies**\n\nThe frontier-orbital energies (HOMO and LUMO) for benzene were computed using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (chemkit tier `standard`), performed with PySCF. The calculation was a single point in the **gas phase** on the user-supplied geometry from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz`. The system was treated as neutral (charge 0) with a singlet multiplicity (1). The SCF calculation converged in 8 cycles.\n\n*   **HOMO Energy**: -7.04683 eV\n*   **LUMO Energy**: -0.41575 eV\n*   **HOMO-LUMO Gap**: 6.63109 eV\n\nNo warnings were reported by the calculation engine.\n"
+}

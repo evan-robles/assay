@@ -1,0 +1,30 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 35.94,
+    "llm_s": 31.04,
+    "engine_s": 4.9,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier\u2010orbital gap of ethylene** \u2014 DFT, tier standard (B3LYP/def2-TZVP, density-fitted) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`, single-point (no geometry relaxation at DFT). SCF converged in 6 cycles with no warnings reported. HOMO = \u20137.6155818 eV, LUMO = \u20130.17986527 eV \u2192 **HOMO\u2013LUMO gap = 7.4357165 eV**. Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpi5x3bbeg/live.json`. Output JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmpi5x3bbeg/live.json`. Converged: yes; Warnings: none."
+}

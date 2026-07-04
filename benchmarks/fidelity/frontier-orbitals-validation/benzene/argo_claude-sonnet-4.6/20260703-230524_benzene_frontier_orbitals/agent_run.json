@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 45.44,
+    "llm_s": 34.38,
+    "engine_s": 11.07,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on benzene (12 atoms: 6 C + 6 H) performed at B3LYP/def2-TZVP (tier 'standard') using PySCF RKS, gas phase, charge 0, multiplicity 1. Single-point calculation at the user-supplied geometry (no re-optimization). SCF converged in 8 cycles. No warnings reported. Integrity check: trustworthy = true, all checks passed.\n\nHOMO (index 20) = \u22127.0468329 eV\nLUMO (index 21) = \u22120.41574728 eV\nHOMO\u2013LUMO gap = 6.6310857 eV (headline value)\n\nThe HOMO and HOMO\u22121 are nearly degenerate (\u0394 \u2248 0.5 meV), and LUMO / LUMO+1 are nearly degenerate (\u0394 \u2248 0.6 meV), consistent with the degenerate e\u2081g and e\u2082u symmetry-adapted \u03c0 orbitals of D\u2086h benzene.\n\nTotal electronic energy: \u2212232.33724 Hartree / \u22126322.2183 eV / \u2212145793.82 kcal\u00b7mol\u207b\u00b9.\n\nNo warnings were returned by the engine (warnings array is empty). Provenance: computed with chemkit frontier-orbitals skill, B3LYP/def2-TZVP, PySCF backend."
+}

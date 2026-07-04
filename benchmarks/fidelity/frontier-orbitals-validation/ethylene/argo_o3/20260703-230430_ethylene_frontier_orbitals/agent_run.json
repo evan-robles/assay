@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 35.0,
+    "llm_s": 30.46,
+    "engine_s": 4.54,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Headline result: HOMO\u2013LUMO gap = 7.4357165 eV\n\nMethod\u2013provenance block\n\n\u2022 Property: HOMO\u2013LUMO (frontier-orbital) gap of ethylene, in electron-volts (eV).\n\u2022 Level of theory: Density-functional theory, tier \u201cstandard\u201d \u2192 B3LYP/def2-TZVP with density fitting (PySCF backend).\n\u2022 Geometry provenance: single-point calculation on the user-supplied /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz; no further optimisation (notation: DFT//user-provided geometry).\n\u2022 Environment: gas phase (no implicit solvent).\n\u2022 Charge 0, multiplicity 1 (closed-shell singlet).\n\u2022 Software: chemkit frontier-orbitals skill \u2192 PySCF 2.x.\n\u2022 Convergence & caveats: SCF converged in 6 cycles; integrity.trustworthy = true. No warnings reported by the engine.\n\nKey numerical outputs (gas-phase B3LYP/def2-TZVP):\n\u2022 Total electronic energy: \u201378.623486 Eh (\u20132139.4541 eV)\n\u2022 HOMO: \u20137.6155818 eV\n\u2022 LUMO: \u20130.17986527 eV\n\u2022 HOMO\u2013LUMO gap: 7.4357165 eV \u2190 headline value\n\nReproducibility: live engine log was written to the frontier-orbitals .out file announced at launch; result JSON saved at /home/erobles/chem-skills/.fidelity_scratch/tmpe5sjd318/live.json. The CLI invocation recorded in that JSON reproduces the run exactly.\n\nNo warnings were reported by the tool."
+}

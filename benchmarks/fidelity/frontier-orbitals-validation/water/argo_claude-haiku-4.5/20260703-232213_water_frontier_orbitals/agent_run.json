@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 16.45,
+    "llm_s": 12.49,
+    "engine_s": 3.95,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Water frontier-orbital (HOMO\u2013LUMO gap) calculation \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied water.xyz, single-point calculation (not relaxed). SCF converged in 7 cycles; integrity trustworthy. Headline result: HOMO\u2013LUMO gap = 8.9406687 eV. HOMO energy = \u22128.6037183 eV; LUMO energy = +0.33695037 eV. Koopmans vertical ionization potential = 8.6037 eV; vertical electron affinity = \u22120.3370 eV (unbound anion in gas phase). Total electronic energy = \u22122080.6615 eV (\u221276.462901 Hartree). Command: `frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 water.xyz`. Result schema v1 passed all integrity checks.</prose>\n<parameter name=\"warnings\">[]"
+}

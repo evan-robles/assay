@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 51.46,
+    "llm_s": 22.68,
+    "engine_s": 28.78,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis was performed on furan using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (tier `standard`) in the gas phase. The calculation used a charge of 0 and a multiplicity of 1 for the neutral molecule, and was performed on the geometry provided in `furan.xyz`. The Fukui indices, which describe the site-reactivity towards nucleophilic (f+), electrophilic (f-), and radical (f0) attack, were computed from single-point energy calculations on the neutral, cation (charge=1, mult=2), and anion (charge=-1, mult=2) species.\n\nThe analysis identifies atom C5 (the carbon atom at index 4) as the most electrophilic site, meaning it is the most susceptible to **nucleophilic attack**. It has the largest f+ index of **1.9242931**. The same atom is also the most nucleophilic site, most susceptible to **electrophilic attack**, with the largest f- index of 0.1616371. The results were computed with PySCF. The calculation converged successfully and reported no warnings.\n\n***\n\n**Fukui Reactivity Indices per Atom**\n\n| Atom | Symbol | f+ (Nucleophilic Attack) | f- (Electrophilic Attack) | f0 (Radical Attack) |\n| :--- | :--- | :--- | :--- | :--- |\n| 1 | O | -1.33162 | 0.08382 | -0.62390 |\n| 2 | C | 1.22869 | 0.08910 | 0.65889 |\n| 3 | C | 1.22703 | 0.08930 | 0.65817 |\n| 4 | C | 1.92331 | 0.16153 | 1.04242 |\n| 5 | C | 1.92429 | 0.16164 | 1.04297 |\n| 6 | H | -1.21906 | 0.10248 | -0.55829 |\n| 7 | H | -1.21911 | 0.10251 | -0.55830 |\n| 8 | H | -0.76678 | 0.10482 | -0.33098 |\n| 9 | H | -0.76674 | 0.10479 | -0.33097 |\n\n***"
+}

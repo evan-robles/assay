@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 203.67,
+    "llm_s": 19.46,
+    "engine_s": 181.12,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui reactivity indices for nitrobenzene have been computed using Density Functional Theory (DFT) with the B3LYP functional and def2-TZVP basis set (tier `standard`). The calculation was performed in the gas phase, with a charge of 0 and a multiplicity of 1. The geometry was taken from the user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz` file.\n\nThe Fukui indices are as follows:\n\n| Atom Index (0-based) | Atom Label (1-based) | Symbol | Fukui f+ (Electrophilic) | Fukui f- (Nucleophilic) | Fukui f0 (Radical) |\n|:---------------------|:---------------------|:-------|:-------------------------|:------------------------|:-------------------|\n| 0                    | 1                    | O      | 0.47317                  | 0.09702                 | 0.28509            |\n| 1                    | 2                    | O      | 0.47344                  | 0.09677                 | 0.28511            |\n| 2                    | 3                    | N      | -0.45670                 | 0.01724                 | -0.21973           |\n| 3                    | 4                    | C      | 0.49642                  | -0.01429                | 0.24106            |\n| 4                    | 5                    | C      | 0.11563                  | 0.10729                 | 0.11146            |\n| 5                    | 6                    | C      | 0.11588                  | 0.10724                 | 0.11156            |\n| 6                    | 7                    | C      | 0.17412                  | 0.09492                 | 0.13452            |\n| 7                    | 8                    | C      | 0.17423                  | 0.09489                 | 0.13456            |\n| 8                    | 9                    | C      | 0.28914                  | 0.00831                 | 0.14872            |\n| 9                    | 10                   | H      | -0.23169                 | 0.07521                 | -0.07824           |\n| 10                   | 11                   | H      | -0.23182                 | 0.07520                 | -0.07831           |\n| 11                   | 12                   | H      | -0.13372                 | 0.08388                 | -0.02492           |\n| 12                   | 13                   | H      | -0.13379                 | 0.08388                 | -0.02496           |\n| 13                   | 14                   | H      | -0.12431                 | 0.07243                 | -0.02594           |\n\nThe most electrophilic atom (highest f+) is Carbon at index 3 (label 4) with f+ = 0.49642.\nThe most nucleophilic atom (highest f-) is Carbon at index 4 (label 5) with f- = 0.10729.\n\nThe calculation log is available live at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_gemini-2.5-flash/20260703-193456_nitrobenzene_fukui_reactivity/fukui_20260703-193511.out`."
+}

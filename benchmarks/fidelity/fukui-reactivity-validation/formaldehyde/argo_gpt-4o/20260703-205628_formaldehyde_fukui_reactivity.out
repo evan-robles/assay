@@ -1,0 +1,23 @@
+[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:gpt-4o via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--tier', 'standard', '--solvent', 'gas', '--charge', '0', '--mult', '1', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz']
+[live] agent submitted final_report. (total=6.0s llm=5.7s engine=0.0s turns=3 tool_calls=1)
+
+[Layer B - invocation fidelity]
+  [FAIL] method  {'intended': 'dft', 'got': None}
+  [FAIL] charge  {'intended': 0, 'got': None}
+  [FAIL] multiplicity  {'intended': 1, 'got': None}
+  [PASS] solvent  {'intended': None, 'got': None}
+  [FAIL] functional  {'intended': 'b3lyp', 'got': None}
+  [FAIL] basis  {'intended': 'def2-tzvp', 'got': None}
+  [FAIL] tier  {'intended': 'standard', 'got': None}
+
+[Layer C - reporting fidelity]
+  [PASS] value match (skipped — report_value_field is null)  {'field': None}
+  [PASS] warnings preserved  {'truth_count': 0, 'preserved_count': 0, 'in_array': 0, 'in_prose_only': 0, 'missing_count': 0, 'sim_threshold': 0.97}
+  [WARN] integrity verdict surfaced  {'truth': True, 'reported': None}
+  [PASS] provenance not mislabeled experimental  {'got': 'computed'}
+
+==> OVERALL: FAIL
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_gpt-4o/20260703-205628_formaldehyde_fukui_reactivity

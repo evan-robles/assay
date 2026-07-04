@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 79.8,
+    "llm_s": 19.94,
+    "engine_s": 59.86,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui Reactivity Indices for Pyridine \u2014 DFT, B3LYP/def2-TZVP (tier `standard`) (PySCF), gas phase, charge 0, multiplicity 1. Geometry: built from the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz` file. The calculation converged.\n\nFukui indices (f^+ for nucleophilic attack, f^- for electrophilic attack, f^0 for radical attack) and dual descriptor (f^+ - f^-) for each atom:\n- Atom 1 (N): f^+ = 0.48422572, f^- = 0.064122671, f^0 = 0.27417419, dual_descriptor = 0.42010305\n- Atom 2 (C): f^+ = 0.32447227, f^- = 0.0061877146, f^0 = 0.16532999, dual_descriptor = 0.31828456\n- Atom 3 (C): f^+ = 0.14032093, f^- = 0.11823139, f^0 = 0.12927616, dual_descriptor = 0.02208954\n- Atom 4 (C): f^+ = 0.14039586, f^- = 0.1182626, f^0 = 0.12932923, dual_descriptor = 0.022133264\n- Atom 5 (C): f^+ = 0.29962626, f^- = 0.11206595, f^0 = 0.20584611, dual_descriptor = 0.1875603\n- Atom 6 (C): f^+ = 0.29947707, f^- = 0.11200985, f^0 = 0.20574346, dual_descriptor = 0.18746722\n- Atom 7 (H): f^+ = -0.1415132, f^- = 0.08284851, f^0 = -0.029332343, dual_descriptor = -0.22436171\n- Atom 8 (H): f^+ = -0.1336841, f^- = 0.098179487, f^0 = -0.017752309, dual_descriptor = -0.23186359\n- Atom 9 (H): f^+ = -0.13365905, f^- = 0.09818226, f^0 = -0.017738396, dual_descriptor = -0.23184131\n- Atom 10 (H): f^+ = -0.1398163, f^- = 0.094960093, f^0 = -0.022428102, dual_descriptor = -0.23477639\n- Atom 11 (H): f^+ = -0.13984545, f^- = 0.094949479, f^0 = -0.022447987, dual_descriptor = -0.23479493\n\nThe most electrophilic atom (highest f^+) is Nitrogen (Atom 1) with f^+ = 0.48422572.\nThe most nucleophilic atom (highest f^-) is Carbon (Atom 4) with f^- = 0.1182626."
+}

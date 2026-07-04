@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.79,
+    "llm_s": 29.21,
+    "engine_s": 4.58,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene frontier-orbital analysis** \u2014 Property: HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n\n**Method provenance block:**\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (density-fitting on by default in chemkit), via **PySCF**.\n- **Geometry provenance:** user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz` (6 atoms: C, C, H, H, H, H). Used **as-is** \u2014 this was a single-point orbital calculation; the geometry was NOT re-optimized at this level.\n- **Solvent / environment:** **gas phase** (solvent = null).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (closed-shell singlet, RKS).\n- **Software:** PySCF.\n- **Convergence:** SCF converged (scf_converged = true) in 6 cycles.\n\n**Headline result:**\n- **HOMO\u2013LUMO gap = 7.4357165 eV**\n- HOMO (index 7) = \u22127.6155818 eV\n- LUMO (index 8) = \u22120.17986527 eV\n\n**Additional frontier orbitals (eV):** HOMO\u22122 = \u221211.487503; HOMO\u22121 = \u22129.883854; HOMO = \u22127.6155818; LUMO = \u22120.17986527; LUMO+1 = 1.720103; LUMO+2 = 2.3802006.\n\n**Koopmans-derived descriptors (eV):** vertical IP = 7.6155818; vertical EA = 0.17986527; electronegativity = 3.8977235; chemical hardness = 3.7178583; chemical softness = 0.26897206 /eV; electrophilicity index = 2.0431452.\n\n**Total (electronic) energy:** \u221278.623486 Hartree (= \u22122139.4541 eV). Note: this energy zero is \"electronic energy (bare nuclei + electrons)\" and is only comparable to other same-method, same-basis energies.\n\n**Integrity:** the engine reports status = ok, trustworthy = **true** (checks passed: energy_finite, scf_converged, schema_header, schema_headline).\n\n**Warnings:** the result JSON contained **no warnings** (no `warnings` array / no warnings reported \u2014 clean run).\n\n**Reproducibility:**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp1e9gpm8a/live.json`\n- Result JSON written to `/home/erobles/chem-skills/.fidelity_scratch/tmp1e9gpm8a/live.json`.\n\nNo experimental/literature comparison is offered \u2014 ask if you want one and I'll verify a source first."
+}

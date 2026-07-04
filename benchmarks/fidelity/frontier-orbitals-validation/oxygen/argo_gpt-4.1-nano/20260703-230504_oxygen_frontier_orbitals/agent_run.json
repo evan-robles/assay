@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.6,
+    "llm_s": 4.38,
+    "engine_s": 4.22,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier-orbitals calculation on oxygen was performed using density functional theory (DFT) with the B3LYP functional and the def2-TZVP basis set, categorized under the \"standard\" tier, in the gas phase, with a multiplicity of 3 and charge 0. The total electronic energy is approximately -4092.2855 eV, with the HOMO energy at about -8.87396 eV and the LUMO at -3.58590 eV. The HOMO-LUMO gap is approximately 5.2881 eV. The SCF procedure converged in 7 cycles.\n\nThe method used:\n- Property: Frontier orbitals (HOMO-LUMO gap)\n- Level of theory: B3LYP/def2-TZVP (tier 'standard')\n- Geometry: Input from specified xyz file (no relaxation indicated)\n- Environment: Gas phase\n- Charge: 0, Multiplicity: 3\n- Software: PySCF\n- Convergence: SCF converged in 7 cycles\n\nWarnings: The calculation reports the energy as finite and the SCF as converged, with schema checks passing."
+}

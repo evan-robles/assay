@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 22.53,
+    "llm_s": 14.12,
+    "engine_s": 8.41,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde Fukui reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied formaldehyde.xyz, single-point calculation. The neutral ground state was computed, along with cation (+1, doublet) and anion (\u22121, doublet) states to calculate the finite-difference Fukui indices. SCF converged; charge-conservation checks passed (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000).\n\n**Most electrophilic atom:** Carbon (atom 2, 1-indexed), f\u207a = 0.7084 (index-0: atom 1). This is the primary nucleophilic attack site.\n\n**Most nucleophilic atom:** Oxygen (atom 1, 1-indexed), f\u207b = 0.4674 (index-0: atom 0). This site favors electrophilic attack.\n\n**Dual descriptor highlights:** The carbon's dual descriptor (\u0394f = 0.5959) is significantly positive, confirming the carbonyl carbon as the dominant electrophilic center. Hydrogen atoms show negative dual descriptors, indicating they are not reactive sites in formaldehyde's standard chemistry.\n\nThe results are consistent with formaldehyde's known reactivity profile: the C=O \u03c0 bond makes the carbon a strong electrophile susceptible to nucleophilic addition (e.g., Grignard, hydride, or enamine attacks).\n\n**Computation details:** Command: `chemkit fukui --method dft --tier standard --solvent none --charge 0 --mult 1 formaldehyde.xyz`. Integrity check: trustworthy. All Fukui indices reported at the precision returned by PySCF.</prose>\n<parameter name=\"value\">0.7084"
+}

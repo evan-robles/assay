@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.06,
+    "llm_s": 13.89,
+    "engine_s": 6.17,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Ferrocene Fukui Reactivity Indices\n\n**Property:** Fukui reactivity indices (electrophilic f\u207a, nucleophilic f\u207b, and dual descriptor).\n\n**Level of theory:** GFN2-xTB (semi-empirical tight-binding method, xtb program).\n\n**Geometry provenance:** User-supplied ferrocene.xyz (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz); no geometry optimization was performed \u2014 these are single-point Fukui indices at the provided geometry.\n\n**Solvent:** Gas phase (no implicit solvation).\n\n**Charge and multiplicity:** Neutral (charge 0, multiplicity 1); the protocol also computed cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2) to derive the Fukui indices.\n\n**Method details:** Fukui indices were computed via finite-difference charge distributions using the Mulliken population scheme of GFN2-xTB. Partial charges were evaluated at three charge states (neutral, +1 cation, \u22121 anion), each at their respective ground-state multiplicities.\n\n**Convergence and integrity:** All calculations converged successfully. Charge conservation checks passed: \u03a3(f\u207a) = 1.0000 and \u03a3(f\u207b) = 1.0000, confirming proper normalization of the Fukui indices.\n\n**Key Results:**\n\nThe **most electrophilic site** (most susceptible to nucleophilic attack) is:\n- **Iron (Fe, atom 11, 1-indexed)** with f\u207a = **0.22885456**\n\nThe **most nucleophilic site** (most susceptible to electrophilic attack) is:\n- **Iron (Fe, atom 11, 1-indexed)** with f\u207b = **0.25938191**\n\nThe **dual descriptor** at iron (f\u207a \u2212 f\u207b) is **\u22120.030527354**, indicating that the iron center is slightly more nucleophilic than electrophilic overall.\n\nFukui indices for all 21 atoms (in order: C, C, C, C, C, H, H, H, H, H, Fe, C, C, C, C, C, H, H, H, H, H):\n\n- **Fukui (f\u207a):** [0.013638348, 0.013638348, 0.013638174, 0.013638597, 0.013638174, 0.063476418, 0.063476418, 0.063476206, 0.063475831, 0.063476206, 0.22885456, 0.013638348, 0.013638348, 0.013638174, 0.013638597, 0.013638174, 0.063476418, 0.063476418, 0.063476206, 0.063475831, 0.063476206]\n\n- **Fukui (f\u207b):** [0.012179196, 0.012179196, 0.012179338, 0.012179313, 0.012179338, 0.061882787, 0.061882787, 0.061882375, 0.061882339, 0.061882375, 0.25938191, 0.012179196, 0.012179196, 0.012179338, 0.012179313, 0.012179338, 0.061882787, 0.061882787, 0.061882375, 0.061882339, 0.061882375]\n\n- **Fukui (f\u2070, dual descriptor):** [0.012908772, 0.012908772, 0.012908756, 0.012908955, 0.012908756, 0.062679603, 0.062679603, 0.06267929, 0.062679085, 0.06267929, 0.24411824, 0.012908772, 0.012908772, 0.012908756, 0.012908955, 0.012908756, 0.062679603, 0.062679603, 0.06267929, 0.062679085, 0.06267929]\n\n- **Dual descriptor (f\u207a \u2212 f\u207b):** [0.0014591519, 0.0014591519, 0.0014588363, 0.0014592841, 0.0014588363, 0.0015936308, 0.0015936308, 0.001593831, 0.0015934927, 0.001593831, \u22120.030527354, 0.0014591519, 0.0014591519, 0.0014588363, 0.0014592841, 0.0014588363, 0.0015936308, 0.0015936308, 0.001593831, 0.0015934927, 0.001593831]\n\nA visualization plot has been generated at: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-haiku-4.5/20260703-192647_ferrocene_fukui_reactivity/agent_call_01_plot.png`\n\n**Command:** `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp9r2vlghw/live.json`</prose>\n<parameter name=\"n_atoms\">21"
+}

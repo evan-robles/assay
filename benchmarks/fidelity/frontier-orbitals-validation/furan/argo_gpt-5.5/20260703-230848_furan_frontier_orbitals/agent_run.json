@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 27.54,
+    "llm_s": 18.72,
+    "engine_s": 8.82,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbital result** \u2014 Property: HOMO\u2013LUMO gap from a DFT frontier-orbitals single-point calculation. Method used: chemkit `frontier-orbitals` task with DFT tier `standard`, explicitly `b3lyp/def2-tzvp` in PySCF, gas phase, charge 0, multiplicity 1. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz`; no geometry relaxation was reported for this task. Software/backend: PySCF; version was not reported by the tool. SCF converged: true, in 9 cycles.\n\nHeadline result: HOMO\u2013LUMO gap = **6.2573602 eV**.\n\nOrbital energies reported by the tool: HOMO = -6.3597638 eV; LUMO = -0.1024036 eV. The total electronic energy reported was -230.11429 hartree = -6261.7289 eV.\n\nWarnings: no warning entries were returned in the tool result.\n\nIntegrity verdict from chemkit: `integrity.trustworthy = true`.\n\nReproducibility: chemkit CLI invocation reported by the tool was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpti1f7wv3/live.json`. A live `.out` log path was not included in the returned result JSON, so I cannot report one without guessing."
+}

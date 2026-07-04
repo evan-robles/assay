@@ -1,0 +1,4 @@
+[engine reference] REUSED cached engine-reference/ (determinism: identical across two runs (within 1e-06 numeric tol))
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:gemini-2.5-flash via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--tier', 'standard', '--charge', '0', '--mult', '1', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz']

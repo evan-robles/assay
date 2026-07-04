@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 154.68,
+    "llm_s": 35.83,
+    "engine_s": 118.85,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui reactivity \u2014 computed result.**\n\nMethod used: DFT, tier `standard` (**b3lyp/def2-tzvp**) in the gas phase, charge 0, multiplicity 1. Geometry: user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` used as input. Charge analysis scheme: Mulliken (PySCF). Backend reported `program: dft`; no software version was returned by the tool. The calculation used finite-difference Fukui indices from neutral, cation, and anion charge states: cation charge +1 multiplicity 2; anion charge -1 multiplicity 2.\n\nHeadline result: the most electrophilic site by f+ is atom 3 (1-based), carbon, with **f+ = 2.1028319**. The most nucleophilic site by f\u2212 is atom 1 (1-based), oxygen, with **f\u2212 = 0.16201477**.\n\nAtom-by-atom Fukui descriptors, in the atom order returned by the tool:\n\n| atom (1-based) | symbol | f+ | f\u2212 | f0 | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | O | -0.99513676 | 0.16201477 | -0.416561 | -1.1571515 |\n| 2 | C | 0.39933185 | 0.048772551 | 0.2240522 | 0.3505593 |\n| 3 | C | 2.1028319 | 0.070972379 | 1.0869022 | 2.0318596 |\n| 4 | C | 1.6196806 | 0.070498539 | 0.84508955 | 1.549182 |\n| 5 | C | -0.34200646 | 0.026704972 | -0.15765075 | -0.36871143 |\n| 6 | C | -0.28910826 | 0.020949414 | -0.13407942 | -0.31005768 |\n| 7 | C | 1.3079753 | 0.12351549 | 0.71574541 | 1.1844598 |\n| 8 | H | -0.73391777 | 0.082321145 | -0.32579831 | -0.81623892 |\n| 9 | H | -0.27465615 | 0.088147788 | -0.093254179 | -0.36280393 |\n| 10 | H | -0.91706058 | 0.081105985 | -0.4179773 | -0.99816657 |\n| 11 | H | -0.62991625 | 0.080487046 | -0.2747146 | -0.7104033 |\n| 12 | H | -0.29591676 | 0.09349577 | -0.10121049 | -0.38941253 |\n| 13 | H | 0.047899332 | 0.051014152 | 0.049456742 | -0.0031148204 |\n\nIntegrity verdict from the engine: `trustworthy: true`.\n\nWarnings/check details returned by the tool, reproduced verbatim:\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nReproducibility artifacts returned by the tool: plot path `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_gpt-5.5/20260703-195927_phenol_fukui_reactivity/agent_call_01_plot.png`; CLI invocation `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 --solvent gas /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpuzmv7lx5/live.json`. The tool result did not return a live `.out` log path."
+}

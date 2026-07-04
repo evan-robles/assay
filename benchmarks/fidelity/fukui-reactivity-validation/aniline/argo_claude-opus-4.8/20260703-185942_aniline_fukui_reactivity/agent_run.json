@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 125.73,
+    "llm_s": 19.83,
+    "engine_s": 105.9,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of aniline** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, PySCF `dft` backend, density fitting on by default), **gas phase** (no implicit solvent), charge 0, multiplicity 1 for the neutral reference. Geometry: user-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`, 14 atoms) \u2014 used as-is; this run was a set of single-point energy/charge evaluations at that fixed geometry (no geometry re-optimization). Partial charges: Mulliken (PySCF).\n\nThe finite-difference Fukui functions were built from the neutral (N), cation (N\u22121, charge +1, multiplicity 2), and anion (N+1, charge \u22121, multiplicity 2) Mulliken populations.\n\n**Headline result \u2014 most electrophilic site (largest f\u207a):**\n- Atom 3 (1-based) / index 2 (0-based), a ring **carbon**, with **f\u207a = 2.2975867** (the reported headline value). Note atom 4 (C) is essentially degenerate at f\u207a = 2.2965637.\n\n**Most nucleophilic site (largest f\u207b):**\n- Atom 1 (1-based) / index 0, the **nitrogen**, with **f\u207b = 0.20452359**.\n\nPer-atom Fukui descriptors (f\u207a, f\u207b, f\u2070, dual descriptor) were computed for all 14 atoms and returned in the result JSON; a plot was written to `\u2026/20260703-185942_aniline_fukui_reactivity/agent_call_01_plot.png`.\n\n**Method / provenance notes:** These are Mulliken-based, finite-difference (frozen-geometry) condensed Fukui indices \u2014 Mulliken populations are basis-set-sensitive, and the individual f-values can exceed 1 or go negative (a known artifact of Mulliken condensed Fukui functions); interpret them as relative site-reactivity indicators rather than as rigorously bounded numbers. No implicit solvation was applied (gas phase). Method line: `b3lyp/def2-tzvp`.\n\n**Integrity:** engine reports `status: ok`, **trustworthy: true**. All integrity checks passed (`ok: true`), each with severity \"warning\". Reproduced verbatim below:\n- fukui_charge_conservation_f+: `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- fukui_charge_conservation_f-: `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- schema_header: `common header present`\n\nBoth charge-conservation sums equal 1.0000, indicating the N\u00b11 states converged properly.\n\n**Reproducibility.** Exact command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpqa8uuoyh/live.json`. The result JSON was written to the `--out` path above; the live `.out` log is streamed by the engine to the run directory during execution."
+}

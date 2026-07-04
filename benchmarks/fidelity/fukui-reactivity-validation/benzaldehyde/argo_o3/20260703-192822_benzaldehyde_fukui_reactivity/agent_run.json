@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 249.87,
+    "llm_s": 23.03,
+    "engine_s": 226.85,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary:\nProperty: Atom-condensed Fukui functions (f\u207a, f\u207b, f0) and dual descriptor for benzaldehyde; headline value reported is the largest electrophilic Fukui index f\u207a.\nLevel of theory: DFT, tier \u2018standard\u2019 \u2192 B3LYP/def2-TZVP with density fitting (PySCF backend).\nGeometry provenance: fixed experimental geometry supplied by user (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz); single-point calculations for the neutral (N), cationic (N\u20131), and anionic (N+1) states were performed \u2013 a canonical DFT//exp-geom protocol (no further relaxation).\nSolvent / environment: gas phase (no implicit solvation model; purely in vacuo).\nCharge and multiplicity: neutral singlet (0, 1) for N state; doublet (+1, 2) and (\u20131, 2) for the N\u20131 and N+1 states used in the finite-difference Fukui evaluation.\nSoftware: chemkit \u2018fukui-reactivity\u2019 skill (PySCF v2 backend reported). Live SCF output was streamed to its automatically generated .out file (path echoed at launch; e.g. fukui_<timestamp>.out) and the structured result saved to /home/erobles/chem-skills/.fidelity_scratch/tmpfyzr80xm/live.json.\nConvergence & caveats: All three SCFs (N, N\u00b11) converged; integrity status ok, trustworthy = true. Warnings were issued at the \u201cwarning\u201d level (see below) but all relevant charge-conservation checks passed. No other engine warnings.\n\nHeadline result:\nMost electrophilic site: atom 3 (C, 0-based index 2) with f\u207a = 0.39938968 (dimensionless). This is the largest f\u207a value in the molecule and is therefore reported as the headline Fukui reactivity index.\nMost nucleophilic site: atom 1 (O, 0-based index 0) with f\u207b = 0.23839906 (dimensionless) \u2013 supplied for completeness.\n\nVerbatim warnings returned by the engine:\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nAll files needed for reproduction \u2014 the input geometry, result JSON, and PNG plot \u2014 are located under /home/erobles/chem-skills/\u2026 as shown in the CLI invocation above. The live engine log was written during execution to the standard chemkit out-log (path printed at job start and available for inspection with `tail -f`)."
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 38.14,
+    "llm_s": 33.84,
+    "engine_s": 4.3,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**O\u2082 frontier-orbital gap** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density fitting on) in PySCF, gas phase, charge 0, multiplicity 3. Geometry: single-point on the user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz` (not re-optimized at the DFT level). SCF converged in 7 cycles; no warnings reported. HOMO = \u20138.8739616 eV, LUMO = \u20133.5859031 eV \u2192 **gap = 5.2880586 eV**.  \n\nCommand:  \n```  \n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier   --method dft --tier standard --charge 0 --multiplicity 3   /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz   --out /home/erobles/chem-skills/.fidelity_scratch/tmp4u793yc1/live.json\n```  \nResult JSON written to  \n`/home/erobles/chem-skills/.fidelity_scratch/tmp4u793yc1/live.json`  \nLive log streaming to `frontier_<timestamp>.out` in the working directory (you can `tail -f` it)."
+}

@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 41.34,
+    "llm_s": 40.11,
+    "engine_s": 0.0,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": null,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "Engine run failed (rc=2): A required script could not be found, indicating a problem with the tool's environment."
+    ],
+    "integrity_trustworthy": false,
+    "provenance": "computed"
+  },
+  "prose": "I was unable to complete the requested frontier orbital calculation for benzene. The computational chemistry toolkit (`chemkit`) failed with an internal error, indicating a problem with its execution environment. The specific error was: `can't open file '/home/erobles/chem-skills/skills/orbitals/scripts/orbitals.py': [Errno 2] No such file or directory`. As a result, no scientific values could be computed."
+}

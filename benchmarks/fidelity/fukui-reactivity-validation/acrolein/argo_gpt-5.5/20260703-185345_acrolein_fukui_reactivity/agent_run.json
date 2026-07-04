@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 59.48,
+    "llm_s": 25.81,
+    "engine_s": 33.67,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity for acrolein** \u2014 computed with chemkit `fukui-reactivity` using DFT **B3LYP/def2-TZVP** (tier `standard` as requested), gas phase, charge 0, multiplicity 1. Geometry: user-supplied fixed XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz` (8 atoms); this task computed neutral, cation, and anion Mulliken charges with PySCF and finite-difference Fukui indices. Solvent: gas phase (`solvent: null`). Software/backend reported by tool: `program: dft`; Mulliken charges from PySCF. Software version and convergence flags were not returned in the chemkit result.\n\nHeadline result: the most electrophilic site is **atom 4 (C)** with **f+ = 0.64232102**. The most nucleophilic site is **atom 1 (O)** with **f\u2212 = 0.39388616**.\n\nPer-atom results, exactly as returned:\n\n| atom label | element | f+ | f\u2212 | f0 | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | O | 0.40136419 | 0.39388616 | 0.39762517 | 0.0074780351 |\n| 2 | C | 0.022255106 | 0.0059884353 | 0.01412177 | 0.01626667 |\n| 3 | C | 0.43404673 | 0.091403097 | 0.26272491 | 0.34264363 |\n| 4 | C | 0.64232102 | 0.087369815 | 0.36484542 | 0.5549512 |\n| 5 | H | -0.1572595 | 0.085961423 | -0.03564904 | -0.24322092 |\n| 6 | H | -0.2072029 | 0.1856796 | -0.010761648 | -0.39288251 |\n| 7 | H | -0.062116996 | 0.084485809 | 0.011184406 | -0.14660281 |\n| 8 | H | -0.073407645 | 0.065225658 | -0.004090993 | -0.1386333 |\n\nCharges used by chemkit:\n- Neutral Mulliken charges: `[-0.287638, -0.058795676, 0.11920624, -0.23417552, 0.13072536, 0.069348651, 0.13095268, 0.13037627]`\n- Cation Mulliken charges: `[0.10624816, -0.052807241, 0.21060933, -0.14680571, 0.21668679, 0.25502826, 0.21543849, 0.19560193]`\n- Anion Mulliken charges: `[-0.68900219, -0.081050781, -0.31484049, -0.87649654, 0.28798487, 0.27655155, 0.19306968, 0.20378391]`\n\nIon states used by the task: cation charge +1, multiplicity 2; anion charge \u22121, multiplicity 2.\n\nWarnings: no `warnings` entries were returned by the chemkit result.\n\nIntegrity verdict returned by chemkit: `integrity.trustworthy: true` (`status: ok`). Integrity checks returned:\n- `fukui_charge_conservation_f+`: ok true; detail: `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `fukui_charge_conservation_f-`: ok true; detail: `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `schema_header`: ok true; detail: `common header present`\n\nReproducibility:\n- CLI invocation returned by chemkit: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp33fq6p7k/live.json`\n- Plot path returned: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_gpt-5.5/20260703-185345_acrolein_fukui_reactivity/agent_call_01_plot.png`\n- A live `.out` log path was not included in the chemkit tool result, so I cannot truthfully report one."
+}

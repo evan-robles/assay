@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 55.15,
+    "llm_s": 50.73,
+    "engine_s": 4.42,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbitals task on O2 (triplet). Method: DFT, tier 'standard' = B3LYP/def2-TZVP (density-fit RI on by default), spin-unrestricted UKS (open-shell), in PySCF. Environment: gas phase (no implicit solvation). Charge 0, multiplicity 3 as specified. Geometry: user-supplied oxygen.xyz (2 atoms, O-O); single point at the supplied geometry, NOT re-optimized.\n\nHeadline result: HOMO-LUMO gap = 5.2880586 eV (Koopmans-style orbital-energy difference, not an excitation energy). Supporting values: HOMO (index 15) = -8.8739616 eV (occ 1.0, degenerate with HOMO-1 at the same energy); LUMO (index 16) = -3.5859031 eV (occ 0.0, degenerate with LUMO+1 at the same energy). Total electronic energy = -150.38872 Hartree (-4092.2855 eV; energy zero = bare nuclei + electrons, comparable only to same-method/same-basis values). Koopmans descriptors: vertical IP = 8.8739616 eV, vertical EA = 3.5859031 eV, electronegativity = 6.2299323 eV, chemical hardness = 2.6440293 eV.\n\nSCF converged in 7 cycles. Engine integrity: status 'ok', trustworthy = true (energy finite, SCF converged, schema header/headline present). The result JSON contained NO warnings field / no warnings reported (clean run). No experimental comparison is offered.\n\nReproducibility: cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 3 <oxygen.xyz>; a live .out log is streamed by the engine to its run directory during the run."
+}

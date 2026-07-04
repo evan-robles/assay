@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 131.04,
+    "llm_s": 15.94,
+    "engine_s": 115.1,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for phenol were computed using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF, in the gas phase, with neutral charge 0 and multiplicity 1. The Fukui function indices (f\u207a, f\u207b, f\u2070) and dual descriptor were derived from Mulliken partial charges of the neutral, cation (+1, doublet), and anion (\u22121, doublet) states. The most electrophilic site is carbon C3 (ortho to OH) with f\u207a = 2.1028319, and the most nucleophilic site is the hydroxyl oxygen (O) with f\u207b = 0.16201477. Charge conservation checks passed (sum of f\u207a and f\u207b both equal 1.0), and the integrity status is trustworthy. A visualization was generated showing the Fukui indices mapped to the molecular structure.</prose>\n<parameter name=\"value\">2.1028319"
+}

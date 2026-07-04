@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.48,
+    "llm_s": 24.45,
+    "engine_s": 9.03,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property: frontier orbital energies (HOMO, LUMO) and HOMO\u2013LUMO gap  \n\u2022 Level of theory: DFT, tier \u2018standard\u2019 \u2261 B3LYP/def2-TZVP with RI density fitting (PySCF)  \n\u2022 Geometry provenance: single-point on the supplied fixed geometry /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz (no re-optimization)  \n  \u2514\u2500 protocol shorthand: DFT//input-xyz  \n\u2022 Environment: gas phase (no implicit or explicit solvent)  \n\u2022 Charge 0, multiplicity 1 (closed-shell RHF/RKS)  \n\u2022 Software/backend: PySCF (via chemkit frontier-orbitals skill)  \n\u2022 SCF convergence: converged in 9 cycles; SCF_converged = true  \n\u2022 Warnings: no warnings reported by the engine  \n\u2022 Live log: calculation ran in real time; stdout/stderr streamed to an `.out` file in the caller\u2019s CWD (path emitted at launch) and final JSON written to /home/erobles/chem-skills/.fidelity_scratch/tmp4phvbfmo/live.json\n\nKey results (all energies in eV)\n\u2022 HOMO  (index 17):  \u22126.3597638 eV  \n\u2022 LUMO  (index 18):  \u22120.1024036 eV  \n\u2022 HOMO\u2013LUMO gap   :   6.2573602 eV   \u2190 headline value (Koopmans\u2010type orbital gap, not an excitation energy)\n\nAdditional Koopmans-derived descriptors\n\u2022 Vertical ionisation potential (IP):  6.3597638 eV  \n\u2022 Vertical electron affinity (EA):     0.1024036 eV  \n\u2022 Electronegativity \u03c7:                3.2310837 eV  \n\u2022 Chemical hardness \u03b7:                3.1286801 eV  \n\u2022 Chemical softness S:                0.3196236 (1/eV)  \n\u2022 Electrophilicity index \u03c9:           1.6684195 eV\n\nReproducibility\nCommand executed (from cli_invocation):\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp4phvbfmo/live.json  \nOptimisation none; coordinates identical to input.  \nThe full result JSON (including orbital lists and integral metadata) is available at the path above.\n\nIntegrity check: status ok; trustworthy = true (all automated checks passed)."
+}

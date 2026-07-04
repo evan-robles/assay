@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.91,
+    "llm_s": 4.31,
+    "engine_s": 9.6,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui Reactivity Calculation for Ferrocene \u2014 The analysis was performed using the GFN2-xTB method (a semi-empirical tight-binding Hamiltonian) in the gas phase, with charge 0 and multiplicity 1. The input geometry was taken directly from the supplied XYZ file (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz), processed with Mulliken population analysis native to GFN2-xTB.\n\nRESULTS:\n- **Most electrophilic site (maximum f\u207a):** Iron atom (Fe) \u2014 f\u207a = **0.22885**.\n- **Most nucleophilic site (maximum f\u207b):** Iron atom (Fe) \u2014 f\u207b = **0.25938**.\n\nWarnings from the tool:\n1. \"sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\"\n2. \"sum(f\u207b) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\"\n3. \"common header present.\" These ensure integrity while indicating marginal disruptions.\n\nThe integrity check returned trustworthy status. Command: '/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb ...' was used interactively (identifying primary reactive hotspots)."
+}

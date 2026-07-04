@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 67.54,
+    "llm_s": 38.79,
+    "engine_s": 28.75,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for furan were calculated as requested. The calculation was performed using Density Functional Theory (DFT) at the `tier 'standard'` level, which corresponds to the B3LYP functional and the def2-TZVP basis set, with density fitting. The molecule was treated in the gas phase as a neutral species with a spin multiplicity of 1. The calculation was performed using the PySCF engine, and all underlying SCF calculations for the neutral, cationic, and anionic states converged successfully. No warnings were reported by the engine.\n\nThe Fukui functions indicate the propensity of a site to undergo electrophilic (f+) or nucleophilic (f-) attack. A higher value indicates greater reactivity for that type of attack. The results are summarized below:\n\n| Atom | Symbol | Index (1-based) | f+ (electrophilic) | f- (nucleophilic) |\n|---|---|---|---|---|\n| 1 | O | 1 | -1.33162 | 0.08382 |\n| 2 | C | 2 | 1.22869 | 0.08910 |\n| 3 | C | 3 | 1.22703 | 0.08930 |\n| 4 | C | 4 | 1.92331 | 0.16153 |\n| 5 | C | 5 | 1.92429 | 0.16164 |\n| 6 | H | 6 | -1.21906 | 0.10248 |\n| 7 | H | 7 | -1.21911 | 0.10251 |\n| 8 | H | 8 | -0.76678 | 0.10482 |\n| 9 | H | 9 | -0.76674 | 0.10479 |\n\nBased on these results, the site most susceptible to electrophilic attack is the carbon atom at index 5 (C5), with an f+ value of 1.92429. This site is also predicted to be the most susceptible to nucleophilic attack, with an f- value of 0.16164."
+}

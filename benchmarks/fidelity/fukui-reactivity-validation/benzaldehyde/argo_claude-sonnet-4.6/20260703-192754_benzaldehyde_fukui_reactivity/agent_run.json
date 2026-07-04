@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 267.26,
+    "llm_s": 39.85,
+    "engine_s": 227.41,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for benzaldehyde (14 atoms: 1 O, 7 C, 6 H) using DFT B3LYP/def2-TZVP (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. Partial charges via Mulliken (PySCF). Geometry taken from the user-supplied benzaldehyde.xyz (single-point on fixed geometry; not re-optimized). N\u00b11 states: cation (charge +1, mult 2), anion (charge \u22121, mult 2). Fukui indices (f+, f\u2212, f0, dual descriptor) computed by finite difference of Mulliken charges across neutral, cation, and anion states. Headline value reported is the maximum f+ (most electrophilic site): atom 3 (ring C), f+ = 0.39938962. Most nucleophilic site: atom 1 (O), f\u2212 = 0.23839906. Charge conservation: sum(f+) = 1.0000, sum(f\u2212) = 1.0000 \u2014 both checks passed. integrity.trustworthy = true. No warnings reported by the engine (warnings array empty). CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz. Plot saved to: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_claude-sonnet-4.6/20260703-192754_benzaldehyde_fukui_reactivity/agent_call_01_plot.png"
+}

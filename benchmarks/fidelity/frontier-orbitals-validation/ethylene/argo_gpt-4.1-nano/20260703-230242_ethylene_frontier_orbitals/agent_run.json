@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.66,
+    "llm_s": 4.14,
+    "engine_s": 4.52,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.43572,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": ""
+  },
+  "prose": "The frontier orbitals calculation on ethylene using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase has been completed. The SCF converged successfully after 6 cycles.\n\nThe HOMO energy is approximately -7.61558 eV, and the LUMO energy is approximately -0.17987 eV. The HOMO-LUMO gap is about 7.43572 eV. The orbitals are listed with their energies and occupations.\n\nI used the chemkit tool with the following method: B3LYP/def2-TZVP, in PySCF, with the specified geometry in gas phase, charge 0, multiplicity 1."
+}

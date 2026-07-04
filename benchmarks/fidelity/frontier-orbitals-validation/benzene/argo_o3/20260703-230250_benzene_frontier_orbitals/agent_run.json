@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.66,
+    "llm_s": 22.75,
+    "engine_s": 10.9,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": 12,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Benzene HOMO\u2013LUMO gap \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, RI density-fitted) in PySCF v?. Gas phase (no implicit solvent), charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz` (12 atoms); single-point calculation \u2014 no further optimisation (notation: DFT//user-provided). SCF converged in 8 cycles.  No engine warnings were reported.  HOMO = \u20137.0468329 eV, LUMO = \u20130.41574728 eV \u2192 gap = 6.6310857 eV.\n\nCalculation ran with chemkit `frontier-orbitals` skill (command shown in `cli_invocation`):\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpg4hkj6e4/live.json\nA live engine log was written during execution (e.g. `frontier_YYYYMMDD-HHMMSS.out`) in the working directory; it can be inspected with `tail -f` for SCF details.  No warnings were emitted (warnings []).\n\nProvenance: computed."
+}

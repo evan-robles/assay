@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 53.5,
+    "llm_s": 43.77,
+    "engine_s": 9.73,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of ferrocene (21 atoms: 10 C, 10 H, 1 Fe) computed at the GFN2-xTB level (semi-empirical tight-binding, xtb backend) in the gas phase, charge 0, multiplicity 1. Fukui indices were derived from finite differences of Mulliken partial charges on the neutral (N), cation (N\u22121, charge +1, mult 2), and anion (N+1, charge \u22121, mult 2) states. Geometry was used as supplied (no re-optimization). The headline value reported is f\u207a(Fe) = 0.22885456, the largest electrophilic Fukui index. Iron (atom 11) is simultaneously the most electrophilic (f\u207a = 0.22885) and most nucleophilic (f\u207b = 0.25938) site, with a negative dual descriptor (\u22120.03053) indicating net nucleophilic character. All Cp ring carbons (~0.01364 f\u207a, ~0.01218 f\u207b) and hydrogens (~0.06348 f\u207a, ~0.06188 f\u207b) are symmetrically equivalent and show much smaller Fukui weights. Integrity: trustworthy = true; sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000."
+}

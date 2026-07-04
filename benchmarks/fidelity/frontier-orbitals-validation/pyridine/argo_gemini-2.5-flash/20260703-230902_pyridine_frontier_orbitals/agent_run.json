@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 30.62,
+    "llm_s": 19.09,
+    "engine_s": 11.54,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Pyridine frontier-orbital gap \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `.xyz` file at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`; the DFT calculation was a single point on this geometry, not re-optimized. SCF converged in 10 cycles. HOMO = \u22127.2525992 eV, LUMO = \u22121.112786 eV \u2192 gap \u2248 6.1398131 eV (Koopmans-style orbital gap, not an excitation energy). The live `.out` log for this run would be found in the current working directory, named `frontier_orbitals_YYYYMMDD-HHMMSS.out`. No warnings reported."
+}

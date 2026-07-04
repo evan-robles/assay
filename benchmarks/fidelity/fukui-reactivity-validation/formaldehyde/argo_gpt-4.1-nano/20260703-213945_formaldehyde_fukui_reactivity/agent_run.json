@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 37.13,
+    "llm_s": 15.23,
+    "engine_s": 9.46,
+    "turns": 7,
+    "tool_calls": 5
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui-reactivity calculation on formaldehyde using DFT at the B3LYP/def2-TZVP level in the gas phase was successful. The main indices indicate that the most electrophilic site is the carbon atom with an approximate index of 0.7084, and the most nucleophilic site is the oxygen atom with an index of around 0.4674."
+}

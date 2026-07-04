@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 97.53,
+    "llm_s": 37.38,
+    "engine_s": 60.16,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of pyridine (11 atoms: N + 5C + 5H) computed at DFT tier 'standard' (B3LYP/def2-TZVP) using PySCF, gas phase, charge 0, multiplicity 1. Cation: charge +1, multiplicity 2; anion: charge \u22121, multiplicity 2. Partial charges via Mulliken (PySCF). Geometry used as supplied (no re-optimization). All SCFs converged; integrity trustworthy = true. Headline value is the maximum f\u207a index (most electrophilic site: N, atom 1) = 0.48422572. Most nucleophilic site: C (atom 4), f\u207b = 0.11826. Dual descriptor peaks also at N (+0.4201). Integrity checks all passed (sum f\u207a = sum f\u207b = 1.0000). No warnings raised beyond passing integrity detail messages (reproduced verbatim): 'sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)'; 'sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)'; 'common header present'."
+}

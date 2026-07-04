@@ -1,0 +1,32 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.28,
+    "llm_s": 21.95,
+    "engine_s": 4.32,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.288058566348104,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "no warnings reported"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block:\n\u2022 Property: frontier orbital energies and HOMO\u2013LUMO gap (eV).\n\u2022 Level of theory: DFT, tier \u2018standard\u2019 (B3LYP/def2-TZVP, RI) with PySCF backend.\n\u2022 Geometry provenance: single-point on the supplied O\u2082 geometry (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz); no further optimization (DFT//input-xyz).\n\u2022 Environment: gas phase (no implicit solvent).\n\u2022 Charge = 0; multiplicity = 3 (UKS open-shell triplet).\n\u2022 Software/version: PySCF (invoked via chemkit frontier-orbitals skill).\n\u2022 Convergence: SCF converged in 7 cycles.\n\u2022 Warnings: no warnings reported by the engine.\n\u2022 Live .out log was streamed to the working directory during execution (path announced at launch); JSON result saved to /tmp/oxygen_frontier_orbitals.json.\n\nHeadline numerical result (gas phase, B3LYP/def2-TZVP):\nHOMO-LUMO gap = 5.288058566348104 eV.\n\nAll numbers are reported exactly as returned by the chemkit calculation; provenance = computed."
+}

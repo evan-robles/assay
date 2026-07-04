@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 60.92,
+    "llm_s": 33.01,
+    "engine_s": 27.91,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for furan were computed using DFT B3LYP/def2-TZVP (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. The N+1 (anion) and N-1 (cation) states used charge \u00b11 and multiplicity 2. Charge partitioning used Mulliken (PySCF). The geometry was taken directly from the user-supplied furan.xyz without re-optimization at this level (single-point Fukui). All three integrity checks passed: sum(f+)=1.0000, sum(f-)=1.0000, schema header present. Trustworthy=true. The headline value reported is the maximum f+ (electrophilic Fukui index) = 1.9242931 at atom 5 (C, 1-based). The \u03b1-carbons (atoms 4 and 5) show the highest dual descriptors (+1.76), consistent with furan's known preference for electrophilic aromatic substitution at the 2- and 5-positions. CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /path/furan.xyz"
+}

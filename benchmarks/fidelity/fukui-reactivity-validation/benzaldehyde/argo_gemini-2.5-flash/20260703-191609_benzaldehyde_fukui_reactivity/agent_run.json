@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 258.42,
+    "llm_s": 36.29,
+    "engine_s": 218.96,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity calculation for benzaldehyde was performed using DFT at the tier `standard` (B3LYP/def2-TZVP) level of theory, density-fit (PySCF), in the gas phase, with a charge of 0 and multiplicity of 1. The geometry was taken from the user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz` file.\n\nThe Fukui reactivity indices for electrophilic (f+), nucleophilic (f-), and radical (f0) attack are reported below for each atom. The most electrophilic site is Carbon (C) at atom index 2 (1-based label 3), with an f+ value of 0.39938964.\n\n**Fukui Reactivity Indices:**\n\n| Atom Index (0-based) | Symbol | Fukui+ (Electrophilic) | Fukui- (Nucleophilic) | Fukui0 (Radical) | Dual Descriptor |\n|----------------------|--------|------------------------|-----------------------|------------------|-----------------|\n| 0                    | O      | 0.37884                | 0.23840               | 0.30862          | 0.14045         |\n| 1                    | C      | -0.35167               | -0.00705              | -0.17936         | -0.34462        |\n| 2                    | C      | 0.39939                | 0.03675               | 0.21807          | 0.36264         |\n| 3                    | C      | 0.21162                | 0.08332               | 0.14747          | 0.12830         |\n| 4                    | C      | 0.33722                | 0.05371               | 0.19546          | 0.28351         |\n| 5                    | C      | 0.28476                | -0.00232              | 0.14122          | 0.28708         |\n| 6                    | C      | 0.27923                | 0.05825               | 0.16874          | 0.22098         |\n| 7                    | C      | 0.35871                | 0.08235               | 0.22053          | 0.27636         |\n| 8                    | H      | -0.11586               | 0.06031               | -0.02777         | -0.17618        |\n| 9                    | H      | -0.20261               | 0.05869               | -0.07196         | -0.26129        |\n| 10                   | H      | -0.12696               | 0.07420               | -0.02638         | -0.20116        |\n| 11                   | H      | -0.13404               | 0.06601               | -0.03401         | -0.20005        |\n| 12                   | H      | -0.13691               | 0.07154               | -0.03268         | -0.20845        |\n| 13                   | H      | -0.18173               | 0.12583               | -0.02795         | -0.30756        |"
+}

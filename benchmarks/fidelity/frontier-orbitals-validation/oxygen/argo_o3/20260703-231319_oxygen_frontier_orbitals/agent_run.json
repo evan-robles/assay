@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.86,
+    "llm_s": 21.25,
+    "engine_s": 8.61,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block\nProperty: Frontier orbital energies (HOMO, LUMO) and HOMO\u2013LUMO gap of molecular oxygen (O2)\nLevel of theory: DFT tier `standard`  (B3LYP/def2-TZVP, RI-J density-fitted) in PySCF  (chemkit `frontier-orbitals` skill)\nGeometry provenance: user-supplied Cartesian coordinates from /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz; treated as a fixed geometry (single-point evaluation, no re-optimization) \u2192 notation DFT//input-xyz.\nEnvironment: gas phase (no implicit solvent).\nCharge 0, multiplicity 3 (open-shell UKS treatment).\nSCF convergence: achieved in 7 cycles; `scf_converged: true`.\nWarnings: no warnings reported by the engine.\nLive log: during execution the PySCF stdout/stderr streamed to a time-stamped frontier_orbitals_<timestamp>.out file in the working directory; path was announced at run start and is available for inspection.\n\nResults (all orbital energies in eV, Koopmans convention):\n \u2022 HOMO (index 15): \u20138.8739616 eV\n \u2022 LUMO (index 16): \u20133.5859031 eV\n \u2022 HOMO\u2013LUMO gap: 5.2880586 eV\nAdditional Koopmans-type descriptors: vertical IP 8.8739616 eV; vertical EA 3.5859031 eV; electronegativity 6.2299323 eV; chemical hardness 2.6440293 eV; electrophilicity index 7.3395664 eV.\n\nAll quantities were computed via chemkit\u2019s `frontier-orbitals` skill invoking PySCF DFT at B3LYP/def2-TZVP with RI-J; provenance: computed."
+}

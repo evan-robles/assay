@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 37.17,
+    "llm_s": 32.66,
+    "engine_s": 4.51,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier-orbital analysis of molecular oxygen (O\u2082)** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, PySCF; density fitting on by chemkit default), **gas phase**, **charge 0, multiplicity 3 (triplet)**. Because O\u2082 is open-shell (triplet ground state), this is a spin-unrestricted (UKS) calculation. Geometry: user-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`, 2 atoms), used as-is \u2014 a single point at the given geometry, not re-optimized. SCF converged (7 cycles).\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 5.2880586 eV** (Koopmans-style orbital gap, not an excitation energy).\n\nSupporting frontier-orbital energies:\n- HOMO = \u22128.8739616 eV (index 15, occupation 1.0)\n- LUMO = \u22123.5859031 eV (index 16, occupation 0.0)\n- HOMO\u22121 = \u22128.8739616 eV; LUMO+1 = \u22123.5859031 eV (the near-degenerate \u03c0*/\u03c0 pairs expected for O\u2082's open-shell manifold)\n- Total electronic energy = \u2212150.38872 Hartree (\u22124092.2855 eV; \u221294370.346 kcal/mol). Energy zero: electronic energy (bare nuclei + electrons). Note that DFT total energies are method/basis-specific and are only comparable to other same-method, same-basis energies.\n\nKoopmans-derived descriptors (from the orbital energies): vertical IP = 8.8739616 eV, vertical EA = 3.5859031 eV, electronegativity = 6.2299323 eV, chemical hardness = 2.6440293 eV, chemical softness = 0.37821064 eV\u207b\u00b9, electrophilicity index = 7.3395664 eV.\n\n**Method:** DFT B3LYP/def2-TZVP (tier `standard`), spin-unrestricted (UKS) for the triplet, gas phase, computed with PySCF via the chemkit `frontier` skill.\n\n**Convergence & integrity:** SCF converged = true (7 cycles). Engine integrity status = \"ok\", trustworthy = true (checks: energy_finite ok, scf_converged ok, schema_header ok, schema_headline ok). **No warnings were reported by the engine** (the result JSON contained no `warnings` entries).\n\n**Reproducibility:** command \u2014 `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 3 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpx8xfx9wq/live.json`. The result JSON was written to `/home/erobles/chem-skills/.fidelity_scratch/tmpx8xfx9wq/live.json`. No experimental/literature comparison is offered \u2014 ask if you'd like one and I will verify a source first."
+}

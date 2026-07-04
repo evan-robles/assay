@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 44.32,
+    "llm_s": 34.94,
+    "engine_s": 9.38,
+    "turns": 6,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital (HOMO\u2013LUMO) gap of formaldehyde\n\nMethod provenance\n\u2022 Property: closed-shell HOMO\u2013LUMO gap (Koopmans orbital energies), eV\n\u2022 Level of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP with RI (density fitting) in PySCF 2.x \n\u2022 Geometry provenance: fixed experimental geometry supplied as XYZ at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz; single-point calculation only (no re-optimization)\n\u2022 Solvent / environment: gas phase (no implicit solvation)\n\u2022 Charge = 0, multiplicity = 1 (restricted singlet)\n\u2022 Software: PySCF via chemkit `frontier-orbitals` skill (CLI invocation logged below)\n\u2022 SCF convergence: converged in 8 cycles; gradient information not applicable (single point)\n\u2022 Warnings: no warnings reported by engine\n\u2022 Live .out log (streamed during run): /home/erobles/chem-skills/.fidelity_scratch/tmp1w4jxo3e/live.json.out (path echoed at job start)\n\nResult\nHOMO energy = \u20137.6523067 eV\nLUMO energy = \u20131.7826355 eV\n\u2192 HOMO\u2013LUMO gap = 5.8696712 eV (headline value)\n\nThe calculation was carried out with the chemkit `frontier-orbitals` skill using B3LYP/def2-TZVP (tier standard, RI) in the gas phase. The engine\u2019s integrity check reports status \"ok\" and trustworthy = true.\n\nCommand executed (reproducible):\ncli.py frontier --method dft --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz --out formaldehyde_gap.json"
+}

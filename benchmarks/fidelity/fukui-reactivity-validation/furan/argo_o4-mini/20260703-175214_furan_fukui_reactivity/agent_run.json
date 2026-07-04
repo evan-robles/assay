@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 64.56,
+    "llm_s": 35.86,
+    "engine_s": 28.7,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan Fukui reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density fitting on) in PySCF (via chemkit), gas phase, charge 0, multiplicity 1. Geometry: user-supplied from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`, single-point only (no geometry optimization). Charges were computed on the neutral, cationic (N\u22121), and anionic (N+1) states using the Mulliken scheme (PySCF). CLI invocation:  \n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpie8mnhft/live.json\n```\nResult: the most electrophilic site is atom 5 (C) with Fukui+ f\u207a = 1.9242931 (unitless), and the most nucleophilic site is atom 5 (C) with Fukui\u2212 f\u207b = 0.1616371 (unitless). Plot of the Fukui indices (dual descriptor) written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_o4-mini/20260703-175214_furan_fukui_reactivity/agent_call_01_plot.png`.  \nConvergence: SCF converged for all three charge states.  \nWarnings (verbatim):  \n- \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n- \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n- \"common header present\"  \nEngine integrity: trustworthy (no critical errors).  \nNo experimental comparison is offered; provenance is purely computed."
+}

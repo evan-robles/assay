@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 30.86,
+    "llm_s": 18.99,
+    "engine_s": 11.86,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital analysis (HOMO\u2013LUMO gap)** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit RKS in PySCF), **gas phase** (no solvent model), **charge 0, multiplicity 1** (closed-shell singlet, as specified by the user). Geometry: user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` (11 atoms), used as-is \u2014 this was a single-point frontier-orbital evaluation at the provided geometry, NOT re-optimized at this level of theory. SCF converged in 10 cycles.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 6.1398131 eV** (Koopmans-style orbital-energy gap; this is an orbital difference, not a computed excitation energy).\n\nSupporting frontier-orbital values (all in eV, gas phase, B3LYP/def2-TZVP):\n- HOMO (index 20) = \u22127.2525992 eV\n- LUMO (index 21) = \u22121.112786 eV\n- HOMO\u22121 = \u22127.4731156, HOMO\u22122 = \u22128.0425195\n- LUMO+1 = \u22120.67231536, LUMO+2 = 1.1781069\n- Total electronic energy = \u2212248.3782 Hartree (\u22126758.7152 eV; energy zero = electronic energy, bare nuclei + electrons). Semi-local/hybrid DFT total energies carry basis- and grid-dependence in their trailing digits \u2014 the relative frontier-orbital gap is the more transferable quantity.\n- Koopmans-derived descriptors: vertical IP = 7.2525992 eV, vertical EA = 1.112786 eV, electronegativity = 4.1826926 eV, chemical hardness = 3.0699066 eV, chemical softness = 0.32574281 eV\u207b\u00b9, electrophilicity index = 2.8494218 eV.\n\n**Method notes:** B3LYP is a hybrid functional; def2-TZVP is a triple-zeta basis; density fitting (RI) is on by default in chemkit and is an approximation to the two-electron integrals. Gap values here are Koopmans/orbital-energy estimates, appropriate for trends, not TDDFT excitation energies.\n\n**Convergence & warnings:** SCF converged (`scf_converged: true`, 10 cycles). The result JSON's `integrity` block reports `status: ok`, `trustworthy: true`, with all checks passing (energy_finite ok, scf_converged ok, schema_header ok, schema_headline ok). The result JSON contained **no `warnings` array / no engine warnings** \u2014 clean run, nothing to report.\n\n**Reproducibility:** Backend PySCF. Exact command (cli_invocation):\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmptqk0in1g/live.json`\nThe engine streams a live `<subcommand>_<timestamp>.out` log to its run directory during execution (viewable with `tail -f`); the result JSON was written to the `--out` path shown above. No experimental/literature comparison is offered \u2014 ask if you want one and I'll verify a source first."
+}

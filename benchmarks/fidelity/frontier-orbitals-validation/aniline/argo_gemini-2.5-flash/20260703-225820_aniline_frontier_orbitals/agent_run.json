@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 48.89,
+    "llm_s": 12.17,
+    "engine_s": 19.37,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Aniline frontier orbitals calculated using Density Functional Theory (DFT) at the tier `standard` (**B3LYP/def2-TZVP**) level of theory, with density fitting, in PySCF. The calculation was performed in the **gas phase** with a charge of 0 and multiplicity of 1. The geometry was taken from the user-supplied XYZ file (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz`), and this was a single point calculation on that fixed geometry. The SCF converged in 9 cycles. No warnings were reported.\n\nThe HOMO energy is -5.553772 eV.\nThe LUMO energy is -0.2489544 eV.\nThe HOMO-LUMO gap is 5.3048177 eV."
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 128.28,
+    "llm_s": 27.87,
+    "engine_s": 100.41,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier-orbital analysis of TEMPO (2,2,6,6-tetramethylpiperidine-1-oxyl)** \u2014 the headline result is the **HOMO\u2013LUMO gap = 3.8724 eV**.\n\n**Method-provenance block:**\n- **Property:** Frontier-orbital energies (HOMO/LUMO) and derived Koopmans descriptors.\n- **Level of theory:** DFT, tier `standard` = **B3LYP/def2-TZVP** (PySCF). This is an open-shell radical (multiplicity 2), so it is a **UKS** calculation. Note: PySCF applies density fitting (RI) by default, which is an approximation to the two-electron integrals.\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`, 29 atoms). The geometry was used **as-is** \u2014 this is a single-point frontier-orbital evaluation at the given geometry, not a re-optimized structure.\n- **Solvent/environment:** **Gas phase** (no implicit solvation; solvent = null).\n- **Charge / multiplicity:** charge **0**, multiplicity **2** (doublet radical), as requested.\n- **Software:** PySCF (b3lyp/def2-tzvp).\n- **Convergence:** SCF **converged** in 12 cycles.\n\n**Results (all energies in eV):**\n- HOMO (index 86, occ 1.0) = **\u22126.3375 eV**\n- LUMO (index 87, occ 0.0) = **\u22122.4651 eV**\n- **HOMO\u2013LUMO gap = 3.8724 eV** (Koopmans-style orbital gap, not an excitation energy)\n- Surrounding orbitals: HOMO\u22122 = \u22127.3058 eV, HOMO\u22121 = \u22126.9287 eV, LUMO+1 = +0.58632 eV, LUMO+2 = +0.59688 eV\n- Koopmans descriptors: vertical IP = 6.3375 eV, vertical EA = 2.4651 eV, electronegativity = 4.4013 eV, chemical hardness = 1.9362 eV, chemical softness = 0.51647 eV\u207b\u00b9, electrophilicity index = 5.0025 eV\n- Total electronic energy = \u2212483.88366 hartree (\u221213167.145 eV); energy zero = electronic energy (bare nuclei + electrons). Absolute totals are not comparable across methods.\n\n**Integrity/warnings:** The engine returned integrity status `ok`, **trustworthy = true** (checks: energy finite \u2713, SCF converged \u2713, schema header present \u2713, schema headline present \u2713). The result JSON contained **no warnings** (warnings array empty \u2014 clean run).\n\n**Reproducibility:**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 2 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp6kkjizax/live.json`\n- Result JSON written to `/home/erobles/chem-skills/.fidelity_scratch/tmp6kkjizax/live.json`.\n\nNo experimental/literature comparison is offered; ask if you want one and I will verify a source first."
+}

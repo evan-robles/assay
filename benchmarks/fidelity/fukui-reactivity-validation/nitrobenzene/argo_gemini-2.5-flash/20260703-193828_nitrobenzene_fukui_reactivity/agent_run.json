@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 225.15,
+    "llm_s": 42.97,
+    "engine_s": 182.18,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices and dual descriptor were calculated for nitrobenzene.\n\n**Method Provenance:**\n- **Property**: Fukui reactivity indices (f+, f-, f0) and dual descriptor (f'')\n- **Level of theory**: DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF.\n- **Geometry provenance**: Built from user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`. This was a single-point calculation.\n- **Solvent / environment**: Gas phase.\n- **Charge and multiplicity**: Charge 0, multiplicity 1.\n- **Software**: PySCF.\n- **Convergence**: SCF converged (implied by absence of SCF non-convergence warnings).\n\n**Fukui Indices (Mulliken Partial Charges) per Atom:**\n| Atom (1-based) | Symbol | f+ (Electrophilic) | f- (Nucleophilic) | f0 (Radical) | f'' (Dual Descriptor) |\n|----------------|--------|--------------------|-------------------|--------------|----------------------|\n| 1              | O      | 0.47317276         | 0.09701552        | 0.28509414   | 0.37615724           |\n| 2              | O      | 0.47344363         | 0.09677392        | 0.28510877   | 0.37666971           |\n| 3              | N      | -0.45670088        | 0.01724346        | -0.21972871  | -0.47394434          |\n| 4              | C      | 0.49641781         | -0.01429204       | 0.24106289   | 0.51070985           |\n| 5              | C      | 0.11562653         | 0.10728820        | 0.11145737   | 0.00833833           |\n| 6              | C      | 0.11588205         | 0.10723661        | 0.11155933   | 0.00864544           |\n| 7              | C      | 0.17412423         | 0.09492244        | 0.13452334   | 0.07920179           |\n| 8              | C      | 0.17422942         | 0.09489250        | 0.13456096   | 0.07933692           |\n| 9              | C      | 0.28913574         | 0.00831161        | 0.14872367   | 0.28082413           |\n| 10             | H      | -0.23168970        | 0.07521203        | -0.07823883  | -0.30690173          |\n| 11             | H      | -0.23181693        | 0.07520256        | -0.07830718  | -0.30701948          |\n| 12             | H      | -0.13372477        | 0.08388328        | -0.02492074  | -0.21760805          |\n| 13             | H      | -0.13379393        | 0.08388191        | -0.02495601  | -0.21767583          |\n| 14             | H      | -0.12430597        | 0.07242800        | -0.02593898  | -0.19673398          |\n\n**Most Reactive Sites:**\n- **Most Electrophilic Site (highest f+)**: Atom 4 (C) with f+ = 0.49641781.\n- **Most Nucleophilic Site (highest f-)**: Atom 5 (C) with f- = 0.10728820."
+}

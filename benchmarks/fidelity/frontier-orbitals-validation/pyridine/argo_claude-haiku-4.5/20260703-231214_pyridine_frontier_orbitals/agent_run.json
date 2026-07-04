@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 22.21,
+    "llm_s": 10.39,
+    "engine_s": 11.81,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fitted) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: pyridine.xyz (11 atoms, user-supplied, single-point calculation \u2014 not re-optimized). SCF converged in 10 cycles. **HOMO\u2013LUMO gap = 6.1398 eV** (Koopmans-style orbital gap; HOMO = \u22127.2526 eV, LUMO = \u22121.1128 eV). Integrity trustworthy: yes. No warnings reported. Command: `chemkit frontier --method dft --tier standard --solvent gas --charge 0 --mult 1 pyridine.xyz`."
+}

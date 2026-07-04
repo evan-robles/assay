@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 25.66,
+    "llm_s": 23.32,
+    "engine_s": 0.0,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": null,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": false,
+    "provenance": "computed"
+  },
+  "prose": "I am sorry, but the `chemkit` tool failed to execute the requested `orbitals` calculation. The task could not be completed due to a persistent internal error.\n\nThe tool returned the following fatal error message on both attempts:\n`'/home/erobles/.conda/envs/assay_env/bin/python: can't open file '/home/erobles/chem-skills/skills/orbitals/scripts/orbitals.py': [Errno 2] No such file or directory'`\n\nThis indicates a problem with the tool's environment or installation, as a required script could not be found. Therefore, no frontier orbital energies can be reported."
+}

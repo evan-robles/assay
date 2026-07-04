@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 139.25,
+    "llm_s": 18.56,
+    "engine_s": 120.7,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui reactivity descriptors** computed via DFT (B3LYP/def2-TZVP, tier standard, PySCF backend) in gas phase, neutral ground state (charge 0, multiplicity 1). Input geometry: user-supplied phenol.xyz; single-point calculation (no reoptimization). Mulliken partial charges computed for neutral, cation (+1, doublet), and anion (\u22121, doublet) states; Fukui condensed indices (f\u207a, f\u207b, f\u2070) and dual descriptor derived. SCF converged for all three states. Charge conservation passed: sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000. **Key findings:** Most electrophilic site = C atom 3 (f\u207a = 2.1028); most nucleophilic site = O atom 1 (f\u207b = 0.1620). Atom count: 13. Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz`. Integrity status: trustworthy (ok).</prose>\n"
+}

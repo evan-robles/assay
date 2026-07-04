@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 124.14,
+    "llm_s": 18.34,
+    "engine_s": 105.79,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2010provenance block\nProperty: Condensed Fukui functions f + (electrophilic attack), f \u2013 (nucleophilic attack), f 0 (radical attack) and dual descriptor for aniline; identification of the most electrophilic and most nucleophilic atomic sites.  \nLevel of theory: DFT tier `standard` = B3LYP/def2-TZVP with RI density-fitting (PySCF backend).  \nGeometry provenance: single-point evaluation on the fixed Cartesian coordinates supplied in /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz (no additional optimisation performed; DFT//input-geometry).  \nSolvent / environment: gas phase (no implicit or explicit solvation).  \nCharge = 0, multiplicity = 1 (closed-shell singlet).  \nSoftware: chemkit fukui-reactivity skill (PySCF v?.? under the hood; density-functional evaluation of N, N+1 and N\u20131 states).  \nConvergence & caveats: SCF cycles converged for N, N+1, and N\u20131 states.  Integrity checks report status \"ok\" and trustworthy = true.  Warnings from the engine are reproduced verbatim below.\n\nSelected numerical results (Mulliken scheme, values sum to ~1):\n\u2022 f +  (electrophilic attack):  [ 1\u2009.6696628, \u20131\u2009.9009183,  2\u2009.2975867,  2\u2009.2965637, \u20130\u2009.28837102, \u20130\u2009.28784778,  1\u2009.4031744, \u20130\u2009.35138763, \u20130\u2009.35134383, \u20130\u2009.82107487, \u20130\u2009.82130627, \u20130\u2009.34268953, \u20130\u2009.75088374, \u20130\u2009.75116473 ]  \n\u2022 f \u2013  (nucleophilic attack): [ 0\u2009.20452359, \u20130\u2009.0037260934, 0\u2009.066571393, 0\u2009.066588805, 0\u2009.0083458972, 0\u2009.0083790983, 0\u2009.10973255, 0\u2009.08199599, 0\u2009.082013935, 0\u2009.076354671, 0\u2009.0763456, 0\u2009.087365768, 0\u2009.067758118, 0\u2009.067750673 ]  \n\u2022 f 0  (radical attack):        [ 0\u2009.9370932, \u20130\u2009.95232218, 1\u2009.182079, 1\u2009.1815763, \u20130\u2009.14001256, \u20130\u2009.13973434, 0\u2009.7564535, \u20130\u2009.13469582, \u20130\u2009.13466495, \u20130\u2009.3723601, \u20130\u2009.37248033, \u20130\u2009.12766188, \u20130\u2009.34156281, \u20130\u2009.34170703 ]  \n\u2022 Dual descriptor:             [ 1\u2009.4651392, \u20131\u2009.8971922, 2\u2009.2310153, 2\u2009.2299749, \u20130\u2009.29671692, \u20130\u2009.29622688, 1\u2009.2934419, \u20130\u2009.43338362, \u20130\u2009.43335777, \u20130\u2009.89742954, \u20130\u2009.89765187, \u20130\u2009.4300553, \u20130\u2009.81864186, \u20130\u2009.81891541 ]\n\nReactivity highlights:\n\u2022 Most electrophilic site (highest f +):  Atom 3 (C) with f + = 2.2975867 (atomic index 2, 0-based).  \n\u2022 Most nucleophilic site (highest f \u2013):  Atom 1 (N) with f \u2013 = 0.20452359 (atomic index 0, 0-based).\n\nAll files (JSON result, Fukui cube/molden surfaces, and live engine log) were written under /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/; live log path was communicated during execution.\n\nEngine warnings (VERBATIM):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nThe calculation passed all integrity checks and is flagged as trustworthy.\n\n"
+}

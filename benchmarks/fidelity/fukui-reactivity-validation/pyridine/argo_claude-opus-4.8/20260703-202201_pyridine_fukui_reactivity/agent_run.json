@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 86.89,
+    "llm_s": 26.9,
+    "engine_s": 59.98,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ [severity: warning]: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- [severity: warning]: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header [severity: warning]: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of pyridine** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit RI, PySCF), **gas phase** (no implicit solvent), charge 0, multiplicity 1 for the neutral reference. Fukui functions were obtained from a finite-difference (\u0394-charge) protocol requiring three SCF states: the neutral (N, charge 0, singlet), the cation (N\u22121, charge +1, doublet, multiplicity 2), and the anion (N+1, charge \u22121, doublet, multiplicity 2), with Mulliken (PySCF) partial charges. Geometry: the user-supplied `pyridine.xyz` (11 atoms: N, 5\u00d7C, 5\u00d7H), used as-is (single point at the given geometry \u2014 not re-optimized).\n\n**Property reported (headline):** the condensed electrophilic Fukui function f\u207a at the most electrophilic site, which is the **ring nitrogen (atom 1, N): f\u207a = 0.48422572** (dimensionless). This identifies N as the preferred site for nucleophilic attack / most electrophilic center.\n\nOther key condensed descriptors:\n- Most nucleophilic site (max f\u207b, favored for electrophilic attack): **C (atom 4), f\u207b = 0.1182626**.\n- Dual descriptor (f\u207a \u2212 f\u207b) is largest and positive at N (atom 1): **0.42010305**, reinforcing N as the electrophilic center.\n\n**Method / backend:** PySCF, DFT with B3LYP functional and def2-TZVP basis; density fitting (RI) is on by default in chekmit and is an approximation to the two-electron integrals. Semi-empirical caveats do not apply here (this is ab initio DFT). Charge/multiplicity for the neutral (0, 1) were user-specified; the \u00b11 states use multiplicity 2 as required for the odd-electron species.\n\n**Convergence / integrity:** the engine's integrity check returned status \"ok\", **trustworthy: true**. All three checks passed (ok=true).\n\n**Warnings (reproduced verbatim, all `severity: warning`):**\n- fukui_charge_conservation_f+: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- fukui_charge_conservation_f-: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- schema_header: \"common header present\"\n\n(These are informational conservation/schema checks that all passed \u2014 sum of f\u207a and f\u207b each equal 1.0000 as expected.)\n\n**Reproducibility:** command \u2014 `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp1q34tzlr/live.json`. Plot written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_claude-opus-4.8/20260703-202201_pyridine_fukui_reactivity/agent_call_01_plot.png`. The live `.out` log is streamed to the caller's cwd during the run.\n\nNo experimental/literature comparison is offered \u2014 this is a purely computed result. Ask if you'd like the full per-atom Fukui tables surfaced."
+}

@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : frontier
+# args       : --method dft --functional b3lyp --basis def2-TZVP --tier standard --environment gas phase --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp_8q7lym8/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli frontier --method dft --functional b3lyp --basis def2-TZVP --tier standard --environment gas phase --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp_8q7lym8/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/argo_gpt-4.1-nano/20260703-230151_benzene_frontier_orbitals
+# started    : 20260703-230156
+# ============================================================
+usage: chemkit [-h] [--version]
+               {sp,opt,freq,binding,redox,confsearch,frontier,electrostatics,solvation,logp,profile,pka,build,resolve,fukui,ts,irc,rxn-energy,scan,orbitals}
+               ...
+chemkit: error: unrecognized arguments: --environment phase /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

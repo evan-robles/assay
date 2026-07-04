@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 65.2,
+    "llm_s": 36.47,
+    "engine_s": 28.73,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property: condensed Fukui functions (most\u2010electrophilic site f\u207a value reported), units dimensionless\n\u2022 Level of theory: DFT, B3LYP/def2\u2010TZVP (tier \u2018standard\u2019 = B3LYP/def2\u2010TZVP) with RI density fitting (PySCF)\n\u2022 Geometry provenance: single\u2010point on fixed geometry supplied by user (\u2018/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz\u2019); no re\u2010optimization at DFT (DFT//input\u2010geom).\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\u2022 Charge = 0; Multiplicity = 1 (closed\u2010shell singlet). Cation (+1, doublet) and anion (\u22121, doublet) states were computed for the N \u00b1 1 steps.\n\u2022 Software: chemkit fukui-reactivity skill \u2192 PySCF backend, Mulliken charges.\n\u2022 Convergence & caveats: All SCF calculations converged (neutral, cation, anion). integrity.status = \"ok\", integrity.trustworthy = true.\n  Warnings reproduced verbatim below.\n\u2022 Live log: calculation output was streamed live to a time-stamped `.out` file in the working directory; path available on request.\n\u2022 Command (from cli_invocation):\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpjmqntk6b/live.json\n\nHeadline result\nThe most electrophilic site in furan is carbon atom 5 (index 4) with Fukui f\u207a = 1.9242931 (dimensionless). The most nucleophilic site is the same carbon atom with f\u207b = 0.1616371.\n\nVerbatim warnings (none omitted):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present"
+}

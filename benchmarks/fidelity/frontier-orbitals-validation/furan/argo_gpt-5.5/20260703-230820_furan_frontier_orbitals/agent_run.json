@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.66,
+    "llm_s": 17.68,
+    "engine_s": 8.97,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbital result** \u2014 Property: HOMO\u2013LUMO gap from a DFT frontier-orbitals calculation. Level of theory: tier `standard`, **b3lyp/def2-tzvp**. Geometry provenance: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz` (9 atoms); this was a frontier-orbitals calculation at that input geometry, not a geometry optimization. Environment: **gas phase** (`solvent`: null in the tool result). Charge and multiplicity: charge 0, multiplicity 1. Software/backend: PySCF (`program`: `pyscf`; version not returned by the tool). SCF convergence: converged = true, SCF cycles = 9. Engine integrity verdict: `trustworthy: true`.\n\nHeadline result: **HOMO\u2013LUMO gap = 6.2573602 eV**.\n\nOrbital energies returned by chemkit: HOMO = -6.3597638 eV; LUMO = -0.1024036 eV. The tool also returned electronic energy = -6261.7289 eV = -230.11429 Hartree.\n\nWarnings: no warnings were returned by the tool result.\n\nReproducibility: chemkit CLI invocation returned by the tool was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --solvent gas /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpsj31eadw/live.json`. The chemkit tool response did not include a live `.out` log path, so I cannot truthfully report one."
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.34,
+    "llm_s": 3.8,
+    "engine_s": 4.54,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene HOMO\u2013LUMO gap** \u2014 computed with **DFT (B3LYP)** and the def2-TZVP basis set in PySCF, tier set to `standard`, **gas phase**, charge 0, and multiplicity 1. Geometry was read from the /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz file (6 atoms total). Computed electronic energy = \u22122139.4541 eV, HOMO = \u22127.6156 eV, LUMO = \u22120.1799 eV, giving a **HOMO\u2013LUMO gap** of **7.4357 eV** (via Koopmans' theorem). SCF convergence: **achieved in 6 cycles**. No warnings were reported, and calculations were verified trustworthy."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 136.0,
+    "llm_s": 29.81,
+    "engine_s": 106.19,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Property: Fukui reactivity indices (electrophilic f\u207a, nucleophilic f\u207b, dual descriptor) for phenol. Level of theory: DFT tier \u2018standard\u2019 = B3LYP/def2-TZVP with density-fitting (RIJK) in PySCF. Geometry provenance: fixed experimental geometry from phenol.xyz; no further optimisation (single-point only). Solvent/environment: gas phase (no implicit solvation). Charge 0, multiplicity 1 (closed-shell). Software: chemkit fukui-reactivity skill (PySCF backend). Convergence: SCF converged; integrity status OK. Warnings surfaced verbatim below.  \n\nHeadline results (selected):\n\u2022 Most electrophilic site: atom 3 (C) with f\u207a = 2.1028319\n\u2022 Most nucleophilic site: atom 1 (O) with f\u207b = 0.16201477\n\u2022 Dual descriptor highlights electrophilic attack preference on carbon 3 (\u0394f = 2.0318596)\n\nMethod command (from cli_invocation):\n  chemkit fukui --method dft --tier standard phenol.xyz --out \u2026/live.json  \nResult JSON: \u2026/live.json  \n(Engine streams a live .out log alongside the run; path printed at launch and available for inspection.)  \n\nWarnings (verbatim):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nEngine integrity verdict: trustworthy = true"
+}

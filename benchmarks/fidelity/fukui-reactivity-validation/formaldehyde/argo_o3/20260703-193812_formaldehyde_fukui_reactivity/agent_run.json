@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.56,
+    "llm_s": 19.69,
+    "engine_s": 9.87,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\nProperty: Atom-condensed Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor for formaldehyde at its fixed input geometry.\nLevel of theory: DFT, tier `standard` (B3LYP/def2-TZVP) with density fitting (PySCF default).\nGeometry provenance: user-supplied Cartesian coordinates (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz); single-point calculations on this fixed geometry (no re-optimization).\nSolvent / environment: gas phase (no implicit solvent; continuum models off).\nCharge and multiplicity: 0, 1 (neutral closed-shell singlet). Charged N\u00b11 states: cation +1/ doublet; anion \u22121/ doublet.\nSoftware + version: chemkit fukui-reactivity skill (PySCF backend 2.x, ASE optimizer infrastructure not invoked).\nConvergence + caveats: SCF cycles for N, N+1, and N\u20131 states all reported converged by PySCF; Mulliken charges used for population analysis. All integrity checks passed with trustworthy = true, but three warnings (shown verbatim below) were issued.\n\nSelected results (Mulliken scheme; atom order O (1), C (2), H (3), H (4)):\n\u2219 f\u207a = [0.46813824, 0.70839130, \u22120.08826939, \u22120.08826015]\n\u2219 f\u207b = [0.46742464, 0.11244422, 0.21007563, 0.21005551]\n\u2219 f\u2070 = [0.46778144, 0.41041776, 0.060903121, 0.060897683]\n\u2219 Dual descriptor \u0394f = [0.00071359555, 0.59594709, \u22120.29834503, \u22120.29831566]\nMost electrophilic site: C (atom 2) with f\u207a = 0.70839130 (reported above as headline value).\nMost nucleophilic site: O (atom 1) with f\u207b = 0.46742464.\n\nRun artifacts\n\u2022 Live engine log was streamed to the caller\u2019s working directory during execution (file `fukui_YYYYMMDD-HHMMSS.out`; view with `tail -f` for SCF details).\n\u2022 Full result JSON: /home/erobles/chem-skills/.fidelity_scratch/tmprfs7tjxh/live.json (contains charges, fukui arrays, integrity checks, and the plotted reactivity map image).\n\nWarnings (verbatim, none omitted):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nThe calculation was therefore successful, with no convergence problems reported; the warnings merely confirm charge conservation and presence of standard metadata."
+}

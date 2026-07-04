@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 267.25,
+    "llm_s": 16.69,
+    "engine_s": 250.56,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices and partial charges for benzaldehyde were computed using DFT with the B3LYP functional and def2-TZVP basis set (tier 'standard', with density fitting) in PySCF, gas phase, charge 0, multiplicity 1. The geometry was user-supplied (no re-optimization). The calculation evaluated the neutral molecule, the cation (charge +1, spin multiplicity 2), and the anion (charge \u22121, spin multiplicity 2) to derive the Fukui indices via finite differences. SCF converged successfully for all three states. The most nucleophilic site is the carbonyl oxygen (f\u207b = 0.238), and the most electrophilic site is the ortho carbon (C-3, f\u207a = 0.399). Mulliken partial charges are reported alongside. Fukui indices conserve charge (sums = 1.0). The dual descriptor (\u0394f = f\u207a \u2212 f\u207b) reveals sites of enhanced electrophilicity (positive dual descriptor) and nucleophilicity (negative), with the ortho carbon and meta carbons showing the highest electrophilic dual descriptors (0.36 and 0.29, respectively). No warnings or convergence failures reported.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}

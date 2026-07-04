@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 114.42,
+    "llm_s": 15.81,
+    "engine_s": 98.61,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO frontier-orbital HOMO\u2013LUMO gap** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, density-fitted) in PySCF, **gas phase**, charge 0, multiplicity 2 (open-shell doublet radical). Geometry: input structure from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz` (29 atoms, C/N/O/H; fixed, single-point evaluation). SCF converged in 12 cycles. \n\n**HOMO energy:** \u22126.3375439 eV  \n**LUMO energy:** \u22122.4651235 eV  \n**HOMO\u2013LUMO gap:** **3.8724203 eV**\n\nKoopmans-style descriptors: vertical ionization potential = 6.338 eV, vertical electron affinity = 2.465 eV, electronegativity = 4.401 eV, chemical hardness = 1.936 eV, electrophilicity index = 5.002 eV.\n\nTotal electronic energy: \u221213167.145 eV (\u2212483.88366 Hartree). All integrity checks pass (`trustworthy: true`). Output file: `/home/erobles/chem-skills/.fidelity_scratch/tmp58uy2y34/live.json`. CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 2 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp58uy2y34/live.json`.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}

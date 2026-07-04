@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 215.24,
+    "llm_s": 38.11,
+    "engine_s": 177.13,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed property: Fukui f+ index of the most electrophilic site in nitrobenzene, obtained via the chemkit `fukui-reactivity` skill.\n\nMethod provenance:\n\u2022 Property: condensed Fukui functions (f + , f \u2212 , f 0 ) and dual descriptor; headline value is the largest electrophilic Fukui function (f + ) = 0.49641782 on C4.\n\u2022 Level of theory: DFT, tier `standard` = B3LYP/def2-TZVP with default RI approximation (density fitting) in PySCF 2.x backend.\n\u2022 Geometry provenance: single-point calculations (neutral, N+1, and N\u22121 states) performed directly on the user-supplied Cartesian geometry file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`; no additional geometry optimization was carried out (DFT//input-xyz protocol).\n\u2022 Environment: gas phase (no implicit solvation model).\n\u2022 Charge & multiplicity: neutral singlet (0, 1) for the N electron state; cation (+1, 2) and anion (\u22121, 2) for the N\u00b11 states, as required for Fukui analysis.\n\u2022 Software: chemkit fukui-reactivity skill calling PySCF (DFT B3LYP/def2-TZVP) for the electronic structure; Mulliken population analysis used for partial charges.\n\u2022 Convergence: all three SCF calculations reported `converged: true` in the JSON output.\n\u2022 Warnings (verbatim):\n  \u2013 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  \u2013 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  \u2013 \"common header present\"\n  (Both charge-conservation checks passed \u2014 sums are exactly 1.0000 \u2014 so the warnings are informational.)\n\u2022 Live log: the run was streamed to the caller\u2019s working directory; see the engine log emitted at launch (path provided during execution) and the result JSON saved at `/home/erobles/chem-skills/.fidelity_scratch/tmpe_k4vru6/live.json` for full details.\n\nResult highlights (atom indices 0-based, as in the output JSON):\n\u2022 Most electrophilic site: atom 3 (label 4, C) with f +  = 0.49641782.\n\u2022 Most nucleophilic site: atom 4 (label 5, C) with f \u2212  = 0.10728820.\n\nThe headline value reported below is the maximum electrophilic Fukui function (f + ) for nitrobenzene at this level of theory."
+}

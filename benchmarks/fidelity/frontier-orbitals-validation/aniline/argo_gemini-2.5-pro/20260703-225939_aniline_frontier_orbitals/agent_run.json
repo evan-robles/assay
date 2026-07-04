@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.32,
+    "llm_s": 11.71,
+    "engine_s": 21.61,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier molecular orbital calculation for aniline has completed. The calculation was performed using Density Functional Theory (DFT) with the B3LYP functional and the def2-tzvp basis set (corresponding to chemkit's tier 'standard'), as implemented in the PySCF program. The calculation was run in the gas phase assuming a neutral charge (0) and a singlet state (multiplicity 1).\n\nThe results are as follows:\n- Highest Occupied Molecular Orbital (HOMO) energy: -5.5538 eV\n- Lowest Unoccupied Molecular Orbital (LUMO) energy: -0.2490 eV\n- HOMO-LUMO gap: 5.3048 eV\n\nThe SCF calculation converged successfully in 9 cycles. No warnings were reported."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 83.38,
+    "llm_s": 22.36,
+    "engine_s": 61.03,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have run the Fukui reactivity analysis for pyridine using Density Functional Theory (DFT). The calculation was performed at the `tier 'standard'` level of theory, which corresponds to the **B3LYP functional with the def2-TZVP basis set**, as you requested. The analysis was conducted in the gas phase on the neutral, singlet molecule (charge 0, multiplicity 1) from the provided geometry file. The result was computed by the PySCF program via `chemkit`.\n\nThe analysis identifies the atoms most susceptible to different types of attack:\n\n*   **Susceptibility to Nucleophilic Attack (f+):** The site most prone to attack by a nucleophile is the **Nitrogen atom (atom 1)**, which has the largest Fukui(+) index of **0.48423**.\n    This is the most electrophilic site in the molecule.\n*   **Susceptibility to Electrophilic Attack (f-):** The site most prone to attack by an electrophile is the **Carbon atom at position 4 (atom 4)**, which has the largest Fukui(-) index of **0.11826**.\n    This is the most nucleophilic site.\n\nThe calculation completed successfully and the result's integrity is trustworthy. No warnings were issued by the computational engine."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 148.23,
+    "llm_s": 47.12,
+    "engine_s": 101.12,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for aniline\n\u2022 Property: condensed Fukui indices (f\u207a, f\u207b) identifying the most electrophilic and most nucleophilic sites\n\u2022 Level of theory: DFT, tier `standard` (B3LYP/def2-TZVP, density-fitted RIJK)\n\u2022 Geometry: single-point on user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (no prior optimization)\n\u2022 Solvent: gas phase (implicit only)\n\u2022 Charge / multiplicity: 0 / 1 (neutral singlet)\n\u2022 Software: PySCF via chemkit CLI (invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --solvent gas-phase --charge 0 --multiplicity 1 --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpsxnodqrk/live.json`)\n\u2022 Convergence: SCF converged for all states; see warnings\n\u2022 Most electrophilic site: C atom 3 (1-based indexing), f\u207a = 2.2975867\n\u2022 Most nucleophilic site: N atom 1 (1-based indexing), f\u207b = 0.20452359\n\u2022 Result JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmpsxnodqrk/live.json`\n\u2022 Live log: streaming to `fukui_20260703-191022.out` in your cwd (you can `tail -f` it)"
+}

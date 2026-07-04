@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 27.08,
+    "llm_s": 21.09,
+    "engine_s": 5.98,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis was performed on ferrocene using the GFN2-xTB semi-empirical tight-binding method in the gas phase. The calculation was run for the neutral species with a charge of 0 and a multiplicity of 1.\n\nThe Fukui functions are used to identify reactive sites in a molecule. The `f+` index indicates susceptibility to nucleophilic attack (where an electrophile is most likely to react), while the `f-` index indicates susceptibility to electrophilic attack (where a nucleophile is most likely to react).\n\nThe results indicate that the central iron atom (atom 11) is the most reactive site for both types of attack.\n*   The site most susceptible to **nucleophilic attack** is the **Fe atom**, with an `f+` value of **0.22885**.\n*   The site most susceptible to **electrophilic attack** is also the **Fe atom**, with an `f-` value of **0.25938**.\n\nThe calculation completed successfully and no warnings were reported by the engine. The integrity of the results is trustworthy."
+}

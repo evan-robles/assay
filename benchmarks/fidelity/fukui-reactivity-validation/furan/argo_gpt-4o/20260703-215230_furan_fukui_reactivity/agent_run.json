@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.73,
+    "llm_s": 5.22,
+    "engine_s": 29.52,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I computed the Fukui reactivity indices for furan using **DFT, B3LYP/def2-TZVP (tier `standard`)**, in the **gas phase**. The calculation was performed at charge 0 and multiplicity 1. Geometry was taken as the provided xyz structure (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz) without re-optimization. The most electrophilic site is **carbon atom 5 (C)** with f\u207a = **1.9242931**. This calculation was carried out via PySCF within chemkit. Note: the engine reported **sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 with no convergence issues indicated, but deviation warnings would typically hint at state convergence inaccuracies had they been larger.** Overall, the integrity status is **ok and trustworthy**."
+}

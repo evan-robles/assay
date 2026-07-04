@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 210.78,
+    "llm_s": 36.62,
+    "engine_s": 174.16,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Nitrobenzene**\n\nThe calculation was performed at the DFT level of theory using the tier `standard` method, which corresponds to the **B3LYP functional** and the **def2-TZVP basis set**, as implemented in the PySCF backend. The calculation was run in the **gas phase**. The analysis was performed on the geometry provided in the input file, `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`, without re-optimization. The neutral molecule was treated with a charge of 0 and a multiplicity of 1.\n\nThe Fukui indices (f+, f-, f0) were calculated to predict the most reactive sites for different types of chemical attack. The results indicate the following:\n\n*   **Site for Electrophilic Attack (f+)**: The most probable target for an electrophile is atom **C4**, which has the highest f+ index of **0.49642**.\n*   **Site for Nucleophilic Attack (f-)**: The most probable target for a nucleophile is atom **C5**, which has the highest f- index of **0.10729**.\n*   **Site for Radical Attack (f0)**: The most probable target for a radical is atom **O2**, which has the highest f0 index of **0.28511**.\n\nThe calculation completed successfully, and the engine's integrity checks confirmed that the results are trustworthy. No warnings were reported by the tool."
+}

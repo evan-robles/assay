@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 239.16,
+    "llm_s": 5.16,
+    "engine_s": 234.0,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis for benzaldehyde** was carried out using **DFT, B3LYP/def2-TZVP** (tier `standard`) in the gas phase. The task analyzed the molecule at **charge 0** and **multiplicity 1**, and Mulliken charges were used. Results identify **atom 3 (C)** as the most electrophilic site (F+ = 0.39939, dimensionless) and **atom 1 (O)** as the most nucleophilic (F- = 0.23840, dimensionless). Warnings note good charge conservation in both cation/anion derivatives (`sum(f+) = 1.0000` and `sum(f-) = 1.0000`). The calculation converged, and the integrity checks passed."
+}

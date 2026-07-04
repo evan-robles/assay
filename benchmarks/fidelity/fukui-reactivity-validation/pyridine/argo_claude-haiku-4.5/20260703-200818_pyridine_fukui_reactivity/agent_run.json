@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 78.99,
+    "llm_s": 16.02,
+    "engine_s": 62.98,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of pyridine was computed using DFT with B3LYP/def2-TZVP basis set (tier standard, density-fitted in PySCF) at the gas phase, charge 0, multiplicity 1. The geometry was from the supplied pyridine.xyz file (11 atoms) and was not re-optimized. Mulliken partial charges were used to compute Fukui indices for the neutral, cationic (+1), and anionic (\u22121) forms. The most electrophilic site is nitrogen (atom 1) with f\u207a = 0.4842, indicating high susceptibility to nucleophilic attack. The most nucleophilic site is a meta carbon (atom 4, ortho to N) with f\u207b = 0.1183, indicating preference for electrophilic aromatic substitution. Charge conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000, confirming proper convergence of the charged-state calculations. The dual descriptor (electrophilicity minus nucleophilicity) was largest for the nitrogen and ortho carbons, marking the sites of greatest reactivity. Integrity status: trustworthy.</prose>\n<parameter name=\"value\">0.48422572"
+}

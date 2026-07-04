@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.72,
+    "llm_s": 20.44,
+    "engine_s": 6.28,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have performed the requested Fukui reactivity analysis on ferrocene.\n\nBased on a GFN2-xTB calculation in the gas phase, the central iron atom (atom 11) is identified as the most reactive site for both electrophilic and nucleophilic attacks. The site for electrophilic attack is characterized by the condensed Fukui function `f-`, and the site for nucleophilic attack by `f+`.\n\n**Calculation Details:**\n\n*   **Property**: Fukui reactivity indices (`f-`, `f+`)\n*   **Level of theory**: GFN2-xTB\n*   **Geometry**: Single-point calculation on the user-provided geometry. The structure was not re-optimized at this level of theory.\n*   **Solvent**: Gas phase\n*   **Charge and Multiplicity**: 0 and 1, respectively.\n*   **Software**: `xtb`\n*   **Integrity**: The calculation completed successfully and the engine's integrity checks passed. No warnings were reported.\n\n**Results:**\n\n*   **Most nucleophilic site (for electrophilic attack)**: The iron atom (atom 11) has the largest `f-` value of **0.25938**.\n*   **Most electrophilic site (for nucleophilic attack)**: The iron atom (atom 11) also has the largest `f+` value of **0.22885**.\n\nThe condensed Fukui function `f-` for the most nucleophilic site is reported as the headline value."
+}

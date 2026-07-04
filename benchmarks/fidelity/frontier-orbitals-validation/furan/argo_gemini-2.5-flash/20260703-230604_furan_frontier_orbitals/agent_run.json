@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 17.6,
+    "llm_s": 9.01,
+    "engine_s": 8.59,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbital gap** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: from user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz`, single point calculation. SCF converged in 9 cycles.\nHOMO = \u22126.3597638 eV, LUMO = \u22120.1024036 eV \u2192 **gap \u2248 6.2573602 eV** (Koopmans-style orbital gap, not an excitation energy).\n\nNo warnings were reported.\nIntegrity checks:\n- energy_finite: ok (total/electronic energy = -6261.728866075377 (must be a finite number))\n- scf_converged: ok (scf_converged = True (SCF must converge for the energy/orbitals to be meaningful))\n- schema_header: ok (common header present)\n- schema_headline: ok (headline field 'homo_lumo_gap_eV' = 6.257360152121101 (present and numeric))"
+}

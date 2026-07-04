@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.24,
+    "llm_s": 16.95,
+    "engine_s": 9.29,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Indices \u2014 Formaldehyde**\n\n**Method Block:**\nProperty: Fukui reactivity indices (f\u207a, f\u207b, f\u2070, dual descriptor).\nLevel of Theory: DFT, B3LYP/def2-TZVP (tier `standard`), PySCF backend.\nGeometry Provenance: Single-point on supplied formaldehyde structure; geometry not relaxed during this run.\nSolvent: Gas phase.\nCharge/Multiplicity: Neutral ground state (charge 0, mult 1); N+1 and N\u22121 states computed to derive indices.\nSoftware: PySCF (chemkit).\nConvergence: SCF fully converged for neutral, cation, and anion. Charge conservation checks passed (sum f\u207a = 1.0000, sum f\u207b = 1.0000).\nCharge partitioning: Mulliken analysis.\n\n**Key Results:**\n- **Most electrophilic site:** Carbon (C), f\u207a = 0.708 \u2014 strongly favored for nucleophilic attack.\n- **Most nucleophilic site:** Oxygen (O), f\u207b = 0.467 \u2014 activated toward electrophilic attack.\n- **Dual descriptor (\u0394f = f\u207a \u2212 f\u207b):** C atom +0.596 (electrophilic), H atoms \u22120.298 each (nucleophobic), O atom +0.001 (balanced).\n\n**Full atom-by-atom table:**\n| Atom | f\u207a | f\u207b | f\u2070 | \u0394f |\n|------|-----|-----|-------|--------|\n| O | 0.468 | 0.467 | 0.468 | 0.001 |\n| C | 0.708 | 0.112 | 0.410 | 0.596 |\n| H | \u22120.088 | 0.210 | 0.061 | \u22120.298 |\n| H | \u22120.088 | 0.210 | 0.061 | \u22120.298 |\n\nNo warnings reported. Reactivity map visualization saved to the output directory.\n\n**Reproducibility:** \nCommand: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`\nResult JSON path: `/home/erobles/chem-skills/.fidelity_scratch/tmpq4tddrg3/live.json`\nPlot output: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_claude-haiku-4.5/20260703-192955_formaldehyde_fukui_reactivity/agent_call_01_plot.png`\n\nInterpretation: Formaldehyde's carbonyl carbon is the primary electrophilic site (f\u207a = 0.708), while oxygen has modest nucleophilic character (f\u207b = 0.467). The large positive dual descriptor at C indicates strong preference for nucleophilic addition, consistent with the well-known reactivity of the C=O bond toward nucleophiles. Hydrogen atoms are nucleophobic and not preferred sites.\n"
+}

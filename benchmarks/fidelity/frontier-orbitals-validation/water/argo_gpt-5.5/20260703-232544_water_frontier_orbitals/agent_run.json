@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.19,
+    "llm_s": 16.22,
+    "engine_s": 3.97,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water frontier-orbital result** \u2014 Property: HOMO\u2013LUMO gap from frontier orbitals, **DFT B3LYP/def2-TZVP** (chemkit tier `standard`), PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied fixed XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` used as-is for the orbital calculation (no geometry optimization reported by this task). SCF converged: true, in 7 cycles. Warnings: no warnings were reported by the tool result.\n\nHeadline result: **HOMO\u2013LUMO gap = 8.9406687 eV**.\n- HOMO = -8.6037183 eV\n- LUMO = 0.33695037 eV\n- Total electronic energy = -76.462901 hartree = -2080.6615 eV\n\nMethod used: chemkit `frontier-orbitals` task with DFT, functional `b3lyp`, basis `def2-tzvp`, tier `standard`, charge 0, multiplicity 1, gas phase. Program reported by the tool: `pyscf`.\n\nReproducibility command reported by chemkit:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --solvent gas /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp77kqezcw/live.json`\n\nIntegrity verdict reported by engine: `trustworthy: true`. Provenance: computed."
+}

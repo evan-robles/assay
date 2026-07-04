@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 40.96,
+    "llm_s": 31.84,
+    "engine_s": 9.12,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Formaldehyde Fukui Reactivity Descriptors \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitting RIJK) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied formaldehyde.xyz (no geometry optimization; single-point).\n\nMulliken (PySCF) partial charges:\n\u2022 Neutral: [\u20130.26363838, +0.083610379, +0.090009268, +0.090018737]\n\u2022 Cation (+1): [+0.20378626, +0.19605459, +0.3000849, +0.30007425]\n\u2022 Anion (\u20131): [\u20130.73177662, \u20130.62478092, +0.17827866, +0.17827888]\n\nCondensed Fukui functions (atom order: O(1), C(2), H(3), H(4)):\n\u2022 f\u207a (electrophilic attack reactivity): [0.46813824, 0.7083913, \u20130.088269392, \u20130.088260145]\n\u2022 f\u207b (nucleophilic attack reactivity): [0.46742464, 0.11244422, 0.21007563, 0.21005551]\n\u2022 f\u2070 (radical attack reactivity): [0.46778144, 0.41041776, 0.060903121, 0.060897683]\n\u2022 Dual descriptor (\u0394f = f\u207a\u2009\u2013\u2009f\u207b): [0.00071359555, 0.59594709, \u20130.29834503, \u20130.29831566]\n\nThe most electrophilic site is C (atom 2) with f\u207a = 0.7083913; the most nucleophilic site is O (atom 1) with f\u207b = 0.46742464.\n\nSCF convergence: converged normally. Warnings from integrity checks (all reproduced verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nCommand to reproduce: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --solvent gas --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpnx3v24zi/live.json`"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 174.53,
+    "llm_s": 6.05,
+    "engine_s": 168.49,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Nitrobenzene Fukui reactivity (most electrophilic atom)** \u2014 DFT, tier 'standard' (**B3LYP/def2-TZVP**, density-fitting active), gas phase, charge 0, multiplicity 1, in PySCF. Mode: single-point Mulliken fukui analysis on pre-optimized **nitrobenzene.xyz**. Geometry built externally (not relaxed during this run).\n\n- **Most electrophilic atom:** Carbon (C\u2084) f\u207a = 0.49641780 (dimensionless).\n\nWarnings surfaced verbatim:\n- \"sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"sum(f\u207b) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"common header present\".\nAdditionally rendered .png resources follow directories referenced nearby JSON."
+}

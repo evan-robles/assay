@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.11,
+    "llm_s": 4.24,
+    "engine_s": 8.87,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbital gap (Koopmans' estimate)** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: Furan's coordinates supplied as an input file (`furan.xyz`); no re-optimization performed at this level (energy and orbitals are computed on the supplied structure). SCF converged in 9 cycles. HOMO energy: -6.3598 eV; LUMO energy: -0.1024 eV. **Gap \u2248 6.2574 eV**. Koopmans-based vertical ionization potential (IP): 6.36 eV, and electron affinity: 0.10 eV. This result is fully trustworthy with no warnings or irregularities reported. Provenance: computation logged with header `/home/erobles/chem-skills/.fidelity_scratch/tmp8qwvyvr0/live.json`."
+}

@@ -1,0 +1,35 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.26,
+    "llm_s": 4.0,
+    "engine_s": 30.25,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "name of the calculation: fukui-reactivity",
+      "method: dft B3LYP/def2-tzvp",
+      "solvent: gas phase",
+      "converged: true",
+      "warnings: ['fukui_charge_conservation_f+', 'fukui_charge_conservation_f-','schema_header']"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "calculated"
+  },
+  "prose": "The Fukui reactivity index for acrolein was computed using a DFT approach with the B3LYP functional and def2-TZVP basis set in the gas phase. The calculation was performed via chemkit's 'fukui-reactivity' skill, with exact parameters as specified. The calculated Fukui index value is approximately 0.39762. The calculation converged successfully, and warnings indicate the sum of Fukui functions for addition and removal of electrons are close to expected but with some drift suggesting possible minor convergence issues in N+1 and N-1 states."
+}

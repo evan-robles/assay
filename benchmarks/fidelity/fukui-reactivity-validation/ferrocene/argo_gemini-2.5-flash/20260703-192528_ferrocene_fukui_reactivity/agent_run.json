@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.32,
+    "llm_s": 11.99,
+    "engine_s": 6.32,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity task was run on ferrocene using the GFN2-xTB method.\n\n**Fukui Reactivity Analysis for Ferrocene**\n- **Property**: Fukui reactivity indices (for electrophilic, nucleophilic, and radical attack)\n- **Level of theory**: GFN2-xTB\n- **Geometry provenance**: The geometry was sourced from the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` file. No geometry optimization was performed during this calculation.\n- **Solvent / environment**: Gas phase\n- **Charge and multiplicity**: Charge 0, multiplicity 1\n- **Software**: xtb\n- **Convergence + caveats**: The calculation completed successfully.\n\n**Results:**\nThe Fukui indices indicate the following most reactive sites:\n- **Most susceptible to electrophilic attack (f+)**: Iron (Fe) atom (index 10, 1-based label 11) with a Fukui+ index of 0.22885.\n- **Most susceptible to nucleophilic attack (f-)**: Iron (Fe) atom (index 10, 1-based label 11) with a Fukui- index of 0.25938.\n- **Most susceptible to radical attack (f0)**: Iron (Fe) atom (index 10, 1-based label 11) with a Fukui0 index of 0.24412.\n\n**Warnings:**\n- `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n\nThe integrity of the calculation is trustworthy."
+}

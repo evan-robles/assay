@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 58.47,
+    "llm_s": 48.66,
+    "engine_s": 9.8,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde Fukui reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitting RI) in PySCF, **gas phase implicit**, charge 0, multiplicity 1. Geometry: user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz` (unrelaxed); this was a single-point Fukui-function calculation (no geometry optimization). SCF converged for the neutral (N), cationic (N\u20131), and anionic (N+1) states. No top-level warning array was reported. Integrity checks (verbatim):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nResults (Mulliken charges scheme):\n\u2022 Fukui+ (electrophilic indices): O (atom 1) = 0.46813824, C (atom 2) = 0.70839130, H (atom 3) = \u20130.088269392, H (atom 4) = \u20130.088260145.  \n\u2022 Fukui\u2013 (nucleophilic indices): O = 0.46742464, C = 0.11244422, H = 0.21007563, H = 0.21005551.  \n\u2022 Fukui\u2070: [0.46778144, 0.41041776, 0.060903121, 0.060897683].  \n\u2022 Dual descriptor: [0.00071359555, 0.59594709, \u20130.29834503, \u20130.29831566].  \nThe most electrophilic atom is C (atom 2; f\u207a = 0.70839130) and the most nucleophilic atom is O (atom 1; f\u207b = 0.46742464). Files: plot at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_o4-mini/20260703-193958_formaldehyde_fukui_reactivity/agent_call_01_plot.png`.  \nCommand: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --solvent gas --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpsps6pa0z/live.json`.  \nJSON output: `/home/erobles/chem-skills/.fidelity_scratch/tmpsps6pa0z/live.json`."
+}

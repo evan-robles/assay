@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 93.58,
+    "llm_s": 29.13,
+    "engine_s": 64.45,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: Fukui functions (f+ / electrophilic susceptibility, f\u2013 / nucleophilic susceptibility, f0, and dual descriptor) for pyridine; headline value reported here is the largest electrophilic Fukui index (f+) = 0.48422572 on the ring nitrogen.\nLevel of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP, density-fitted (PySCF).\nGeometry provenance: fixed experimental geometry provided by user in /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz; single-point calculations for N, N+1, and N\u20131 electron counts (DFT//exp-geom).\nSolvent / environment: gas phase (no implicit solvation).\nCharge & multiplicity: neutral singlet (0, 1) for N electrons; cation (+1, doublet) and anion (\u20131, doublet) for N\u00b11 steps.\nSoftware: chemkit fukui-reactivity skill (PySCF backend; version as in engine), Mulliken charge partitioning.\nConvergence & caveats: All three SCF calculations converged. Engine integrity: trustworthy = true. Warnings returned by engine reproduced verbatim below.\n\nKey numerical results (atomic indices 0-based):\n\u2022 Most electrophilic site (f+) 0.48422572 \u2192 atom 0 (N)\n\u2022 Most nucleophilic site (f\u2013) 0.11826260 \u2192 atom 3 (C)\nFull f+/f\u2013/f0 and dual descriptor arrays are available in live JSON output.\n\nLive .out log: written during the run to /home/erobles/chem-skills/.fidelity_scratch/tmpo1zed8ow/live.out (same stem as live.json) \u2014 it contains SCF cycles and optimizer details and can be inspected or tailed for full provenance.\n\nVerbatim warnings from engine:\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nThese warnings indicate the charge-conservation checks passed exactly (sum = 1.0000) but are still flagged as informational; no convergence issues were detected.\n\nAll numbers are as output by the chemkit engine; provenance = computed."
+}

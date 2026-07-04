@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 123.44,
+    "llm_s": 24.62,
+    "engine_s": 98.81,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Calculation summary (method-provenance block)\nProperty: HOMO\u2013LUMO (frontier-orbital) gap of TEMPO, units eV.\nLevel of theory: DFT, B3LYP/def2-TZVP (tier \u2018standard\u2019, density-fitted) in PySCF.\nGeometry provenance: fixed input geometry from /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz; single-point only (no re-optimization) \u2013 notation B3LYP/def2-TZVP//input-XYZ.\nSolvent / environment: gas phase (no implicit or explicit solvation).\nCharge & multiplicity: 0, 2 (open-shell doublet; UKS).\nSoftware: PySCF backend via chemkit frontier-orbitals skill.\nConvergence & caveats: SCF converged in 12 cycles; no warnings reported by the engine; integrity.status = ok, trustworthy = true.\n\nHeadline numerical results\n\u2022 HOMO = \u22126.3375439 eV\n\u2022 LUMO = \u22122.4651235 eV\n\u2192 HOMO\u2013LUMO gap = 3.8724203 eV  \u2190 reported value\nAdditional Koopmans estimates: vertical IP = 6.3375439 eV, vertical EA = 2.4651235 eV, electronegativity = 4.4013337 eV, chemical hardness = 1.9362102 eV.\n\nReproducibility notes\nCommand executed (from result JSON `cli_invocation`):\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 2 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpi3t63stz/live.json\n\nThe live engine log was streamed to the standard chemkit `<skill>_<timestamp>.out` file in the working directory while the run executed; please consult that file for full SCF details and step-by-step output. No warnings were issued by the backend (`warnings` array empty)."
+}

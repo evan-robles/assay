@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.97,
+    "llm_s": 15.28,
+    "engine_s": 8.7,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in **PySCF**, **gas phase** (no solvent model), **charge 0, multiplicity 1** (closed-shell RKS). Geometry: user-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz`, 9 atoms: O, 4\u00d7C, 4\u00d7H); the DFT was a single point on this fixed geometry \u2014 it was not re-optimized. SCF converged in 9 cycles.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 6.2573602 eV** (Koopmans-style orbital gap, not an excitation energy).\n\nFrontier orbital energies:\n- HOMO (index 17): \u22126.3597638 eV\n- LUMO (index 18): \u22120.1024036 eV\n- HOMO\u22121: \u22127.8707441 eV; HOMO\u22122: \u221210.332024 eV\n- LUMO+1: +1.4483308 eV; LUMO+2: +1.702378 eV\n\nTotal electronic energy: \u2212230.11429 Hartree (\u22126261.7289 eV). Koopmans-derived descriptors: vertical IP = 6.3597638 eV, vertical EA = 0.1024036 eV, electronegativity = 3.2310837 eV, chemical hardness = 3.1286801 eV, softness = 0.3196236 eV\u207b\u00b9, electrophilicity index = 1.6684195 eV. (18 occupied of 179 orbitals.)\n\n**Method used:** DFT (B3LYP functional, def2-TZVP basis, chemkit tier `standard`) via PySCF, gas phase, charge 0 / multiplicity 1.\n\n**Convergence & warnings:** SCF converged (`scf_converged: true`, 9 cycles). The engine returned **no warnings array** (no warnings reported). Integrity verdict: **trustworthy = true**, status \"ok\" \u2014 all integrity checks passed (energy finite; SCF converged; schema header present; headline field present and numeric).\n\n**Reproducibility:** command run was `.../cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 .../furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp0tjgdv4k/live.json`. Note that B3LYP is an implicit-solvation-free (gas-phase) run and density fitting (RI) is on by default in chemkit, an approximation to the two-electron integrals. Orbital energies are single-point, single-geometry values (no conformer averaging)."
+}

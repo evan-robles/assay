@@ -1,0 +1,9 @@
+{
+  "mode": "live",
+  "layer_A_determinism": true,
+  "overall": "ERROR",
+  "exit_code": 2,
+  "scored": false,
+  "error": "no_agent_run",
+  "error_detail": "live agent did not submit a final_report within the turn budget; no reported values to score"
+}

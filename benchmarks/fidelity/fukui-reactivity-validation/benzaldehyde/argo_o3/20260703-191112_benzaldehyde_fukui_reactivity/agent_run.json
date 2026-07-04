@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 242.54,
+    "llm_s": 16.72,
+    "engine_s": 225.82,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed Fukui reactivity indices for benzaldehyde (C\u2087H\u2086O) with chemkit skill `fukui-reactivity`.\n\nMethod provenance\nProperty: Condensed Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor; most electrophilic/nucleophilic sites.\nLevel of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP, density-fitted (PySCF backend).\nGeometry provenance: single-point on user-supplied geometry `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz` (no re-optimization; DFT//input-XYZ).\nSolvent / environment: gas phase (no implicit solvation).\nCharge & multiplicity: 0, 1 (closed-shell singlet).\nSoftware: chemkit fukui-reactivity skill (PySCF 2.x under the hood; density-fitting on by default).\nConvergence & caveats: SCFs for N, N\u00b11 states reported converged. See warnings below (charge-conservation checks). No explicit optimizer used (single-point). Live engine log written during run to the default `<cwd>/fukui_*.out` file (path echoed at launch).\n\nKey numerical results (atomic indices are 0-based in JSON, 1-based labels in parentheses)\n\u2022 Most electrophilic site: C (index 2, atom 3) with f\u207a = 0.39938963.\n\u2022 Most nucleophilic site: O (index 0, atom 1) with f\u207b = 0.23839906.\n\u2022 \u03a3f\u207a = 1.0000; \u03a3f\u207b = 1.0000 (charge-conservation checks passed).\n\nWarnings (verbatim from tool result)\n1. sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n2. sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n3. common header present\n\nThe headline value reported above is the largest electrophilic Fukui index (f\u207a) of 0.39938963 for atom 3 (C)."
+}

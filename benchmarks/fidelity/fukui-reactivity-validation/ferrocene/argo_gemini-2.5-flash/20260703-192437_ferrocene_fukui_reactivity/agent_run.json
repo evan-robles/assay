@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 27.74,
+    "llm_s": 21.07,
+    "engine_s": 6.67,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity \u2014 GFN2-xTB (xtb), gas phase, charge 0, multiplicity 1. Geometry: provided in `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`. The iron atom (Fe, atom 11) is identified as the most electrophilic and most nucleophilic site. Most electrophilic Fukui index (f+) on Fe (atom 11): 0.22885456. Most nucleophilic Fukui index (f-) on Fe (atom 11): 0.25938191. Fukui radical index (f0) on Fe (atom 11): 0.24411824. The dual descriptor on Fe (atom 11): -0.030527354. Detailed Fukui indices for all atoms are available in the full output."
+}

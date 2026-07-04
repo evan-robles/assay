@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.53,
+    "llm_s": 21.98,
+    "engine_s": 11.56,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital analysis \u2014 HOMO\u2013LUMO gap**\n\n**Method-provenance block**\n- **Property:** Frontier molecular orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP/def2-TZVP** (density fitting is on by default in chemkit). Backend: **PySCF** (RKS, closed-shell).\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`, 11 atoms: C\u2085H\u2085N). Used **as-is** \u2014 this is a single point at the supplied geometry; no optimization was performed at this or any other level.\n- **Solvent / environment:** **Gas phase** (solvent = null).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (neutral closed-shell singlet), as specified.\n- **Software:** PySCF.\n- **Convergence:** SCF **converged** in 10 cycles. Integrity check: status \"ok\", trustworthy = **true** (energy finite \u2713, SCF converged \u2713, schema header \u2713, headline present \u2713).\n\n**Result**\n- **HOMO\u2013LUMO gap = 6.1398 eV** (headline value 6.1398131 eV).\n- HOMO (index 20) = \u22127.2526 eV; LUMO (index 21) = \u22121.1128 eV.\n- Neighboring orbitals: HOMO\u22121 = \u22127.4731 eV, HOMO\u22122 = \u22128.0425 eV; LUMO+1 = \u22120.67232 eV, LUMO+2 = +1.1781 eV.\n- Koopmans-derived quantities: vertical IP = 7.2526 eV, vertical EA = 1.1128 eV, electronegativity = 4.1827 eV, chemical hardness = 3.0699 eV, chemical softness = 0.32574 eV\u207b\u00b9, electrophilicity index = 2.8494 eV.\n- Electronic total energy = \u2212248.3782 Hartree (\u22126758.7152 eV); 216 orbitals, 21 occupied.\n\n**Warnings:** The tool returned no warnings \u2014 no warnings reported.\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpu10x_nbl/live.json`\n- Note: these are DFT orbital eigenvalues at a fixed (unrelaxed) input geometry; the gap is a Koopmans-style orbital gap, not a TD-DFT excitation energy. No experimental/literature comparison is offered \u2014 ask if you'd like one and I'll verify a source first."
+}

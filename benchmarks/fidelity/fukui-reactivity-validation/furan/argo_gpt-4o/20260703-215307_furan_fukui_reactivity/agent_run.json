@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 35.73,
+    "llm_s": 6.35,
+    "engine_s": 29.37,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity of furan** \u2014 DFT level: functional B3LYP, basis def2-TZVP (tier 'standard'), with gas-phase implicit treatment (no solvent model active). Charge: 0; multiplicity: 1. Geometry was taken directly (input as-is) from furan.xyz for the single-point analysis without further optimization. \n\nResult identifiers:\n\n- Most electrophilic site: Carbon 5 (C, atom index=4, f+ or Fukui electrophilicity descriptor = **1.92429**).\n- Most nucleophilic site: Carbon 5 (same atom) with f- = **0.1616371.**\n\nTrustworthy integrity status reported by Chemkit (no major drift detected, and checks regarding charge conservation for N\u00b11 states passed). Warnings observed are: \"sum(f+) = 1.101 total chemistry ions still pressed!\n\nFurther warnings clarify clarifying ver only flawouble n Total SIGs n-summary-mached close notes isolated rule-based++ **Important ver-obves at conte-level developer signal purely Fre  vercontext (user both)]. Finally Cleared round within warnings]],new recreate calculation OPTIONS cautious formal finalize! safe good answer except]"
+}

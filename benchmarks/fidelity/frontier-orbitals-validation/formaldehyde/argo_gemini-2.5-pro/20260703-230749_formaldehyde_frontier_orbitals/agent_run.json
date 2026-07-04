@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 12.76,
+    "llm_s": 11.59,
+    "engine_s": 0.0,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": null,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": false,
+    "provenance": "computed"
+  },
+  "prose": "I am sorry, but the `chemkit` tool encountered an error and was unable to complete the frontier-orbitals calculation. The tool's execution failed because it could not find a required script.\n\nThe error message was: `engine run failed (rc=2): ... can't open file '/home/erobles/chem-skills/skills/orbitals/scripts/orbitals.py': [Errno 2] No such file or directory`\n\nTherefore, I cannot provide the frontier-orbital energies for formaldehyde at this time. This appears to be a tool or system configuration issue, not an error in the request."
+}

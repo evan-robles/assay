@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 60.52,
+    "llm_s": 21.71,
+    "engine_s": 31.84,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Acrolein Fukui Reactivity Indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: provided as `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`. SCF converged.\n\nThe Fukui reactivity indices and dual descriptor values for each atom are as follows (atom indices are 0-based):\n\n| Atom (0-idx) | Symbol | f+ (electrophilicity) | f- (nucleophilicity) | f0 (radical) | Dual Descriptor (\u0394f) |\n|--------------|--------|-----------------------|----------------------|--------------|----------------------|\n| 0            | O      | 0.40136419            | 0.39388616           | 0.39762517   | 0.0074780351         |\n| 1            | C      | 0.022255106           | 0.0059884353         | 0.01412177   | 0.01626667           |\n| 2            | C      | 0.43404673            | 0.091403097          | 0.26272491   | 0.34264363           |\n| 3            | C      | 0.64232102            | 0.087369815          | 0.36484542   | 0.5549512            |\n| 4            | H      | -0.1572595            | 0.085961423          | -0.03564904  | -0.24322092          |\n| 5            | H      | -0.2072029            | 0.1856796            | -0.010761648 | -0.39288251          |\n| 6            | H      | -0.062116996          | 0.084485809          | 0.011184406  | -0.14660281          |\n| 7            | H      | -0.073407645          | 0.065225658          | -0.004090993 | -0.1386333           |\n\nThe most electrophilic site is Carbon (index 3) with an f+ value of 0.64232102.\nThe most nucleophilic site is Oxygen (index 0) with an f- value of 0.39388616.\n\nThe total f+ and f- values were conserved (sum(f+) = 1.0000, sum(f-) = 1.0000)."
+}

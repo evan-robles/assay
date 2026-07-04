@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.2,
+    "llm_s": 18.59,
+    "engine_s": 4.61,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit RI as chemkit default), in **PySCF**. Environment: **gas phase** (solvent = null). Charge 0, multiplicity 1 (closed-shell RKS, as requested). Geometry: user-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`, 6 atoms: C, C, H, H, H, H), used as-is \u2014 this was a single point at that fixed geometry (not re-optimized). SCF converged in 6 cycles.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 7.4357 eV** (Koopmans-style orbital gap, not an excitation/TDDFT energy).\n\nSupporting frontier values (all in eV):\n- HOMO (index 7) = \u22127.6156 eV\n- LUMO (index 8) = \u22120.17987 eV\n- HOMO\u22121 = \u22129.8839, HOMO\u22122 = \u221211.488\n- LUMO+1 = +1.7201, LUMO+2 = +2.3802\n- Koopmans descriptors: vertical IP = 7.6156 eV, vertical EA = 0.17987 eV, electronegativity = 3.8977 eV, chemical hardness = 3.7179 eV, chemical softness = 0.26897 eV\u207b\u00b9, electrophilicity index = 2.0431 eV.\n- Total electronic energy = \u221278.623486 Hartree (= \u22122139.4541 eV); this is the bare nuclei + electrons electronic energy, whose zero is method-specific and not comparable across methods.\n\n**Convergence / integrity:** SCF converged (scf_converged = true, 6 cycles); the engine's integrity verdict is **trustworthy = true** (status \"ok\"; all checks passed: energy_finite, scf_converged, schema_header, schema_headline).\n\n**Warnings:** the result JSON contained no `warnings` array / no warnings were reported \u2014 clean run.\n\n**Reproducibility.** Exact command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpatvt6xcn/live.json`. Result written to `/home/erobles/chem-skills/.fidelity_scratch/tmpatvt6xcn/live.json`. No experimental/literature comparison is offered; ask if you want one and I'll verify a source first."
+}

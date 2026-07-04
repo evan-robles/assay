@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 179.93,
+    "llm_s": 6.15,
+    "engine_s": 173.78,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui-reactivity calculation on nitrobenzene was performed using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase, with a charge of 0 and multiplicity 1. The computation included partial charges, Fukui indices for nucleophilic and electrophilic sites, dual descriptors, and identification of the most electrophilic and nucleophilic atoms.\n\nHere is the main result: the computed value (fukui-plus) for the most electrophilic carbon atom (index 3, label 4) is approximately 0.49642, with the full detailed outputs and warnings included below.\n\n---\n\n**Method used:** DFT, tier `standard` (B3LYP/def2-TZVP), in PySCF, gas phase, charge 0, multiplicity 1. The calculation was requested with the `fukui-reactivity` skill.\n\n---\n\n**Warnings from the computation:**\n- \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"common header present\"\n\n---\n\nFinal Result:\n- Fukui index (most electrophilic site, atom 4): **0.49642**\n\nAtom count: 14\n\nProvenance: computed\n\n**Live output log path:** /home/erobles/chem-skills/.fidelity_scratch/tmp_cyoxf_1/live.json\n\n**Warnings:**\n- warning: \"schema_header\" present\n- warning: \"fukui_charge_conservation_f+\" severity: warning - sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- warning: \"fukui_charge_conservation_f-\" severity: warning - sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\n**Trustworthy:** true\n\n**Provenance:** computed"
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 51.91,
+    "llm_s": 19.36,
+    "engine_s": 32.55,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.304817651371971,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\nProperty: Frontier-orbital (HOMO/LUMO) energies and gap (eV)\nLevel of theory: DFT, functional B3LYP with def2-TZVP Gaussian basis, density-fitted (tier \u201cstandard\u201d \u2261 B3LYP/def2-TZVP)\nGeometry provenance: single-point on the user-supplied aniline geometry (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz); no re-optimization (DFT//user-xyz)\nSolvent / environment: gas phase (no implicit solvation)\nCharge & multiplicity: 0, 1 (closed-shell singlet)\nSoftware/backend: PySCF  (invoked via chemkit frontier-orbitals skill)\nConvergence & warnings: SCF converged in 9 cycles; no warnings reported by the engine.\nLive log: the run streamed to a file named frontier_orbitals_<timestamp>.out in the caller\u2019s working directory (path was printed to the terminal at launch and can be tailed for full SCF details). Result JSON: /home/erobles/chem-skills/.fidelity_scratch/tmptyzs_trp/live.json\n\nResults (DFT//user-xyz):\n\u2022 HOMO = \u20135.553772 eV\n\u2022 LUMO = \u20130.2489544 eV\n\u2192 HOMO\u2013LUMO gap = 5.304817651371971 eV (Koopmans-style orbital gap; not an excitation energy)\n\nThe headline value above is reported exactly as returned by the chemkit frontier-orbitals skill. No engine warnings were emitted, and the integrity checker flagged the result as trustworthy."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 141.23,
+    "llm_s": 33.47,
+    "engine_s": 107.76,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\nProperty: Atom-condensed Fukui functions (f+, f\u2212, f0) and dual descriptor; identification of most electrophilic (max f+) and most nucleophilic (max f\u2212) atomic sites for aniline.\nLevel of theory: DFT tier `standard` \u2192 B3LYP/def2-TZVP with RI (density fitting) in PySCF.\nGeometry provenance: single\u2013point Fukui analysis on the fixed experimental geometry supplied by the user (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz); no re-optimization was performed (notation: fukui//given geometry).\nSolvent / environment: gas phase (no implicit solvation).\nCharge and multiplicity: neutral molecule, charge 0, multiplicity 1; N\u00b11 states were modeled as doublets (cation: +1, multiplicity 2; anion: \u22121, multiplicity 2).\nSoftware: chemkit fukui-reactivity skill (PySCF backend, Mulliken population analysis for charges).\nConvergence & caveats: SCF cycles for N, N+1, and N\u22121 states all converged (integrity.status = \"ok\", trustworthy = true). Warnings returned by the engine are reproduced verbatim below.\n\nKey numerical result (headline)\nMost electrophilic site (largest f+): atom 3 (C) with f+ = 2.2975867 (dimensionless).\nMost nucleophilic site (largest f\u2212): atom 1 (N) with f\u2212 = 0.20452359 (dimensionless).\n\nEngine warnings (verbatim)\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nReproducibility\nCommand executed (from result.cli_invocation):\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --charge 0 --multiplicity 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpoaai0d1z/live.json\n\nLive engine log (.out) was written to the working directory as the calculation ran (path provided at launch); the summarized JSON result is at /home/erobles/chem-skills/.fidelity_scratch/tmpoaai0d1z/live.json. All files are available for inspection.\n\nThe calculation\u2019s integrity check reports status \"ok\" with trustworthy = true, indicating no detected issues beyond the informational warnings listed above."
+}

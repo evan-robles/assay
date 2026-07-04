@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.19,
+    "llm_s": 10.89,
+    "engine_s": 4.3,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen frontier-orbital energies** \u2014 DFT, **B3LYP/def2-TZVP** (PySCF), gas phase, charge 0, multiplicity 3 (triplet open-shell, UKS). Geometry: user-supplied O\u2082 structure (`oxygen.xyz`), used as-is (single-point calculation). SCF converged in 7 cycles.\n\n**Frontier-orbital energies:**\n- **HOMO** (index 15): \u22128.8739616 eV\n- **LUMO** (index 16): \u22123.5859031 eV\n- **HOMO\u2013LUMO gap**: **5.2880586 eV**\n\n**Koopmans-based descriptors** (vertical approximation):\n- Vertical ionization potential (IP): 8.8739616 eV\n- Vertical electron affinity (EA): 3.5859031 eV\n- Electronegativity: 6.2299323 eV\n- Chemical hardness: 2.6440293 eV\n- Electrophilicity index: 7.3395664 eV\n\n**Orbital context:** The system has 16 occupied orbitals (\u03b1 and \u03b2 combined across the triplet ground state) and 124 total basis functions. HOMO-1 and HOMO are degenerate at \u22128.8739616 eV (characteristic of O\u2082's \u03c0g orbital pair), and the LUMO and LUMO+1 are degenerate at \u22123.5859031 eV (\u03c0u* pair).\n\n**Software:** PySCF (DFT backend).  \n**Method:** `--method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 3`  \n**Input file:** `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`  \n**Integrity:** trustworthy = true; all checks passed.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}

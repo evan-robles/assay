@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 190.82,
+    "llm_s": 16.51,
+    "engine_s": 174.31,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity descriptors for nitrobenzene were computed using DFT with B3LYP/def2-TZVP (tier standard, density-fit via PySCF) in the gas phase. The neutral parent structure (charge 0, multiplicity 1) and both ionized states (cation: charge +1, multiplicity 2; anion: charge \u22121, multiplicity 2) were calculated to obtain f\u207a (nucleophilic Fukui index), f\u207b (electrophilic Fukui index), f\u2070 (radical index), and dual descriptor for each of the 14 atoms. All three SCF calculations converged successfully, with perfect Fukui sum conservation (1.0000 each). The most electrophilic site is carbon atom 4 (ortho to NO\u2082, dual descriptor 0.5107); the most nucleophilic site is carbon atom 5 (meta to NO\u2082, f\u207b = 0.1073). The nitro group nitrogen shows large negative dual descriptor (\u22120.4739), reflecting its electron-withdrawing character. Results are fully described in the Method Provenance Block and Results sections above. Output files written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_claude-haiku-4.5/20260703-194718_nitrobenzene_fukui_reactivity/`."
+}

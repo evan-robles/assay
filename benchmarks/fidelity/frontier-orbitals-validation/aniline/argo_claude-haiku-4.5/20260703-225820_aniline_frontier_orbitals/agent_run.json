@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 44.17,
+    "llm_s": 13.63,
+    "engine_s": 30.54,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline frontier-orbital HOMO\u2013LUMO gap** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: fixed input from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz` (not optimized). SCF converged in 9 cycles. **Gap = 5.3048 eV** (Koopmans-theory orbital-energy difference: HOMO = \u22125.5538 eV, LUMO = \u22120.2490 eV). No warnings reported. Total electronic energy = \u2212287.71578 Hartree. The gap is a computed single-electron orbital difference, not a vertical excitation energy. Command: `frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz`. Integrity: trustworthy.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}
