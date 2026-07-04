@@ -93,6 +93,25 @@ def test_invented_flag_suggests_real_flag():
     assert cli._suggest_flag("--phase", ["--method", "--charge"]) is None
 
 
+def test_geometry_input_invented_flags_point_to_positional():
+    # models invent many geometry-input flags; all -> "pass as positional"
+    ff = ["--method", "--charge", "--mult", "--solvent", "--no-plot"]
+    for bad in ("--molecule", "--mol", "--geo", "--geometry", "--xyz",
+                "--input", "--coord-file", "--structure", "--system"):
+        assert cli._suggest_flag(bad, ff).startswith("(pass"), bad
+    # regression: --molecule must NOT mis-suggest --mult by edit distance
+    assert cli._suggest_flag("--molecule", ff) != "--mult"
+
+
+def test_plot_flag_hint_and_nonexistent_knobs():
+    ff = ["--method", "--no-plot", "--charge"]
+    # plotting is default-on: guide to omit --plot / use --no-plot
+    assert "default" in cli._suggest_flag("--plot", ff)
+    # invented tuning knobs with no real equivalent -> no misleading match
+    for bad in ("--convergence", "--atoms", "--gradient", "--maxiter"):
+        assert cli._suggest_flag(bad, ff) is None, bad
+
+
 def test_invented_flag_on_fukui_names_solvent(capsys):
     with pytest.raises(SystemExit):
         cli.main(["fukui", "--method", "xtb", "--phase", "gas", "mol.xyz"])

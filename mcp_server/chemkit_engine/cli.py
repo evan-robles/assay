@@ -556,25 +556,36 @@ def _suggest_flag(bad: str, valid_flags: List[str]) -> Optional[str]:
     `--geometry`/`--xyz` for the positional; a raw edit-distance match would
     mis-suggest (e.g. --phase -> --charge). The semantic map encodes intent."""
     key = str(bad).lower()
-    semantic = {
-        "--phase": "--solvent", "--environment": "--solvent",
-        "--gas": "--solvent", "--solvation": "--solvent",
-        "--geometry": None, "--geo": None, "--geofile": None,
-        "--xyz": None, "--input": None, "--coord-file": None,
-        "--structure": None, "--file": None, "--convergence": None,
-        "--atoms": None,
+    # solvent-style invented flags -> --solvent
+    solvent_kin = {"--phase", "--environment", "--gas", "--solvation", "--medium"}
+    # geometry-INPUT invented flags -> the positional argument (observed: models
+    # invent --geometry/--molecule/--geo/--xyz/--input etc. and even file:// URIs)
+    geom_kin = {
+        "--geometry", "--geo", "--geofile", "--geomfile", "--geometry-file",
+        "--xyz", "--xyzfile", "--xyz-file", "--input", "--inputfile",
+        "--input-file", "--infile", "--coord-file", "--coordfile",
+        "--coordinates", "--coord", "--coords", "--structure", "--struct",
+        "--file", "--molecule", "--mol", "--molfile", "--system",
     }
-    if key in semantic:
-        target = semantic[key]
-        if target is None:
-            return "(pass the geometry as the positional argument, not a flag)"
-        if target in valid_flags:
-            return target
-        # target flag not valid for THIS subcommand -> no confident suggestion
+    # non-existent tuning knobs models invent -> no real equivalent
+    nonexistent = {"--convergence", "--atoms", "--gradient", "--maxiter"}
+    if key in solvent_kin:
+        return "--solvent" if "--solvent" in valid_flags else None
+    if key in geom_kin:
+        return "(pass the geometry as the positional argument, not a flag)"
+    if key == "--plot":
+        # plotting is ON by default (there is only a --no-plot to DISABLE it).
+        if "--no-plot" in valid_flags:
+            return "(plotting is on by default — omit --plot; use --no-plot to disable)"
+        return None
+    if key in nonexistent:
         return None
     import difflib
     m = difflib.get_close_matches(str(bad), valid_flags, n=1, cutoff=0.6)
-    return m[0] if m else None
+    # guard: don't offer a wildly-different short flag (e.g. --molecule -> --mult)
+    if m and abs(len(m[0]) - len(key)) <= 4:
+        return m[0]
+    return None
 
 
 class _SuggestingSubParser(argparse.ArgumentParser):
