@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 47.19,
+    "llm_s": 36.04,
+    "engine_s": 10.49,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui-reactivity result** \u2014 computed with **GFN2-xTB** (`program`: `xtb`) using the chemkit `fukui-reactivity` task. Geometry: user-supplied fixed XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` with 21 atoms. Environment: **gas phase** (`solvent`: null). Parent state: charge 0, multiplicity 1; finite-difference ion states used by the tool: cation charge +1 multiplicity 2, anion charge \u22121 multiplicity 2. Partial charges: **Mulliken (GFN2-xTB)**.\n\nHeadline result from the tool: the site with the largest **f+** is **Fe, atom 11**, with **f+ = 0.22885456**. The same atom is also the largest **f\u2212** site, with **f\u2212 = 0.25938191**. Its condensed Fukui average is **f0 = 0.24411824**, and its dual descriptor is **\u22120.030527354**.\n\nPer-atom condensed Fukui descriptors returned by chemkit:\n\n| atom | element | f+ | f\u2212 | f0 | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | C | 0.013638348 | 0.012179196 | 0.012908772 | 0.0014591519 |\n| 2 | C | 0.013638348 | 0.012179196 | 0.012908772 | 0.0014591519 |\n| 3 | C | 0.013638174 | 0.012179338 | 0.012908756 | 0.0014588363 |\n| 4 | C | 0.013638597 | 0.012179313 | 0.012908955 | 0.0014592841 |\n| 5 | C | 0.013638174 | 0.012179338 | 0.012908756 | 0.0014588363 |\n| 6 | H | 0.063476418 | 0.061882787 | 0.062679603 | 0.0015936308 |\n| 7 | H | 0.063476418 | 0.061882787 | 0.062679603 | 0.0015936308 |\n| 8 | H | 0.063476206 | 0.061882375 | 0.06267929 | 0.001593831 |\n| 9 | H | 0.063475831 | 0.061882339 | 0.062679085 | 0.0015934927 |\n| 10 | H | 0.063476206 | 0.061882375 | 0.06267929 | 0.001593831 |\n| 11 | Fe | 0.22885456 | 0.25938191 | 0.24411824 | -0.030527354 |\n| 12 | C | 0.013638348 | 0.012179196 | 0.012908772 | 0.0014591519 |\n| 13 | C | 0.013638348 | 0.012179196 | 0.012908772 | 0.0014591519 |\n| 14 | C | 0.013638174 | 0.012179338 | 0.012908756 | 0.0014588363 |\n| 15 | C | 0.013638597 | 0.012179313 | 0.012908955 | 0.0014592841 |\n| 16 | C | 0.013638174 | 0.012179338 | 0.012908756 | 0.0014588363 |\n| 17 | H | 0.063476418 | 0.061882787 | 0.062679603 | 0.0015936308 |\n| 18 | H | 0.063476418 | 0.061882787 | 0.062679603 | 0.0015936308 |\n| 19 | H | 0.063476206 | 0.061882375 | 0.06267929 | 0.001593831 |\n| 20 | H | 0.063475831 | 0.061882339 | 0.062679085 | 0.0015934927 |\n| 21 | H | 0.063476206 | 0.061882375 | 0.06267929 | 0.001593831 |\n\nConservation/integrity checks returned by the engine were OK: `sum(f+) = 1.0000`, `sum(f-) = 1.0000`, and `common header present`. Engine integrity verdict: **trustworthy = true**.\n\nWarnings: **no warnings were reported in a `warnings` array by the tool result**.\n\nReproducibility: chemkit returned this command line: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --mult 1 --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp7834_gbv/live.json`. Plot path returned: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_gpt-5.5/20260704-052806_ferrocene_fukui_reactivity/agent_call_01_plot.png`. A live `.out` log path was not included in the returned tool JSON, so I will not invent one."
+}

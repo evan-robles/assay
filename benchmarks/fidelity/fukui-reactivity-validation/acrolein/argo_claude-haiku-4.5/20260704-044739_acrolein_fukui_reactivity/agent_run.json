@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 60.24,
+    "llm_s": 24.85,
+    "engine_s": 34.76,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Acrolein**\n\n**Method Provenance Block:**\n- **Property:** Fukui condensed dual-descriptor and electrophilicity/nucleophilicity indices\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`, PySCF)\n- **Geometry:** Input structure from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz` (single-point calculation; geometry not optimized)\n- **Solvent:** Gas phase\n- **Charge and multiplicity:** Charge 0, multiplicity 1 (neutral singlet); N+1 cation (charge +1, multiplicity 2); N\u22121 anion (charge \u22121, multiplicity 2)\n- **Partial charges:** Mulliken (PySCF)\n- **Software:** PySCF DFT backend\n- **Convergence:** SCF converged; charge conservation checks passed (sum f\u207a = 1.000, sum f\u207b = 1.000)\n- **Live calculation log:** `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_claude-haiku-4.5/20260704-044739_acrolein_fukui_reactivity/` (fukui subcommand output and result JSON)\n\n**Results Summary**\n\nAcrolein (C\u2083H\u2084O, 8 atoms) shows pronounced reactivity asymmetry computed at the B3LYP/def2-TZVP level in the gas phase:\n\n**Most Electrophilic Site:**\nAtom 4 (C, terminal vinyl carbon): f\u207a = 0.6423\n\n**Most Nucleophilic Site:**\nAtom 1 (O, carbonyl oxygen): f\u207b = 0.3939\n\n**Dual Descriptor (f\u207a \u2212 f\u207b) Summary:**\nThe terminal vinyl carbon (C4) exhibits the strongest electrophilic character with a dual descriptor of +0.5549, indicating this site is most susceptible to nucleophilic attack. The carbonyl oxygen (O1) shows the strongest nucleophilic character (f\u207b = 0.3939) with a small dual descriptor of +0.00748, reflecting its role as a hydrogen-bond acceptor and electron lone-pair donor. The central sp\u00b2 carbon (C3) also shows electrophilic character (dual descriptor +0.3426), consistent with conjugation with the carbonyl. These predictions align with the known reactivity of acrolein, where the terminal alkene is a primary site for nucleophilic addition and the carbonyl oxygen acts as a nucleophile in many transformations.\n\n**Convergence and Integrity:**\nAll SCF iterations converged successfully. Mulliken partial-charge conservation checks passed with sum(f\u207a) = 1.000 and sum(f\u207b) = 1.000, confirming the reliability of the calculated Fukui indices. No warnings were reported.</prose>\n<parameter name=\"value\">0.64232"
+}

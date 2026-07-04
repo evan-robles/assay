@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 123.69,
+    "llm_s": 19.38,
+    "engine_s": 103.57,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity indices for aniline were computed using Density Functional Theory (DFT) with the B3LYP functional and def2-TZVP basis set (tier `standard`, density-fit by default in PySCF). The calculation was performed in the gas phase with a charge of 0 and a multiplicity of 1. The geometry was sourced from the provided input file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`, and the calculation was a single point on this fixed geometry.\n\nThe most electrophilic site is the Carbon atom (C) at 1-based index 3, with an f+ value of 2.29759. The most nucleophilic site is the Nitrogen atom (N) at 1-based index 1, with an f- value of 0.20452.\n\nThe calculated fukui indices for each atom are as follows (atom symbol, 0-based index, f+, f-, f0, dual descriptor):\n- N (0): f+ = 1.66966, f- = 0.20452, f0 = 0.93709, dual descriptor = 1.46514\n- C (1): f+ = -1.90092, f- = -0.00373, f0 = -0.95232, dual descriptor = -1.89719\n- C (2): f+ = 2.29759, f- = 0.06657, f0 = 1.18208, dual descriptor = 2.23102\n- C (3): f+ = 2.29656, f- = 0.06659, f0 = 1.18158, dual descriptor = 2.22997\n- C (4): f+ = -0.28837, f- = 0.00835, f0 = -0.14001, dual descriptor = -0.29672\n- C (5): f+ = -0.28785, f- = 0.00838, f0 = -0.13973, dual descriptor = -0.29623\n- C (6): f+ = 1.40317, f- = 0.10973, f0 = 0.75645, dual descriptor = 1.29344\n- H (7): f+ = -0.35139, f- = 0.08200, f0 = -0.13470, dual descriptor = -0.43338\n- H (8): f+ = -0.35134, f- = 0.08201, f0 = -0.13466, dual descriptor = -0.43336\n- H (9): f+ = -0.82107, f- = 0.07635, f0 = -0.37236, dual descriptor = -0.89743\n- H (10): f+ = -0.82131, f- = 0.07635, f0 = -0.37248, dual descriptor = -0.89765\n- H (11): f+ = -0.34269, f- = 0.08737, f0 = -0.12766, dual descriptor = -0.43006\n- H (12): f+ = -0.75088, f- = 0.06776, f0 = -0.34156, dual descriptor = -0.81864\n- H (13): f+ = -0.75116, f- = 0.06775, f0 = -0.34171, dual descriptor = -0.81892\n\nThe calculation converged successfully."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 224.67,
+    "llm_s": 47.3,
+    "engine_s": 176.19,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Nitrobenzene Fukui Reactivity** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact RKS integrals) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: input from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`, no geometry optimization (single-point fukui-reactivity). SCF converged. Mulliken-based condensed Fukui functions per atom: f\u207a = [0.47317276, 0.47344363, -0.45670088, 0.4964178, 0.11562654, 0.11588205, 0.17412424, 0.1742294, 0.28913576, -0.2316897, -0.23181693, -0.13372477, -0.13379393, -0.12430597]; f\u207b = [0.097015524, 0.096773921, 0.017243458, -0.014292037, 0.1072882, 0.10723661, 0.094922441, 0.094892499, 0.0083116096, 0.075212029, 0.075202557, 0.083883283, 0.083881905, 0.072428004]; dual descriptor = [0.37615724, 0.37666971, -0.47394434, 0.51070984, 0.008338342, 0.0086454385, 0.079201795, 0.079336899, 0.28082415, -0.30690172, -0.30701949, -0.21760805, -0.21767584, -0.19673397]. Most electrophilic site: carbon atom 4 (f\u207a = 0.4964178); most nucleophilic site: carbon atom 5 (f\u207b = 0.1072882). Live log path: `fukui_<timestamp>.out` (written to cwd during calculation). JSON output: `nitrobenzene_fukui_dft.json`. Warnings: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); common header present. integrity.trustworthy = true."
+}

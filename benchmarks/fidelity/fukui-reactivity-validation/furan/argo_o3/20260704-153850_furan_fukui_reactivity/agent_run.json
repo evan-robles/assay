@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 58.24,
+    "llm_s": 27.49,
+    "engine_s": 29.51,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property: atom-condensed Fukui indices (Mulliken charges) for furan; headline value reported is the largest electrophilic (f\u207a) index.  \n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (tier \u2018standard\u2019), exact four-center integrals (no density fitting) in PySCF.  \n\u2022 Geometry provenance: user-supplied /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz (9 atoms), single-point N, N \u00b1 1 charge-state calculations; no further optimisation (DFT//input geometry).  \n\u2022 Solvent / environment: gas phase (no implicit solvation).  \n\u2022 Charge / multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation (+1, doublet), anion (\u20131, doublet).  \n\u2022 Software: chemkit fukui-reactivity skill (engine subcommand `fukui`; PySCF backend).  \n\u2022 Convergence & caveats: all three SCF calculations converged; integrity status = ok, trustworthy = true.  Warnings reproduced verbatim below.\n\nResult\nMost electrophilic site: C5 (atom index 4) with f\u207a = 1.9242931 (dimensionless).  \nMost nucleophilic site: C5 (atom index 4) with f\u207b = 0.1616371.\n\nVerbatim warnings from the engine\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present"
+}

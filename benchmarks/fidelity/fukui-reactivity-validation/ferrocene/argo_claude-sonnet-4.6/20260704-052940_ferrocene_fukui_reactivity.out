@@ -1,0 +1,21 @@
+[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:claude-sonnet-4.6 via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls skill_help('fukui-reactivity') (discovery)
+[live] agent calls chemkit: fukui-reactivity ['/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz', '--method', 'xtb', '--charge', '0', '--mult', '1', '--out', 'ferrocene_fukui_xtb.json', '--stdout', 'path']
+[live] agent submitted final_report. (total=46.2s llm=35.6s engine=9.9s turns=4 tool_calls=1)
+
+[Layer B - invocation fidelity]
+  [PASS] method  {'intended': 'xtb', 'got': 'GFN2-xTB'}
+  [PASS] charge  {'intended': 0, 'got': 0}
+  [PASS] multiplicity  {'intended': 1, 'got': 1}
+  [PASS] solvent  {'intended': None, 'got': None}
+
+[Layer C - reporting fidelity]
+  [PASS] value match (skipped — report_value_field is null)  {'field': None}
+  [PASS] warnings preserved  {'truth_count': 0, 'preserved_count': 0, 'in_array': 0, 'in_prose_only': 0, 'missing_count': 0, 'sim_threshold': 0.97}
+  [PASS] integrity verdict surfaced  {'truth': True, 'reported': True}
+  [PASS] provenance not mislabeled experimental  {'got': 'computed'}
+
+==> OVERALL: PASS
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-sonnet-4.6/20260704-052940_ferrocene_fukui_reactivity

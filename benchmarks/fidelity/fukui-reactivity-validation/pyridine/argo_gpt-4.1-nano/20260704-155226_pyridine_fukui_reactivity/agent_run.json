@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 69.88,
+    "llm_s": 8.7,
+    "engine_s": 58.07,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-TZVP",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "Sum of Fukui function for electrophilic attack (f+) = 1.0000 (should be approximately 1.0; large drift suggests an N\u00b9 state did not converge)",
+      "Sum of Fukui function for nucleophilic attack (f\u2212) = 1.0000 (should be approximately 1.0; large drift suggests an N\u00b9 state did not converge)",
+      "Schema header present."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity calculation on pyridine using DFT at the B3LYP functional with the def2-TZVP basis set in the gas phase was successful. The method used was B3LYP/def2-TZVP at the 'standard' tier level. The calculation indicates the most electrophilic site is the nitrogen atom, while the most nucleophilic site is the targeted carbon atom; the plot of the reactivity descriptors is available at the provided path. Warnings: Sum of Fukui function for electrophilic attack (f+) = 1.0000 (should be approximately 1.0; large drift suggests an N\u00b9 state did not converge). Sum of Fukui function for nucleophilic attack (f\u2212) = 1.0000 (should be approximately 1.0; large drift suggests an N\u00b9 state did not converge). Schema header present."
+}

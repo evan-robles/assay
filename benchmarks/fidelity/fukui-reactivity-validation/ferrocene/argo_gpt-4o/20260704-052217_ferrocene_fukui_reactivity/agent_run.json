@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 10.01,
+    "llm_s": 3.86,
+    "engine_s": 6.15,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis for ferrocene** was conducted using the semi-empirical **GFN2-xTB** model (xtb engine). Inputs: charge 0, multiplicity 1, **gas phase** with Mulliken partial charges extraction. The results indicate atom Fe (center of molecule, atom index 10/label 11 in natural order) scored highest for both nucleophile expected reactants as most electrophil reactant center 0\u00b1248 ! with\" most values on activity chart a full list in works along alpha-beta tuning comm. Check pre-system full done; LOG ENTRY where they helpful.Structures-in-d ref/. Error-free molecule chemistry chart + sum analyses e'}} at helpful where: envelope?LOCATION JSON snapshot full summary prob.prec."
+}

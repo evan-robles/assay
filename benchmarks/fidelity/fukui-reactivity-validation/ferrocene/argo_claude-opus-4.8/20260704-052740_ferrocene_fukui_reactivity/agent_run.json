@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.6,
+    "llm_s": 24.08,
+    "engine_s": 7.86,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of ferrocene \u2014 condensed (atom-resolved) Fukui descriptors from finite-difference of Mulliken populations.**\n\n**Method provenance block**\n- **Property:** Condensed Fukui functions f\u207a (electrophilic attack / nucleophilicity toward added electron), f\u207b (nucleophilic attack / electron-donating), f\u2070, and the dual descriptor, computed by the finite-difference (\u0394N = \u00b11) approach from atomic partial charges of the neutral, cation (N\u22121), and anion (N+1) states.\n- **Level of theory:** **GFN2-xTB** (semi-empirical tight-binding; program = xtb). No basis set and no functional apply to this Hamiltonian. GFN2-xTB is appropriate for geometries, conformers, and relative/qualitative trends rather than chemical-accuracy absolute energies.\n- **Partial-charge scheme:** Mulliken (GFN2-xTB).\n- **Geometry provenance:** User-supplied file `ferrocene.xyz` (21 atoms: 2\u00d7C\u2085H\u2085 rings + Fe), used **as-is** \u2014 this Fukui run does not itself re-optimize the geometry.\n- **Solvent / environment:** **Gas phase** (no implicit solvent; `solvent: null`).\n- **Charge / multiplicity:** parent **charge 0, multiplicity 1** (as requested). Auxiliary states derived automatically: cation charge +1, multiplicity 2; anion charge \u22121, multiplicity 2.\n- **Software:** xtb backend via chemkit (`fukui` subcommand).\n- **Convergence / integrity:** integrity status **ok**, **trustworthy = true**. Charge-conservation checks pass: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Key results**\n- **Most nucleophilic (largest f\u207b):** the **Fe** atom (1-based index 11), **f\u207b = 0.25938** \u2014 this is the headline value reported.\n- **Most electrophilic (largest f\u207a):** also the **Fe** atom (1-based index 11), **f\u207a = 0.22885**.\n- The iron center dominates both f\u207a and f\u207b; it is the only atom with a negative dual descriptor (\u0394f = f\u207a \u2212 f\u207b \u2248 \u22120.03053), while all ring C and H atoms carry small positive dual-descriptor values (~0.0015). The five carbons per ring are equivalent (f\u207b \u2248 0.01218 each) and the five hydrogens per ring are equivalent (f\u207b \u2248 0.06188 each).\n\n**Warnings (reproduced verbatim from the result JSON's integrity checks):**\n- fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- schema_header: common header present\n\nThere is no separate `warnings` array in the result; the above are the integrity-check details (all passed, severity \"warning\"). No engine warnings beyond these were reported.\n\n**Reproducibility**\n- Command (as recorded): `cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --stdout json --out \u2026/live.json`\n- Result JSON written to `/home/erobles/ferrocene_fukui_xtb.json`; per-atom bar chart at `\u2026/agent_call_01_plot.png`.\n\nNo experimental or literature comparison is offered (none was requested); this is a computed result."
+}

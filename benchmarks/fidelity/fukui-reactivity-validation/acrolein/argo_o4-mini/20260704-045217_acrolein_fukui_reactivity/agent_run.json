@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 81.09,
+    "llm_s": 45.33,
+    "engine_s": 35.1,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Acrolein Fukui Reactivity Descriptors** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, plain RKS, no density fitting) in PySCF via chemkit; gas phase; charge 0; multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz` (**single-point** at fixed geometry). SCF converged; no warnings reported. Condensed Fukui functions (Mulliken, PySCF) yielded:\n\n\u2022 fukui_plus (electrophilic) per atom: [0.40136419, 0.022255106, 0.43404673, 0.64232102, -0.1572595, -0.2072029, -0.062116996, -0.073407645]\n\u2022 fukui_minus (nucleophilic) per atom: [0.39388616, 0.0059884353, 0.091403097, 0.087369815, 0.085961423, 0.1856796, 0.084485809, 0.065225658]\n\u2022 dual_descriptor: [0.0074780351, 0.01626667, 0.34264363, 0.5549512, -0.24322092, -0.39288251, -0.14660281, -0.1386333]\n\nMost electrophilic site: atom 4 (C), f_plus = 0.64232102. Most nucleophilic site: atom 1 (O), f_minus = 0.39388616. Files: JSON output at `/home/erobles/chem-skills/.fidelity_scratch/tmpo56n8y42/live.json`. CLI command: \n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --method dft --tier standard --charge 0 --mult 1 --stdout json --out /home/erobles/chem-skills/.fidelity_scratch/tmpo56n8y42/live.json\n```"
+}

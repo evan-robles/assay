@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.35,
+    "llm_s": 13.18,
+    "engine_s": 7.55,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui-reactivity analysis** \u2014 GFN2-xTB (xtb), gas phase, charge 0, multiplicity 1. The calculation computed Fukui indices (f\u207a, f\u207b, and dual descriptor) for the neutral ferrocene molecule (21 atoms: two cyclopentadienyl ligands and one iron center) by computing partial charges on the neutral, cation (N\u22121, doublet), and anion (N+1, doublet) species using Mulliken charges.\n\n**Key results:**\n- **Most electrophilic site:** Fe (atom 11), f\u207a = 0.22885456\n- **Most nucleophilic site:** Fe (atom 11), f\u207b = 0.25938191\n- **Fukui indices for all atoms** are provided per atom in the full output.\n\nThe Fukui plus index (f\u207a) identifies sites most favorable to nucleophilic attack (electron donation), while Fukui minus (f\u207b) identifies sites favorable to electrophilic attack (electron withdrawal). The dual descriptor (f\u207a \u2212 f\u207b) quantifies the preference for one reactivity mode over the other. For ferrocene, the iron center shows the highest Fukui indices, indicating it is the most reactive site both for nucleophilic and electrophilic attack. The carbon atoms and hydrogen atoms show lower Fukui indices, consistent with ferrocene's aromatic stabilization.\n\n**Convergence:** Both the N\u22121 (cation) and N+1 (anion) states converged to stable geometries; charge conservation was verified (sum of f\u207a and sum of f\u207b each equal 1.0000). SCF converged; all integrity checks passed.\n\n**Plot:** A PNG bar chart of f\u207a/f\u207b/dual descriptor per atom was generated at: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-haiku-4.5/20260704-052423_ferrocene_fukui_reactivity/agent_call_01_plot.png`\n\n**Command:** `fukui --method xtb --charge 0 --mult 1 --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`"
+}

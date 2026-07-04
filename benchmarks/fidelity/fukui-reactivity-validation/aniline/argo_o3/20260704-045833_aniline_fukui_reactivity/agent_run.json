@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 147.46,
+    "llm_s": 31.07,
+    "engine_s": 109.42,
+    "turns": 5,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2010provenance block (single\u2010point Fukui analysis)\nProperty: Atom\u2010condensed Fukui functions f\u207a (electrophilic attack), f\u207b (nucleophilic attack), f\u2070 (radical attack) and the dual descriptor on neutral aniline; identification of the most electrophilic and most nucleophilic sites.\nLevel of theory: DFT, B3LYP/def2-TZVP (tier \u201cstandard\u201d), exact four-center integrals (density fitting OFF) in PySCF.\nGeometry provenance: user-supplied structure /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz; no re-optimization (single-point analysis on that fixed geometry: Fukui//input xyz).\nSolvent / environment: gas phase (no implicit solvent).\nCharge & multiplicity: 0, 1 (closed-shell singlet parent); cation and anion states automatically treated as doublets.\nSoftware: chemkit fukui-reactivity skill (engine subcommand `fukui`, PySCF backend).\nConvergence & caveats: SCF cycles converged for N, N\u20131, and N+1 states; integrity.status = ok, trustworthy = true.  Warnings returned by the engine are reproduced verbatim below.\nLive .out log (complete SCF traces, etc.) was written during the run and is available at:\n  /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_o3/20260704-045833_aniline_fukui_reactivity/fukui_20260704-045849.out\n\nHeadline results\n\u2022 Most electrophilic site: C3 (atom index 2), f\u207a = 2.2975867\n\u2022 Most nucleophilic site: N1 (atom index 0), f\u207b = 0.20452359\n\nSelected per-atom Fukui indices (Mulliken partitioning, units: electrons)\nAtom  f\u207a        f\u207b        Dual (f\u207a \u2013 f\u207b)\nN 1   1.66966  0.20452  1.46514\nC 3   2.29759  0.06657  2.23102  \u27f5 highest electrophilic susceptibility\nC 1   \u20131.90092 \u20130.00373 \u20131.89719\n\u2026 (full lists in JSON file `aniline_fukui_b3lyp.json`)\n\nEngine warnings (verbatim)\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nAll warnings surfaced; integrity.trustworthy = true.\n\nThe above values are computed quantities (provenance: computed). They derive from a single\u2010point B3LYP/def2-TZVP calculation on the provided aniline geometry using chemkit\u2019s fukui-reactivity workflow."
+}

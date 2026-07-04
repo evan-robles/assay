@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 66.06,
+    "llm_s": 4.91,
+    "engine_s": 58.03,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-TZVP",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "name of the .out log path: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_gpt-4.1-nano/20260704-154800_pyridine_fukui_reactivity/fukui_20260704-155011.out",
+      "chemkit: error: unrecognized arguments: --geometry"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": ""
+}

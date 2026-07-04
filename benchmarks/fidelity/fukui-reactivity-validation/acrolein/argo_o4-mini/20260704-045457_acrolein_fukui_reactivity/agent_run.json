@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 127.96,
+    "llm_s": 58.25,
+    "engine_s": 69.06,
+    "turns": 6,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices (acrolein) \u2014 DFT (tier standard: B3LYP/def2-TZVP), no density fitting (plain RKS), PySCF via chemkit, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz` (single\u2010point on this xyz, not re-optimized at DFT). Mulliken partial charges used for finite\u2010difference f\u207a/f\u207b. SCF converged; N\u00b11 states also converged.\n\nMost electrophilic site: C4 (atom label 4), f\u207a = 0.64232102\nMost nucleophilic site: O1 (atom label 1), f\u207b = 0.39388616\n\nWarnings:\n\u2022 sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f\u207b) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nCommand:\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpeolpbfir/live.json\n\nOutput JSON: /home/erobles/chem-skills/.fidelity_scratch/tmpeolpbfir/live.json\nLive .out log: fukui_20260704-045457.out (streaming SCF/opt steps; use tail -f to monitor). All integrity checks passed; trustworthy = true."
+}

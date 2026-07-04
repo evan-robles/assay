@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 73.58,
+    "llm_s": 52.23,
+    "engine_s": 20.25,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\nProperty: Fukui functions f\u207a (electrophilic), f\u207b (nucleophilic), f\u2070 (radical) and dual descriptor for formaldehyde (CH\u2082O) in the gas phase.\nLevel of theory: DFT, B3LYP/def2-TZVP (tier `standard`), no density fitting, run in PySCF via chemkit.\nGeometry provenance: single-point charges on the user-supplied formaldehyde.xyz geometry; the structure was NOT re-optimized at DFT (DFT//fixed geometry protocol).\nSolvent / environment: gas phase (no implicit solvation model).\nCharge and multiplicity: neutral singlet parent (charge 0, multiplicity 1).   Cation state: charge +1, doublet; Anion state: charge \u22121, doublet.\nSoftware + version: chemkit fukui-reactivity skill (backend: PySCF 2.x; run through chemkit-engine CLI).\nConvergence + caveats: All three SCF calculations (N, N+1, N\u20131) converged; integrity.status = \"ok\", trustworthy = true.  Engine checks note exact charge conservation for f\u207a and f\u207b (\u03a3f \u2248 1.0000) and presence of the common header (see warnings below).  No other warnings reported.\n\nKey numerical results (Mulliken-charge finite-difference Fukui indices, per atom):\n  Atom 1  O:   f\u207a =  0.46813824   f\u207b = 0.46742464   f\u2070 = 0.46778144   \u0394f =  0.00071359555\n  Atom 2  C:   f\u207a =  0.70839130   f\u207b = 0.11244422   f\u2070 = 0.41041776   \u0394f =  0.59594709\n  Atom 3  H:   f\u207a = \u22120.088269392  f\u207b = 0.21007563   f\u2070 = 0.060903121  \u0394f = \u22120.29834503\n  Atom 4  H:   f\u207a = \u22120.088260145  f\u207b = 0.21005551   f\u2070 = 0.060897683  \u0394f = \u22120.29831566\n\nMost electrophilic site (highest f\u207a):  Atom 2 (carbon) with f\u207a = 0.70839130.\nMost nucleophilic site (highest f\u207b):  Atom 1 (oxygen) with f\u207b = 0.46742464.\n\nReproducibility\nCLI command executed (abbreviated):\n  chemkit fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults /\u2026/formaldehyde.xyz --out \u2026/live.json\nLive .out log: a timestamped file named `fukui_<timestamp>.out` was streamed to the working directory while the job ran (it can be viewed with `tail -f`).\nResult files: JSON at /home/erobles/chem-skills/.fidelity_scratch/tmp07rpzxnt/live.json ; bar-chart PNG at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_o3/20260704-153448_formaldehyde_fukui_reactivity/agent_call_02_plot.png.\n\nWarnings (verbatim from tool):\n- \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"common header present\""
+}

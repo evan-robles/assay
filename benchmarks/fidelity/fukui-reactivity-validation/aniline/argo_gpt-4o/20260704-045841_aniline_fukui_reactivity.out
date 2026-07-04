@@ -1,0 +1,30 @@
+[engine reference] REUSED cached engine-reference/ (determinism: identical across two runs (within 1e-06 numeric tol))
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:gpt-4o via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls skill_help('fukui-reactivity') (discovery)
+[live] agent calls chemkit: fukui-reactivity ['/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz', '--method', 'dft', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '--charge', '0', '--mult', '1', '--solvent', 'none', '--stdout', 'none', '--out', 'fukui_aniline_dft.json', '--accept-defaults']
+[live] agent submitted final_report. (total=111.2s llm=6.7s engine=103.9s turns=3 tool_calls=1)
+[live] encoding corruption in transit (malformed Unicode escapes) — retrying agent call (1/5)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:gpt-4o via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls skill_help('fukui-reactivity') (discovery)
+[live] agent calls chemkit: fukui-reactivity ['/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz', '--method', 'dft', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '--charge', '0', '--mult', '1', '--solvent', 'none', '--plot']
+[live] agent submitted final_report. (total=8.9s llm=5.6s engine=0.0s turns=3 tool_calls=1)
+
+[Layer B - invocation fidelity]
+  [FAIL] method  {'intended': 'dft', 'got': None}
+  [FAIL] charge  {'intended': 0, 'got': None}
+  [FAIL] multiplicity  {'intended': 1, 'got': None}
+  [PASS] solvent  {'intended': None, 'got': None}
+  [FAIL] functional  {'intended': 'b3lyp', 'got': None}
+  [FAIL] basis  {'intended': 'def2-tzvp', 'got': None}
+  [FAIL] tier  {'intended': 'standard', 'got': None}
+
+[Layer C - reporting fidelity]
+  [PASS] value match (skipped — report_value_field is null)  {'field': None}
+  [PASS] warnings preserved  {'truth_count': 0, 'preserved_count': 0, 'in_array': 0, 'in_prose_only': 0, 'missing_count': 0, 'sim_threshold': 0.97}
+  [WARN] integrity verdict surfaced  {'truth': True, 'reported': False}
+  [PASS] provenance not mislabeled experimental  {'got': 'computed'}
+
+==> OVERALL: FAIL
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_gpt-4o/20260704-045841_aniline_fukui_reactivity

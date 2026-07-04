@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 122.81,
+    "llm_s": 16.2,
+    "engine_s": 105.97,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis for aniline was performed using Density Functional Theory (DFT) with the B3LYP functional and def2-TZVP basis set (tier `standard`). The calculation was performed in the gas phase with a charge of 0 and multiplicity of 1, using the geometry from the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` file. This was a single-point calculation using PySCF, not a geometry optimization. The Fukui dual descriptor and indices were calculated based on Mulliken partial charges. The cation and anion states used for the Fukui analysis had a multiplicity of 2.\n\nBased on the calculated Fukui indices:\n- The **most electrophilic atom** (highest f+) is Carbon 3 (C3, 0-indexed 2) with an f+ value of 2.29759.\n- The **most nucleophilic atom** (highest f-) is Nitrogen 1 (N1, 0-indexed 0) with an f- value of 0.20452.\n"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.13,
+    "llm_s": 38.27,
+    "engine_s": 10.23,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of formaldehyde (H2C=O) using DFT tier 'standard' (B3LYP/def2-TZVP, exact four-centre integrals, no density fitting) in PySCF. Gas phase, charge 0, multiplicity 1. Geometry: user-supplied .xyz, not re-optimised at this level (single-point Fukui). N-1 cation: charge +1, multiplicity 2; N+1 anion: charge -1, multiplicity 2. Partial charges via Mulliken (PySCF). All three integrity checks passed (status: ok, trustworthy: true). No warnings. Headline value is the f+ (electrophilic Fukui) on carbon (atom 2), the most electrophilic site (f+ = 0.70839130). Full per-atom results: O: f+=0.46813824, f-=0.46742464, f0=0.46778144, dual=+0.00071360; C: f+=0.70839130, f-=0.11244422, f0=0.41041776, dual=+0.59594709; H3: f+=-0.08826939, f-=-0.21007563, f0=0.06090312, dual=-0.29834503; H4: f+=-0.08826015, f-=-0.21005551, f0=0.06089768, dual=-0.29831566. Carbon is the dominant electrophilic site (nucleophilic attack), oxygen is the dominant nucleophilic site (electrophilic attack), consistent with carbonyl chemistry."
+}

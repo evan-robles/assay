@@ -1,0 +1,32 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 85.65,
+    "llm_s": 50.07,
+    "engine_s": 34.96,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for acrolein computed at DFT B3LYP/def2-TZVP (PySCF RKS), tier 'standard', gas phase, charge 0, multiplicity 1. Geometry: user-supplied fixed acrolein.xyz (no re-optimization). Mulliken partial charges used for Fukui index construction; three single-point SCFs run for neutral (N), cation (N\u22121, charge +1, doublet), and anion (N+1, charge \u22121, doublet) states. Density fitting: OFF (exact four-centre integrals). All three SCFs converged. Integrity: trustworthy=true, status=ok. Headline value is the maximum f+ (electrophilic Fukui index) = 0.64232102, located at atom 4 (C4, the \u03b2-carbon / terminal CH2), identifying it as the most electrophilic site (dominant Michael acceptor). Most nucleophilic site: atom 1 (O, carbonyl oxygen), f\u2212 = 0.39388616. Integrity checks: sum(f+)=1.0000 and sum(f\u2212)=1.0000, both passed. Warnings from engine (both passed, no action needed): 'sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)' and 'sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)'."
+}

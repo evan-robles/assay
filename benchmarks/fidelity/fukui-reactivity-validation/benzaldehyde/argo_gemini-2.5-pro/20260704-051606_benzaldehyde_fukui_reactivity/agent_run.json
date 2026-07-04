@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 266.95,
+    "llm_s": 40.13,
+    "engine_s": 226.18,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of benzaldehyde was performed using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (tier `standard`) in the gas phase, with a charge of 0 and a multiplicity of 1. The calculation was carried out using the PySCF program. The geometry was taken from the user-provided `benzaldehyde.xyz` file and was not re-optimized.\n\nThe results indicate the following sites are most reactive:\n\n*   **Susceptibility to electrophilic attack** (where a nucleophile would attack) is highest at carbon atom 3, which has the largest Fukui f+ index of 0.39939.\n*   **Susceptibility to nucleophilic attack** (where an electrophile would attack) is highest at the oxygen atom (atom 1), which has the largest Fukui f- index of 0.23840.\n\nThe calculation completed successfully and reported no warnings."
+}

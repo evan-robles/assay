@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 38.27,
+    "llm_s": 6.28,
+    "engine_s": 31.99,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "name: fukui_charge_conservation_f+",
+      7.1e-05,
+      1.0
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "calculated"
+  },
+  "prose": "The Fukui electrophilicity index (f+) at the most electrophilic site (atom 4, carbon) of acrolein was computed as approximately 0.398 (units are the same as in the raw data). The calculation used DFT at the B3LYP/def2-TZVP level with a tier `standard` protocol in the gas phase, charge 0, multiplicity 1."
+}

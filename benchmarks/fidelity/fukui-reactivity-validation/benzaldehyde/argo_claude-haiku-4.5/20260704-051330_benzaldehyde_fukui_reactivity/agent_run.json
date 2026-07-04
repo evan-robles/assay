@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 290.23,
+    "llm_s": 30.52,
+    "engine_s": 259.05,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for benzaldehyde computed using DFT, B3LYP/def2-TZVP (tier standard), in the gas phase, charge 0, singlet with N\u00b11 doublet states. Geometry: user-supplied .xyz (not optimized). Partial charges: Mulliken (PySCF). Most electrophilic site: C-3 (ortho carbon, f\u207a = 0.3994). Most nucleophilic site: O-1 (aldehyde oxygen, f\u207b = 0.2384). The dual descriptor (f\u207a \u2212 f\u207b) shows clear regioselectivity, with positive values on aromatic carbons (electrophilic character, especially ortho/para to the aldehyde) and negative on hydrogens and the aldehyde carbon itself (nucleophilic character). All convergence checks passed (sum f\u207a = 1.0000, sum f\u207b = 1.0000). Calculation status: ok, trustworthy=true. No warnings. Output JSON: /home/erobles/chem-skills/.fidelity_scratch/tmpl_pp8hsg/live.json. CLI invocation: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz."
+}

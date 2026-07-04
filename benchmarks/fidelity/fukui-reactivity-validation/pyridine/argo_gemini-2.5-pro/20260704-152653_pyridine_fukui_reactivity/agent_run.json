@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 99.41,
+    "llm_s": 38.21,
+    "engine_s": 61.2,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Based on a Fukui reactivity analysis, the sites of pyridine most susceptible to electrophilic, nucleophilic, and radical attack have been determined.\n\n### Method Provenance\nThe analysis was performed using DFT at the tier `standard` level (B3LYP functional, def2-TZVP basis set) with density fitting in the gas phase. The calculation was run on the neutral molecule (charge 0, multiplicity 1) using the geometry from the provided input file. The Fukui indices were derived from single-point energy calculations of the N, N+1, and N-1 electron states, as implemented in the `chemkit` `fukui-reactivity` skill, which uses PySCF as the backend.\n\n### Results\nThe Fukui functions identify the reactivity of different sites in a molecule:\n-   **f(+) (for Nucleophilic Attack)**: Measures the reactivity of a site towards a nucleophile (electron donor). A higher value indicates greater reactivity.\n-   **f(-) (for Electrophilic Attack)**: Measures the reactivity of a site towards an electrophile (electron acceptor). A higher value indicates greater reactivity.\n\nThe analysis of pyridine reveals the following:\n-   **Most reactive site for nucleophilic attack**: The nitrogen atom (Atom 1) is the preferred site for an incoming nucleophile, with the largest Fukui f(+) value of **0.484**.\n-   **Most reactive site for electrophilic attack**: The carbon atom at position 4 (Atom 4) is the most favorable site for an incoming electrophile, with the largest Fukui f(-) value of **0.118**.\n\nThe calculation completed successfully and reported no warnings. The underlying `f+` and `f-` summations conserved charge to 1.0000, indicating the underlying single-point calculations were reliable.\n\nThe full Fukui indices condensed to each atom are:\n| Atom | Symbol | f(+) | f(-) | f(0) | \u0394f |\n|---|---|---|---|---|---|\n| 1 | N | **0.4842** | 0.0641 | 0.2742 | 0.4201 |\n| 2 | C | 0.3245 | 0.0062 | 0.1653 | 0.3183 |\n| 3 | C | 0.1403 | 0.1182 | 0.1293 | 0.0221 |\n| 4 | C | 0.1404 | **0.1183** | 0.1293 | 0.0221 |\n| 5 | C | 0.2996 | 0.1121 | 0.2058 | 0.1876 |\n| 6 | C | 0.2995 | 0.1120 | 0.2057 | 0.1875 |\n| 7 | H | -0.1415 | 0.0828 | -0.0293 | -0.2244 |\n| 8 | H | -0.1337 | 0.0982 | -0.0178 | -0.2319 |\n| 9 | H | -0.1337 | 0.0982 | -0.0177 | -0.2318 |\n| 10 | H | -0.1398 | 0.0950 | -0.0224 | -0.2348 |\n| 11 | H | -0.1398 | 0.0949 | -0.0224 | -0.2348 |\n\n*(f(0) is the index for radical attack; \u0394f is the dual descriptor)*"
+}

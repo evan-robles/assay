@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 145.82,
+    "llm_s": 35.63,
+    "engine_s": 109.58,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance block\nProperty: condensed Fukui indices (f\u207a, f\u207b, f\u2070) and dual\u2010descriptor for aniline; identification of the most electrophilic (largest f\u207a) and most nucleophilic (largest f\u207b) atomic sites.\nLevel of theory: DFT, B3LYP/def2-TZVP in PySCF (no density-fitting; exact four-center integrals).\nGeometry provenance: user-supplied Cartesian coordinates (file: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz); single-point calculations on this fixed geometry for the N, N+1, and N\u20131 charge states (no geometry optimisation).\nSolvent / environment: gas phase (no implicit solvent).\nCharge & multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation doublet (charge +1, multiplicity 2); anion doublet (charge \u20131, multiplicity 2).\nSoftware: chemkit fukui-reactivity skill (engine backend: PySCF 2.x, invoked via chemkit_engine CLI).\nConvergence & caveats: All three SCF calculations converged. Integrity report: status ok, trustworthy true. Warnings returned by the engine are reproduced verbatim below. No other warnings were reported. The live run log was streamed during execution to the usual chemkit out file (e.g. \u2026/20260704-050529_aniline_fukui_reactivity/agent_call_01.out) and can be inspected for full SCF details.\n\nKey numerical results (atomic indices are 1-based as in the output):\n\u2022 Most electrophilic site (max f\u207a): atom 3 (C) with f\u207a = 2.2975867.\n\u2022 Most nucleophilic site (max f\u207b): atom 1 (N) with f\u207b = 0.20452359.\n\nSelected condensed Fukui indices (f\u207a / f\u207b / dual descriptor):\n1 N   1.66966 / 0.20452 / 1.46514\n2 C   \u20131.90092 / \u20130.00373 / \u20131.89719\n3 C   2.29759 / 0.06657 / 2.23102\n(Full per-atom arrays are available in the JSON result file aniline_fukui_dft.json.)\n\nAll warnings from tool output (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nThe calculation is marked trustworthy by the engine."
+}

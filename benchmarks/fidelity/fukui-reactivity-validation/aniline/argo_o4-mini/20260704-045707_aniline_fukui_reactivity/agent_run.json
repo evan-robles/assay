@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 143.77,
+    "llm_s": 37.75,
+    "engine_s": 105.38,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for aniline \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals, no density fitting) in gas phase, charge 0, multiplicity 1. Geometry: single-point on the user-supplied /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz (no relaxation). Software: PySCF via chemkit `fukui-reactivity` (verbose default) \u2014 CLI invocation recorded in the JSON output. SCF and N\u00b11 (cation/anion) UKS states converged. Integrity checks passed (status OK, trustworthy). JSON result file: /home/erobles/chem-skills/.fidelity_scratch/tmpy_gxp_ua/live.json. Warnings (verbatim): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); common header present. Result highlights: most electrophilic site is C atom 3 (f+ = 2.2975867), most nucleophilic site is N atom 1 (f\u2013 = 0.20452359)."
+}

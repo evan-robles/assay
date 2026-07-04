@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 145.42,
+    "llm_s": 32.07,
+    "engine_s": 112.11,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of phenol (13 atoms, neutral singlet) completed via DFT single-point calculation at B3LYP/def2-TZVP level (tier 'standard'), gas phase, in PySCF. The parent neutral, cation (+1 doublet), and anion (\u22121 doublet) states all converged cleanly. Fukui descriptors (nucleophilicity f\u207b, electrophilicity f\u207a, dual descriptor \u0394F) were computed from Mulliken partial charges. Key results: ortho carbons (atoms 3 and 4) are the most electrophilic sites (f\u207a = 2.10, 1.62) for nucleophilic attack; the hydroxyl oxygen (atom 1) is the most nucleophilic (f\u207b = 0.162) for electrophilic attack. Charge-conservation integrity checks passed (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000). All cation and anion SCF converged. Input geometry: user-supplied .xyz. Calculation command: chemkit fukui --method dft --tier standard --charge 0 --mult 1 /phenol.xyz."
+}

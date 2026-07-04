@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 128.55,
+    "llm_s": 58.92,
+    "engine_s": 68.98,
+    "turns": 6,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance: Fukui reactivity indices (f\u207a, f\u207b, dual descriptor) for acrolein computed via DFT at the B3LYP/def2-TZVP level (no density fitting) using PySCF, gas phase, charge 0, multiplicity 1. Geometry: fixed \u2011 taken directly from the supplied file /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz (no re-optimization; single-point N, N+1, and N-1 calculations). Cation (Q=+1) and anion (Q=\u22121) were treated as doublets. No implicit solvent was requested; therefore the calculation was carried out in the gas phase. SCF cycles for all three charge states converged.\n\nHeadline result: the largest electrophilic Fukui function value (f\u207a) is 0.64232102 on atom 4 (C \u03b1 to the carbonyl). The most nucleophilic site (largest f\u207b) is atom 1 (carbonyl O) with f\u207b = 0.39388616. Dual descriptors and full per-atom f\u207a/f\u207b/f\u00b0 arrays are available in the output JSON.\n\nAll warnings returned by the engine are reproduced verbatim below and indicate that the computed f\u207a and f\u207b values sum exactly to 1.0, as expected, and that the standard schema header was present.\n\nLive `.out` log: the DFT/SCF progress and Fukui-workflow details were streamed to a live log file alongside the JSON output (path printed during execution); that file contains the full PySCF and chemkit transcripts for reproducibility.\n\nCaveats: results rely on Mulliken charges and single-conformer, gas-phase calculations; specific solvation effects and conformational averaging are not captured.\n"
+}

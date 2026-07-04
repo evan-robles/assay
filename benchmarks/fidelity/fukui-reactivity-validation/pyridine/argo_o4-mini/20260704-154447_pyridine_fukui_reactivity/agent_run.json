@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 103.58,
+    "llm_s": 41.58,
+    "engine_s": 60.89,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity descriptors** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact integrals) in PySCF, gas phase (implicit solvent omitted), charge 0, multiplicity 1. Geometry: single-point on the provided pyridine.xyz (no relaxation). SCF converged; no SCF or geometry-optimization warnings. All engine warnings:\n- fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- schema_header: common header present\n\nMost electrophilic atom: N (atom 1) with f\u207a = 0.48422572. Most nucleophilic atom: C (atom 4) with f\u207b = 0.11826260.\n\nCommand: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 --out /home/erobles/chem-skills/.fidelity_scratch/tmpq8_2s49n/live.json`. Live log: `fukui_<timestamp>.out`"
+}

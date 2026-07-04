@@ -1,0 +1,31 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 114.15,
+    "llm_s": 5.26,
+    "engine_s": 108.89,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "- The schema header and charge conservation warnings suggest that the N\u202f\u00b1\u202f1 states did not fully converge, which may impact the accuracy of the Fukui descriptors."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis was performed on phenol using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase. The key numerical result (the most reactive site indicator) is the most electrophilic atom being carbon at position 3, with an Fukui plus value of approximately -0.99514. The method used: DFT, tier 'standard' (B3LYP/def2-TZVP), in gas phase."
+}

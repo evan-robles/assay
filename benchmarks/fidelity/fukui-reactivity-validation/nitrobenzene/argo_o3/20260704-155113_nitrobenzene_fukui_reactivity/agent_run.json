@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 206.8,
+    "llm_s": 28.96,
+    "engine_s": 176.76,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance and key results\nProperty: Atom-condensed Fukui functions f\u207a (electrophilicity), f\u207b (nucleophilicity), f\u2070 (radical susceptibility), and the dual descriptor for nitrobenzene.\nLevel of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP (no RI density fitting) in PySCF.\nGeometry provenance: user-supplied Cartesian coordinates from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz; single-point calculations on this fixed geometry for the N, N+1, and N\u20131 charge states (no re-optimization).\nSolvent / environment: gas phase (no implicit solvent model requested).\nCharge & multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation and anion states run as doublets (charge \u00b11, multiplicity 2) per default protocol.\nSoftware: PySCF (backend invoked via chemkit `fukui-reactivity` skill).\nConvergence & integrity: all three SCF calculations converged; integrity.status = \"ok\", trustworthy = true.\nWarnings (verbatim from result):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nNo additional warnings were reported.\n\nSelected numerical highlights (Mulliken scheme, atom indices 0-based; full arrays in output JSON):\nMost electrophilic site  \u2192 atom 3 (C4)  f\u207a = 0.4964178\nMost nucleophilic site   \u2192 atom 4 (C5)  f\u207b = 0.1072882\nDual descriptor highest  \u2192 atom 3 (C4)  \u0394f = 0.51070983\n\nReproducibility\nCLI command (abbreviated):\n  chemkit fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 \u2026 nitrobenzene.xyz --out \u2026/live.json\nResult JSON written to /home/erobles/chem-skills/.fidelity_scratch/tmpxo_o6dkc/live.json.\nA live engine log was streamed to the working directory during execution (file name `fukui_<timestamp>.out`). The bar-chart PNG of f\u207a/f\u207b per atom is at\n/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_o3/20260704-155113_nitrobenzene_fukui_reactivity/agent_call_01_plot.png.\n\nHeadline value (maximum electrophilic Fukui index): 0.4964178\n\nprovenance: computed"
+}

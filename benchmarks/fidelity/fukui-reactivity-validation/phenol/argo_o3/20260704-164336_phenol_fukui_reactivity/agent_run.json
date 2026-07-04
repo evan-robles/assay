@@ -1,0 +1,29 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 144.56,
+    "llm_s": 36.54,
+    "engine_s": 107.98,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Most electrophilic Fukui function (f\u207a) of phenol\n\nMethod provenance\n1. Property: Atom\u2010condensed Fukui functions f\u207a (electrophilic attack), f\u207b (nucleophilic attack), f\u2070 (radical attack), and dual descriptor; identification of the most electrophilic/nucleophilic sites.\n2. Level of theory: DFT, B3LYP/def2-TZVP (no density fitting) in PySCF.\n3. Geometry provenance: user-supplied Cartesian coordinates (phenol.xyz); single\u2013point calculations on this fixed geometry for the N, N+1, and N\u20131 charge states (no re-optimization).\n4. Environment: gas phase (no implicit solvation).\n5. Charge and multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation state charge +1, multiplicity 2; anion state charge \u22121, multiplicity 2.\n6. Software: chemkit fukui-reactivity skill \u2192 PySCF backend (version not reported in JSON).\n7. Convergence & caveats: All three SCF calculations converged; integrity status \"ok\", trustworthy = true. Charge-conservation checks passed (\u03a3f\u207a = \u03a3f\u207b = 1.0000). No warnings were returned by the engine.\n\nHeadline result\n\u2022 The most electrophilic site is atom 3 (C, index 2) with f\u207a = 2.1028319.\n\u2022 The most nucleophilic site is atom 1 (O, index 0) with f\u207b = 0.16201477.\n\nLive log & files\nThe run was executed with:\n  cli: chemkit fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 phenol.xyz\nA live engine log was written during execution to a file reported by chemkit (path in the JSON\u2019s cli_invocation). The full result, plot, and JSON are saved alongside that log for inspection.\n\nNo further warnings were reported."
+}

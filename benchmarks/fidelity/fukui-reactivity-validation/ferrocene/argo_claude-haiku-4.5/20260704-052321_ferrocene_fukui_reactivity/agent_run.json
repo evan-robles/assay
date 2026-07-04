@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.8,
+    "llm_s": 22.23,
+    "engine_s": 6.91,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of ferrocene (21 atoms) using GFN2-xTB in the gas phase, charge 0, multiplicity 1. Three states computed: neutral (N), cation (N+1, doublet), and anion (N\u22121, doublet) to compute Fukui descriptors. The most electrophilic site is the iron center with f\u207a = 0.22885456 (the most nucleophilic site is also the iron center with f\u207b = 0.25938191). The dual descriptor at iron is \u22120.030527354, indicating nucleophilic preference. All carbons (ring atoms) and hydrogens show much lower reactivity. SCF converged for all three electronic states; charge conservation checks passed. Method: GFN2-xTB semi-empirical tight-binding via xtb program. Geometry: input structure used as-is (not DFT-relaxed). Output files: result JSON at `/home/erobles/chem-skills/.fidelity_scratch/tmp7ctvc0gw/live.json` and PNG bar chart showing f\u207a/f\u207b/\u0394f per atom. No warnings reported; integrity trustworthy.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}

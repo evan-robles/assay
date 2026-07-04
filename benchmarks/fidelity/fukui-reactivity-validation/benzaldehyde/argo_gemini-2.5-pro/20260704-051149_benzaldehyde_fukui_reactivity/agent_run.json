@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 253.92,
+    "llm_s": 30.49,
+    "engine_s": 223.42,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis of benzaldehyde was completed successfully. The calculation was performed using density functional theory (DFT) with the B3LYP functional and the def2-TZVP basis set (corresponding to chemkit's tier `standard`), running in the gas phase. The calculation was for the neutral ground state with a charge of 0 and a multiplicity of 1. The geometry was taken from the user-provided file `benzaldehyde.xyz`.\n\nThe results identify the atoms most susceptible to different types of attack:\n\n*   **Susceptibility to Nucleophilic Attack** (reaction with an electrophile) is governed by the `f-` index. The highest value was **0.23840** on the **Oxygen atom (atom 1)**, making it the most nucleophilic site.\n*   **Susceptibility to Electrophilic Attack** (reaction with a nucleophile) is governed by the `f+` index. The highest value was **0.39939** on the **Carbon atom at position 3**, making it the most electrophilic site.\n*   **Susceptibility to Radical Attack** is governed by the `f0` index. The highest value was **0.30862** on the **Oxygen atom (atom 1)**.\n\nThe calculation, performed by the PySCF backend, was found to be trustworthy and reported no warnings."
+}

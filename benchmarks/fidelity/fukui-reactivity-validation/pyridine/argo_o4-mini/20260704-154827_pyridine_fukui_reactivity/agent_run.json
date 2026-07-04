@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 103.91,
+    "llm_s": 41.11,
+    "engine_s": 61.67,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Pyridine Fukui reactivity indices \u2014 DFT, tier standard (B3LYP/def2-TZVP, exact integrals) in PySCF, gas phase (no solvent), charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz`, single-point (no geometry optimization). Cation: charge +1, multiplicity 2; anion: charge \u20131, multiplicity 2. SCF converged for neutral, cation, and anion states.\nMost electrophilic site: atom 1 (N) with Fukui f\u207a = 0.48422572.\nMost nucleophilic site: atom 4 (C) with Fukui f\u207b = 0.11826260.\n\nCommand:\n```\nchemkit fukui pyridine.xyz   --method dft --tier standard --functional b3lyp --basis def2-tzvp   --charge 0 --mult 1 --accept-defaults --out pyridine_fukui_reactivity_dft.json --stdout json\n```\nOutput JSON: `pyridine_fukui_reactivity_dft.json`\nPlot PNG: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/.../agent_call_01_plot.png`\n\nWarnings (verbatim):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nintegrity.trustworthy: true\nprovenance: computed"
+}

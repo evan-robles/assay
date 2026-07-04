@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 108.78,
+    "llm_s": 59.99,
+    "engine_s": 48.04,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of acrolein (CH2=CH\u2013CHO)** \u2014 finite-difference (frozen-geometry, \u0394N = \u00b11) condensed Fukui indices from Mulliken populations.\n\n**Method-provenance block**\n- **Property:** Condensed-to-atom Fukui functions (f\u207a, f\u207b, dual descriptor) and derived electrophilic/nucleophilic site ranking.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** \u2014 chemkit tier `standard` with the functional and basis set both set explicitly to `b3lyp` and `def2-tzvp`. Density fitting was OFF (exact four-center two-electron integrals; this is the chemkit default).\n- **Geometry provenance:** User-supplied `.xyz` (`.../fukui-reactivity-validation/acrolein/acrolein.xyz`, 8 atoms: O, C, C, C, H, H, H, H). The geometry was used **as-is** \u2014 Fukui indices are computed at the fixed input geometry for the neutral, cation (N\u22121), and anion (N+1) states; no re-optimization was performed.\n- **Solvent/environment:** **Gas phase** (`solvent: null`).\n- **Charge / multiplicity:** Parent = charge **0**, multiplicity **1** (closed-shell). Cation (N\u22121) = charge +1, multiplicity 2; anion (N+1) = charge \u22121, multiplicity 2 (open-shell UKS states, derived from the singlet parent).\n- **Software:** PySCF (DFT backend), via chemkit `fukui` subcommand. Partial-charge scheme: Mulliken (PySCF).\n- **Convergence / integrity:** All integrity checks passed \u2014 engine `status: ok`, `trustworthy: true`. Charge conservation holds: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (indicating the N\u00b11 states converged well).\n\n**Results**\n- **Most electrophilic site (headline value):** atom index 3 (1-based label 4), a **carbon**, with **f\u207a = 0.64232** \u2014 this is the terminal \u03b2-carbon of the vinyl group (the site of nucleophilic attack, consistent with acrolein's role as a Michael acceptor).\n- **Most nucleophilic site:** atom index 0 (label 1), the **oxygen**, with **f\u207b = 0.39389**.\n- Per-atom f\u207a: [0.40136, 0.022255, 0.43405, 0.64232, \u22120.15726, \u22120.20720, \u22120.062117, \u22120.073408]\n- Per-atom f\u207b: [0.39389, 0.0059884, 0.091403, 0.087370, 0.085961, 0.18568, 0.084486, 0.065226]\n- Dual descriptor (f\u207a \u2212 f\u207b): [0.0074780, 0.016267, 0.34264, 0.55495, \u22120.24322, \u22120.39288, \u22120.14660, \u22120.13863]\n\n**Warnings:** The engine's integrity `checks` array contains only informational `severity: \"warning\"`-typed entries that all passed (`ok: true`): the two charge-conservation checks (sum(f+) = 1.0000; sum(f-) = 1.0000) and the schema-header check. There is no separate top-level `warnings` array in the result \u2014 i.e., **no failure warnings were reported; the run was clean.**\n\n**Reproducibility**\n- Command: `.../chemkit_engine/cli.py fukui .../acrolein.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --stdout json`\n- Result JSON written to `acrolein_fukui_dft.json`; bar-chart PNG at `.../20260704-044451_acrolein_fukui_reactivity/agent_call_01_plot.png`.\n\nNote: `--accept-defaults` was passed to consent to chemkit's silent tier default (though the functional/basis were also given explicitly here, so the level of theory is fully B3LYP/def2-TZVP as requested). No experimental/literature comparison is offered; this is a computed result only."
+}

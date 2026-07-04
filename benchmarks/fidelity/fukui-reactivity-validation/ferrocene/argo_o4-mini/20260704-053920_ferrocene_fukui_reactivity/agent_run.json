@@ -1,0 +1,32 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 48.28,
+    "llm_s": 41.6,
+    "engine_s": 6.07,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui reactivity** \u2014 Fukui indices f\u207a (electrophilic), f\u207b (nucleophilic), and f\u2070 (radical) computed at the GFN2-xTB level in xtb (GFN2-xTB), gas phase, charge 0, multiplicity 1. Geometry: taken directly from user-supplied /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz (no geometry optimization). Partial charges via Mulliken (GFN2-xTB); f\u207a/f\u207b from single-point energies on neutral, N + 1 (doublet), and N \u2013 1 (doublet) states. SCF converged; integrity checks passed.\n\nMost electrophilic site: Fe atom (atom 11) with f\u207a = 0.22885456\nMost nucleophilic site: Fe atom (atom 11) with f\u207b = 0.25938191\n\nintegrity.trustworthy: true"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 266.02,
+    "llm_s": 44.16,
+    "engine_s": 221.25,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for benzaldehyde were computed using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1 (neutral singlet). The cation (N\u22121) and anion (N+1) states were computed as doublets (multiplicity 2). Partial charges were obtained via the Mulliken scheme. Density fitting was NOT used (exact four-center integrals). Geometry was taken from the user-supplied .xyz file as-is (no re-optimization). All three SCFs converged; integrity trustworthy = true. sum(f+) = 1.0000; sum(f-) = 1.0000. No engine warnings. Headline value reported is the maximum f+ (most electrophilic site), at atom 3 (C, ring carbon adjacent to CHO group): f+ = 0.39938968. The most nucleophilic site is atom 1 (O, carbonyl oxygen): f- = 0.23839906. Output JSON: benzaldehyde_fukui_dft.json. Bar-chart plot written to the run directory."
+}

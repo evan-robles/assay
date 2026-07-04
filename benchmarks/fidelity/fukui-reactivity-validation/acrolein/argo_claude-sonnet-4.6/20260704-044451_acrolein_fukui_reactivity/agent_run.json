@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 121.49,
+    "llm_s": 73.08,
+    "engine_s": 47.72,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of acrolein (8 atoms: O, C, C, C, H, H, H, H) computed at DFT tier 'standard' (B3LYP/def2-TZVP, PySCF RKS, exact four-center integrals, no density fitting), gas phase, charge 0, multiplicity 1. Geometry: user-supplied acrolein.xyz, not relaxed (single-point Fukui). Mulliken finite-difference scheme; N\u22121 cation (charge +1, mult 2) and N+1 anion (charge \u22121, mult 2) evaluated at the same level.\n\nHeadline result (most electrophilic site): C-4 (terminal vinyl carbon, atom index 4), f\u207a = 0.64232102.\nMost nucleophilic site: O-1 (carbonyl oxygen, atom index 1), f\u207b = 0.39388616.\n\nFull per-atom Fukui indices (f\u207a / f\u207b / f\u2070 / \u0394f):\n  O  (1): 0.40136 / 0.39389 / 0.39763 /  0.00748\n  C  (2): 0.02226 / 0.00599 / 0.01412 /  0.01627\n  C  (3): 0.43405 / 0.09140 / 0.26272 /  0.34264\n  C  (4): 0.64232 / 0.08737 / 0.36485 /  0.55495\n  H  (5):-0.15726 / 0.08596 /-0.03565 / -0.24323\n  H  (6):-0.20720 / 0.18568 /-0.01076 / -0.39288\n  H  (7):-0.06212 / 0.08449 / 0.01118 / -0.14660\n  H  (8):-0.07341 / 0.06523 /-0.00409 / -0.13863\n\nCharge conservation: sum(f\u207a)=1.0000, sum(f\u207b)=1.0000. Integrity status: ok, trustworthy: true. No warnings reported by the engine."
+}

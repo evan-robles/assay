@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 132.36,
+    "llm_s": 24.82,
+    "engine_s": 106.85,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning, ok=true): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning, ok=true): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning, ok=true): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis of Aniline\n\n**Method Provenance Block**\n- **Property:** Condensed (Mulliken) Fukui reactivity descriptors \u2014 f\u207a (electrophilic attack / nucleophilicity toward incoming electrons), f\u207b (nucleophilic attack / susceptibility to electron removal), f\u2070 (radical), and the dual descriptor \u2014 computed from finite-difference Mulliken charges of the N, N\u22121 (cation), and N+1 (anion) states.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** \u2014 this is exactly chemkit's tier `standard`, which I requested explicitly (--functional b3lyp --basis def2-tzvp --tier standard). Exact four-center two-electron integrals (density fitting OFF, chemkit default).\n- **Geometry provenance:** User-supplied file `aniline.xyz` (14 atoms), used **as-is** \u2014 this Fukui task is a set of single-point SCF calculations at the fixed input geometry; no geometry optimization was performed.\n- **Solvent / environment:** **Gas phase** (no implicit solvent; solvent = null). I passed `--accept-defaults` to consent to the gas-phase default that I intended.\n- **Charge / multiplicity:** Parent charge **0**, multiplicity **1** (closed-shell singlet). Derived states: cation (N\u22121) charge +1, multiplicity 2; anion (N+1) charge \u22121, multiplicity 2 (open-shell, UKS).\n- **Software:** PySCF (via chemkit DFT backend). Partial-charge scheme: Mulliken (PySCF).\n- **Convergence / integrity:** Engine integrity status = **ok**, **trustworthy = true**. All three integrity checks passed (ok=true). Charge conservation held: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Key results (atom labels are 1-based):**\n- **Most electrophilic site (largest f\u207a):** atom 3 = **C**, f\u207a = **2.2975867** (this is the headline value). Note atom 4 (C) is essentially degenerate at f\u207a = 2.2965637 \u2014 these are the ortho ring carbons.\n- **Most nucleophilic site (largest f\u207b):** atom 1 = **N**, f\u207b = **0.20452359**.\n\nFull per-atom descriptors are available in the result JSON (`aniline_fukui_dft.json`); a bar-chart PNG of f\u207a/f\u207b/dual was also written. Command run: `cli.py fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 1 --accept-defaults /path/aniline.xyz`.\n\n**Warnings (reproduced verbatim, all three integrity checks; all passed ok=true):**\n1. fukui_charge_conservation_f+ \u2014 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. fukui_charge_conservation_f- \u2014 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. schema_header \u2014 \"common header present\"\n\nNote: the individual Fukui values here are Mulliken-based finite-difference descriptors, which can take negative or greater-than-1 values (as seen above) because Mulliken populations are basis-dependent; only the *sums* are constrained to ~1. No experimental or literature comparison is offered \u2014 ask if you want one and I will verify a source first."
+}

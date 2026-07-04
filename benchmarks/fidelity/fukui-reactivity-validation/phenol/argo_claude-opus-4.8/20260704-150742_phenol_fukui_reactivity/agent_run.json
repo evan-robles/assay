@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 153.06,
+    "llm_s": 43.96,
+    "engine_s": 107.95,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of phenol** \u2014 condensed Fukui functions from finite-difference Mulliken population changes (N, N\u00b11 states).\n\n**Method-provenance block**\n- **Property:** Condensed Fukui indices (f\u207a electrophilic attack, f\u207b nucleophilic attack), Fukui-zero (radical), and dual descriptor per atom, derived from Mulliken (PySCF) partial charges of the neutral, cation, and anion states.\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (as returned by the engine: method \"b3lyp/def2-tzvp\"). Density fitting was OFF (default) \u2014 exact four-center integrals (plain RKS/UKS).\n- **Geometry provenance:** user-supplied `.xyz` file (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz), used as-is \u2014 this is a single-point Fukui evaluation on the given geometry, not re-optimized.\n- **Solvent / environment:** gas phase (no solvent; `--accept-defaults` used to consent to gas phase, which the user explicitly requested).\n- **Charge / multiplicity:** parent charge 0, multiplicity 1 (closed-shell RKS). Cation state: charge +1, multiplicity 2 (UKS doublet); anion state: charge \u22121, multiplicity 2 (UKS doublet) \u2014 both derived automatically from the singlet parent.\n- **Software:** PySCF (DFT backend), via chemkit fukui-reactivity skill.\n- **Convergence/integrity:** integrity status \"ok\", trustworthy = true. All three integrity checks passed: charge conservation sum(f\u207a)=1.0000, sum(f\u207b)=1.0000, and schema header present. No warnings were reported (the `warnings` array is empty).\n\n**Headline result**\n- **Most electrophilic site (max f\u207a):** atom index 2 (0-based) / label 3 (1-based), a **carbon**, with **f\u207a = 2.1028** (this is the headline value). Note: with only 13 atoms, some condensed f\u207a values are negative/large in magnitude, which is common for finite-difference Mulliken-based Fukui functions on individual atoms \u2014 the physically meaningful interpretation is the relative ranking, not the raw magnitude.\n- **Most nucleophilic site (max f\u207b):** atom index 0 (0-based) / label 1 (1-based), the **oxygen**, with **f\u207b = 0.16201**.\n\nFull per-atom arrays (f\u207a, f\u207b, f\u2070, dual descriptor) and Mulliken charges for all three states were returned by the engine and are available on request.\n\n**Reproducibility**\n- Command: `cli.py fukui .../phenol.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --stdout json`\n- Result JSON written to the engine run directory; bar-chart PNG at `.../20260704-150742_phenol_fukui_reactivity/agent_call_01_plot.png`.\n\nNo experimental or literature comparison is offered (none was requested)."
+}

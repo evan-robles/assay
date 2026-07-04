@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 284.56,
+    "llm_s": 22.57,
+    "engine_s": 261.38,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of benzaldehyde** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**), backend PySCF (RKS/UKS via the finite-difference N\u00b11 approach). **Gas phase** (no implicit solvent). Charge 0, multiplicity 1 for the neutral parent; the N\u22121 (cation) and N+1 (anion) states were both computed as charge \u00b11, multiplicity 2 (doublet). Density fitting was OFF (exact four-center integrals, chemkit default). Partial charges: Mulliken (PySCF). Geometry: taken as-is from the user-supplied file benzaldehyde.xyz (14 atoms; a single point Fukui workflow \u2014 the input geometry was used directly, not re-optimized at this level). \n\n**Method used:** condensed (atom-resolved) Fukui functions from Mulliken populations of the neutral, cation, and anion states at B3LYP/def2-TZVP in the gas phase.\n\n**Headline result:** The most electrophilic site (largest f\u207a) is **atom 3 (1-based), a carbon, with f\u207a = 0.39939**. The most nucleophilic site (largest f\u207b) is atom 1, the carbonyl oxygen, with f\u207b = 0.23840.\n\nFull condensed Fukui values were returned per atom (f\u207a, f\u207b, f\u2070, and the dual descriptor f\u207a\u2212f\u207b); sums are conserved (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000).\n\n**Integrity / convergence:** the engine reports status = \"ok\", trustworthy = **true**. All three integrity checks passed:\n - fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) \u2014 ok.\n - fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) \u2014 ok.\n - schema_header: common header present \u2014 ok.\n\nThe result JSON reported **no `warnings` array** (no engine warnings were emitted). \n\n**Reproducibility:** command = `cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 <benzaldehyde.xyz>`. Result JSON written to `benzaldehyde_fukui_dft.json`; a per-atom f\u207a/f\u207b/dual bar-chart PNG was written alongside the input. Note: semi-empirical/DFT condensed Fukui indices are population-scheme dependent (Mulliken here) and should be read as relative-reactivity trends. No experimental/literature comparison is offered."
+}

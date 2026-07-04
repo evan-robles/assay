@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 27.65,
+    "llm_s": 20.49,
+    "engine_s": 6.52,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "\n**Ferrocene Fukui Reactivity Analysis** \u2014 Semi-empirical tight-binding quantum chemistry, **GFN2-xTB** (xtb program), gas phase, charge 0, multiplicity 1. Structure: user-supplied ferrocene.xyz (21 atoms: 2 cyclopentadienyl rings + 1 Fe center). The Fukui indices were computed at the neutral state (N), and the cation (N\u22121, multiplicity 2) and anion (N+1, multiplicity 2) states were evaluated to derive electrophilic and nucleophilic Fukui functions (f\u207a and f\u207b).\n\n**Key Results:**\n\n- **Most electrophilic site:** Fe (atom 11), f\u207a = **0.22885456**\n- **Most nucleophilic site:** Fe (atom 11), f\u207b = **0.25938191**\n- **Dual descriptor** (f\u207a \u2212 f\u207b) on Fe = **\u22120.030527354** (indicating nucleophilic preference, since f\u207b > f\u207a)\n\nThe Mulliken partial charges were evaluated for the neutral, cation, and anion states. Per-atom Fukui indices (f\u207a, f\u207b, and the dual descriptor f\u207a \u2212 f\u207b) are given for all 21 atoms. The Fukui plus function is higher on hydrogens (~0.0635) and the iron center (0.2289), while the Fukui minus function is similarly distributed. The iron center exhibits the largest dual descriptor (most nucleophilic/electrophilic reactivity), consistent with its role as the electron-donating center in ferrocene. A bar-chart PNG visualization was generated (`agent_call_01_plot.png`).\n\n**Convergence & integrity:** Both charge-conservation checks (sum of f\u207a and sum of f\u207b both equal 1.0) passed. The result is marked `trustworthy: true` with status \"ok.\"\n\n**Method provenance:** GFN2-xTB is a semi-empirical tight-binding method; it has no basis set or density-fitting parameters. Charges are Mulliken (GFN2-xTB native). The N\u00b11 multiplicities were derived automatically from the neutral singlet (2S+1 = 1 \u2192 cation and anion both multiplicity 2, spin doublet).\n"
+}

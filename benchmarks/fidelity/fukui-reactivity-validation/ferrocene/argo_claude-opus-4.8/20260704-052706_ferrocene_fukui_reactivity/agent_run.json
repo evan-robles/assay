@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.03,
+    "llm_s": 22.73,
+    "engine_s": 9.69,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning, ok=true): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning, ok=true): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning, ok=true): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis \u2014 Ferrocene\n\n**Method-provenance block**\n- **Property:** Condensed (atom-resolved) Fukui functions \u2014 f\u207a (electrophilic-attack susceptibility), f\u207b (nucleophilic-attack susceptibility), f\u2070, and the dual descriptor \u2014 from finite-difference Mulliken population differences over the N, N\u22121 (cation) and N+1 (anion) states.\n- **Level of theory:** **GFN2-xTB** (semi-empirical tight-binding; program: xtb). No basis set and no functional apply to this Hamiltonian. GFN2-xTB is parametrized for geometries/conformers and relative trends, not chemical-accuracy absolute energies.\n- **Geometry provenance:** User-supplied `.xyz` (21 atoms: Fe + two C\u2085H\u2085 rings) at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`, used **as-is** \u2014 this is a single-point-style Fukui analysis at the fixed input geometry; no geometry optimization was performed at this level.\n- **Solvent / environment:** **Gas phase** (no `--solvent` given).\n- **Charge / multiplicity:** Parent neutral, charge **0**, multiplicity **1** (as specified). Derived N\u22121 cation state: charge +1, multiplicity 2; N+1 anion state: charge \u22121, multiplicity 2.\n- **Partial-charge scheme:** Mulliken (GFN2-xTB).\n- **Software/backend:** xtb via chemkit fukui-reactivity skill.\n- **Convergence / integrity:** integrity status **ok**, **trustworthy = true**. Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Headline result**\nBoth the most-electrophilic and most-nucleophilic site is the **iron atom** (atom label 11, 0-based index 10):\n- **Most nucleophilic site (largest f\u207b): Fe, f\u207b = 0.25938191** \u2190 reported headline value\n- Most electrophilic site (largest f\u207a): Fe, f\u207a = 0.22885456\n- Fe dual descriptor = \u22120.030527 (negative \u2192 net electrophilic character at Fe relative to the ring atoms). The C and H ring atoms all show much smaller, near-uniform Fukui values (f\u207a \u2248 0.0136 for C, \u2248 0.0635 for H; f\u207b \u2248 0.0122 for C, \u2248 0.0619 for H), consistent with the D\u2085d symmetry of the two equivalent cyclopentadienyl rings.\n\n**Warnings (verbatim from the engine, all `ok=true`):**\n1. fukui_charge_conservation_f+ (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. fukui_charge_conservation_f- (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. schema_header (severity: warning): \"common header present\"\n\n**Reproducibility**\n- Command: `cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`\n- Bar-chart plot written to: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-opus-4.8/20260704-052706_ferrocene_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental or literature comparison is offered (none was requested)."
+}

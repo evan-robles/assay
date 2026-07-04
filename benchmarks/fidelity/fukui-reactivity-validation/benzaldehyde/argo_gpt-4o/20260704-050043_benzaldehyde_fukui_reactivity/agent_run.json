@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 233.16,
+    "llm_s": 6.61,
+    "engine_s": 225.92,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui function analysis for Benzaldehyde** \u2014 DFT, **B3LYP/def2-TZVP** (PySCF), gas phase, charge 0, multiplicity 1. Geometry: supplied .xyz file, direct single-point property evaluation (no re-optimization). SCF converged, implicit solvation unused (no solvent set). Mulliken electrostatic charges were assigned. Results:\n\n1. **Most electrophilic atom:** Carbon at index 3 (1-based), f\u207a = 0.39939.\n2. **Most nucleophilic atom:** Oxygen at index 1 (1-based), f\u207b = 0.23840.\n\nWarnings surfaced by tool:\n- sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\n- sum(f\u2212) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\n\nIntegrity checks passed (status OK, trustworthy=True). The property file, including the Mulliken electrostatic charges and the full Fukui function calculations [f+, f\u2212, f0, dual descriptor, electrophilicity/nucleophilicity ranking], is available: /home/erobles/chem-skills/.fidelity_scratch/tmp5cy8dlkk/live.json \u2014 the calculation log streamed live to /home/erobles/chem-skills/.fidelity_scratch/tmp5cy8dlkk/live.out during execution."
+}

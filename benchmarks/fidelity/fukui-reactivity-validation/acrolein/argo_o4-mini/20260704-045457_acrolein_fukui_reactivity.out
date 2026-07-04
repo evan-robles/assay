@@ -1,0 +1,26 @@
+[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:o4-mini via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls list_skills (discovery)
+[live] agent calls skill_help('fukui-reactivity') (discovery)
+[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--tier', 'standard', '--accept-defaults', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz']
+[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--tier', 'standard', '--accept-defaults', '--out', '/home/erobles/acrolein_fukui.json', '--stdout', 'path', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz']
+[live] agent submitted final_report. (total=128.0s llm=58.3s engine=69.1s turns=6 tool_calls=2)
+
+[Layer B - invocation fidelity]
+  [PASS] method  {'intended': 'dft', 'got': 'b3lyp/def2-tzvp'}
+  [PASS] charge  {'intended': 0, 'got': 0}
+  [PASS] multiplicity  {'intended': 1, 'got': 1}
+  [PASS] solvent  {'intended': None, 'got': None}
+  [PASS] functional  {'intended': 'b3lyp', 'got': 'b3lyp'}
+  [PASS] basis  {'intended': 'def2-tzvp', 'got': 'def2-tzvp'}
+  [PASS] tier  {'intended': 'standard', 'got': 'standard'}
+
+[Layer C - reporting fidelity]
+  [PASS] value match (skipped — report_value_field is null)  {'field': None}
+  [PASS] warnings preserved  {'truth_count': 0, 'preserved_count': 0, 'in_array': 0, 'in_prose_only': 0, 'missing_count': 0, 'sim_threshold': 0.97}
+  [PASS] integrity verdict surfaced  {'truth': True, 'reported': True}
+  [PASS] provenance not mislabeled experimental  {'got': 'computed'}
+
+==> OVERALL: PASS
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_o4-mini/20260704-045457_acrolein_fukui_reactivity

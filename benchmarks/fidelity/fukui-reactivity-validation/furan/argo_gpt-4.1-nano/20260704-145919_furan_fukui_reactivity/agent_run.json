@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 11.82,
+    "llm_s": 5.59,
+    "engine_s": 0.0,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The attempt to run the Fukui reactivity task with the specified options failed because the geometry file was not found at the given path. Please verify the file exists and is accessible to run the calculation."
+}

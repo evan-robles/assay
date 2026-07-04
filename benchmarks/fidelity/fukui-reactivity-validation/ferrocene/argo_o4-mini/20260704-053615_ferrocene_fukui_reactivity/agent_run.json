@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 42.12,
+    "llm_s": 31.39,
+    "engine_s": 10.02,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui electrophilic index (f\u207a) for ferrocene** \u2014 semiempirical GFN2-xTB (xtb engine) in the gas phase, charge 0, multiplicity 1. Geometry: fixed, user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` (no optimization). SCF and state calculations converged; no warnings reported. Most electrophilic atom: Fe (atom 11) with f\u207a = 0.22885456 (dimensionless)."
+}

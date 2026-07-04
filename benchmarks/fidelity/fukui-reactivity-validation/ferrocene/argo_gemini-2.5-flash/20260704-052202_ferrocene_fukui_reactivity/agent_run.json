@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 17.67,
+    "llm_s": 10.37,
+    "engine_s": 6.67,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for ferrocene has been performed using the GFN2-xTB method in the gas phase.\n\n**Fukui Reactivity Analysis** \u2014 GFN2-xTB (xtb), gas phase, charge 0, multiplicity 1. Geometry: built from user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`. SCF converged.\n\nThe most electrophilic site is Iron (Fe) at atom index 10 (1-based label 11), with a Fukui f+ value of 0.22885. The most nucleophilic site is Iron (Fe) at atom index 10 (1-based label 11), with a Fukui f- value of 0.25938.\n\nA plot of the Fukui indices per atom has been generated and saved to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_gemini-2.5-flash/20260704-052202_ferrocene_fukui_reactivity/agent_call_01_plot.png`."
+}

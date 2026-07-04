@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 46.6,
+    "llm_s": 35.71,
+    "engine_s": 10.07,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde Fukui reactivity \u2014 computed result.**\n\n**Method/provenance:** Fukui indices from finite-difference Mulliken charges using DFT **B3LYP/def2-TZVP**; chemkit tier `standard` corresponds to **B3LYP/def2-TZVP**. Geometry: user-supplied fixed XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz` (4 atoms: O, C, H, H); the tool did not report a geometry relaxation. Environment: **gas phase** (`solvent: null`). Charge/multiplicity for neutral parent: **0 / 1**. N\u22121 cation state: charge **+1**, multiplicity **2**. N+1 anion state: charge **\u22121**, multiplicity **2**. Backend reported by chemkit: `program: dft`; partial charges scheme: **Mulliken (PySCF)**. Functional/basis returned by the tool: `b3lyp` / `def2-tzvp`. Density fitting was not requested.\n\n**Headline result:** the most electrophilic site is **atom 2, C**, with **f+ = 0.7083913**. The most nucleophilic site is **atom 1, O**, with **f\u2212 = 0.46742464**.\n\nPer-atom Fukui data returned by chemkit:\n\n| Atom label | Element | f+ | f\u2212 | f0 | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | O | 0.46813824 | 0.46742464 | 0.46778144 | 0.00071359555 |\n| 2 | C | 0.7083913 | 0.11244422 | 0.41041776 | 0.59594709 |\n| 3 | H | -0.088269392 | 0.21007563 | 0.060903121 | -0.29834503 |\n| 4 | H | -0.088260145 | 0.21005551 | 0.060897683 | -0.29831566 |\n\nMulliken charges returned by chemkit:\n- Neutral: `[-0.26363838, 0.083610379, 0.090009268, 0.090018737]`\n- Cation: `[0.20378626, 0.19605459, 0.3000849, 0.30007425]`\n- Anion: `[-0.73177662, -0.62478092, 0.17827866, 0.17827888]`\n\n**Warnings:** no `warnings` array was reported by the tool result. Integrity checks returned by chemkit were all `ok: true`, including: `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`, `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`, and `common header present`.\n\n**Integrity:** chemkit reported `integrity.trustworthy: true`.\n\n**Reproducibility artifacts returned:**\n- Plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_gpt-5.5/20260704-053506_formaldehyde_fukui_reactivity/agent_call_01_plot.png`\n- Tool-returned CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --stdout path --out /home/erobles/chem-skills/.fidelity_scratch/tmplseav6gu/live.json`\n- The result JSON returned to me did not include a live `.out` log path, so I cannot truthfully name one."
+}

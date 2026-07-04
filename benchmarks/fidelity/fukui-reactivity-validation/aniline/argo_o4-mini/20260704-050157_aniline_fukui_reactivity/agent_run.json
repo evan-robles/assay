@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 160.87,
+    "llm_s": 53.73,
+    "engine_s": 106.53,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity descriptors for aniline**  \nMethod provenance: DFT (tier standard \u21d2 B3LYP/def2-TZVP, no density fitting) in PySCF via chemkit, gas phase, charge 0, multiplicity 1. Geometry: single\u2010point on the provided `/home/erobles/\u2026/aniline.xyz` (no DFT re\u2010optimization). SCF converged cleanly.  \n\nResults (Mulliken\u2010condensed, PySCF):  \n\u2022 fukui_plus (f\u207a): [1.6696628, \u22121.9009183, 2.2975867, 2.2965637, \u22120.28837103, \u22120.28784778, 1.4031745, \u22120.35138763, \u22120.35134383, \u22120.82107488, \u22120.82130627, \u22120.34268953, \u22120.75088374, \u22120.75116473]  \n\u2022 fukui_minus (f\u207b): [0.20452359, \u22120.0037260934, 0.066571393, 0.066588805, 0.0083458972, 0.0083790983, 0.10973255, 0.08199599, 0.082013935, 0.076354671, 0.0763456, 0.087365768, 0.067758118, 0.067750673]  \n\u2022 fukui_zero (f\u2070): [0.93709321, \u22120.95232219, 1.182079, 1.1815763, \u22120.14001257, \u22120.13973434, 0.75645351, \u22120.13469582, \u22120.13466495, \u22120.3723601, \u22120.37248034, \u22120.12766188, \u22120.34156281, \u22120.34170703]  \n\u2022 dual_descriptor (f\u207a\u2013f\u207b): [1.4651392, \u22121.8971922, 2.2310153, 2.2299749, \u22120.29671693, \u22120.29622688, 1.2934419, \u22120.43338362, \u22120.43335776, \u22120.89742955, \u22120.89765187, \u22120.4300553, \u22120.81864186, \u22120.81891541]  \n\nMost electrophilic site: C\u2083 (atom 3, index 2) with f\u207a = 2.2975867  \nMost nucleophilic site: N\u2081 (atom 1, index 0) with f\u207b = 0.20452359  \n\nWarnings (all integrity checks reported verbatim):  \n\u2022 sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 sum(f\u207b) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 common header present  \n\ntrustworthy: true  "
+}

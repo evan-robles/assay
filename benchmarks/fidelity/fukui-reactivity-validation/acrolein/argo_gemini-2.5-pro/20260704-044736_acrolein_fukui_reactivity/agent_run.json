@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 73.37,
+    "llm_s": 36.29,
+    "engine_s": 37.09,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Based on the Fukui reactivity analysis of acrolein, the site most susceptible to nucleophilic attack is C4, the site most susceptible to electrophilic attack is O1, and the site most susceptible to radical attack is also O1.\n\n### Fukui Reactivity Analysis of Acrolein\n\n**Methodology**\nThe Fukui indices (f\u207a, f\u207b, f\u2070) were calculated at the DFT level of theory using the `standard` tier, which corresponds to the **B3LYP functional and the def2-TZVP basis set** in the PySCF program. The calculation was performed in the **gas phase** on the neutral singlet species (charge 0, multiplicity 1) using the geometry provided in the input file. The Fukui indices are derived from Mulliken population analysis of the neutral, N+1, and N-1 electron states.\n\n**Results**\nThe calculated Fukui indices for each atom are as follows:\n\n| Atom | Symbol | f\u207a (Nucleophilic Attack) | f\u207b (Electrophilic Attack) | f\u2070 (Radical Attack) |\n|------|--------|--------------------------|---------------------------|---------------------|\n| 1    | O      | 0.40136                  | **0.39389**               | **0.39763**         |\n| 2    | C      | 0.02226                  | 0.00599                   | 0.01412             |\n| 3    | C      | 0.43405                  | 0.09140                   | 0.26272             |\n| 4    | C      | **0.64232**              | 0.08737                   | 0.36485             |\n| 5    | H      | -0.15726                 | 0.08596                   | -0.03565            |\n| 6    | H      | -0.20720                 | 0.18568                   | -0.01076            |\n| 7    | H      | -0.06212                 | 0.08449                   | 0.01118             |\n| 8    | H      | -0.07341                 | 0.06523                   | -0.00409            |\n\n*   **Susceptibility to Nucleophilic Attack (f\u207a):** The largest value (0.64232) is on atom **C4**, indicating it is the most electrophilic site.\n*   **Susceptibility to Electrophilic Attack (f\u207b):** The largest value (0.39389) is on atom **O1**, indicating it is the most nucleophilic site.\n*   **Susceptibility to Radical Attack (f\u2070):** The largest value (0.39763) is on atom **O1**.\n\nThe calculation was successful and the tool reported no warnings. The sum of the f\u207a and f\u207b indices conserved charge to 1.0000, consistent with a reliable result."
+}

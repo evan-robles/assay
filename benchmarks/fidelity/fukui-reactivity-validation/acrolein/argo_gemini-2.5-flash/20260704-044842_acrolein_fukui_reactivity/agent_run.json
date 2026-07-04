@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 61.0,
+    "llm_s": 27.12,
+    "engine_s": 33.2,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for acrolein has been completed.\n\n**Fukui Reactivity Indices** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**), in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: built from user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz` and not optimized. The neutral molecule was a singlet (charge 0, multiplicity 1), the cation (charge 1) and anion (charge -1) were both doublets (multiplicity 2). SCF converged for all states.\n\nFukui functions describe the change in electron density upon adding or removing an electron.\n*   **f+ (electrophilic attack)**: Indicates sites susceptible to nucleophilic attack (where electron density would prefer to be added). Higher f+ implies greater electrophilicity at that site.\n*   **f- (nucleophilic attack)**: Indicates sites susceptible to electrophilic attack (where electron density would prefer to be removed). Higher f- implies greater nucleophilicity at that site.\n*   **Dual Descriptor (f2)**: Regions where f2 > 0 are nucleophilic and susceptible to electrophilic attack, while regions where f2 < 0 are electrophilic and susceptible to nucleophilic attack.\n\n**Fukui Indices and Dual Descriptor per Atom (using Mulliken charges):**\n\n| Atom Label (1-based) | Symbol | f+      | f-      | Dual Descriptor |\n|----------------------|--------|---------|---------|-----------------|\n| 1                    | O      | 0.40136 | 0.39389 | 0.00748         |\n| 2                    | C      | 0.02226 | 0.00599 | 0.01627         |\n| 3                    | C      | 0.43405 | 0.09140 | 0.34264         |\n| 4                    | C      | 0.64232 | 0.08737 | 0.55495         |\n| 5                    | H      | -0.15726| 0.08596 | -0.24322        |\n| 6                    | H      | -0.20720| 0.18568 | -0.01076        |\n| 7                    | H      | -0.06212| 0.08449 | -0.14660        |\n| 8                    | H      | -0.07341| 0.06523 | -0.13863        |\n\n**Most Electrophilic Site:**\nThe most electrophilic site is **Atom 4 (C)**, with a Fukui f+ index of **0.64232**.\n\n**Most Nucleophilic Site:**\nThe most nucleophilic site is **Atom 1 (O)**, with a Fukui f- index of **0.39389**.\n\nThe calculation's integrity is trustworthy."
+}

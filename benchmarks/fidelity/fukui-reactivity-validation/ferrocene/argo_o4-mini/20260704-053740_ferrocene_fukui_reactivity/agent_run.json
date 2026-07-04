@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 47.07,
+    "llm_s": 38.95,
+    "engine_s": 7.44,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui reactivity (Fukui+ and Fukui\u2013)** \u2014 GFN2-xTB (semi-empirical tight-binding) in xtb, gas phase, charge 0, multiplicity 1. Geometry: single-point on user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` (no optimization). SCF converged; integrity status\u2009OK. Warnings (engine checks):\n- \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"common header present\"\nMost electrophilic site: atom 11 (Fe) with Fukui+ = 0.22885456; most nucleophilic site: atom 11 (Fe) with Fukui\u2013 = 0.25938191. Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --method xtb --charge 0 --mult 1 --out /home/erobles/chem-skills/.fidelity_scratch/tmpapg5rf0y/live.json`. JSON result at `/home/erobles/chem-skills/.fidelity_scratch/tmpapg5rf0y/live.json`.**"
+}

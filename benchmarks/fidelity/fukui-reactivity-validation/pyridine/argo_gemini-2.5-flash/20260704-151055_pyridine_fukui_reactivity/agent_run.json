@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 143.8,
+    "llm_s": 16.81,
+    "engine_s": 125.83,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for pyridine were computed using DFT at the B3LYP/def2-TZVP level of theory. **Fukui Reactivity Indices** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz`; this was a single-point calculation, geometry was not optimized. SCF converged. **Warnings:** * `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)` * `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)` | Atom (1-based index) | Symbol | f\u207a (Electrophilic) | f\u207b (Nucleophilic) | f\u2070 (Radical) | Dual Descriptor (\u0394f) | |---|---|---|---|---|---| | 1 | N | 0.4842257 | 0.0641227 | 0.2741742 | 0.4201031 | | 2 | C | 0.3244723 | 0.0061877 | 0.1653300 | 0.3182846 | | 3 | C | 0.1403209 | 0.1182314 | 0.1292762 | 0.0220895 | | 4 | C | 0.1403959 | 0.1182626 | 0.1293292 | 0.0221333 | | 5 | C | 0.2996263 | 0.1120660 | 0.2058461 | 0.1875603 | | 6 | C | 0.2994771 | 0.1120098 | 0.2057435 | 0.1874672 | | 7 | H | -0.1415132 | 0.0828485 | -0.0293323 | -0.2243617 | | 8 | H | -0.1336841 | 0.0981795 | -0.0177523 | -0.2318636 | | 9 | H | -0.1336591 | 0.0981823 | -0.0177384 | -0.2318413 | | 10 | H | -0.1398163 | 0.0949601 | -0.0224281 | -0.2347764 | | 11 | H | -0.1398454 | 0.0949495 | -0.0224480 | -0.2347949 | The most electrophilic atom is N (atom 1) with an f\u207a value of 0.4842257. The most nucleophilic atom is C (atom 4) with an f\u207b value of 0.1182626."
+}

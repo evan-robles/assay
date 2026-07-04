@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 126.31,
+    "llm_s": 22.77,
+    "engine_s": 102.9,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity indices for aniline have been computed using DFT.\n\n**Fukui Reactivity Indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP) in PySCF, gas phase, charge 0, multiplicity 1 (cation: charge 1, multiplicity 2; anion: charge -1, multiplicity 2). Geometry: from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (single-point calculation, geometry not optimized). SCF converged. Partial charges: Mulliken (PySCF).\n\n**Results:**\n*   **Most Electrophilic Site (f+)**: Carbon atom (C) at position 3 (0-indexed atom 2) with a Fukui f+ value of 2.29759.\n*   **Most Nucleophilic Site (f-)**: Nitrogen atom (N) at position 1 (0-indexed atom 0) with a Fukui f- value of 0.20452.\n\n**Fukui Indices per Atom:**\n| Atom (1-based index) | Symbol | f+          | f-          | f0          | Dual Descriptor |\n|----------------------|--------|-------------|-------------|-------------|-----------------|\n| 1                    | N      | 1.66966     | 0.20452     | 0.93709     | 1.46514         |\n| 2                    | C      | -1.90092    | -0.00373    | -0.95232    | -1.89719        |\n| 3                    | C      | 2.29759     | 0.06657     | 1.18208     | 2.23102         |\n| 4                    | C      | 2.29656     | 0.06659     | 1.18158     | 2.22997         |\n| 5                    | C      | -0.28837    | 0.00835     | -0.14001    | -0.29672        |\n| 6                    | C      | -0.28785    | 0.00838     | -0.13973    | -0.29623        |\n| 7                    | C      | 1.40317     | 0.10973     | 0.75645     | 1.29344         |\n| 8                    | H      | -0.35139    | 0.08200     | -0.13470    | -0.43338        |\n| 9                    | H      | -0.35134    | 0.08201     | -0.13466    | -0.43336        |\n| 10                   | H      | -0.82107    | 0.07635     | -0.37236    | -0.89743        |\n| 11                   | H      | -0.82131    | 0.07635     | -0.37248    | -0.89765        |\n| 12                   | H      | -0.34269    | 0.08737     | -0.12766    | -0.43006        |\n| 13                   | H      | -0.75088    | 0.06776     | -0.34156    | -0.81864        |\n| 14                   | H      | -0.75116    | 0.06775     | -0.34171    | -0.81892        |"
+}

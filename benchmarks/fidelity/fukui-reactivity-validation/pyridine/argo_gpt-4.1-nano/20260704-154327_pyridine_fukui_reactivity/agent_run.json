@@ -1,0 +1,31 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 70.13,
+    "llm_s": 8.6,
+    "engine_s": 58.42,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "Lmod Warning: ONEAPI_DEVICE_SELECTOR has been set to \"opencl:gpu;level_zero:gpu\" to enable Triton-XPU, vLLM, Ray, and dpctl functionality.\nIf you encounter issues, you can revert to:\n  export ONEAPI_DEVICE_SELECTOR=\"level_zero:gpu\"\n\nIf you do need to revert, please email support@alcf.anl.gov\nso we can track and address compatibility issues.\n\nWhile processing the following module(s):\n    Module fullname      Module Filename\n    ---------------      ---------------\n    frameworks/2025.3.1  /opt/aurora/26.26.0/modulefiles/frameworks/2025.3.1.lua\n"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity calculation on pyridine using DFT with the B3LYP functional and def2-TZVP basis set in the gas phase was completed. The method used was B3LYP/def2-TZVP at the 'standard' tier.\n\nThe calculation output includes atomic charges, Fukui indices for nucleophilic and electrophilic attack, dual descriptor, and the most electrophilic and nucleophilic sites. Several warnings indicate that the sum of Fukui functions for positive and negative charges drifted slightly from 1.0, suggesting the N\u00b11 states did not fully converge, but overall the results are trustworthy.\n\nFor detailed data and visualization, refer to the plot file and JSON output."
+}

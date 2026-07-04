@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 79.91,
+    "llm_s": 49.99,
+    "engine_s": 29.31,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for furan (9 atoms: O, C, C, C, C, H, H, H, H) using the fukui-reactivity chemkit skill.\n\nMethod provenance:\n- Property: Fukui reactivity indices (f+, f-, f0, dual descriptor) via finite-difference Mulliken charges (PySCF)\n- Level of theory: DFT, tier 'standard' \u2014 B3LYP/def2-TZVP (PySCF, exact four-centre integrals; density fitting OFF)\n- Geometry provenance: User-supplied .xyz at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz; single-point (geometry not re-optimized)\n- Solvent/environment: Gas phase (no solvent)\n- Charge / multiplicity: 0 / 1 (neutral singlet); cation: +1 / doublet; anion: \u22121 / doublet\n- Software: PySCF (chemkit DFT backend)\n- Convergence: All three SCF calculations (neutral, cation, anion) converged; integrity status: ok, trustworthy: true\n- Warnings: None reported; no warnings array entries.\n- Integrity checks: sum(f+) = 1.0000 \u2705, sum(f\u2212) = 1.0000 \u2705, schema header \u2705\n\nHeadline result: The most electrophilic site is atom 5 (C), f+ = 1.9242931. The most nucleophilic site is also atom 5 (C), f\u2212 = 0.16164. The dual descriptor peaks at atom 5 (C), \u0394f = +1.76266, indicating dominant electrophilic character at the \u03b1-carbons of the furan ring.\n\nCLI invocation: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1\nOutput JSON: furan_fukui_dft.json\nPlot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_claude-sonnet-4.6/20260704-053741_furan_fukui_reactivity/agent_call_01_plot.png"
+}

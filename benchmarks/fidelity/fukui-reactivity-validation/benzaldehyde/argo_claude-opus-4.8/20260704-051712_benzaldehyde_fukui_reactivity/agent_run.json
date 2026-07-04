@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 273.29,
+    "llm_s": 27.79,
+    "engine_s": 244.87,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "Integrity check fukui_charge_conservation_f+ (severity warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "Integrity check fukui_charge_conservation_f- (severity warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "Integrity check schema_header (severity warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of benzaldehyde (C7H6O, 14 atoms)**\n\n**Method-provenance block**\n- **Property:** Condensed (atom-resolved) Fukui functions f\u207a, f\u207b, f\u2070 and the dual descriptor, from finite-difference Mulliken charge partitioning of the neutral (N), cation (N\u22121) and anion (N+1) states.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** \u2014 chemkit tier `standard` (I set the functional and basis explicitly to b3lyp / def2-tzvp, matching the tier). Exact four-center two-electron integrals (density fitting NOT enabled \u2014 chemkit default is off).\n- **Software:** PySCF (via chemkit `fukui` subcommand).\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz`, used **as-is** (single-point energies at the fixed input geometry \u2014 no optimization performed at any level).\n- **Solvent/environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** Parent charge 0, multiplicity 1 (closed-shell). Derived states: cation charge +1, multiplicity 2 (open-shell UKS doublet); anion charge \u22121, multiplicity 2 (open-shell UKS doublet).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Headline result**\n- **Most electrophilic site (largest f\u207a):** atom index 3 (1-based), a ring **C**, with **f\u207a = 0.39939** \u2014 this is the reported headline value.\n- **Most nucleophilic site (largest f\u207b):** atom index 1 (1-based), the carbonyl **O**, with f\u207b = 0.23840.\n\n**Selected per-atom values** (atom order: O, C, C, C, C, C, C, C, H, H, H, H, H, H):\n- f\u207a = [0.37884, \u22120.35167, 0.39939, 0.21162, 0.33722, 0.28476, 0.27923, 0.35871, \u22120.11586, \u22120.20261, \u22120.12696, \u22120.13404, \u22120.13691, \u22120.18173]\n- f\u207b = [0.23840, \u22120.00705, 0.03675, 0.08332, 0.05371, \u22120.00232, 0.05825, 0.08235, 0.06031, 0.05869, 0.07420, 0.06601, 0.07154, 0.12583]\n- dual = [0.14045, \u22120.34462, 0.36264, 0.12830, 0.28351, 0.28708, 0.22098, 0.27636, \u22120.17618, \u22120.26129, \u22120.20116, \u22120.20005, \u22120.20845, \u22120.30756]\n\n**Convergence / integrity:** Engine integrity status **ok**, **trustworthy = true**. The charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000, consistent with converged N\u00b11 states.\n\n**Warnings (reproduced verbatim from the integrity checks):**\n1. fukui_charge_conservation_f+ \u2014 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. fukui_charge_conservation_f- \u2014 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. schema_header \u2014 \"common header present\"\n\nThere was no separate `warnings` array in the result JSON; the above are the integrity-check details (all severity `warning`, all `ok: true`). All are surfaced for transparency.\n\n**Reproducibility:** CLI invocation (as run by the engine):\n`cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults <input.xyz> --out \u2026/live.json`\nResult JSON written to `benzaldehyde_fukui_dft.json`; bar-chart PNG at `\u2026/20260704-051712_benzaldehyde_fukui_reactivity/agent_call_01_plot.png`. A live `<fukui>_<timestamp>.out` log is streamed to the run cwd during execution.\n\n**Scope note:** Fukui functions are single-geometry, Mulliken-partitioning-dependent descriptors (Mulliken charges are basis-set sensitive); values are relative reactivity indices, not measurable observables. No experimental/literature comparison is offered."
+}

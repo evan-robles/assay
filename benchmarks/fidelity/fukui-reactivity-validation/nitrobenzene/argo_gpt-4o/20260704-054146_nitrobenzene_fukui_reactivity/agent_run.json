@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 199.55,
+    "llm_s": 7.74,
+    "engine_s": 188.12,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity calculation for nitrobenzene was conducted using DFT at the B3LYP/def2-TZVP level of theory, with the default gas-phase (unsolvated) environment. The molecular geometry was provided as `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`, with charge 0 and multiplicity 1. The Mulliken partial charges were evaluated using PySCF, and the reactivity descriptors were calculated from N\u00b11 state perturbations with f+ (electrophilic attack) and f\u2212 (nucleophilic attack) properties interpreted on a per-atom basis.\n\nThe most electrophilic atom is C (atom index 3, label 4), with the highest f+ value of 0.49641784.\nWarnings from the integrity checks were reported verbatim:\n1. sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n2. sum(f\u2212) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n3. common header present.\n\nCalculation completed successfully and was deemed trustworthy. All results have been recorded including the plot for visualization at the path indicated in \"/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_gpt-4o/20260704-054146_nitrobenzene_fukui_reactivity/agent_call_02_plot.png\""
+}

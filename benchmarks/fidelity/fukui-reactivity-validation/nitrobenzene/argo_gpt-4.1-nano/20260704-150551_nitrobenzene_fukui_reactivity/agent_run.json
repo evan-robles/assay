@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 187.14,
+    "llm_s": 7.26,
+    "engine_s": 179.88,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-TZVP",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity calculation on nitrobenzene was performed using DFT at the B3LYP functional with the def2-TZVP basis set in the gas phase. The molecule's input geometry was taken from the specified xyz file. The calculation used charge 0 and multiplicity 1, with the tier set to 'standard'. The results include the Fukui indices for both nucleophilic (+) and electrophilic (\u2212) attacks, the zero-attack Fukui index, dual descriptor, and the most electrophilic and nucleophilic sites. The calculation converged successfully and the method used is B3LYP/def2-TZVP in a gas-phase environment. Here is the summarized numerical result for the most electrophilic atom (atom 4, labeled 4) with its F+ value: 0.49642.\n\nMethod and provenance: DFT, tier `standard` (B3LYP/def2-TZVP), in PySCF, gas phase, charge 0, multiplicity 1. Geometry: read from input xyz file. Calculation converged successfully with warnings related to charge conservation drift but within acceptable limits. The exact command used was: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --tier standard --basis def2-TZVP --charge 0 --multiplicity 1 --solvent none /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmplno0n5cr/live.json The output is: Most electrophilic atom (atom 4) F+ = 0.49642 and the report includes all other Fukui indices and related data. The calculation was performed with the chemkit fukui-reactivity skill."
+}

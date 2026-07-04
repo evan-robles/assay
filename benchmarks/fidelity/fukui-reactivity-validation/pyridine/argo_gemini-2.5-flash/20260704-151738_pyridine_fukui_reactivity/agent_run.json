@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 83.6,
+    "llm_s": 19.67,
+    "engine_s": 62.83,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity task on pyridine was executed using Density Functional Theory (DFT) with the B3LYP functional and def2-TZVP basis set (corresponding to the 'standard' tier preset) in the gas phase. The calculation was performed with PySCF, and the geometry was taken from the provided `.xyz` file without further optimization. The neutral parent molecule was treated with a charge of 0 and a multiplicity of 1. Density fitting was not enabled. The cation (charge +1, multiplicity 2) and anion (charge -1, multiplicity 2) states were also calculated for the Fukui indices. The SCF converged successfully for all states. The fukui charge conservation checks passed.\n\nThe most electrophilic site is Atom 1 (Nitrogen), with a Fukui f+ index of 0.48422572.\nThe most nucleophilic site is Atom 4 (Carbon), with a Fukui f- index of 0.1182626."
+}

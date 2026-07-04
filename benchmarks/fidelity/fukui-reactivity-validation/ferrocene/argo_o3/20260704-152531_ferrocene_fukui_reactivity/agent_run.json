@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 66.23,
+    "llm_s": 44.83,
+    "engine_s": 20.23,
+    "turns": 5,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance block\nProperty: Atom-condensed Fukui functions f\u207a (electrophilic), f\u207b (nucleophilic), f\u2070 (radical) and dual descriptor for ferrocene; identification of the most electrophilic (largest f\u207a) and most nucleophilic (largest f\u207b) atoms.\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) implemented in xtb 6.x.\nGeometry provenance: Fixed input Cartesian coordinates supplied by user (file \u201c/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz\u201d).  No geometry optimisation was performed; the calculation is a single-point evaluation on that geometry (fukui-reactivity//GFN2-xTB).\nSolvent / environment: Gas phase (no implicit solvation model).\nCharge and multiplicity: charge 0, multiplicity 1 (closed-shell singlet parent).  Cation (N\u20131) and anion (N+1) states were treated as doublets (multiplicity 2) with charges +1 and \u20131, respectively, as per default scheme.\nSoftware: chemkit fukui-reactivity skill (engine subcommand \u201cfukui\u201d) calling xTB 6.x.\nConvergence & warnings: All three single-point calculations (N, N\u20131, N+1) converged.  Integrity status ok; engine reported three warnings (verbatim below).  Live SCF/out-of-core log was written during the run to a file named \u201cfukui_<timestamp>.out\u201d in the working directory (path was displayed at launch and can be tailed for full details).\n\nKey results\n\u2022 Most electrophilic site (largest f\u207a):  Fe (atom 11), f\u207a = 0.22885456\n\u2022 Most nucleophilic site (largest f\u207b):   Fe (atom 11), f\u207b = 0.25938191\n\u2022 Dual descriptor on Fe: \u20130.030527354 (negative \u21d2 nucleophilic character dominates)\n\nComplete per-atom indices (atom order from input .xyz):\nIndex  Symbol   f\u207a        f\u207b        f\u2070        \u0394f (dual)\n1      C     0.013638348 0.012179196 0.012908772  0.0014591519\n2      C     0.013638348 0.012179196 0.012908772  0.0014591519\n3      C     0.013638174 0.012179338 0.012908756  0.0014588363\n4      C     0.013638597 0.012179313 0.012908955  0.0014592841\n5      C     0.013638174 0.012179338 0.012908756  0.0014588363\n6      H     0.063476418 0.061882787 0.062679603  0.0015936308\n7      H     0.063476418 0.061882787 0.062679603  0.0015936308\n8      H     0.063476206 0.061882375 0.06267929   0.001593831\n9      H     0.063475831 0.061882339 0.062679085  0.0015934927\n10     H     0.063476206 0.061882375 0.06267929   0.001593831\n11     Fe    0.22885456  0.25938191  0.24411824  \u20130.030527354\n12     C     0.013638348 0.012179196 0.012908772  0.0014591519\n13     C     0.013638348 0.012179196 0.012908772  0.0014591519\n14     C     0.013638174 0.012179338 0.012908756  0.0014588363\n15     C     0.013638597 0.012179313 0.012908955  0.0014592841\n16     C     0.013638174 0.012179338 0.012908756  0.0014588363\n17     H     0.063476418 0.061882787 0.062679603  0.0015936308\n18     H     0.063476418 0.061882787 0.062679603  0.0015936308\n19     H     0.063476206 0.061882375 0.06267929   0.001593831\n20     H     0.063475831 0.061882339 0.062679085  0.0015934927\n21     H     0.063476206 0.061882375 0.06267929   0.001593831\n\nVerbatim warnings from the engine\n1. sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n2. sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n3. common header present\n\nOverall, the calculation used the semi-empirical GFN2-xTB method in the gas phase and converged without issues flagged as critical; integrity.trustworthy is reported as true.\n"
+}

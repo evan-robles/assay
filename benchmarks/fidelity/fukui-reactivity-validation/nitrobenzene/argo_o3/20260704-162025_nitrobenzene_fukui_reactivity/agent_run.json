@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 518.94,
+    "llm_s": 53.76,
+    "engine_s": 464.33,
+    "turns": 6,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: condensed Fukui functions (electrophilic f\u207a, nucleophilic f\u207b, dual descriptor) for nitrobenzene; headline value reported here is the largest electrophilic index f\u207a.\nLevel of theory: DFT, B3LYP/def2-TZVP (no density fitting) in PySCF 2.x (chemkit backend)\nGeometry provenance: fixed experimental geometry supplied by user as /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz; the DFT calculation was a single-point on this structure (DFT//exp-xyz), no further optimisation.\nSolvent / environment: gas phase (no implicit solvent requested).\nCharge and multiplicity: charge 0, multiplicity 1 (closed-shell singlet); N\u00b11 states automatically computed as doublets for f\u00b1.\nSoftware: chemkit (fukui-reactivity skill \u2192 PySCF engine).\nConvergence & warnings: SCF cycles converged for the neutral, cation (charge +1, mult 2) and anion (charge \u22121, mult 2) states. Integrity status: ok; trustworthy: true. Warnings returned by the engine are reproduced verbatim below.\nLive .out log: written during the run to a file named fukui_<timestamp>.out in the working directory (see cli invocation in JSON for exact call); result JSON saved to /home/erobles/chem-skills/.fidelity_scratch/tmpmwq3ipab/live.json.\n\nKey results (Mulliken-based condensed Fukui indices)\nMost electrophilic site: atom 4 (C) with f\u207a = 0.49641779\nMost nucleophilic site: atom 5 (C) with f\u207b = 0.10728820\n\nEngine warnings (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present"
+}

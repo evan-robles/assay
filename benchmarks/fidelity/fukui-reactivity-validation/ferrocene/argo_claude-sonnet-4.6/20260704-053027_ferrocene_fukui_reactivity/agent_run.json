@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.96,
+    "llm_s": 41.44,
+    "engine_s": 7.89,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for ferrocene (21 atoms: 10 C, 10 H, 1 Fe) computed at the GFN2-xTB level (xtb backend), gas phase, charge 0, multiplicity 1 (singlet). N\u00b11 states: cation (charge +1, mult 2) and anion (charge \u22121, mult 2). Partial charges: Mulliken (GFN2-xTB). All three states converged; integrity trustworthy = true; \u03a3(f\u207a) = \u03a3(f\u207b) = 1.0000. No warnings reported by the engine.\n\nHeadline result: Fe (atom 11) is both the most electrophilic site (f\u207a = 0.22885456) and the most nucleophilic site (f\u207b = 0.25938191), with a negative dual descriptor (f\u207a\u2212f\u207b = \u22120.030527354), confirming dominant nucleophilic character at the iron center \u2014 consistent with ferrocene's well-known electron-donor behaviour. Both Cp rings give identical Fukui values (f\u207a \u2248 0.01364 per C, \u2248 0.06348 per H), reflecting the molecular symmetry.\n\nMethod: GFN2-xTB (Bannwarth, C.; Ehlert, S.; Grimme, S. J. Chem. Theory Comput. 2019, 15, 1652\u20131671). CLI: cli.py fukui --method xtb --charge 0 --mult 1 ferrocene.xyz. Plot: .../agent_call_01_plot.png."
+}

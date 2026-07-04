@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 140.22,
+    "llm_s": 26.27,
+    "engine_s": 112.8,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of phenol** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**) in PySCF (backend `dft`), **gas phase** (no implicit solvent), charge 0, multiplicity 1. Density fitting was OFF (chemkit default: exact four-center integrals). Partial-charge scheme: Mulliken (PySCF). The N\u22121 (cation) and N+1 (anion) states were each computed as charge \u00b11, multiplicity 2 (doublet), as derived from the singlet parent.\n\n**Geometry provenance:** user-supplied geometry file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (13 atoms: C6H5OH), used as-is (finite-difference Fukui via three fixed-geometry single points \u2014 the frozen-orbital/finite-difference protocol does not relax the geometry).\n\n**Headline result \u2014 most electrophilic site (largest f\u207a):**\n- Atom index 3 (1-based) = **carbon**, with **f\u207a = 2.1028319** (dimensionless Fukui function). This is the *ortho*-type ring carbon most susceptible to nucleophilic attack per the f\u207a descriptor.\n\n**Most nucleophilic site (largest f\u207b):**\n- Atom index 1 (1-based) = **oxygen**, with **f\u207b = 0.16201477** \u2014 the site most susceptible to electrophilic attack.\n\nPer-atom descriptors (f\u207a, f\u207b, f\u2070, dual) for all 13 atoms are in the result JSON. Note that several f\u207a values are large/negative and the anion (N+1) Mulliken charges are strongly delocalized/large in magnitude \u2014 this is characteristic of an anion state with a diffuse extra electron in a triple-zeta basis without diffuse functions; interpret individual electrophilicity magnitudes with that caveat. The Fukui functions are properly normalized: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Convergence / integrity:** integrity status = `ok`, **trustworthy = true**. All three integrity checks passed:\n- `fukui_charge_conservation_f+`: ok \u2014 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- `fukui_charge_conservation_f-`: ok \u2014 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- `schema_header`: ok \u2014 common header present\n\n**Warnings:** the result JSON contained no `warnings` array \u2014 no engine warnings reported.\n\n**Reproducibility:**\n- Command (cli_invocation): `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout json --out /home/erobles/chem-skills/.fidelity_scratch/tmpadvj7dpy/live.json`\n- Result JSON written to `phenol_fukui_dft.json` (and the engine's scratch `live.json`).\n- Bar-chart plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-opus-4.8/20260704-151245_phenol_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental or literature comparison is offered \u2014 ask if you want one and I will verify a source first."
+}

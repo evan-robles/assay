@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 140.03,
+    "llm_s": 31.68,
+    "engine_s": 107.19,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui reactivity descriptors** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` used as-is (single point). SCF converged (no convergence errors reported). Warnings from integrity checks:   sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge);   sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge);   common header present. \n\nMost electrophilic site: atom 3 (C) with f\u207a = 2.1028319 (a.u.); Most nucleophilic site: atom 1 (O) with f\u207b = 0.16201477 (a.u.). Command: `chemkit fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --method dft --tier standard --accept-defaults --stdout path --out phenol_fukui_dft.json`. JSON result: `phenol_fukui_dft.json`, live log: `fukui_<timestamp>.out` (in current working directory)."
+}

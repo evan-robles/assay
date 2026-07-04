@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 137.26,
+    "llm_s": 25.15,
+    "engine_s": 110.95,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of phenol** \u2014 computed with DFT, tier `standard` (**B3LYP/def2-TZVP**) in PySCF (`--method dft`). Exact four-center integrals were used (density fitting OFF by default). **Gas phase** (no solvent). Parent state: **charge 0, multiplicity 1** (as requested). The finite-difference Fukui functions used the N\u22121 cation (charge +1, multiplicity 2) and N+1 anion (charge \u22121, multiplicity 2) states, all as UKS where open-shell. Partial charges are Mulliken (PySCF).\n\n**Geometry provenance:** user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (13 atoms: O, 6\u00d7C, 6\u00d7H). This was a single-point Fukui analysis performed on that fixed geometry \u2014 the structure was **not** re-optimized at this level.\n\n**Headline result \u2014 condensed-to-atom Fukui indices (Mulliken-based, dimensionless):**\n- **Most electrophilic site** (largest f\u207a, susceptible to nucleophilic attack): **atom 3 (C), f\u207a = 2.1028** \u2014 this is the headline number reported.\n- **Most nucleophilic site** (largest f\u207b, susceptible to electrophilic attack): **atom 1 (O), f\u207b = 0.16201**.\n\nThe full per-atom vectors (f\u207a, f\u207b, f\u2070, dual descriptor f\u207a\u2212f\u207b) are in the result JSON (`phenol_fukui_dft.json`). Note: several f\u207a / dual-descriptor values (especially on the added-electron / anion states) are large and physically implausible in magnitude (e.g. anion Mulliken charges as extreme as \u22122.29 e), which is a well-known artifact of Mulliken population analysis with large, diffuse-leaning basis sets like def2-TZVP for the N+1 (anion) state \u2014 interpret the site *rankings* with more confidence than the raw magnitudes.\n\n**Integrity / convergence:** engine reports `status: ok`, `trustworthy: true`. All integrity checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (charge conservation satisfied \u2192 the N\u00b11 states converged), and the schema header is present. **The result JSON's `warnings` array is empty (no warnings reported).**\n\n**Reproducibility:**\n- Command (from result JSON `cli_invocation`): `.../chemkit_engine/cli.py fukui --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --stdout json <input.xyz> --out .../live.json`\n- Result JSON written to: `phenol_fukui_dft.json`\n- Per-atom bar chart (f\u207a/f\u207b/dual): `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/argo_claude-opus-4.8/20260704-151737_phenol_fukui_reactivity/agent_call_01_plot.png`\n- Each skill run also streams a live `<subcommand>_<timestamp>.out` log (PySCF at --verbose 4) to the caller's cwd, which can be `tail -f`'d during the run and inspected afterward for the SCF cycles of each of the three (neutral/cation/anion) states.\n\nNote on the `--accept-defaults` flag: it was passed to consent to the gas-phase default (no solvent) you specified; the level of theory (B3LYP/def2-TZVP, tier standard) was set explicitly per your request, not silently.\n\nNo experimental or literature comparison is offered (none was requested)."
+}

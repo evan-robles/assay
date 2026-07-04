@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 151.72,
+    "llm_s": 43.09,
+    "engine_s": 107.99,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for aniline were computed using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. The geometry was taken from the user-supplied aniline.xyz without re-optimization (single-point Mulliken charges on neutral, cation N-1 doublet, and anion N+1 doublet states). Density fitting was OFF (exact four-center integrals). The most nucleophilic site is N (atom 1) with f\u207b = 0.20452359; the most electrophilic site is C (atom 3, ortho carbon) with f\u207a = 2.2975867. All integrity checks passed (sum(f+)=1.0000, sum(f-)=1.0000); trustworthy: true. No warnings were reported. Method: chemkit fukui-reactivity skill, B3LYP/def2-TZVP, gas phase, charge 0, mult 1."
+}

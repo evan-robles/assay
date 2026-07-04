@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 47.41,
+    "llm_s": 40.15,
+    "engine_s": 6.02,
+    "turns": 6,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed Fukui functions for ferrocene (C\u2081\u2080H\u2081\u2080Fe) using the fukui-reactivity skill with the GFN2-xTB Hamiltonian (xtb backend).\n\nMethod\u2013provenance summary\n\u2022 Property: atom-condensed Fukui indices f\u207a (electrophilic), f\u207b (nucleophilic), dual descriptor.\n\u2022 Level of theory: GFN2-xTB (semi-empirical tight-binding).\n\u2022 Geometry: single-point on the user-supplied ferrocene.xyz (no relaxation).\n\u2022 Solvent / environment: gas phase (no implicit solvent).\n\u2022 Charge 0, multiplicity 1; cation and anion states both treated as doublets (auto-selected by the skill).\n\u2022 Software: chemkit / xtb.\n\u2022 Convergence: SCF converged for neutral, cation, and anion; integrity.status = ok, trustworthy = true.\n\u2022 Live .out log was written during the run (path echoed at launch by chemkit; see CLI in JSON).\n\nKey numerical result\nMost electrophilic atom: Fe (index 10, label 11)\n\u2003f\u207a = 0.22885456 e (headline value reported above)\nMost nucleophilic atom: Fe (same atom) with f\u207b = 0.25938191 e.\n\nAll per-atom f\u207a, f\u207b, f\u2070, and dual\u2010descriptor values, together with the bar-chart PNG, are available in the output directory shown in the JSON (`live.json`, `agent_call_01_plot.png`).\n\nWarnings reproduced verbatim from integrity checks:\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nThese are informational; all checks passed, and the sums exactly equal 1.0000, confirming charge conservation."
+}

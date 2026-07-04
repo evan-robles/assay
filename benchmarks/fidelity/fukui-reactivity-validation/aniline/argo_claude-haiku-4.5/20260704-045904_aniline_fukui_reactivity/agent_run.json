@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 121.79,
+    "llm_s": 19.02,
+    "engine_s": 102.12,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of aniline (14 atoms) using DFT with B3LYP/def2-TZVP (tier standard, PySCF RKS) in gas phase, neutral singlet parent with charge 0, multiplicity 1. Cation and anion states computed at multiplicities 2 each. Partial charges evaluated by Mulliken scheme. The most electrophilic site (highest f\u207a) is atom 3, a carbon ortho to the amino group, with f\u207a = 2.2975867. The most nucleophilic site (highest f\u207b) is the nitrogen (atom 1) with f\u207b = 0.20452359. All three electronic states (N, N+1, N\u22121) converged in the SCF. Charge conservation validated: \u03a3(f\u207a) = 1.0000, \u03a3(f\u207b) = 1.0000. Geometry source: user-supplied /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz (not re-optimized; single-point calculation). A PNG bar chart visualizing f\u207a, f\u207b, and f\u2070 per atom has been generated.</prose>\n<parameter name=\"n_atoms\">14"
+}

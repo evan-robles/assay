@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 75.84,
+    "llm_s": 42.11,
+    "engine_s": 33.73,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity of acrolein was computed using Density Functional Theory (DFT) with the B3LYP functional and the def2-TZVP basis set (tier 'standard'). The calculation was performed for the neutral, singlet (charge 0, multiplicity 1) molecule in the gas phase, using the geometry from the user-provided file. The result's integrity was found to be trustworthy.\n\nThe condensed-to-atom Fukui indices predict the reactivity at different atomic sites. A higher value indicates a greater susceptibility to the corresponding type of attack.\n\n- **For electrophilic attack (f+)**: The site most prone to attack by an electrophile is the terminal carbon atom (C4), which has the highest f(+) value of 0.64232.\n- **For nucleophilic attack (f-)**: The site most prone to attack by a nucleophile is the oxygen atom (O1), which has the highest f(-) value of 0.39389.\n\nThe full set of Fukui indices for each atom are:\n- **f(+)**: [O: 0.40136, C: 0.022255, C: 0.43405, C: 0.64232, H: -0.15726, H: -0.20720, H: -0.062117, H: -0.073408]\n- **f(-)**: [O: 0.39389, C: 0.0059884, C: 0.091403, C: 0.087370, H: 0.085961, H: 0.18568, H: 0.084486, H: 0.065226]\n- **f(0)**: [O: 0.39763, C: 0.014122, C: 0.26272, C: 0.36485, H: -0.035649, H: -0.010762, H: 0.011184, H: -0.0040910]\n\nThere were no warnings reported during the calculation."
+}

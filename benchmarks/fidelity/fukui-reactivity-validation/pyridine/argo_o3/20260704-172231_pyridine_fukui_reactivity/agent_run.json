@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 102.8,
+    "llm_s": 39.66,
+    "engine_s": 62.47,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block  \n\u2022 Property: atom\u2010condensed Fukui functions f\u207a (electrophilic), f\u207b (nucleophilic), dual descriptor (f\u207a\u2013f\u207b) for pyridine; headline number = largest electrophilic index f\u207a.  \n\u2022 Level of theory: DFT, tier `standard` = B3LYP/def2-TZVP (no density fitting) in PySCF.  \n\u2022 Geometry provenance: single-point evaluations on the fixed Cartesian coordinates supplied in  \n  `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz`; no geometry optimization at DFT (DFT//input-XYZ).  \n\u2022 Solvent / environment: gas phase (no implicit solvation).  \n\u2022 Charge 0, multiplicity 1 (neutral singlet); cation (N\u20131) state: charge +1, multiplicity 2; anion (N+1) state: charge \u20131, multiplicity 2.  \n\u2022 Software: PySCF back-end via chemkit `fukui-reactivity` skill.  \n\u2022 Convergence: SCF cycles converged for all three charge states; integrity status **ok** (trustworthy = true).  \n\u2022 Warnings (verbatim from engine):  \n  \u2013 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n  \u2013 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n  \u2013 \"common header present\"  \n\nKey results (Mulliken scheme, atom order as in the input XYZ):  \n\u2022 f\u207a  = [0.48422572, 0.32447227, 0.14032092, 0.14039587, 0.29962626, 0.29947706, \u20130.14151320, \u20130.13368410, \u20130.13365905, \u20130.13981630, \u20130.13984545]  \n\u2022 f\u207b  = [0.064122671, 0.0061877146, 0.11823139, 0.11826260, 0.11206595, 0.11200985, 0.08284851, 0.098179487, 0.09818226, 0.094960093, 0.094949479]  \n\u2022 f\u2070  = [0.27417420, 0.16532999, 0.12927615, 0.12932923, 0.20584611, 0.20574345, \u20130.029332344, \u20130.017752309, \u20130.017738395, \u20130.022428104, \u20130.022447986]  \n\u2022 Dual = [0.42010305, 0.31828455, 0.022089536, 0.022133274, 0.18756031, 0.18746722, \u20130.22436171, \u20130.23186359, \u20130.23184131, \u20130.23477639, \u20130.23479493]  \n\nMost electrophilic site: atom 1 (N) with f\u207a = 0.48422572  \nMost nucleophilic site: atom 4 (C) with f\u207b = 0.11826260  \n\nLive log file: (written during run) `/home/erobles/chem-skills/.fidelity_scratch/tmpsvtk_886/live.out`  \nJSON result: `/home/erobles/chem-skills/.fidelity_scratch/tmpsvtk_886/live.json`  \n\nThe headline value reported above is the largest electrophilic Fukui index, f\u207a = 0.48422572 (dimensionless)."
+}

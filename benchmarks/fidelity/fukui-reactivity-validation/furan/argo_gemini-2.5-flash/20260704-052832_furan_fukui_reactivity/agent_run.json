@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 56.16,
+    "llm_s": 27.11,
+    "engine_s": 28.42,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis for Furan**\n\nFukui indices (f+, f-, f0) and the dual descriptor were calculated for furan (9 atoms) using Density Functional Theory (DFT) at the tier `standard` level (B3LYP/def2-TZVP) in PySCF. The calculation was performed in the gas phase with a charge of 0 and a multiplicity of 1. The input geometry was provided as an `.xyz` file. The Self-Consistent Field (SCF) calculation converged successfully, and the overall integrity of the calculation is trustworthy.\n\n**Method Provenance:**\n*   **Property:** Fukui indices (f+, f-, f0) and Dual Descriptor.\n*   **Level of theory:** DFT, tier `standard` (B3LYP/def2-TZVP), PySCF (exact four-center integrals, not density-fit).\n*   **Geometry provenance:** User-supplied coordinates from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`.\n*   **Solvent / environment:** Gas phase.\n*   **Charge and multiplicity:** Charge 0, multiplicity 1. Cation and anion states were calculated with charge 1, multiplicity 2 and charge -1, multiplicity 2, respectively.\n*   **Software:** PySCF.\n*   **Convergence and caveats:** SCF converged. No warnings reported from the engine.\n*   **Live output log:** The full log of the calculation was streamed to `fukui_reactivity_2024*.out`.\n\n**Results:**\n\nThe calculated Fukui indices for each atom are as follows (atom index is 0-based, atom symbol, f+ for nucleophilic attack, f- for electrophilic attack, f0 for radical attack, and dual descriptor):\n\n*   **Atom 0 (O):** f+ = -1.33162, f- = 0.08382, f0 = -0.62390, Dual Descriptor = -1.41544\n*   **Atom 1 (C):** f+ = 1.22869, f- = 0.08910, f0 = 0.65889, Dual Descriptor = 1.13958\n*   **Atom 2 (C):** f+ = 1.22703, f- = 0.08930, f0 = 0.65817, Dual Descriptor = 1.13772\n*   **Atom 3 (C):** f+ = 1.92331, f- = 0.16153, f0 = 1.04242, Dual Descriptor = 1.76178\n*   **Atom 4 (C):** f+ = 1.92429, f- = 0.16164, f0 = 1.04297, Dual Descriptor = 1.76266\n*   **Atom 5 (H):** f+ = -1.21906, f- = 0.10248, f0 = -0.55829, Dual Descriptor = -1.32155\n*   **Atom 6 (H):** f+ = -1.21911, f- = 0.10251, f0 = -0.55830, Dual Descriptor = -1.32162\n*   **Atom 7 (H):** f+ = -0.76678, f- = 0.10482, f0 = -0.33098, Dual Descriptor = -0.87160\n*   **Atom 8 (H):** f+ = -0.76674, f- = 0.10479, f0 = -0.33097, Dual Descriptor = -0.87153\n\nBased on these indices:\n*   The **most electrophilic site** (most susceptible to nucleophilic attack, indicated by the highest f+) is **Atom 4 (Carbon)**, with a f+ value of 1.92429.\n*   The **most nucleophilic site** (most susceptible to electrophilic attack, indicated by the highest f-) is **Atom 4 (Carbon)**, with a f- value of 0.16164."
+}

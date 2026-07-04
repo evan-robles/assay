@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 143.66,
+    "llm_s": 36.24,
+    "engine_s": 106.77,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui reactivity analysis** \u2014 DFT (tier standard \u2192 B3LYP/def2-TZVP, no density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: single-point on user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (no optimization). Partial charges: Mulliken. SCF converged. No engine warnings reported.\n\nResults:\n\u2022 Fukui f\u207a indices (electrophilicity) per atom: [1.6696628, \u20131.9009183, 2.2975867, 2.2965637, \u20130.28837103, \u20130.28784779, 1.4031745, \u20130.35138763, \u20130.35134382, \u20130.82107488, \u20130.82130627, \u20130.34268953, \u20130.75088374, \u20130.75116473]  \n\u2022 Fukui f\u207b indices (nucleophilicity) per atom: [0.20452359, \u20130.0037260934, 0.066571393, 0.066588805, 0.0083458971, 0.0083790983, 0.10973255, 0.08199599, 0.082013935, 0.076354671, 0.0763456, 0.087365768, 0.067758118, 0.067750673]  \n\u2022 Most electrophilic site: atom 3 (C, 0-based index 2) with f\u207a = 2.2975867  \n\u2022 Most nucleophilic site: atom 1 (N, 0-based index 0) with f\u207b = 0.20452359  \n\nCommand run:  \n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --method dft --tier standard --charge 0 --mult 1 --accept-defaults --out /home/erobles/chem-skills/.fidelity_scratch/tmpb8r76a_4/live.json\n```\n\nintegrity.trustworthy: true  \nprovenance: computed"
+}

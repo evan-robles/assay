@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 181.99,
+    "llm_s": 43.96,
+    "engine_s": 137.35,
+    "turns": 5,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block (all fields required for reproduction)\nProperty: atom-condensed electrophilic Fukui indices f\u207a (largest value reported) for pyridine, plus full f\u207a/f\u207b/dual tables (see JSON)\nLevel of theory: density-functional theory, B3LYP/def2-TZVP, no density fitting (exact four-center integrals)\nGeometry provenance: user-supplied geometry file /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz; single-point N, N\u00b11 charge states at the same fixed geometry (fukui = \u2202q/\u2202N Mulliken scheme)\nSolvent / environment: gas phase (no implicit solvent)\nCharge & multiplicity: neutral singlet parent (charge 0, mult 1); cation doublet (charge +1, mult 2); anion doublet (charge \u22121, mult 2)\nSoftware: chemkit fukui-reactivity skill (engine: PySCF 2.x) at verbose=4; live log written during the run to \u2026/pyridine_fukui_reactivity/agent_call_02.out (path shown during execution)\nConvergence & caveats: all three SCF calculations converged; integrity.status = ok, trustworthy = true. Warnings streamed by engine reproduced verbatim below.\n\nHeadline result (most electrophilic site):\n\u2022 Atom 1 (N) f\u207a = 0.48422572 (dimensionless, Mulliken-charge finite-difference, B3LYP/def2-TZVP, gas phase, single-geometry).\nMost nucleophilic site: Atom 4 (C) f\u207b = 0.11826260.\nFull per-atom f\u207a, f\u207b, dual descriptor, and bar-chart PNG are in pyridine_fukui_b3lyp_full.json and \u2026_plot.png.\n\nEngine warnings (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nReproducibility: command executed\n  chemkit fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /\u2026/pyridine.xyz --out pyridine_fukui_b3lyp.json\nAll artifacts (optimized JSON, plot PNG, live .out log) are saved in the current working directory. Data provenance: computed."
+}

@@ -1,0 +1,15 @@
+# chemkit live log
+# subcommand : fukui
+# args       : --method xtb --charge 0 --mult 1 --accept-defaults --stdout path /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpip9pl765/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli fukui --method xtb --charge 0 --mult 1 --accept-defaults --stdout path /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpip9pl765/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_gpt-5.5/20260704-052854_ferrocene_fukui_reactivity
+# started    : 20260704-052911
+# ============================================================
+# agent model: argo:gpt-5.5
+
+# result written to: /home/erobles/chem-skills/.fidelity_scratch/tmpip9pl765/live.json
+# plot: /home/erobles/chem-skills/.fidelity_scratch/tmpip9pl765/live.png
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{"out": "/home/erobles/chem-skills/.fidelity_scratch/tmpip9pl765/live.json", "status": "ok", "trustworthy": true}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 73.35,
+    "llm_s": 40.62,
+    "engine_s": 31.88,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan Fukui reactivity descriptors** \u2014 DFT, **B3LYP/def2-TZVP** (exact integrals, no density fitting) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`, used as-is (single-point). Cation (+1, multiplicity 2) and anion (\u20131, multiplicity 2) single points were computed on the same geometry. Partial charges: Mulliken. SCF converged for all states. Most electrophilic site: atom 5 (C) with f\u207a = 1.9242931; most nucleophilic site: atom 5 (C) with f\u207b = 0.1616371.\n\nWarnings reported verbatim:\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nFiles: result JSON at `/home/erobles/chem-skills/.fidelity_scratch/tmpjcy6snew/live.json`. Command: `cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout path --out /home/erobles/chem-skills/.fidelity_scratch/tmpjcy6snew/live.json`."
+}

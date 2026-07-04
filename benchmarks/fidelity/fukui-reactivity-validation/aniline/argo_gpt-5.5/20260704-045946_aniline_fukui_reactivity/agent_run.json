@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 160.51,
+    "llm_s": 53.28,
+    "engine_s": 106.62,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity for aniline \u2014 computed result**\n\n**Method/provenance.** Property: condensed Fukui indices from Mulliken charges. Level of theory: DFT tier `standard` with **B3LYP/def2-TZVP** (`--functional b3lyp --basis def2-tzvp`). Geometry: fixed user-supplied XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (not geometry-optimized in this task). Environment: **gas phase** (`solvent: null`). Parent state: charge 0, multiplicity 1. N\u22121 cation state: charge +1, multiplicity 2. N+1 anion state: charge \u22121, multiplicity 2. Backend reported by chemkit as DFT/PySCF Mulliken charges; version not reported. Density fitting was not requested.\n\n**Headline result.** The atom with the largest electrophilic Fukui index f+ is **atom 3, C**, with **f+ = 2.2975867**. The atom with the largest nucleophilic Fukui index f\u2212 is **atom 1, N**, with **f\u2212 = 0.20452359**.\n\nPer-atom values returned by chemkit:\n\n| atom label | element | f+ | f\u2212 | f0 | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | N | 1.6696628 | 0.20452359 | 0.93709321 | 1.4651392 |\n| 2 | C | -1.9009183 | -0.0037260935 | -0.95232219 | -1.8971922 |\n| 3 | C | 2.2975867 | 0.066571393 | 1.182079 | 2.2310153 |\n| 4 | C | 2.2965637 | 0.066588805 | 1.1815763 | 2.2299749 |\n| 5 | C | -0.28837103 | 0.0083458972 | -0.14001257 | -0.29671693 |\n| 6 | C | -0.28784778 | 0.0083790983 | -0.13973434 | -0.29622688 |\n| 7 | C | 1.4031744 | 0.10973255 | 0.7564535 | 1.2934419 |\n| 8 | H | -0.35138763 | 0.08199599 | -0.13469582 | -0.43338362 |\n| 9 | H | -0.35134383 | 0.082013935 | -0.13466495 | -0.43335776 |\n| 10 | H | -0.82107487 | 0.076354671 | -0.3723601 | -0.89742954 |\n| 11 | H | -0.82130627 | 0.0763456 | -0.37248033 | -0.89765187 |\n| 12 | H | -0.34268953 | 0.087365768 | -0.12766188 | -0.4300553 |\n| 13 | H | -0.75088374 | 0.067758118 | -0.34156281 | -0.81864186 |\n| 14 | H | -0.75116473 | 0.067750673 | -0.34170703 | -0.81891541 |\n\n**Integrity/convergence.** chemkit integrity verdict: `trustworthy: true` (`status: ok`). No top-level `warnings` array was returned by the tool result. The tool did return these integrity checks with severity `warning`, reproduced verbatim:\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\n**Artifacts/reproducibility.** Plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_gpt-5.5/20260704-045946_aniline_fukui_reactivity/agent_call_01_plot.png`. CLI invocation reported by chemkit: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --stdout path --out /home/erobles/chem-skills/.fidelity_scratch/tmp8vs5w09u/live.json`. The tool result did not return a live `.out` log path, so I am not fabricating one."
+}

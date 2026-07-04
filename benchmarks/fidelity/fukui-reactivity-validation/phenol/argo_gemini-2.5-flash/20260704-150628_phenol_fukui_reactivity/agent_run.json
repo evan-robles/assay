@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 131.52,
+    "llm_s": 16.08,
+    "engine_s": 114.15,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity for phenol was calculated using Density Functional Theory (DFT) with the B3LYP functional and def2-TZVP basis set (chemkit tier `standard`). The calculation was performed in the gas phase with a charge of 0 and a multiplicity of 1, using PySCF as the backend. The geometry was taken from the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` file and was not optimized as part of this calculation. The SCF converged successfully.\n\nThe most electrophilic site (highest f+ value) is carbon atom 3 (0-indexed atom 2, symbol 'C') with a Fukui f+ index of 2.1028.\nThe most nucleophilic site (highest f- value) is oxygen atom 1 (0-indexed atom 0, symbol 'O') with a Fukui f- index of 0.16201.\n\nAll fukui indices are listed below:\nFukui f+ indices (electrophilic attack, N-1 state):\n[-0.99514 (O), 0.39933 (C), 2.10283 (C), 1.61968 (C), -0.34201 (C), -0.28911 (C), 1.30798 (C), -0.73392 (H), -0.27466 (H), -0.91706 (H), -0.62992 (H), -0.29592 (H), 0.04790 (H)]\n\nFukui f- indices (nucleophilic attack, N+1 state):\n[0.16201 (O), 0.04877 (C), 0.07097 (C), 0.07050 (C), 0.02670 (C), 0.02095 (C), 0.12352 (C), 0.08232 (H), 0.08815 (H), 0.08111 (H), 0.08049 (H), 0.09350 (H), 0.05101 (H)]"
+}

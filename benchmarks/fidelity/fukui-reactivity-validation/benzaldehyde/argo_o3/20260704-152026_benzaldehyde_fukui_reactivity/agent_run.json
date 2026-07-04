@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 302.68,
+    "llm_s": 45.96,
+    "engine_s": 255.55,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance block\nProperty: Fukui\u2013reactivity indices (f\u207a, f\u207b, dual descriptor) for benzaldehyde; headline value = largest electrophilic Fukui function f\u207a = 0.39938965 on atom 3 (C).  \nLevel of theory: DFT, tier \"standard\" \u2192 B3LYP/def2-TZVP (no density-fitting) in PySCF 2.x (via chemkit).  \nGeometry provenance: user-supplied Cartesian coordinates in /home/erobles/\u2026/benzaldehyde.xyz; single-point charges on this fixed geometry (no re-optimization) \u2192 DFT//(input XYZ).  \nSolvent / environment: gas phase (no implicit solvation).  \nCharge 0, multiplicity 1 (closed-shell singlet).  \nPopulation scheme: Mulliken charges from the PySCF SCF solutions for the N, N-1, and N+1 states (cation/anion multiplicities 2).  \nConvergence & warnings: SCF for all three charge states converged.  Engine integrity status: ok; trustworthy = true.  Warnings (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 common header present  \nAll three integrity checks passed (ok = true), so the run is considered reliable.\n\nLive log & files: calculation ran via\n`chemkit fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /\u2026/benzaldehyde.xyz --out benzaldehyde_fukui_dft.json`  \nLive SCF/analysis output was streamed to `fukui_<timestamp>.out` in the working directory.  All numerical results are in `benzaldehyde_fukui_dft.json`; the bar-chart PNG is at the path listed above.\n\nResult (electrophilic site): f\u207a(atom 3 C) = 0.39938965 (dimensionless)."
+}

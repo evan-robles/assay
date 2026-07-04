@@ -1,0 +1,31 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 118.39,
+    "llm_s": 7.93,
+    "engine_s": 107.26,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "Large drift in Fukui charge conservation suggests a possible non-convergence of the N+1 and N\u22121 states, with the sums f+ and f\u2212 both approximately 1.0000, but indicating the N+1 state might not have fully converged."
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "calculated"
+  },
+  "prose": "Fukui reactivity analysis on aniline was performed using DFT at the B3LYP functional with def2-tzvp basis set (tier 'standard') in the gas phase. The most electrophilic site has Fukui + approximately 2.2976 at a carbon atom, and the most nucleophilic site has Fukui - approximately 0.2045 at the nitrogen atom. The method was B3LYP/def2-tzvp in gas phase with charge 0 and multiplicity 1. The calculation results include site-specific Fukui indices and indicated some convergence warnings."
+}

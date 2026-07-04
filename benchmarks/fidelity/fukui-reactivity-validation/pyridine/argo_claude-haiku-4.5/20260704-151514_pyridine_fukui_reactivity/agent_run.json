@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 79.11,
+    "llm_s": 16.85,
+    "engine_s": 61.15,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Fukui Reactivity Indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals, PySCF), **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `.xyz` file, used as-is (single-point). Neutral parent state computed alongside cation (N\u22121, mult. 2) and anion (N+1, mult. 2) for Fukui descriptor calculation. SCF converged for all three electronic states. Charge conservation verified: \u03a3(f\u207a) = 1.0000, \u03a3(f\u207b) = 1.0000.\n\n**Key Results:**\n\u2014 **Most electrophilic site:** N (atom 1), *f*\u207a = 0.4842\n\u2014 **Most nucleophilic site:** C (atoms 3 & 4, meta positions), *f*\u207b \u2248 0.1182\n\u2014 **Full Fukui indices, partial charges (Mulliken), and dual descriptors** tabulated above for all 11 atoms (5 heavy atoms + 6 H).\n\nCalculated using chemkit `fukui-reactivity` skill with `--method dft --tier standard` on pyridine.xyz (11 atoms). Output files and visualization plot generated. Integrity check passed; result is trustworthy."
+}

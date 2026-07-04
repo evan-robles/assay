@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 986.5,
+    "llm_s": 85.66,
+    "engine_s": 900.82,
+    "turns": 7,
+    "tool_calls": 4
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary (reproducible):\n\n\u2022 Property: atom\u2010condensed Fukui indices f\u207a (electrophilic), f\u207b (nucleophilic), f\u2070 (radical) and dual descriptor for benzaldehyde; most electrophilic and most nucleophilic sites identified.\n\n\u2022 Level of theory: DFT, functional B3LYP with def2-TZVP basis (tier \u2018standard\u2019), no density fitting (exact four-center integrals) in PySCF 2.5.0 via chemkit.\n\n\u2022 Geometry provenance: user-supplied Cartesian coordinates (benzaldehyde.xyz); single-point calculations for the neutral (N), cation (N\u20131), and anion (N+1) states \u2014 no additional geometry optimization (notation: DFT//input XYZ).\n\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\n\u2022 Charge & multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation and anion states were doublets (charge \u00b11, multiplicity 2).\n\n\u2022 Convergence & integrity: all three SCFs converged; integrity.status = ok; integrity.trustworthy = true.  Three engine warnings (see below) note charge-conservation checks and schema header.\n\nKey numerical results (Mulliken partitioning):\n\u2003Most electrophilic site: atom 3 (C, the carbonyl carbon)\u2003f\u207a = 0.39938964  \n\u2003Most nucleophilic site: atom 1 (O)\u2003f\u207b = 0.23839906  \n\nLive run log was written during execution (tailable in real time) to the standard chemkit `<cwd>/fukui_<timestamp>.out`; full JSON result saved as `benzaldehyde_fukui_b3lyp_def2tzvp2.json` (see cli_invocation inside the JSON for exact command).\n\nVerbatim warnings from chemkit:\n1. sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n2. sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n3. common header present  \n\nThe calculation therefore meets internal integrity checks and is flagged trustworthy."
+}

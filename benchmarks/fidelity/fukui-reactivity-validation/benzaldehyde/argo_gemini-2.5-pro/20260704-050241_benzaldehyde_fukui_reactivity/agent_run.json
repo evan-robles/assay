@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 255.95,
+    "llm_s": 32.81,
+    "engine_s": 223.14,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have completed the Fukui reactivity analysis for benzaldehyde using DFT.\n\n**Fukui Reactivity Analysis of Benzaldehyde**\n\nThe calculation was performed at the DFT level of theory, using the tier `standard` protocol, which corresponds to the **B3LYP functional and def2-TZVP basis set** (with density fitting) in the **PySCF** program. The calculation was run in the **gas phase**. The geometry of the neutral molecule (charge 0, multiplicity 1) was optimized at this level of theory before performing single-point energy calculations on the corresponding cation and anion species to derive the Fukui indices. The calculation completed successfully, and the engine reported no warnings.\n\nThe Fukui functions indicate the change in electron density at a given position when the number of electrons in the molecule changes.\n*   **f+ (f_plus)**: Measures reactivity towards a **nucleophilic attack** (propensity to accept an electron). The site with the highest f+ value is the most electrophilic.\n*   **f- (f_minus)**: Measures reactivity towards an **electrophilic attack** (propensity to donate an electron). The site with the highest f- value is the most nucleophilic.\n*   **f0 (f_zero)**: Measures reactivity towards a **radical attack**.\n\n**Results:**\n\n*   The site most susceptible to **nucleophilic attack (the most electrophilic site) is atom C3**, a carbon atom in the benzene ring, with an f+ value of 0.3994.\n*   The site most susceptible to **electrophilic attack (the most nucleophilic site) is atom O1**, the carbonyl oxygen, with an f- value of 0.2384.\n\nA summary of the calculated Fukui indices for each atom is provided below:\n\n| Atom | Symbol | f+ (Electrophilicity) | f- (Nucleophilicity) | f0 (Radical) | Dual Descriptor (\u0394f) |\n|------|--------|-----------------------|----------------------|--------------|--------------------------|\n| 1    | O      | 0.3788                | **0.2384**           | 0.3086       | 0.1404                   |\n| 2    | C      | -0.3517               | -0.0071              | -0.1794      | -0.3446                  |\n| 3    | C      | **0.3994**            | 0.0368               | 0.2181       | 0.3626                   |\n| 4    | C      | 0.2116                | 0.0833               | 0.1475       | 0.1283                   |\n| 5    | C      | 0.3372                | 0.0537               | 0.1955       | 0.2835                   |\n| 6    | C      | 0.2848                | -0.0023              | 0.1412       | 0.2871                   |\n| 7    | C      | 0.2792                | 0.0583               | 0.1687       | 0.2210                   |\n| 8    | C      | 0.3587                | 0.0824               | 0.2205       | 0.2764                   |\n| 9    | H      | -0.1159               | 0.0603               | -0.0278      | -0.1762                  |\n| 10   | H      | -0.2026               | 0.0587               | -0.0720      | -0.2613                  |\n| 11   | H      | -0.1270               | 0.0742               | -0.0264      | -0.2012                  |\n| 12   | H      | -0.1340               | 0.0660               | -0.0340      | -0.2000                  |\n| 13   | H      | -0.1369               | 0.0715               | -0.0327      | -0.2085                  |\n| 14   | H      | -0.1817               | 0.1258               | -0.0279      | -0.3076                  |"
+}

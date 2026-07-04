@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 78.84,
+    "llm_s": 16.41,
+    "engine_s": 61.37,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of pyridine** was performed using **DFT at B3LYP/def2-TZVP** (tier standard, PySCF backend) in **gas phase**, with **neutral singlet parent** (charge 0, multiplicity 1), **cation doublet state** (charge +1, multiplicity 2), and **anion doublet state** (charge \u22121, multiplicity 2). The structure was read from the user-supplied .xyz file and evaluated as a single point (no geometry optimization). All three electronic states converged successfully.\n\n**Key results:**\n- **Most electrophilic site:** Nitrogen (N, atom 1) with f\u207a = **0.48422572**\n- **Most nucleophilic site:** Carbon (C, atom 4) with f\u207b = **0.1182626**\n- The full Fukui indices table (f\u207a, f\u207b, and dual descriptor f\u2070) was computed for all 11 atoms\n- **Charge conservation checks:** sum(f\u207a) = 1.0000 \u2713, sum(f\u207b) = 1.0000 \u2713 (integrity = trustworthy)\n\nThe nitrogen lone pair dominates electrophilicity, while the ortho carbons show enhanced nucleophilicity due to \u03c0-activation by nitrogen. The Mulliken partial-charge scheme was used as the partitioning method. A summary bar chart was generated. No warnings were reported."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 52.25,
+    "llm_s": 41.28,
+    "engine_s": 10.33,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde Fukui reactivity descriptors** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, plain RKS no density fitting) in PySCF, gas phase implicit only, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`, single-point property calculation (Fukui functions) on that fixed geometry. Neutral, cationic, and anionic SCFs all converged; no warnings reported.\n\nComputed Mulliken partial charges (neutral):  \n\u2022 O (atom 1): \u22120.26363838 e  \n\u2022 C (atom 2): +0.083610379 e  \n\u2022 H (atom 3): +0.090009268 e  \n\u2022 H (atom 4): +0.090018737 e  \n\nFukui functions f\u207a (electrophilic) per atom:  \n\u2022 O: 0.46813824  \n\u2022 C: 0.70839130  \n\u2022 H\u2081: \u22120.088269392  \n\u2022 H\u2082: \u22120.088260145  \n\nFukui functions f\u207b (nucleophilic) per atom:  \n\u2022 O: 0.46742464  \n\u2022 C: 0.11244422  \n\u2022 H\u2081: 0.21007563  \n\u2022 H\u2082: 0.21005551  \n\nFukui functions f\u2070 (radical) per atom:  \n\u2022 O: 0.46778144  \n\u2022 C: 0.41041776  \n\u2022 H\u2081: 0.060903121  \n\u2022 H\u2082: 0.060897683  \n\nDual descriptor \u0394f per atom:  \n\u2022 O: +0.00071359555  \n\u2022 C: +0.59594709  \n\u2022 H\u2081: \u22120.29834503  \n\u2022 H\u2082: \u22120.29831566  \n\nMost electrophilic site: C (atom 2) with f\u207a = 0.7083913  \nMost nucleophilic site: O (atom 1) with f\u207b = 0.46742464  \n\nLive log is being written to `fukui_20260704-054213.out` in the working directory (streaming PySCF output; you can `tail -f` it)."
+}

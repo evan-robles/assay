@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 50.74,
+    "llm_s": 43.57,
+    "engine_s": 6.52,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for ferrocene (21 atoms: Fe + 2\u00d7Cp rings) were computed at the GFN2-xTB level (xtb backend) in the gas phase, charge 0, multiplicity 1. The N\u00b11 states used doublet multiplicity (auto-derived). Partial charges use the Mulliken scheme (GFN2-xTB).\n\nHeadline results: The iron centre (atom 11) is both the most electrophilic site (f\u207a = 0.22885456) and the most nucleophilic site (f\u207b = 0.25938191; reported as the headline value). The dual descriptor for Fe is \u22120.030527, confirming it as a net nucleophilic/donating centre. All C and H atoms on the Cp rings carry comparatively small Fukui values (~0.012\u20130.064) and positive dual descriptors.\n\nIntegrity: status=ok, trustworthy=true. sum(f\u207a)=1.0000, sum(f\u207b)=1.0000. No warnings reported by the engine.\n\nMethod caveat: GFN2-xTB is a semi-empirical tight-binding Hamiltonian; Mulliken-based Fukui indices are indicative of reactivity trends but are not chemically-accurate absolute values."
+}

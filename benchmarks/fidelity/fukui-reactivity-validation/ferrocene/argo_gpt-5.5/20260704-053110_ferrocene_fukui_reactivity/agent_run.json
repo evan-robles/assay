@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 45.66,
+    "llm_s": 38.92,
+    "engine_s": 6.09,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity for ferrocene** \u2014 computed with **GFN2-xTB** using the chemkit `fukui-reactivity` skill / `xtb` backend, **gas phase** (no solvent), charge 0, multiplicity 1. Geometry: user-supplied XYZ used as provided: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` (21 atoms). The N\u22121 cation and N+1 anion states were run as doublets: cation charge +1/multiplicity 2; anion charge \u22121/multiplicity 2.\n\nHeadline result: the **most electrophilic site** is **Fe, atom 11**, with **f+ = 0.22885456**. The **most nucleophilic site** is also **Fe, atom 11**, with **f\u2212 = 0.25938191**. The Fe dual descriptor is **\u22120.030527354**.\n\nSelected atom/site result from the tool:\n- most_electrophilic: atom_index_0based = 10, atom_label_1based = 11, symbol = Fe, f_plus = 0.22885456\n- most_nucleophilic: atom_index_0based = 10, atom_label_1based = 11, symbol = Fe, f_minus = 0.25938191\n\nThe returned tool record did not include a separate `warnings` array. Integrity check messages returned by the tool were:\n- `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `common header present`\n\nEngine integrity verdict: `trustworthy: true` with status `ok`.\n\nReproducibility artifacts reported by the tool:\n- Input file: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`\n- Plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_gpt-5.5/20260704-053110_ferrocene_fukui_reactivity/agent_call_01_plot.png`\n- CLI invocation returned by chemkit: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --mult 1 --accept-defaults --stdout path /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpy1i0nn07/live.json`\n\nNo experimental/literature comparison is implied; provenance is **computed**."
+}

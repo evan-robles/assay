@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 129.08,
+    "llm_s": 51.6,
+    "engine_s": 76.87,
+    "turns": 5,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block  \n\u2022 Property: atom\u2010condensed Fukui functions f\u207a (electrophilic), f\u207b (nucleophilic), f\u2070 (average), and the condensed dual descriptor for acrolein (C\u2083H\u2084O).  \n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (no density fitting, exact 4-center integrals).  \n\u2022 Geometry provenance: user-supplied Cartesian coordinates (`acrolein.xyz`); single-point population analysis only (no re-optimization).  \n\u2022 Environment: gas phase (no implicit solvent).  \n\u2022 Total system charge 0, spin multiplicity 1 (closed-shell singlet); cation (N\u20131) and anion (N+1) states treated at doublet (M = 2) with the same functional/basis.  \n\u2022 Software/backend: PySCF 2.x invoked via chemkit `fukui-reactivity` skill.  \n\u2022 Convergence & caveats: all three SCF calculations converged; integrity.status = \u201cok\u201d, trustworthy = true.  \n  Warnings returned by chemkit (VERBATIM):\n    \u2013 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n    \u2013 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n    \u2013 common header present  \n  No other warnings or fall-backs reported.  \n\u2022 Live engine log: the PySCF/chemkit run was streamed in real time to the `.out` file created by the skill (path announced at launch) and can be inspected for full SCF and population details.  \n\u2022 Result JSON: /home/erobles/chem-skills/.fidelity_scratch/tmp00pgixty/live.json  \n\nKey results (Mulliken-based Fukui indices, in input atom order):\n  Atom  f\u207a        f\u207b        f\u2070        Dual\n    O   0.40136419 0.39388616 0.39762517  0.00747804\n    C   0.02225511 0.00598844 0.01412177  0.01626667\n    C   0.43404673 0.09140310 0.26272491  0.34264363\n    C   0.64232102 0.08736982 0.36484542  0.55495120\n    H  -0.15725950 0.08596142 -0.03564904 -0.24322092\n    H  -0.20720290 0.18567960 -0.01076165 -0.39288251\n    H  -0.06211700 0.08448581 0.01118441 -0.14660281\n    H  -0.07340765 0.06522566 -0.00409099 -0.13863330\n\nMost electrophilic site: atom 4 (C, index 3) with f\u207a = 0.64232102.\nMost nucleophilic site: atom 1 (O, index 0) with f\u207b = 0.39388616.\n\nThe headline value above (0.64232102) is the largest electrophilic Fukui index. The calculation was executed exactly as requested with B3LYP/def2-TZVP in the gas phase on the supplied geometry using chemkit\u2019s `fukui-reactivity` (PySCF) tool."
+}
