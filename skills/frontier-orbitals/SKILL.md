@@ -39,6 +39,15 @@ Arguments:
 - HF-only: `--basis <name>`.
 - `--out <path>` — result JSON (default `<stem>_frontier_<method>.json` in the run cwd).
 
+> **Skill name / discovery.** This skill's engine subcommand is `frontier`; the
+> names `frontier-orbitals` (this folder), `frontier-orbital`, and `fmo` are
+> accepted aliases — any of them work. Do **not** invent flags: gas phase is the
+> default (or `--solvent none`); there is no `--phase`/`--environment` flag, and
+> the geometry is the positional argument, not `--geometry`/`--xyz`. If unsure of
+> the exact name or flags, run `chemkit --list-skills` or
+> `chemkit frontier-orbitals --help-json` (or `--help`) to discover them instead
+> of guessing.
+
 Read the JSON — it is already written to `--out` (default `<stem>_frontier_<method>.json` in the run cwd). Report: HOMO, LUMO, and HOMO–LUMO gap (eV); the full frontier table (HOMO−$K$..HOMO, LUMO..LUMO+$K$) sorted by energy; the Koopmans descriptors from `koopmans` (vertical IP, vertical EA, $\chi$, $\eta$, $S$, $\omega$); method, solvent (or "gas phase"), charge, multiplicity; the JSON path; and every warning from the result JSON, reproduced verbatim — none dropped, summarized, or paraphrased; if there are no warnings, say so. For MOPAC, also surface heat of formation and dipole from `code_specific`. xtb and MOPAC orbital zeros differ — compare orbital energies only within the same method — and Koopmans values are first-order estimates (for quantitative IP/EA use ΔSCF with DFT). To relax the geometry first, run [geometry-optimize](../geometry-optimize/SKILL.md) beforehand; for a single-point energy see [single-point-energy](../single-point-energy/SKILL.md).
 
 

@@ -107,6 +107,105 @@ _REPO = Path(__file__).resolve().parent.parent
 _RUNS_DIR = _REPO / "benchmarks" / "runs"
 
 
+def _resolve_skill_name(skill: str) -> str:
+    """Normalize a skill name to an existing skills/<folder> before the driver
+    builds the script path (skills/<skill>/scripts/<skill>.py).
+
+    A model may spell the CORRECT skill non-canonically — the terse engine
+    subcommand (`frontier` for frontier-orbitals) or a near-miss
+    (`frontier-orbital`). We map those spelling-variants back to the real skill
+    FOLDER via the engine's SUBCOMMAND_ALIASES so the run proceeds. This does
+    NOT rescue a genuinely-wrong skill choice: a name that maps to a DIFFERENT
+    skill (e.g. `orbitals` -> visualize-orbitals) is left as-is, so calling the
+    wrong skill for a task still FAILs — that is a real fidelity error the
+    benchmark must keep measuring.
+
+    Returns the resolved folder name if (and only if) skills/<resolved>/ exists;
+    otherwise returns the input unchanged (letting the caller error as before).
+    """
+    if (_REPO / "skills" / skill).is_dir():
+        return skill  # already a real skill folder
+    try:
+        import sys as _sys
+        _mcp = str(_REPO / "mcp_server")
+        if _mcp not in _sys.path:
+            _sys.path.insert(0, _mcp)
+        from chemkit_engine.cli import SUBCOMMAND_ALIASES  # type: ignore
+    except Exception:
+        return skill
+    # Build {any accepted spelling -> canonical subcommand}
+    spelling_to_canon = {}
+    for canon, aliases in SUBCOMMAND_ALIASES.items():
+        spelling_to_canon[canon] = canon
+        for a in aliases:
+            spelling_to_canon[a] = canon
+    canon = spelling_to_canon.get(skill)
+    if canon is None:
+        return skill
+    # canonical subcommand -> skill folder: the folder whose OWN name aliases to
+    # this canonical subcommand (i.e. the descriptive alias that is a real folder).
+    candidates = [canon] + SUBCOMMAND_ALIASES.get(canon, [])
+    for c in candidates:
+        if (_REPO / "skills" / c).is_dir():
+            return c
+    return skill
+
+
+def _import_engine_cli():
+    """Import the engine CLI module (source of truth for discovery). Returns the
+    module or None if unavailable."""
+    try:
+        import sys as _sys
+        _mcp = str(_REPO / "mcp_server")
+        if _mcp not in _sys.path:
+            _sys.path.insert(0, _mcp)
+        from chemkit_engine import cli as _cli  # type: ignore
+        return _cli
+    except Exception:
+        return None
+
+
+def _engine_list_skills_json() -> str:
+    """JSON listing of all skills + aliases for the agent's `list_skills` tool.
+    Prefers the skill-FOLDER names (what the `chemkit` tool's `skill` arg expects)
+    with the engine subcommand shown too, so the agent sees the right identifier."""
+    _cli = _import_engine_cli()
+    if _cli is None:
+        # Fallback: list skill folders directly.
+        folders = sorted(p.name for p in (_REPO / "skills").iterdir()
+                         if p.is_dir() and not p.name.startswith(("_", ".")))
+        return json.dumps({"skills": folders}, indent=2)
+    rows = []
+    for canon in _cli.subcommand_names():
+        aliases = _cli.SUBCOMMAND_ALIASES.get(canon, [])
+        # the skill-folder name is the descriptive alias that is a real folder
+        folder = next((a for a in ([canon] + aliases)
+                       if (_REPO / "skills" / a).is_dir()), canon)
+        rows.append({"skill": folder, "engine_subcommand": canon,
+                     "aliases": aliases})
+    return json.dumps({"skills": rows,
+                       "note": "pass `skill` (the skill name) to the chemkit tool"},
+                      indent=2)
+
+
+def _engine_skill_help_json(skill: str) -> str:
+    """JSON arg spec for one skill for the agent's `skill_help` tool. Accepts any
+    accepted spelling; returns the exact valid flags so the agent needn't guess."""
+    _cli = _import_engine_cli()
+    if _cli is None:
+        return json.dumps({"error": "engine unavailable; cannot describe skill"})
+    canon = _cli._alias_to_canonical().get(_resolve_skill_name(skill), None)
+    if canon is None:
+        canon = _cli._alias_to_canonical().get(skill)
+    if canon is None:
+        sug = _cli._suggest_subcommand(skill)
+        return json.dumps({"error": f"unknown skill {skill!r}",
+                           "did_you_mean": sug,
+                           "hint": "call list_skills to see all skill names"})
+    return json.dumps({"skill": skill, "engine_subcommand": canon,
+                       "arguments": _cli.describe_subcommand(canon)}, indent=2)
+
+
 class RemoteHostUnreachable(RuntimeError):
     """The engine could not run because the remote compute host
     (CHEMKIT_REMOTE_HOST) was unreachable over ssh — e.g. the PBS allocation
@@ -665,6 +764,7 @@ def run_engine(skill: str, flags: List[str], positional: Optional[str], out_path
     `out_log`) is copied beside it as `<label>.out` so artifacts persist past
     the caller's temp dir. This satisfies calculation-reporting-standards §9.
     """
+    skill = _resolve_skill_name(skill)
     script = _REPO / "skills" / skill / "scripts" / f"{skill}.py"
     # Drop any model-supplied --out and its value.
     clean: List[str] = []
@@ -1637,6 +1737,44 @@ _CHEMKIT_TOOL = {
     },
 }
 
+# Discovery tools — the "discoverable, not spoon-fed" interface. The agent is NOT
+# handed the full CLI spec up front; instead it can CALL these to look up the
+# exact skill names and per-skill arguments at runtime, exactly as a real MCP
+# deployment / a human running `chemkit --list-skills` / `chemkit <s> --help-json`
+# would. Backed by the engine (single source of truth), so no drift.
+_LIST_SKILLS_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "list_skills",
+        "description": (
+            "List every chemkit skill (canonical name + accepted aliases + a "
+            "one-line description). Call this if you are unsure which skill name "
+            "to pass to `chemkit` — do not guess."
+        ),
+        "parameters": {"type": "object", "properties": {}},
+    },
+}
+
+_SKILL_HELP_TOOL = {
+    "type": "function",
+    "function": {
+        "name": "skill_help",
+        "description": (
+            "Get the exact valid arguments (flags, types, choices, required, "
+            "positional) for one chemkit skill. Call this if you are unsure of "
+            "the correct flags — do not invent flags like --phase or --geometry."
+        ),
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "skill": {"type": "string",
+                          "description": "skill name to describe, e.g. fukui-reactivity"},
+            },
+            "required": ["skill"],
+        },
+    },
+}
+
 _FINAL_REPORT_TOOL = {
     "type": "function",
     "function": {
@@ -1685,7 +1823,11 @@ _FINAL_REPORT_TOOL = {
 _LIVE_INSTRUCTIONS = (
     "You are a computational-chemistry assistant. Use the `chemkit` tool to do "
     "the requested task — never guess or fabricate a result; only report what a "
-    "tool actually returned. The molecule (an xyz path, or a SMILES/name to "
+    "tool actually returned. If you are unsure of the exact skill name or its "
+    "valid arguments, call `list_skills` and/or `skill_help` FIRST to discover "
+    "them — do not invent skill names or flags (e.g. there is no --phase flag; "
+    "gas phase is the default or --solvent none). "
+    "The molecule (an xyz path, or a SMILES/name to "
     "build) is given in the task. When finished, call `final_report`: put any "
     "headline number under `value` as a single bare number (not an object) at "
     "AT LEAST 5 significant figures, copied exactly from the tool's result with "
@@ -1849,7 +1991,7 @@ def run_live_agent(spec: Dict[str, Any],
         {"role": "system", "content": system_content},
         {"role": "user", "content": prompt},
     ]
-    tools = [_CHEMKIT_TOOL, _FINAL_REPORT_TOOL]
+    tools = [_CHEMKIT_TOOL, _LIST_SKILLS_TOOL, _SKILL_HELP_TOOL, _FINAL_REPORT_TOOL]
 
     def _dump_transcript() -> None:
         if run_dir is not None:
@@ -1978,6 +2120,16 @@ def run_live_agent(spec: Dict[str, Any],
                     tool_out = json.dumps({"error": str(e)})
                 messages.append({"role": "tool", "tool_call_id": call.id,
                                  "content": tool_out})
+            elif fn == "list_skills":
+                # Discovery: return the engine's authoritative skill listing.
+                print("[live] agent calls list_skills (discovery)")
+                messages.append({"role": "tool", "tool_call_id": call.id,
+                                 "content": _engine_list_skills_json()})
+            elif fn == "skill_help":
+                want = fargs.get("skill", "")
+                print(f"[live] agent calls skill_help({want!r}) (discovery)")
+                messages.append({"role": "tool", "tool_call_id": call.id,
+                                 "content": _engine_skill_help_json(want)})
             else:
                 messages.append({"role": "tool", "tool_call_id": call.id,
                                  "content": json.dumps({"error": "unknown tool"})})

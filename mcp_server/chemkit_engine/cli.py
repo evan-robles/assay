@@ -482,6 +482,167 @@ def _dispatch(args, parser, cli: str, pyscf_kwargs: dict):
         return None
 
 
+# ── Subcommand aliases (agent-/user-proofing) ────────────────────────────────
+# The engine's canonical subcommands are terse (`sp`, `opt`, `frontier`, ...),
+# but the SKILL folders / MCP tools use descriptive names (`single-point-energy`,
+# `frontier-orbitals`, ...). A user or agent naturally reaches for the
+# descriptive name (or a near-miss), which argparse would reject as an unknown
+# subcommand. We register these as argparse `aliases=` on each subparser so BOTH
+# spellings work everywhere (CLI, MCP front door, benchmark), and an unknown one
+# still gets a `did you mean` suggestion (see _suggest_subcommand).
+#
+# Maps canonical subcommand -> list of accepted aliases. Kept in ONE place so
+# subcommand_names()/the consistency check/--list-skills all report it.
+# (Observed confusions from the 2026-07-03 fidelity runs: models called
+# `orbitals`/`frontier` for frontier-orbitals, hence the descriptive aliases.)
+SUBCOMMAND_ALIASES = {
+    "sp":          ["single-point-energy", "single-point", "singlepoint"],
+    "opt":         ["geometry-optimize", "geometry-optimization", "optimize"],
+    "freq":        ["vibrational-analysis", "frequencies", "vibrations"],
+    "binding":     ["binding-energy"],
+    "redox":       ["redox-potential"],
+    "confsearch":  ["conformer-search", "conformer-generation"],
+    "frontier":    ["frontier-orbitals", "frontier-orbital", "fmo"],
+    "solvation":   ["solvation-energy"],
+    "logp":        ["logp-partition", "logp-partitioning"],
+    "profile":     ["reaction-profile"],
+    "pka":         ["pka-acidity"],
+    "build":       ["build-from-smiles", "build-from-name"],
+    "resolve":     ["name-to-smiles"],
+    "fukui":       ["fukui-reactivity"],
+    "ts":          ["transition-state", "ts-search"],
+    "irc":         ["intrinsic-reaction-coordinate"],
+    "rxn-energy":  ["reaction-energy"],
+    "scan":        ["conformational-analysis", "dihedral-scan", "relaxed-scan"],
+    "orbitals":    ["visualize-orbitals"],
+    # electrostatics has no descriptive/terse split (same name) -> no alias.
+}
+
+
+def _alias_to_canonical() -> dict:
+    """Flat {alias -> canonical subcommand} map. Every canonical subcommand maps
+    to itself (including ones with NO descriptive alias, e.g. electrostatics), so
+    this is a safe idempotent normalizer for any valid subcommand name."""
+    out = {}
+    # seed every real canonical subcommand -> itself (covers alias-less ones)
+    try:
+        for canon in subcommand_names():
+            out[canon] = canon
+    except Exception:  # pragma: no cover - subcommand_names always works
+        pass
+    for canon, aliases in SUBCOMMAND_ALIASES.items():
+        out[canon] = canon
+        for a in aliases:
+            out[a] = canon
+    return out
+
+
+def _suggest_subcommand(name: str) -> Optional[str]:
+    """Nearest valid subcommand OR alias for an unknown `name`, or None.
+    Used to append a 'did you mean' hint to an unknown-subcommand error."""
+    import difflib
+    candidates = list(_alias_to_canonical().keys())
+    m = difflib.get_close_matches(str(name), candidates, n=1, cutoff=0.5)
+    return m[0] if m else None
+
+
+def _suggest_flag(bad: str, valid_flags: List[str]) -> Optional[str]:
+    """Nearest valid option string for an unknown flag `bad` within a specific
+    subcommand's option set, or None. Per-subcommand so `--geometry` (valid for
+    freq, not fukui) is only suggested where it applies.
+
+    SEMANTIC map first (known invented flags -> the real flag), THEN difflib.
+    Order matters: models invent `--phase`/`--environment` for the solvent and
+    `--geometry`/`--xyz` for the positional; a raw edit-distance match would
+    mis-suggest (e.g. --phase -> --charge). The semantic map encodes intent."""
+    key = str(bad).lower()
+    semantic = {
+        "--phase": "--solvent", "--environment": "--solvent",
+        "--gas": "--solvent", "--solvation": "--solvent",
+        "--geometry": None, "--geo": None, "--geofile": None,
+        "--xyz": None, "--input": None, "--coord-file": None,
+        "--structure": None, "--file": None, "--convergence": None,
+        "--atoms": None,
+    }
+    if key in semantic:
+        target = semantic[key]
+        if target is None:
+            return "(pass the geometry as the positional argument, not a flag)"
+        if target in valid_flags:
+            return target
+        # target flag not valid for THIS subcommand -> no confident suggestion
+        return None
+    import difflib
+    m = difflib.get_close_matches(str(bad), valid_flags, n=1, cutoff=0.6)
+    return m[0] if m else None
+
+
+class _SuggestingSubParser(argparse.ArgumentParser):
+    """A subparser whose `error()` appends a per-subcommand 'did you mean'
+    suggestion when the failure is an unrecognized/ambiguous flag. Additive:
+    every existing parser.error message (level-of-theory gate, etc.) is
+    unchanged; we only enrich the argparse 'unrecognized arguments' case."""
+
+    def error(self, message: str) -> None:  # type: ignore[override]
+        hint = ""
+        # argparse phrasings: "unrecognized arguments: --foo" /
+        # "ambiguous option: --f could match ..." — extract the offending token.
+        import re
+        m = re.search(r"unrecognized arguments:\s+(\S+)", message) or \
+            re.search(r"(?:ambiguous option|unknown option):\s+(\S+)", message)
+        if m and m.group(1).startswith("-"):
+            valid = [s for a in self._actions for s in a.option_strings]
+            sug = _suggest_flag(m.group(1), valid)
+            if sug:
+                hint = f"\n  did you mean: {sug}" if sug.startswith("-") else f"\n  {sug}"
+        super().error(message + hint)
+
+
+def _valid_flags_for(subcommand: str) -> List[str]:
+    """All option strings valid for a given (possibly aliased) subcommand."""
+    canon = _alias_to_canonical().get(subcommand, subcommand)
+    parser = build_parser()
+    subact = next((a for a in parser._actions
+                   if isinstance(a, argparse._SubParsersAction)), None)
+    sp = subact.choices.get(canon) if subact else None
+    if sp is None:
+        return []
+    return [s for a in sp._actions for s in a.option_strings]
+
+
+class _TopParser(argparse.ArgumentParser):
+    """Top-level parser whose error() appends a 'did you mean' suggestion for
+    (a) an unknown SUBCOMMAND ('invalid choice') and (b) an unrecognized FLAG
+    ('unrecognized arguments'), which argparse raises at the TOP level after the
+    subparser runs. The flag suggestion is scoped to the subcommand actually
+    used (read from argv), so `--geometry` is only offered where it's valid.
+    Additive — all other errors pass through unchanged."""
+
+    def error(self, message: str) -> None:  # type: ignore[override]
+        import re
+        hint = ""
+        m = re.search(r"invalid choice:\s+'([^']+)'", message)
+        if m:
+            sug = _suggest_subcommand(m.group(1))
+            if sug:
+                hint = (f"\n  did you mean: {sug!r}?  "
+                        f"(run `chemkit --list-skills` to see all)")
+        else:
+            m2 = re.search(r"unrecognized arguments:\s+(--\S+)", message)
+            if m2:
+                # subcommand = first non-flag token in argv. Prefer the argv main()
+                # stashed on us (works when main() is called with explicit argv,
+                # e.g. MCP/tests); fall back to sys.argv for the shell path.
+                argv = getattr(self, "_chemkit_argv", None) or sys.argv[1:]
+                subcmd = next((t for t in argv if not t.startswith("-")), None)
+                valid = _valid_flags_for(subcmd) if subcmd else []
+                sug = _suggest_flag(m2.group(1), valid)
+                if sug:
+                    hint = (f"\n  did you mean: {sug}" if sug.startswith("-")
+                            else f"\n  {sug}")
+        super().error(message + hint)
+
+
 def build_parser() -> argparse.ArgumentParser:
     """Construct the full chemkit engine argument parser.
 
@@ -490,12 +651,35 @@ def build_parser() -> argparse.ArgumentParser:
     (subcommand_names / check_tools_cli_consistency), and by the typed MCP
     input-schema derivation.
     """
-    parser = argparse.ArgumentParser(
+    parser = _TopParser(
         prog="chemkit",
         description="ASE-based computational chemistry suite (xtb, MOPAC).",
     )
     parser.add_argument("--version", action="version", version=f"chemkit {__version__}")
-    sub = parser.add_subparsers(dest="task", required=True)
+    parser.add_argument(
+        "--list-skills", action="store_true",
+        help="List every subcommand (with its descriptive aliases) and exit. "
+             "Add --json for a machine-readable listing an agent can parse.",
+    )
+    parser.add_argument(
+        "--json", action="store_true",
+        help="With --list-skills: emit JSON instead of text.",
+    )
+    # parser_class here makes EVERY subparser a _SuggestingSubParser (per-subcommand
+    # 'did you mean' on an unknown flag).
+    sub = parser.add_subparsers(dest="task", required=False,
+                                parser_class=_SuggestingSubParser)
+
+    # Every subparser is created through this shim so it automatically gets its
+    # descriptive aliases from SUBCOMMAND_ALIASES. Callers keep using
+    # `sub.add_parser("sp", ...)` unchanged.
+    _raw_add_parser = sub.add_parser
+
+    def _add_parser(name, **kw):
+        kw.setdefault("aliases", SUBCOMMAND_ALIASES.get(name, []))
+        return _raw_add_parser(name, **kw)
+
+    sub.add_parser = _add_parser  # type: ignore[assignment]
 
     p_sp = sub.add_parser("sp", help="Single-point energy.")
     _add_common(p_sp)
@@ -930,14 +1114,50 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def subcommand_names() -> List[str]:
-    """The engine's registered subcommands (e.g. 'sp', 'opt', ...), read from
-    the built parser's subparser map. Single source of truth for the CLI side
-    of the TOOLS<->CLI consistency check."""
+    """The engine's registered CANONICAL subcommands (e.g. 'sp', 'opt', ...).
+    Single source of truth for the CLI side of the TOOLS<->CLI consistency check.
+
+    argparse's subparser `choices` now includes descriptive aliases too (added via
+    SUBCOMMAND_ALIASES); filter those out so this returns only canonical names —
+    otherwise the consistency check would flag every alias as 'unexposed'."""
     parser = build_parser()
+    aliases = {a for al in SUBCOMMAND_ALIASES.values() for a in al}
     for action in parser._actions:
         if isinstance(action, argparse._SubParsersAction):
-            return sorted(action.choices.keys())
+            return sorted(n for n in action.choices.keys() if n not in aliases)
     return []
+
+
+def list_skills(as_json: bool = False) -> str:
+    """Human- or machine-readable listing of every subcommand, its aliases, and
+    its one-line help. Backs `chemkit --list-skills`. Source of truth = the built
+    parser, so it never drifts. An agent can call this (or its --json form) to
+    DISCOVER the interface instead of guessing skill names."""
+    parser = build_parser()
+    subact = next((a for a in parser._actions
+                   if isinstance(a, argparse._SubParsersAction)), None)
+    helps = {}
+    if subact is not None:
+        for choice_action in subact._choices_actions:  # canonical entries only
+            helps[choice_action.dest] = choice_action.help or ""
+    rows = []
+    for canon in subcommand_names():
+        rows.append({
+            "subcommand": canon,
+            "aliases": SUBCOMMAND_ALIASES.get(canon, []),
+            "help": helps.get(canon, ""),
+        })
+    if as_json:
+        return json.dumps({"subcommands": rows}, indent=2) + "\n"
+    lines = ["chemkit subcommands (canonical name, then accepted aliases):", ""]
+    for r in rows:
+        al = f"   aliases: {', '.join(r['aliases'])}" if r["aliases"] else ""
+        lines.append(f"  {r['subcommand']:16}{r['help']}")
+        if al:
+            lines.append(f"  {'':16}{al.strip()}")
+    lines += ["", "Run `chemkit <subcommand> --help` for a subcommand's arguments,",
+              "or `chemkit <subcommand> --help-json` for a machine-readable arg spec."]
+    return "\n".join(lines) + "\n"
 
 
 def describe_subcommand(subcommand: str) -> List[dict]:
@@ -1055,7 +1275,50 @@ def main(argv: Optional[List[str]] = None) -> int:
     # taken from sys.argv (the subprocess path used by run_engine, where a
     # model's malformed ['--method dft', ...] arrives as one argv element).
     argv = _split_combined_flag_tokens(argv if argv is not None else sys.argv[1:])
+
+    # Discovery: `chemkit --list-skills [--json]` — list every subcommand and its
+    # descriptive aliases, then exit. Handled BEFORE full parsing so it works with
+    # no subcommand. Lets an agent/user discover the interface (source of truth =
+    # this parser) instead of guessing skill names.
+    if argv is not None and "--list-skills" in argv:
+        as_json = "--json" in argv
+        sys.stdout.write(list_skills(as_json=as_json))
+        return 0
+
+    # Discovery: `chemkit <sub> --help-json` — machine-readable arg spec for one
+    # subcommand (from describe_subcommand). Handled before parse_args since the
+    # subparser doesn't define --help-json. Accepts alias spellings of <sub>.
+    if argv and "--help-json" in argv:
+        sub_name = argv[0] if not argv[0].startswith("-") else None
+        canon = _alias_to_canonical().get(sub_name) if sub_name else None
+        if canon is None:
+            sug = _suggest_subcommand(sub_name or "")
+            hint = f" did you mean {sug!r}?" if sug else ""
+            sys.stderr.write(f"chemkit: unknown subcommand {sub_name!r}.{hint} "
+                             f"Run `chemkit --list-skills`.\n")
+            return 2
+        sys.stdout.write(json.dumps(
+            {"subcommand": canon, "aliases": SUBCOMMAND_ALIASES.get(canon, []),
+             "arguments": describe_subcommand(canon)}, indent=2) + "\n")
+        return 0
+
+    # Stash argv so _TopParser.error can scope a flag suggestion to the
+    # subcommand actually used (works for explicit-argv callers, not just shell).
+    parser._chemkit_argv = argv  # type: ignore[attr-defined]
     args = parser.parse_args(argv)
+
+    # A subcommand is required for an actual calculation (subparsers are
+    # required=False only so --list-skills can run without one). Missing one ->
+    # helpful usage, not a bare argparse crash.
+    if getattr(args, "task", None) is None:
+        parser.error("a subcommand is required. Run `chemkit --list-skills` to "
+                     "see all subcommands (and their aliases), or `chemkit <sub> "
+                     "--help` for a subcommand's arguments.")
+
+    # Normalize an alias subcommand (e.g. 'frontier-orbitals') to its canonical
+    # name ('frontier') so all downstream `args.task == "<canonical>"` dispatch
+    # works regardless of which accepted spelling the caller used.
+    args.task = _alias_to_canonical().get(args.task, args.task)
 
     # ------------------------------------------------------------------
     # Gas-phase synonyms -> None. Gas phase is expressed by OMITTING --solvent

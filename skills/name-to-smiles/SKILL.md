@@ -59,6 +59,8 @@ to generate a 3D `.xyz` for downstream calculations.
 > you need with `jq` (always include `warnings`). See
 > [RESULT-READING.md](../RESULT-READING.md).
 
+> **Skill name / discovery.** This skill's engine subcommand is `resolve` (`name-to-smiles` is an accepted alias). Do **not** invent flags: the molecule (a SMILES string or a name) is the positional argument, not `--smiles`/`--name`/`--input`. If unsure of the exact name or flags, run `chemkit --list-skills` or `chemkit name-to-smiles --help-json` (or `--help`) to discover them instead of guessing.
+
 ## Examples
 ```bash
 # Env: anl_env

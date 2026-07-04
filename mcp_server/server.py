@@ -446,10 +446,39 @@ def cli_main(argv: list[str] | None = None) -> int:
 
     subcommand = argv[0]
     rest = argv[1:]
+
+    # `chemkit --list-skills [--json]` — discovery, handled by the engine.
+    if subcommand in ("--list-skills",):
+        try:
+            from chemkit_engine.cli import list_skills  # type: ignore
+            sys.stdout.write(list_skills(as_json=("--json" in rest)))
+            return 0
+        except Exception:  # noqa: BLE001
+            sys.stdout.write(_chemkit_usage())
+            return 0
+
+    # Resolve descriptive aliases (frontier-orbitals -> frontier, ...) to the
+    # canonical subcommand via the engine's alias map (single source of truth),
+    # so `chemkit frontier-orbitals ...` works at the human/agent front door too.
+    try:
+        from chemkit_engine.cli import _alias_to_canonical  # type: ignore
+        subcommand = _alias_to_canonical().get(subcommand, subcommand)
+    except Exception:  # noqa: BLE001
+        pass
+
     tool_name = _SUBCOMMAND_TO_TOOL.get(subcommand)
     if tool_name is None:
+        # did-you-mean suggestion from the engine's fuzzy matcher.
+        hint = ""
+        try:
+            from chemkit_engine.cli import _suggest_subcommand  # type: ignore
+            sug = _suggest_subcommand(subcommand)
+            if sug:
+                hint = f" did you mean {sug!r}?"
+        except Exception:  # noqa: BLE001
+            pass
         sys.stderr.write(
-            f"chemkit: unknown subcommand {subcommand!r}.\n\n" + _chemkit_usage()
+            f"chemkit: unknown subcommand {subcommand!r}.{hint}\n\n" + _chemkit_usage()
         )
         return 2
 

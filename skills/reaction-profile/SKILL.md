@@ -55,6 +55,8 @@ Related skills: [geometry-optimize](../geometry-optimize/SKILL.md), [transition-
 
 > **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
 
+> **Skill name / discovery.** This skill's engine subcommand is `profile` (`reaction-profile` is an accepted alias). Do **not** invent flags: gas phase is the default (or `--solvent none`); there is no `--phase`/`--environment` flag, and each geometry is passed with `--reactant`/`--product`/`--ts-guess` — not `--geometry`/`--xyz`/`--input`. If unsure of the exact name or flags, run `chemkit --list-skills` or `chemkit reaction-profile --help-json` (or `--help`) to discover them instead of guessing.
+
 ## Examples
 ```bash
 # Env: anl_env

@@ -44,6 +44,8 @@ python skills/transition-state/scripts/transition-state.py guess.xyz --method mo
 
 > **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
 
+> **Skill name / discovery.** This skill's engine subcommand is `ts`; the names `transition-state`, `ts-search` are accepted aliases — any of them work. Do **not** invent flags: gas phase is the default (or `--solvent none`); there is no `--phase`/`--environment` flag, and the geometry is the positional argument, not `--geometry`/`--xyz`/`--input`. If unsure of the exact name or flags, run `chemkit --list-skills` or `chemkit transition-state --help-json` (or `--help`) to discover them instead of guessing.
+
 ## Examples
 ```bash
 # Env: anl_env

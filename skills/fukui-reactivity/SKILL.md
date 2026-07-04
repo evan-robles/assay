@@ -44,6 +44,14 @@ Arguments:
 - HF-only: `--basis <name>`.
 - `--out <path>` (result JSON; default `<stem>_fukui_<method>.json` in the run cwd).
 
+> **Skill name / discovery.** This skill's engine subcommand is `fukui`;
+> `fukui-reactivity` (this folder) is an accepted alias. Do **not** invent flags:
+> gas phase is the default (or `--solvent none`); there is no
+> `--phase`/`--environment` flag, and the geometry is the positional argument,
+> not `--geometry`/`--xyz`. If unsure of the exact name or flags, run
+> `chemkit --list-skills` or `chemkit fukui-reactivity --help-json` (or `--help`)
+> to discover them instead of guessing.
+
 If the `.xyz` is missing → stop and ask. If `--method` is missing, ask.
 
 Then read the JSON and report: the most electrophilic atom (largest $f^+$ — symbol, 1-based index, value); the most nucleophilic atom (largest $f^-$); the full per-atom table (index, symbol, $f^+$, $f^-$, dual — sort by $|\mathrm{dual}|$ descending if compact); the PNG path (if plotting was on); the partial-charge scheme (Mulliken for both backends); and every warning from the result JSON, reproduced verbatim — none dropped, summarized, or paraphrased; if there are no warnings, say so. Pay particular attention to the "Σ f± ≠ 1.0" charge-conservation drift, which usually indicates an SCF problem in an N±1 state.

@@ -44,6 +44,8 @@ Recommendations: skip `--opt` if a downstream skill does its own optimization; u
 
 > **Result reading (token-efficient, required):** run with `--out <path> --stdout path` so stdout is a one-line pointer, then read back only the fields you need with `jq` (always include `warnings` and the convergence flag). Surface the live `.out` log path the moment the run starts so the user can `tail -f` it. See [RESULT-READING.md](../RESULT-READING.md).
 
+> **Skill name / discovery.** This skill's engine subcommand is `build`; the names `build-from-smiles`, `build-from-name` are accepted aliases — any of them work. Do **not** invent flags: the molecule (a SMILES string or a name) is the positional argument, not `--smiles`/`--name`/`--input`. If unsure of the exact name or flags, run `chemkit --list-skills` or `chemkit build-from-smiles --help-json` (or `--help`) to discover them instead of guessing.
+
 ## Examples
 ```bash
 # Env: anl_env
