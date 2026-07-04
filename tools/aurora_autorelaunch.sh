@@ -43,7 +43,13 @@ activate() {
     export SKIP_WARMUP=1
 }
 
-# Sweep complete? every (molecule,model) has REPEAT result.json.
+# Sweep complete? every (molecule,model) has REPEAT REAL (PASS/FAIL) runs.
+# CRITICAL: count only scored runs, NOT ERROR result.jsons (dead-node
+# remote_host_unreachable, no_agent_run, encoding corruption). An ERROR is an
+# excluded-from-scoring artifact whose slot must be re-run — counting it as
+# "done" makes the sweep stop prematurely with unfilled slots (observed
+# 2026-07-04: o3 tail runs died on an expired allocation, left 13 ERROR slots,
+# and the sweep declared complete). Mirrors parallel_suite.sh _completed_runs.
 sweep_complete() {
     activate
     python - "$SUITE" "$REPEAT" "${MODELS[@]}" <<'PY'
@@ -51,11 +57,19 @@ import sys, glob, json
 from pathlib import Path
 suite, n = Path(sys.argv[1]), int(sys.argv[2]); models = sys.argv[3:]
 mols = [d for d in suite.iterdir() if d.is_dir()]
+def real_scored(mol, mslug):
+    c = 0
+    for rj in glob.glob(str(mol/mslug/"*"/"result.json")):
+        try:
+            if json.load(open(rj)).get("overall") in ("PASS", "FAIL"):
+                c += 1
+        except Exception:
+            pass
+    return c
 for mol in mols:
     for m in models:
         mslug = m.replace(":","_").replace("/","_")
-        done = len(glob.glob(str(mol/mslug/"*"/"result.json")))
-        if done < n:
+        if real_scored(mol, mslug) < n:
             sys.exit(1)
 sys.exit(0)
 PY
@@ -70,15 +84,25 @@ PY
 unfinished_models() {
     activate
     python - "$SUITE" "$REPEAT" "${MODELS[@]}" <<'PY'
-import sys, glob
+import sys, glob, json
 from pathlib import Path
 suite, n = Path(sys.argv[1]), int(sys.argv[2]); models = sys.argv[3:]
 mols = [d for d in suite.iterdir() if d.is_dir()]
+def real_scored(mol, mslug):
+    c = 0
+    for rj in glob.glob(str(mol/mslug/"*"/"result.json")):
+        try:
+            if json.load(open(rj)).get("overall") in ("PASS", "FAIL"):
+                c += 1
+        except Exception:
+            pass
+    return c
 need = 0
 for m in models:
     mslug = m.replace(":","_").replace("/","_")
-    # a model is "unfinished" if ANY molecule has < n result.json
-    if any(len(glob.glob(str(mol/mslug/"*"/"result.json"))) < n for mol in mols):
+    # unfinished if ANY molecule has < n REAL (PASS/FAIL) runs — ERROR slots
+    # (dead-node etc.) don't count, so they get re-run instead of masking the gap.
+    if any(real_scored(mol, mslug) < n for mol in mols):
         need += 1
 print(max(1, need))
 PY
