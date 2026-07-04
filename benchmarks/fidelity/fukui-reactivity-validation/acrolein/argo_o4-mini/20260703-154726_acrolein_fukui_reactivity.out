@@ -1,4 +1,0 @@
-[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
-[live] injected rules: calculation-reporting-standards, research-standards
-[live] model=argo:o4-mini via argo-proxy http://127.0.0.1:60639/v1
-[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--tier', 'standard', '--charge', '0', '--multiplicity', '1', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz']

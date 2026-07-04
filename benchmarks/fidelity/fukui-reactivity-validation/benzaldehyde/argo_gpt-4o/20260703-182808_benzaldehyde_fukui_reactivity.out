@@ -1,4 +1,0 @@
-[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
-[live] injected rules: calculation-reporting-standards, research-standards
-[live] model=argo:gpt-4o via argo-proxy http://127.0.0.1:60639/v1
-[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--tier', 'standard', '--charge', '0', '--mult', '1', '--solvent', 'none', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz']

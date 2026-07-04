@@ -1,7 +1,0 @@
-[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
-[live] injected rules: calculation-reporting-standards, research-standards
-[live] model=argo:claude-opus-4.8 via argo-proxy http://127.0.0.1:60639/v1
-[live] agent calls chemkit: frontier-orbitals ['--method', 'dft', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '--charge', '0', '--mult', '1', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz']
-[live] agent calls chemkit: frontier-orbitals ['--help']
-[live] agent calls chemkit: frontier-orbital-energies ['--help']
-[live] agent calls chemkit: orbitals ['--help']
