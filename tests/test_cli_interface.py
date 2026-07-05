@@ -218,3 +218,74 @@ def test_tools_cli_consistency_still_clean():
         "resolve", "fukui", "ts", "irc", "rxn-energy", "scan", "orbitals",
     ]
     assert cli.check_tools_cli_consistency(tools_subs) == []
+
+
+# --------------------------------------------------------------------------- #
+# Typed tool schema: params -> canonical argv (server + driver parity)
+# --------------------------------------------------------------------------- #
+def _load_server():
+    import importlib
+    if str(_MCP) not in sys.path:
+        sys.path.insert(0, str(_MCP))
+    return importlib.import_module("server")
+
+
+def _load_driver():
+    import importlib
+    b = str(Path(__file__).parent.parent / "benchmarks")
+    if b not in sys.path:
+        sys.path.insert(0, b)
+    return importlib.import_module("fidelity_driver")
+
+
+def test_typed_argv_canonical_dft():
+    srv = _load_server()
+    argv = srv._typed_args_to_argv(method="dft", functional="b3lyp",
+                                   basis="def2-tzvp", tier="standard",
+                                   charge=0, multiplicity=1, xyz="/m.xyz")
+    # method + charge + mult + functional + basis + tier + positional last
+    assert argv[:4] == ["--method", "dft", "--charge", "0"]
+    assert "--functional" in argv and "b3lyp" in argv
+    assert "--tier" in argv and "standard" in argv
+    assert argv[-1] == "/m.xyz"
+
+
+def test_typed_argv_charge_zero_emitted():
+    srv = _load_server()
+    # charge 0 must be emitted, not falsy-skipped
+    assert "--charge" in srv._typed_args_to_argv(method="xtb", charge=0, xyz="/m.xyz")
+
+
+def test_typed_argv_gas_phase_omits_solvent():
+    srv = _load_server()
+    for s in ("none", "gas", "gas phase", "gas-phase", "vacuum", ""):
+        assert "--solvent" not in srv._typed_args_to_argv(method="xtb", solvent=s, xyz="/m.xyz")
+    # a real solvent is kept
+    assert "--solvent" in srv._typed_args_to_argv(method="dft", tier="standard",
+                                                  solvent="water", xyz="/m.xyz")
+
+
+def test_typed_argv_extra_args_before_positional():
+    srv = _load_server()
+    argv = srv._typed_args_to_argv(method="dft", tier="standard",
+                                   extra_args=["--nfrontier", "5"], xyz="/m.xyz")
+    assert argv[-3:] == ["--nfrontier", "5", "/m.xyz"]
+
+
+def test_typed_argv_server_driver_parity():
+    srv = _load_server()
+    drv = _load_driver()
+    params = dict(method="dft", functional="b3lyp", basis="def2-tzvp",
+                  tier="standard", charge=-1, multiplicity=2, solvent="water",
+                  extra_args=["--nfrontier", "3"], xyz="/mol.xyz")
+    # driver takes a dict; server takes kwargs — same canonical argv
+    assert drv._typed_args_to_argv(params) == srv._typed_args_to_argv(**params)
+
+
+def test_driver_chemkit_tool_is_typed():
+    drv = _load_driver()
+    props = drv._CHEMKIT_TOOL["function"]["parameters"]["properties"]
+    assert set(["skill", "xyz", "method", "charge", "multiplicity", "solvent",
+                "functional", "basis", "tier", "extra_args"]).issubset(props)
+    assert props["method"]["enum"] == ["xtb", "mopac", "dft", "hf"]
+    assert len(props["skill"]["enum"]) == 20  # all skills selectable

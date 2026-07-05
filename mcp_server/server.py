@@ -377,6 +377,44 @@ def tool_error_envelope(subcommand: str):
     return deco
 
 
+def _typed_args_to_argv(
+    xyz: str | None = None, method: str | None = None,
+    charge: int | None = None, multiplicity: int | None = None,
+    solvent: str | None = None, functional: str | None = None,
+    basis: str | None = None, tier: str | None = None,
+    extra_args: list[str] | None = None,
+) -> list[str]:
+    """Build canonical engine argv from TYPED tool params. Typed params make an
+    invalid invocation structurally impossible (the MCP SDK validates types/enums
+    before the call), so a caller — human, a weak agent, or the benchmark —
+    cannot invent flags (--phase), mistype the method (--method b3lyp), or
+    scramble arg order. Mirrors benchmarks/fidelity_driver.py::_typed_args_to_argv.
+    Gas phase = omit --solvent (none/gas/vacuum synonyms dropped). `extra_args`
+    is the escape hatch for rare skill-specific flags (still parsed by the engine,
+    which gives did-you-mean on a bad one)."""
+    argv: list[str] = []
+    if method:
+        argv += ["--method", str(method)]
+    if charge is not None:
+        argv += ["--charge", str(charge)]
+    if multiplicity is not None:
+        argv += ["--mult", str(multiplicity)]
+    if solvent and str(solvent).strip().lower() not in (
+            "none", "gas", "gas phase", "gas-phase", "vacuum", ""):
+        argv += ["--solvent", str(solvent)]
+    if functional:
+        argv += ["--functional", str(functional)]
+    if basis:
+        argv += ["--basis", str(basis)]
+    if tier:
+        argv += ["--tier", str(tier)]
+    if extra_args:
+        argv += [str(a) for a in extra_args]
+    if xyz:
+        argv.append(str(xyz))
+    return argv
+
+
 def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
     """Register one MCP tool that dispatches to `subcommand`."""
     description = _description(skill_folder, subcommand)
@@ -384,10 +422,29 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
     @mcp.tool(name=tool_name, description=description)
     @tool_error_envelope(subcommand)
     @log_tool_call(tool_name)
-    def _tool(args: list[str] | None = None, cwd: str | None = None) -> str:
-        """args: chemkit CLI tokens for this task. cwd: directory to resolve
-        relative input/output paths against (the caller's working dir)."""
-        return _run_engine(subcommand, list(args or []), cwd=cwd)
+    def _tool(
+        xyz: str | None = None, method: str | None = None,
+        charge: int | None = None, multiplicity: int | None = None,
+        solvent: str | None = None, functional: str | None = None,
+        basis: str | None = None, tier: str | None = None,
+        extra_args: list[str] | None = None,
+        args: list[str] | None = None, cwd: str | None = None,
+    ) -> str:
+        """Run this chemkit skill. Fill the TYPED fields (xyz, method, charge,
+        multiplicity, solvent, functional, basis, tier) — do NOT pass raw CLI
+        flags. `xyz` is the geometry path (or SMILES/name for build/resolve).
+        Gas phase is the default (omit solvent). `extra_args` is only for rare
+        skill-specific flags. `cwd` resolves relative paths. (`args`, a raw CLI
+        token list, is still accepted for back-compat — e.g. the `chemkit` CLI
+        front door — and takes precedence when given.)"""
+        if args:
+            argv = list(args)
+        else:
+            argv = _typed_args_to_argv(
+                xyz=xyz, method=method, charge=charge, multiplicity=multiplicity,
+                solvent=solvent, functional=functional, basis=basis, tier=tier,
+                extra_args=extra_args)
+        return _run_engine(subcommand, argv, cwd=cwd)
 
     return _tool
 

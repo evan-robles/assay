@@ -1758,25 +1758,97 @@ _ARGO_BASE_URL = os.environ.get("CHEMKIT_LLM_BASE_URL", "http://0.0.0.0:60639/v1
 _ARGO_API_KEY = os.environ.get("CHEMKIT_LLM_API_KEY", "")  # set to your username
 _ARGO_MODEL = os.environ.get("CHEMKIT_LLM_MODEL", "argo:o3")
 
+# The 20 chemkit skill names (folder names == the `skill` the driver resolves).
+_SKILL_NAMES = [
+    "single-point-energy", "geometry-optimize", "vibrational-analysis",
+    "binding-energy", "redox-potential", "conformer-search", "frontier-orbitals",
+    "electrostatics", "solvation", "logp-partition", "reaction-profile",
+    "pka-acidity", "build-from-smiles", "name-to-smiles", "fukui-reactivity",
+    "transition-state", "intrinsic-reaction-coordinate", "reaction-energy",
+    "conformational-analysis", "visualize-orbitals",
+]
+
+
+def _typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
+    """Convert the typed `chemkit` tool params into CANONICAL engine argv.
+
+    This is the core robustness win: a weak model fills typed fields (method as an
+    enum, charge as an int, xyz as a string) and CANNOT emit an invented flag
+    (--phase), mistype the method (--method b3lyp), or scramble arg order — we
+    build the exact `--method <m> [--charge N] [--mult M] [--solvent S] ...
+    <xyz> <extra_args...>` here. `extra_args` is the escape hatch for rare
+    skill-specific flags (--nfrontier/--monomer/--reactant/--ha/--dihedral/...);
+    it still flows through the engine's did-you-mean, so a bad one is guided, not
+    silently accepted. `solvent` of none/gas/gas phase/vacuum is omitted (gas
+    phase = no --solvent)."""
+    argv: List[str] = []
+    m = params.get("method")
+    if m:
+        argv += ["--method", str(m)]
+    charge = params.get("charge")
+    if charge is not None:
+        argv += ["--charge", str(charge)]
+    mult = params.get("multiplicity")
+    if mult is not None:
+        argv += ["--mult", str(mult)]
+    solvent = params.get("solvent")
+    if solvent and str(solvent).strip().lower() not in (
+            "none", "gas", "gas phase", "gas-phase", "vacuum", ""):
+        argv += ["--solvent", str(solvent)]
+    for key, flag in (("functional", "--functional"), ("basis", "--basis"),
+                      ("tier", "--tier")):
+        v = params.get(key)
+        if v:
+            argv += [flag, str(v)]
+    # extra_args: rare skill-specific flags, verbatim (normalized downstream).
+    extra = params.get("extra_args") or []
+    argv += [str(a) for a in extra]
+    # positional geometry / SMILES / name goes LAST.
+    xyz = params.get("xyz")
+    if xyz:
+        argv.append(str(xyz))
+    return argv
+
+
 _CHEMKIT_TOOL = {
     "type": "function",
     "function": {
         "name": "chemkit",
         "description": (
-            "Run a chemkit computational-chemistry skill. Most skills take a "
-            "molecule file (.xyz) as the positional arg; build-from-smiles takes "
-            "a SMILES string or molecule name instead. Returns the raw result "
-            "JSON the engine produced."
+            "Run a chemkit computational-chemistry skill. Fill the TYPED fields "
+            "below — do NOT pass raw CLI flags. `xyz` is the molecule file path "
+            "(or, for build-from-smiles/name-to-smiles, the SMILES string or "
+            "molecule name). Gas phase is the default (omit `solvent`). Use "
+            "`extra_args` ONLY for rare skill-specific flags not covered by the "
+            "typed fields (e.g. --nfrontier, --monomer, --reactant, --ha, "
+            "--dihedral, --cubes). Returns the raw result JSON."
         ),
         "parameters": {
             "type": "object",
             "properties": {
-                "skill": {"type": "string",
-                          "description": "skill name, e.g. single-point-energy"},
-                "args": {"type": "array", "items": {"type": "string"},
-                         "description": "CLI tokens, e.g. ['--method','xtb','mol.xyz']"},
+                "skill": {"type": "string", "enum": _SKILL_NAMES,
+                          "description": "which skill to run"},
+                "xyz": {"type": "string",
+                        "description": "path to the geometry file (or SMILES/name "
+                                       "for build-from-smiles / name-to-smiles)"},
+                "method": {"type": "string", "enum": ["xtb", "mopac", "dft", "hf"],
+                           "description": "level-of-theory backend"},
+                "charge": {"type": ["integer", "null"], "description": "molecular charge"},
+                "multiplicity": {"type": ["integer", "null"],
+                                 "description": "spin multiplicity 2S+1"},
+                "solvent": {"type": ["string", "null"],
+                            "description": "implicit solvent name or dielectric; "
+                                           "omit for gas phase"},
+                "functional": {"type": ["string", "null"], "description": "DFT functional"},
+                "basis": {"type": ["string", "null"], "description": "DFT/HF basis set"},
+                "tier": {"type": ["string", "null"],
+                         "enum": ["fast", "standard", "accurate", None],
+                         "description": "DFT tier preset"},
+                "extra_args": {"type": "array", "items": {"type": "string"},
+                               "description": "rare skill-specific CLI flags only "
+                                              "(e.g. ['--nfrontier','3'])"},
             },
-            "required": ["skill", "args"],
+            "required": ["skill"],
         },
     },
 }
@@ -1867,10 +1939,13 @@ _FINAL_REPORT_TOOL = {
 _LIVE_INSTRUCTIONS = (
     "You are a computational-chemistry assistant. Use the `chemkit` tool to do "
     "the requested task — never guess or fabricate a result; only report what a "
-    "tool actually returned. If you are unsure of the exact skill name or its "
-    "valid arguments, call `list_skills` and/or `skill_help` FIRST to discover "
-    "them — do not invent skill names or flags (e.g. there is no --phase flag; "
-    "gas phase is the default or --solvent none). "
+    "tool actually returned. The `chemkit` tool takes TYPED fields: set `skill`, "
+    "`xyz` (the geometry path, or a SMILES/name for build-from-smiles/"
+    "name-to-smiles), and the typed options `method`/`charge`/`multiplicity`/"
+    "`solvent`/`functional`/`basis`/`tier` as fields — do NOT pass raw CLI flag "
+    "strings. Gas phase is the default (omit `solvent`). Use `extra_args` ONLY "
+    "for rare skill-specific flags. If unsure which skill or fields apply, call "
+    "`list_skills`/`skill_help` first. "
     "The molecule (an xyz path, or a SMILES/name to "
     "build) is given in the task. When finished, call `final_report`: put any "
     "headline number under `value` as a single bare number (not an object) at "
@@ -2134,14 +2209,20 @@ def run_live_agent(spec: Dict[str, Any],
                 }
             if fn == "chemkit":
                 skill = fargs.get("skill", "")
-                raw_cargs = [str(a) for a in fargs.get("args", [])]
-                # Forgive a whole-flags-in-one-string tool call (see
-                # _normalize_tool_args): split space-mashed elements into argv
-                # tokens so a formatting quirk isn't scored as a chemistry error.
-                cargs = _normalize_tool_args(raw_cargs)
-                if cargs != raw_cargs:
-                    print(f"[live] normalized tool args (split space-mashed "
-                          f"tokens): {raw_cargs} -> {cargs}")
+                # TYPED path (preferred): build canonical argv from typed fields.
+                # BACK-COMPAT: if a model still sends a raw `args` list, honor it
+                # (then normalize space-mashed tokens as before). This keeps old
+                # freeform callers working while the typed schema is the default.
+                if "args" in fargs and fargs.get("args"):
+                    raw_cargs = [str(a) for a in fargs.get("args", [])]
+                    cargs = _normalize_tool_args(raw_cargs)
+                    if cargs != raw_cargs:
+                        print(f"[live] normalized tool args (split space-mashed "
+                              f"tokens): {raw_cargs} -> {cargs}")
+                else:
+                    cargs = _typed_args_to_argv(fargs)
+                    # extra_args (if any) may still be space-mashed — normalize.
+                    cargs = _normalize_tool_args(cargs)
                 print(f"[live] agent calls chemkit: {skill} {cargs}")
                 call_n += 1
                 try:
