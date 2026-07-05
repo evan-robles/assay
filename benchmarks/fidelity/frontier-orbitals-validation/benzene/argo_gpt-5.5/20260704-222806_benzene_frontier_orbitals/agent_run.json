@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.3,
+    "llm_s": 21.91,
+    "engine_s": 10.87,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier-orbital result** \u2014 computed HOMO\u2013LUMO gap = **6.6310857 eV**.\n\nMethod/provenance: DFT tier `standard` (**B3LYP/def2-TZVP**) with PySCF, gas phase, charge 0, multiplicity 1. The calculation used the user-supplied fixed XYZ geometry at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz` (12 atoms); this was a frontier-orbital single-point calculation, not a geometry optimization. Density fitting was not enabled in the run.\n\nOrbital energies returned by chemkit:\n- HOMO = **-7.0468329 eV**\n- LUMO = **-0.41574728 eV**\n- HOMO\u2013LUMO gap = **6.6310857 eV**\n\nConvergence/caveats: SCF converged: **true** in **8** cycles. No warnings were reported by the tool result. Engine integrity verdict: `trustworthy: true`.\n\nReproducibility: chemkit reported this CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout path /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpkp3nttdy/live.json`. The result JSON path in that invocation is `/home/erobles/chem-skills/.fidelity_scratch/tmpkp3nttdy/live.json`. The chemkit tool response did not include a live `.out` log path, so I cannot truthfully name one."
+}

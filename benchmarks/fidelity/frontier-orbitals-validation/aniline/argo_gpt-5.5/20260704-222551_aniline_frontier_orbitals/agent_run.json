@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.53,
+    "llm_s": 18.6,
+    "engine_s": 14.4,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline frontier-orbital result** \u2014 computed HOMO\u2013LUMO gap = **5.3048177 eV**.\n\nMethod used: chemkit `frontier-orbitals` skill; DFT tier `standard` = **B3LYP/def2-TZVP** in **PySCF**, gas phase, charge 0, multiplicity 1. The run explicitly used `--functional b3lyp --basis def2-tzvp --tier standard`. Density fitting was not enabled. Geometry provenance: fixed, user-supplied XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz`; this frontier-orbital task was a single-point orbital calculation, not a geometry optimization.\n\nSCF convergence: **converged**, 9 SCF cycles. Integrity verdict: `trustworthy: true`. Warnings: no warnings reported.\n\nKey orbital energies from the tool:\n- HOMO = **-5.553772 eV**\n- LUMO = **-0.2489544 eV**\n- HOMO\u2013LUMO gap = **5.3048177 eV**\n\nOther returned details: n_atoms = 14; total electronic energy = **-287.71578 hartree** (`-7829.1453 eV`).\n\nReproducibility command returned by chemkit:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout json --out /home/erobles/chem-skills/.fidelity_scratch/tmp49ihgf1r/live.json`\n\nThe chemkit result did not expose a separate live `.out` log path in the returned JSON, so I am not inventing one."
+}

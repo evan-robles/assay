@@ -1,0 +1,16 @@
+# chemkit live log
+# subcommand : frontier
+# args       : --method dft --tier standard --charge 0 --mult 3 --phase gas /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp7hk08c82/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli frontier --method dft --tier standard --charge 0 --mult 3 --phase gas /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp7hk08c82/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/argo_gpt-4o/20260704-223032_oxygen_frontier_orbitals
+# started    : 20260704-223036
+# ============================================================
+usage: chemkit [-h] [--version] [--list-skills] [--json]
+               {sp,single-point-energy,single-point,singlepoint,opt,geometry-optimize,geometry-optimization,optimize,freq,vibrational-analysis,frequencies,vibrations,binding,binding-energy,redox,redox-potential,confsearch,conformer-search,conformer-generation,frontier,frontier-orbitals,frontier-orbital,fmo,electrostatics,solvation,solvation-energy,logp,logp-partition,logp-partitioning,profile,reaction-profile,pka,pka-acidity,build,build-from-smiles,build-from-name,resolve,name-to-smiles,fukui,fukui-reactivity,ts,transition-state,ts-search,irc,intrinsic-reaction-coordinate,rxn-energy,reaction-energy,scan,conformational-analysis,dihedral-scan,relaxed-scan,orbitals,visualize-orbitals}
+               ...
+chemkit: error: unrecognized arguments: --phase /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz
+  did you mean: --solvent?  (run `chemkit frontier --help-json` for all valid flags)
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

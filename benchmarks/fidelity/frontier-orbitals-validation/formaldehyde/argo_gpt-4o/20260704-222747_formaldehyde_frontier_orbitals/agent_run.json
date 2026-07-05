@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 9.34,
+    "llm_s": 4.35,
+    "engine_s": 4.47,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The HOMO\u2013LUMO gap of formaldehyde was computed as 5.86967 eV using DFT at the B3LYP/def2-TZVP level with density fitting enabled, implemented in PySCF.\n\nMethod summary:\n- **Level of theory:** B3LYP/def2-TZVP\n- **Environment:** Gas phase, no solvent\n- **Charge and multiplicity:** Neutral singlet (charge 0, multiplicity 1)\n- **Geometry:** Input provided as a fixed .xyz file, no re-optimization\n- **Software:** PySCF\n\nSCF converged within 8 cycles, confirming accuracy and stability of the calculation. The input geometry had 4 atoms:\n\nAtoms: ['O', 'C', 'H', 'H'].\n\nDerived orbital and energetic properties:\n- HOMO Energy: -7.65231 eV\n- LUMO Energy: -1.78264 eV\n- HOMO\u2013LUMO energy gap: 5.86967 eV. Live logging was recorded as part of quality checks."
+}

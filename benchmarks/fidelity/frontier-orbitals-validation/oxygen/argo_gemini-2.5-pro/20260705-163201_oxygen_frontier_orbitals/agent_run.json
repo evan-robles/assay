@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.85,
+    "llm_s": 14.77,
+    "engine_s": 5.37,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbitals calculation for the oxygen molecule completed successfully.\n\n**Analysis of Frontier Orbitals**\n*   **Method:** DFT, using the B3LYP functional and the def2-TZVP basis set (tier `standard`).\n*   **Environment:** Gas phase.\n*   **Charge:** 0\n*   **Multiplicity:** 3 (triplet state)\n*   **HOMO Energy:** -8.8740 eV\n*   **LUMO Energy:** -3.5859 eV\n*   **HOMO-LUMO Gap:** 5.2881 eV\n\nThe calculation converged successfully, and no warnings were reported by the engine. This result was computed for the triplet electronic state of the oxygen molecule as requested."
+}

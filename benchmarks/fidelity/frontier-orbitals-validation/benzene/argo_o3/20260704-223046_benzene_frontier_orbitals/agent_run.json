@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.21,
+    "llm_s": 21.77,
+    "engine_s": 10.82,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.631085667557326,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance summary\nProperty: Benzene frontier orbitals (HOMO, LUMO, and HOMO\u2013LUMO gap)\nLevel of theory: DFT, B3LYP/def2-TZVP (no density-fitting), evaluated with PySCF via chemkit\nGeometry provenance: single-point calculation on the supplied benzene.xyz geometry (no further optimisation)\nEnvironment: gas phase (no implicit solvent)\nCharge / multiplicity: 0 / 1 (closed-shell singlet)\nSoftware: PySCF (version as packaged in chemkit engine)\nSCF convergence: converged in 8 cycles; gradient/optimizer not applicable (single-point)\nWarnings: no warnings reported by the engine\nLive log: the SCF run was written live to a frontier_*.out file in the working directory (path shown at execution time via chemkit)\nIntegrity check: status ok, trustworthy = true (all automated checks passed)\n\nKey results (eV)\nHOMO energy = \u22127.0468329\nLUMO energy = \u22120.41574728\nHOMO\u2013LUMO gap = 6.631085667557326\nVertical IP (Koopmans) = 7.0468329\nVertical EA (Koopmans) = 0.41574728\n\nThe frontier-orbital calculation was carried out with the chemkit \u201cfrontier-orbitals\u201d skill invoking PySCF at the specified B3LYP/def2-TZVP level. The headline HOMO\u2013LUMO gap is reported above (copying the tool\u2019s value exactly, no rounding). No engine warnings were issued, and the run is marked trustworthy.\n"
+}

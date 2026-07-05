@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 50.2,
+    "llm_s": 34.94,
+    "engine_s": 14.72,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: HOMO\u2013LUMO (frontier-orbital) energy gap, eV\nLevel of theory: DFT, tier \u2018standard\u2019 \u2192 B3LYP/def2-TZVP (no density fitting) in PySCF v? (via chemkit)\nGeometry provenance: single-point on the user-supplied aniline coordinates at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz \u2014 no re-optimization performed (reported as DFT//input-XYZ)\nEnvironment: gas phase (no implicit solvent)\nCharge = 0, multiplicity = 1 (closed-shell singlet)\nSCF convergence: achieved in 9 cycles; scf_converged = true\nWarnings: none reported by the engine\nLive log: a real-time SCF/analysis transcript was streamed to frontier_<timestamp>.out (created automatically in the run directory); the full result JSON is at /home/erobles/chem-skills/.fidelity_scratch/tmppmhekxy_/live.json\n\nResult\nHOMO energy = \u22125.553772 eV\nLUMO energy = \u22120.2489544 eV\n\u2192 HOMO\u2013LUMO gap = 5.3048177 eV (Koopmans\u2019/orbital gap, not an excited-state energy)\n\nThe calculation was carried out with chemkit\u2019s frontier-orbitals skill using the command recorded in the JSON\u2019s cli_invocation field:\n/\u2026/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 \u2026 aniline.xyz\nNo engine warnings were issued and the integrity check reports status = ok, trustworthy = true, so the value above is reported as computed and trustworthy."
+}

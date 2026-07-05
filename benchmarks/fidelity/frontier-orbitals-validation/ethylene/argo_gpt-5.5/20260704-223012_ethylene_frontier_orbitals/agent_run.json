@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.77,
+    "llm_s": 28.68,
+    "engine_s": 4.56,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "common header present",
+      "headline field 'homo_lumo_gap_eV' = 7.435716547018233 (present and numeric)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene frontier-orbital result** \u2014 Property: HOMO\u2013LUMO gap from frontier molecular orbitals. Level of theory: DFT tier `standard` with **B3LYP/def2-TZVP** using PySCF; density fitting was **not** enabled. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz` (6 atoms); this was a frontier-orbital single-point calculation, not a geometry optimization. Environment: **gas phase** (`solvent: null`). Charge/multiplicity: charge 0, multiplicity 1. Software: PySCF. SCF convergence: converged in 6 cycles. Integrity verdict: `trustworthy: true`.\n\nHeadline computed value: **HOMO\u2013LUMO gap = 7.4357165 eV**.\n\nOrbital energies reported by chemkit: HOMO = -7.6155818 eV; LUMO = -0.17986527 eV. Total electronic energy = -78.623486 hartree (-2139.4541 eV).\n\nWarnings: the result did not include a top-level `warnings` array. The tool result did include warning-severity integrity checks, reproduced verbatim here: `common header present`; `headline field 'homo_lumo_gap_eV' = 7.435716547018233 (present and numeric)`.\n\nReproducibility: chemkit CLI invocation reported by the tool was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --stdout path --out /home/erobles/chem-skills/.fidelity_scratch/tmp43e_zd0a/live.json`. A live `.out` log path was required by the reporting standard, but no `.out` path was returned in the chemkit tool result, so I cannot truthfully name one."
+}

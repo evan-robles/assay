@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.84,
+    "llm_s": 4.33,
+    "engine_s": 16.98,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline HOMO\u2013LUMO gap** \u2014 DFT, B3LYP/def2-TZVP (PySCF), gas phase (no solvent). Charge = 0, multiplicity = 1. Geometry: supplied from /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz (not re-optimized). SCF converged (9 cycles). HOMO = -5.554 eV, LUMO = -0.249 eV \u2192 gap \u2248 **5.3048 eV** (Koopmans-style orbital gap, not an optical excitation energy). Files: /home/erobles/chem-skills/.fidelity_scratch/tmprvnr80k7/live.json. Command: cli ... frontier ... --method dft --functional b3lyp --basis def2-tzvp --tier standard --solvent none --charge 0 --mult 1. Calculation trustworthiness: true."
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.35,
+    "llm_s": 16.39,
+    "engine_s": 4.25,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water HOMO\u2013LUMO frontier-orbital gap** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, PySCF RKS, exact two-electron integrals), **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied water.xyz, used as-is (single-point calculation, not geometry-optimized at this level). SCF converged in 7 cycles. The HOMO (orbital 4) lies at \u22128.6037 eV, the LUMO (orbital 5) at +0.3370 eV, yielding a Koopmans-style gap of **8.9406687 eV**. This gap represents the orbital energy difference and overestimates the true vertical excitation energy (Koopmans' theorem limitation). Total electronic energy: \u22122080.6615 eV. All integrity checks passed; trustworthy = true. No warnings reported.</prose>\n<parameter name=\"warnings\">[]"
+}

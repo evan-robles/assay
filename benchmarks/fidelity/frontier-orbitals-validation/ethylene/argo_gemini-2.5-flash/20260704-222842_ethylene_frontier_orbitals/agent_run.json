@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 16.63,
+    "llm_s": 11.64,
+    "engine_s": 4.46,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital gap of ethylene was computed using the `frontier-orbitals` skill with the `chemkit` tool.\n\n**Ethylene Frontier Orbital Gap** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`. SCF converged in 6 cycles.\nHOMO = -7.61558 eV, LUMO = -0.17987 eV.\n\n**The HOMO-LUMO gap is 7.43572 eV.**\n\nNo warnings reported.\nThe engine's integrity verdict is trustworthy.\n\nThe `.out` log file for this run is located at `/home/erobles/chem-skills/.fidelity_scratch/tmp2nqyj7l_/live.json`. You can `tail -f` it to monitor live calculations."
+}

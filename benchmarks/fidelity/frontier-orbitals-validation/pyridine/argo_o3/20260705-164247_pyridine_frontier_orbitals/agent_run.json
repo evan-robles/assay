@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 87.96,
+    "llm_s": 51.05,
+    "engine_s": 36.12,
+    "turns": 6,
+    "tool_calls": 3
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance \u2013 pyridine frontier-orbital gap\nProperty: HOMO/LUMO energies and HOMO\u2013LUMO gap (eV)\nLevel of theory: DFT, B3LYP/def2-TZVP (no density fitting) in PySCF 2.x (via chemkit)\nGeometry provenance: single-point on the user-supplied pyridine.xyz (no re-optimization)\nEnvironment: gas phase (no implicit solvent)\nCharge = 0, multiplicity = 1 (closed-shell singlet)\nSCF convergence: converged in 10 cycles; integrity.status = ok, trustworthy = true; no warnings reported.\nLive engine log: written during the run to the standard chemkit `frontier_YYYYMMDD-HHMMSS.out` file in the working directory; full result JSON saved as `pyridine_frontier_b3lyp_def2tzvp.json` (see cli_invocation path above) for reproduction.\n\nResults (electron-volt):\n  HOMO  = \u22127.2525992 eV\n  LUMO  = \u22121.112786 eV\n  HOMO\u2013LUMO gap = 6.1398131 eV  \u2190 headline value\n\nNo warnings were emitted by the engine. The calculation used chemkit\u2019s frontier-orbitals skill with explicit flags `--method dft --functional b3lyp --basis def2-tzvp`; the result is a computed (not experimental) estimate of the Koopmans-style orbital gap for gas-phase pyridine."
+}

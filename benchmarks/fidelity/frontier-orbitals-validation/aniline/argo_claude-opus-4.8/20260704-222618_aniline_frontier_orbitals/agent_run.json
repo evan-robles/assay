@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 35.93,
+    "llm_s": 21.69,
+    "engine_s": 13.73,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier-orbital analysis of aniline \u2014 HOMO\u2013LUMO gap**\n\n**Method-provenance block**\n- **Property:** Frontier orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` = **B3LYP/def2-TZVP** (as explicitly requested; functional b3lyp, basis def2-tzvp). Exact four-center two-electron integrals \u2014 density fitting was OFF (chemkit default; --density-fit not passed).\n- **Software:** PySCF (RKS).\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz` (14 atoms: N, 6\u00d7C, 7\u00d7H). The calculation was a single point on this fixed geometry \u2014 the geometry was NOT re-optimized at this level.\n- **Solvent / environment:** **Gas phase** (no --solvent set; solvent = null).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (closed-shell singlet, as requested).\n- **Convergence:** SCF converged (scf_converged = true) in 9 cycles.\n\n**Results (eV)**\n- **HOMO (index 24):** \u22125.553772 eV\n- **LUMO (index 25):** \u22120.2489544 eV\n- **HOMO\u2013LUMO gap (headline):** **5.3048177 eV**\n- HOMO\u22121 (index 23): \u22126.8461949 eV; HOMO\u22122 (index 22): \u22128.4041702 eV\n- LUMO+1 (index 26): +0.30750756 eV; LUMO+2 (index 27): +0.77617648 eV\n- Total electronic energy: \u2212287.71578 Hartree (\u22127829.1453 eV). Note this is an electronic energy on a specific method's zero and is only comparable to same-method/same-basis values.\n- Koopmans-derived descriptors: vertical IP = 5.553772 eV, vertical EA = 0.2489544 eV, electronegativity = 2.9013632 eV, chemical hardness = 2.6524088 eV, chemical softness = 0.37701579 eV\u207b\u00b9, electrophilicity index = 1.5868422 eV.\n\n**Integrity:** Engine reports status = ok, trustworthy = **true** (energy finite \u2713, SCF converged \u2713, schema header/headline present \u2713).\n\n**Warnings:** The result JSON contained no `warnings` array \u2014 no warnings were reported (clean run).\n\n**Reproducibility**\n- Command: `cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout json <aniline.xyz> --out /home/erobles/chem-skills/.fidelity_scratch/tmpucm7s26y/live.json`\n- A live `.out` log is streamed to the caller's cwd during the run (`frontier_<timestamp>.out`) and can be `tail -f`'d; the result JSON was written to the `--out` path shown above.\n\nThe headline HOMO\u2013LUMO gap for aniline at B3LYP/def2-TZVP, gas phase, charge 0, multiplicity 1, is **5.3048177 eV**. No experimental/literature comparison is offered \u2014 ask if you want one and I'll verify a source first."
+}

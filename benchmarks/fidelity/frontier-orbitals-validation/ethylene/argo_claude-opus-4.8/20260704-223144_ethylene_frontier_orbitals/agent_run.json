@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.37,
+    "llm_s": 21.41,
+    "engine_s": 4.44,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene frontier-orbital analysis (HOMO\u2013LUMO gap)**\n\n**Method-provenance block**\n- **Property:** Frontier molecular orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` = **B3LYP/def2-TZVP** (explicitly requested functional b3lyp, basis def2-tzvp). Exact four-center two-electron integrals (density fitting OFF, chemkit default).\n- **Software:** PySCF (RKS).\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`, 6 atoms: C, C, H, H, H, H). Single point at the supplied geometry \u2014 geometry was used as-is (NOT relaxed at this or any level).\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (closed-shell singlet, RKS).\n- **Convergence:** SCF converged in 6 cycles.\n\n**Results (all in eV):**\n- HOMO (index 7) = **\u22127.6155818 eV**\n- LUMO (index 8) = **\u22120.17986527 eV**\n- **HOMO\u2013LUMO gap = 7.4357165 eV** (headline value)\n- HOMO\u22121 = \u22129.883854 eV, HOMO\u22122 = \u221211.487503 eV\n- LUMO+1 = +1.720103 eV, LUMO+2 = +2.3802006 eV\n- Total electronic energy = \u221278.623486 hartree (\u22122139.4541 eV). This is the electronic-energy zero (bare nuclei + electrons) at the B3LYP/def2-TZVP level and is only comparable to same-method, same-basis energies.\n\nKoopmans-derived descriptors (from these orbital energies): vertical IP = 7.6155818 eV, vertical EA = 0.17986527 eV, electronegativity = 3.8977235 eV, chemical hardness = 3.7178583 eV, chemical softness = 0.26897206 eV\u207b\u00b9, electrophilicity index = 2.0431452 eV.\n\n**Integrity:** Engine reports status = ok, **trustworthy = true**. Checks passed: energy finite, SCF converged, schema header present, headline field present/numeric.\n\n**Warnings:** The result JSON contained no `warnings` array / no warnings were reported \u2014 clean run.\n\n**Reproducibility:**\n- Command: `.../chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults .../ethylene.xyz`\n- Note: `--accept-defaults` was passed to consent to the gas-phase default (no solvent knob given); functional, basis, charge, and multiplicity were all explicitly specified.\n- No experimental/literature comparison is offered (none was requested); this is a computed value, not an experimental one."
+}

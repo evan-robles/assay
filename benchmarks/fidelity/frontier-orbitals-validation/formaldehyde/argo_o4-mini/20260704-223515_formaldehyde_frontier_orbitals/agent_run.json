@@ -1,0 +1,30 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 43.91,
+    "llm_s": 38.92,
+    "engine_s": 4.43,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde frontier\u2010orbital gap** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, no density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: single-point on the user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz` (no optimization). SCF converged in 8 cycles; no warnings reported. HOMO = \u22127.6523067 eV, LUMO = \u22121.7826355 eV \u2192 gap = **5.8696712 eV**.\n\nCommand:\n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier \\\n  /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz \\\n  --method dft --tier standard --charge 0 --mult 1 \\\n  --stdout path \\\n  --out formaldehyde_frontier_dft_standard.json\n```\n\nOutput paths:\n- Result JSON: `formaldehyde_frontier_dft_standard.json`\n- Live log: `frontier_<timestamp>.out` (streaming during the run; you can `tail -f` it)."
+}

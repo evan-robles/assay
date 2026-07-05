@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 45.17,
+    "llm_s": 40.23,
+    "engine_s": 4.42,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital energies for ethylene (C\u2082H\u2084) computed at DFT, tier 'standard' \u2192 B3LYP/def2-TZVP (exact four-center integrals, no density fitting) in PySCF (RKS), gas phase, charge 0, multiplicity 1 (closed-shell singlet). Geometry: user-supplied .xyz, single-point (not re-optimized at DFT level; labeled B3LYP/def2-TZVP // input xyz). SCF converged in 6 cycles. No warnings reported \u2014 clean run. Integrity: status ok, trustworthy true.\n\nResults:\n  HOMO (index 7):          \u22127.6155818 eV\n  LUMO (index 8):          \u22120.17986527 eV\n  HOMO\u2013LUMO gap:            7.4357165 eV  \u2190 headline value\n  Total energy:            \u221278.623486 Hartree (\u22122139.4541 eV)\n\nFull frontier-orbital ladder:\n  HOMO\u22122 (idx 5): \u221211.487503 eV\n  HOMO\u22121 (idx 6):  \u22129.883854 eV\n  HOMO   (idx 7):  \u22127.6155818 eV\n  LUMO   (idx 8):  \u22120.17986527 eV\n  LUMO+1 (idx 9):  +1.720103 eV\n  LUMO+2 (idx 10): +2.3802006 eV\n\nKoopmans' descriptors: vertical IP = 7.6155818 eV, vertical EA = 0.17986527 eV, chemical hardness \u03b7 = 3.7178583 eV, electrophilicity index \u03c9 = 2.0431452 eV.\n\nCaveats: (1) Orbital energies are Koopmans'-style one-electron eigenvalues, not true excitation energies. (2) Single-point on input geometry \u2014 no DFT-level relaxation. (3) No density fitting (exact four-center integrals). (4) Gas phase only."
+}

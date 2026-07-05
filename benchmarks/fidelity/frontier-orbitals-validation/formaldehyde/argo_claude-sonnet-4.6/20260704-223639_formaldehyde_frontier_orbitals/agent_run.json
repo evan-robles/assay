@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 42.24,
+    "llm_s": 37.02,
+    "engine_s": 4.6,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital energies for formaldehyde (CH\u2082O) computed at the DFT level using the B3LYP functional with the def2-TZVP basis set (tier 'standard'), via PySCF (chemkit frontier subcommand). Single-point calculation on the user-supplied geometry at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz. Gas phase, charge 0, multiplicity 1 (closed-shell RKS). Density fitting (RI) was OFF \u2014 exact four-center integrals used. SCF converged in 8 cycles. All integrity checks passed (trustworthy: true). No warnings reported.\n\nHeadline result: HOMO\u2013LUMO gap = 5.8696712 eV (Koopmans-theorem orbital energy difference, not an excitation energy).\nHOMO (index 7) = \u22127.6523067 eV\nLUMO (index 8) = \u22121.7826355 eV\nTotal energy = \u2212114.55325 Hartree (\u22123117.1528 eV)\n\nCLI invocation: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1\nOutput JSON: formaldehyde_frontier_dft_b3lyp_def2tzvp.json"
+}

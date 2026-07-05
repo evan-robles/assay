@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 77.99,
+    "llm_s": 61.7,
+    "engine_s": 15.48,
+    "turns": 6,
+    "tool_calls": 4
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Calculation summary \u2013 HOMO\u2013LUMO gap of water\n\nMethod-provenance block\n\u2022 Property: frontier-orbital energies (HOMO, LUMO) and HOMO\u2013LUMO gap (eV)\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP, no density fitting (exact four-center integrals)\n\u2022 Geometry provenance: user-supplied Cartesian coordinates in /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz; single-point calculation (no re-optimization)\n\u2022 Solvent / environment: gas phase (no implicit solvation)\n\u2022 Charge & multiplicity: 0, 1 (closed-shell singlet)\n\u2022 Software/backend: PySCF (invoked via chemkit frontier-orbitals skill)\n\u2022 Convergence & caveats: SCF converged in 7 cycles; no warnings reported; integrity.trustworthy = true\n\nHeadline result\nHOMO energy  =  \u22128.6037183 eV\nLUMO energy  =  +0.33695037 eV\nHOMO\u2013LUMO gap = 8.9406687 eV\n\nReproducibility\nCommand (from cli_invocation):\n/ home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp1q0hrc8f/live.json\n\nLive .out log was written during execution alongside the JSON result in the same scratch directory (path printed at run start and available for inspection). No warnings were reported by the engine.\n\nThus, the computed gas-phase B3LYP/def2-TZVP HOMO\u2013LUMO gap of H\u2082O is 8.9406687 eV."
+}

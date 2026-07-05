@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 40.85,
+    "llm_s": 35.87,
+    "engine_s": 4.45,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier orbital calculation on ethylene (C2H4, 6 atoms) using DFT at the B3LYP/def2-TZVP level of theory (PySCF RKS, tier 'standard'), gas phase, charge 0, multiplicity 1, exact four-center integrals (no density fitting). Geometry taken as-is from the user-supplied .xyz file (single-point, not re-optimized at this level). SCF converged in 6 cycles. No warnings reported. Integrity: trustworthy=true, all checks passed.\n\nHOMO = \u22127.6155818 eV (index 7), LUMO = \u22120.17986527 eV (index 8). Headline result: HOMO\u2013LUMO gap = 7.4357165 eV (Koopmans orbital energy difference, not a true excitation energy). Total electronic energy = \u221278.623486 Hartree. 86 basis functions, 8 occupied orbitals. Output JSON: ethylene_frontier_dft.json."
+}

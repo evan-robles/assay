@@ -1,0 +1,30 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.82,
+    "llm_s": 37.57,
+    "engine_s": 11.52,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier-orbital gap for pyridine** \u2014 DFT, tier standard (B3LYP/def2-TZVP, no density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: single-point on the supplied pyridine.xyz (no geometry optimization). SCF converged in 10 cycles; no warnings reported.\n\nResults:\n  \u2022 HOMO = \u20137.2525992 eV  \n  \u2022 LUMO = \u20131.1127860 eV  \n  \u2192 HOMO\u2013LUMO gap = 6.1398131 eV\n\nFiles:\n  \u2022 JSON output: pyridine_frontier_dft.json  \n  \u2022 Live log (SCF/DFT output): frontier-<timestamp>.out  \nCommand:\n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier   \\\n  /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz   \\\n  --method dft --tier standard --charge 0 --mult 1 --stdout path   \\\n  --out pyridine_frontier_dft.json\n```"
+}

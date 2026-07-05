@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 45.56,
+    "llm_s": 22.64,
+    "engine_s": 21.84,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.869671192772918,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: HOMO\u2013LUMO (frontier-orbital) gap, eV\nLevel of theory: DFT, functional B3LYP with def2-TZVP basis set (tier \u201cstandard\u201d); exact four-center integrals (no density fitting)\nGeometry provenance: user-supplied Cartesian coordinates (formaldehyde.xyz); single-point calculation \u2013 no re-optimization (DFT//user geometry)\nEnvironment: gas phase (no implicit solvent)\nCharge & multiplicity: 0, 1 (closed-shell singlet)\nSoftware backend: PySCF (via chemkit frontier-orbitals skill)\nSCF convergence: converged in 8 cycles; gradient criteria not applicable (single point)\nWarnings: no warnings reported\nLive log: written during run to a timestamped *.out* file in the working directory (streamed by chemkit while executing the task).\n\nResult\nThe computed Koopmans-style HOMO\u2013LUMO gap of formaldehyde at B3LYP/def2-TZVP in the gas phase is:\n\n\u0394\u03b5(HOMO\u2013LUMO) = 5.869671192772918 eV\n\nAll numbers and orbitals (HOMO = \u22127.6523067 eV, LUMO = \u22121.7826355 eV; additional frontier orbitals included in the JSON) come directly from the chemkit frontier-orbitals result JSON referenced above.\n\nEngine integrity verdict: trustworthy (all automated checks passed).\n\nProvenance: computed (this work)."
+}

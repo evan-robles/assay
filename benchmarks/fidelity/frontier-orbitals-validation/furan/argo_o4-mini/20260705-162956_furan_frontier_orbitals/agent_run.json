@@ -1,0 +1,30 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 58.82,
+    "llm_s": 31.12,
+    "engine_s": 26.75,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier molecular orbital gap** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals), PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz` (no re-optimization). SCF converged in 9 cycles; no warnings reported. HOMO = \u22126.3597638 eV, LUMO = \u22120.1024036 eV \u2192 gap = 6.2573602 eV (Koopmans-style orbital gap). Command: `cli.py frontier furan.xyz --method dft --tier standard --charge 0 --mult 1 --stdout json --out /home/erobles/chem-skills/.fidelity_scratch/tmpssqffw48/live.json`."
+}

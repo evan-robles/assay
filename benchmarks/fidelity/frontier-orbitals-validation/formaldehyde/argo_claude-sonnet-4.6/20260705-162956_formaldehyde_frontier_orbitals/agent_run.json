@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 68.42,
+    "llm_s": 45.41,
+    "engine_s": 22.3,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on formaldehyde (H\u2082C=O) using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF.\n\nMethod provenance:\n- Property: Frontier orbital energies and HOMO\u2013LUMO gap\n- Level of theory: DFT, tier 'standard' \u2192 B3LYP / def2-TZVP (exact four-center integrals; density fitting OFF)\n- Software: PySCF\n- Geometry: User-supplied .xyz at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz \u2014 single-point on that geometry, not re-optimized (result is B3LYP/def2-TZVP // input geometry)\n- Solvent / environment: Gas phase (no implicit solvation)\n- Charge / multiplicity: 0 / 1 (closed-shell singlet)\n- SCF convergence: Converged in 8 cycles\n- Integrity: trustworthy = true, status = ok\n- Warnings: None (warnings array is empty; clean run)\n\nKey results:\n- HOMO (index 7): \u22127.6523067 eV\n- LUMO (index 8): \u22121.7826355 eV\n- HOMO\u2013LUMO gap (headline): 5.8696712 eV\n- Total energy: \u2212114.55325 Ha (\u22123117.1528 eV)\n- Occupied orbitals: 8; Total orbitals: 74\n\nKoopmans-theorem derived properties:\n- Vertical IP: 7.6523067 eV\n- Vertical EA: 1.7826355 eV\n- Electronegativity: 4.7174711 eV\n- Chemical hardness: 2.9348356 eV\n- Chemical softness: 0.34073459 eV\u207b\u00b9\n- Electrophilicity index: 3.7914447 eV\n\nNote: HOMO/LUMO energies are Koopmans-theorem estimates (orbital eigenvalues), not rigorously computed excitation energies. Provenance is 'computed' \u2014 this is not an experimental value."
+}

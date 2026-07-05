@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 14.9,
+    "llm_s": 10.2,
+    "engine_s": 4.19,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbitals of oxygen were computed using **DFT (B3LYP/def2-TZVP)** in PySCF, **gas phase**, charge 0, multiplicity 3. The geometry was provided by the user via `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`. The SCF converged in 7 cycles.\n\nThe HOMO energy is -8.87396 eV and the LUMO energy is -3.58590 eV, resulting in a **HOMO-LUMO gap of 5.28806 eV**.\n\nOutput logged to `oxygen_frontier_orbitals.json`."
+}

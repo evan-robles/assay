@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 39.33,
+    "llm_s": 28.05,
+    "engine_s": 10.57,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance summary (frontier orbitals of furan)\nProperty: HOMO and LUMO one-electron energies and HOMO\u2013LUMO gap (eV)\nLevel of theory: DFT, B3LYP/def2-TZVP (no density-fitting; full four-center RKS) in PySCF (version not reported)\nGeometry provenance: user-supplied /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz; single-point only (no re-optimization) \u21d2 DFT//input-XYZ\nEnvironment: gas phase (no implicit solvent)\nCharge = 0, multiplicity = 1 (closed-shell singlet)\nSCF convergence: converged in 9 cycles; integrity.trustworthy = true; no warnings reported.\nLive run log was streamed to the working directory (frontier_<timestamp>.out) while the calculation executed; result JSON saved as furan_frontier_dft.json (see cli_invocation path in JSON for exact location).\n\nKey results (eV):\n\u2022 HOMO = \u22126.3597638\n\u2022 LUMO = \u22120.1024036\n\u2192 HOMO\u2013LUMO gap = 6.2573602 eV (Koopmans-type orbital gap, not an excitation energy)\n\nThese values were obtained with the chemkit \"frontier-orbitals\" skill calling PySCF at the specified B3LYP/def2-TZVP level in the gas phase.\n\nNo engine warnings were reported."
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 68.79,
+    "llm_s": 47.06,
+    "engine_s": 21.21,
+    "turns": 6,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: Frontier orbital energies (HOMO, LUMO) and HOMO\u2013LUMO gap, energies in eV.\nLevel of theory: DFT, B3LYP/def2-TZVP (tier \"standard\"), exact four-center integrals (density fitting OFF) in PySCF (version not reported).\nGeometry provenance: User-supplied benzene.xyz (12 atoms) from /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz; no geometry optimization was performed \u2013 this is a single-point calculation (notation: DFT//input xyz).\nSolvent / environment: Gas phase (no implicit solvent).\nCharge and multiplicity: 0, 1 (closed-shell singlet).\nSCF convergence: Converged in 8 cycles (scf_converged: true).\nWarnings: no warnings reported.\nLive log: chemkit streamed the SCF/analysis output to a frontier_<timestamp>.out file in the working directory; this path was displayed at run start and can be monitored with tail \u2011f.\nIntegrity: trustworthy = true (all integrity checks passed).\n\nHeadline results (gas phase):\n  HOMO energy = \u22127.0468329 eV\n  LUMO energy = \u22120.41574728 eV\n  HOMO\u2013LUMO gap = 6.6310857 eV\n\nThese values were obtained with the chemkit frontier-orbitals skill using the settings detailed above (command recorded in cli_invocation for full reproducibility)."
+}

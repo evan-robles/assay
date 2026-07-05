@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.42,
+    "llm_s": 24.1,
+    "engine_s": 4.57,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Headline result (frontier-orbital HOMO\u2013LUMO gap): 5.2880586 eV\n\nMethod-provenance block\n\u2022 Property: HOMO and LUMO orbital energies and HOMO\u2013LUMO gap (Koopmans/SCF orbital energies).\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (exact four-center integrals, no density fitting).\n\u2022 Geometry provenance: single-point calculation on the supplied O2 geometry (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz); no re-optimization.\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\u2022 Charge 0; multiplicity 3 (triplet); unrestricted Kohn\u2013Sham wavefunction.\n\u2022 Software/backend: PySCF via chemkit frontier-orbitals skill.\n\u2022 Convergence: SCF converged in 7 cycles; no warnings issued.\n\u2022 All integrity checks passed (integrity.trustworthy = true).\n\nSelected orbital energies (eV)\n  HOMO-2  \u221212.571514\n  HOMO-1   \u22128.8739616\n  HOMO     \u22128.8739616\n  LUMO     \u22123.5859031\n  LUMO+1   \u22123.5859031\n  LUMO+2    +3.6845879\n\nKoopmans-derived indices\n  Vertical IP (\u2212\u03b5_HOMO): 8.8739616 eV\n  Vertical EA (\u2212\u03b5_LUMO): 3.5859031 eV\n  Electronegativity:     6.2299323 eV\n  Chemical hardness:     2.6440293 eV\n  Chemical softness:     0.37821064 (1/eV)\n  Electrophilicity:      7.3395664 eV\n\nNo warnings were reported during the run.\n\nLive log file was streamed during execution and is available for inspection at the path given in the run output.\n"
+}

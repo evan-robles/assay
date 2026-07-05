@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 37.74,
+    "llm_s": 24.74,
+    "engine_s": 12.28,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": -7.2525992,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\nProperty: Frontier orbital energies (HOMO, LUMO) and HOMO\u2013LUMO gap of pyridine; units eV.\nLevel of theory: DFT, functional B3LYP with def2-TZVP basis (no density fitting) \u2013 written as B3LYP/def2-TZVP.\nGeometry provenance: single-point calculation on the user-supplied Cartesian coordinates in /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz; no further geometry optimization (notation: DFT//user-provided geometry).\nSolvent / environment: gas phase (no implicit solvation model).\nCharge & multiplicity: charge 0, multiplicity 1 (closed-shell singlet).\nSoftware: PySCF (backend invoked by chemkit frontier-orbitals skill via cli: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier \u2026).\nConvergence & caveats: SCF converged in 10 cycles; no warnings were reported by the engine. The live SCF/SCF log was streamed to frontier_<timestamp>.out in the working directory (path echoed at run start). The final structured result is saved at /home/erobles/chem-skills/.fidelity_scratch/tmpj4zrvry4/live.json.\n\nResults (Koopmans-style orbital energies, negatives indicate bound states):\n\u2022 HOMO energy  = \u20137.2525992 eV\n\u2022 LUMO energy  = \u20131.112786 eV\n\u2022 HOMO\u2013LUMO gap = 6.1398131 eV\n\nThese orbital energies come directly from the converged B3LYP/def2-TZVP Kohn\u2013Sham eigenvalues and represent vertical ionization (IP) and electron-affinity (EA) estimates under the Koopmans approximation; they are *not* corrected excitation energies.\n\nReproducibility details: see the cli_invocation string in the JSON for the exact command, the `.xyz` geometry path above, the live `.out` log (written during the run to the working directory, available for inspection with `tail -f`), and the full result JSON path noted. Together these artifacts allow the calculation to be rerun or audited without ambiguity.\n\nNo warnings were reported; integrity.trustworthy = true."
+}

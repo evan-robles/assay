@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.39,
+    "llm_s": 29.34,
+    "engine_s": 4.52,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene frontier-orbital result** \u2014 Property: HOMO\u2013LUMO frontier-orbital gap. Level of theory/method used: DFT tier `standard`, explicitly B3LYP/def2-TZVP, run with PySCF (`program`: `pyscf`); density fitting was not requested. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz` (6 atoms), not reported as re-optimized by this frontier-orbitals task. Environment: gas phase (`solvent`: null; no implicit or explicit solvent). Charge 0, multiplicity 1. SCF converged: true in 6 cycles. Engine integrity trustworthy verdict: true. Provenance: computed.\n\nHeadline result: HOMO\u2013LUMO gap = 7.4357165 eV.\nHOMO = -7.6155818 eV; LUMO = -0.17986527 eV. The gap is a Koopmans-style orbital energy gap, not an excitation energy.\n\nAdditional returned values: total electronic energy = -78.623486 hartree = -2139.4541 eV; n_orbitals = 86; n_occupied = 8.\n\nWarnings: no warnings were reported in the result JSON (no `warnings` entries were returned by the tool).\n\nReproducibility: CLI invocation returned by chemkit was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmphzrs7r0_/live.json`. The tool result did not include a live `.out` log path, so I cannot truthfully report one beyond the returned JSON output path in the invocation."
+}

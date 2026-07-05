@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 53.0,
+    "llm_s": 40.64,
+    "engine_s": 11.62,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital result** \u2014 Property: HOMO\u2013LUMO frontier-orbital gap, **6.1398131 eV**. Level of theory: DFT tier `standard` (**B3LYP/def2-TZVP**) using PySCF; density fitting was not requested. Geometry: fixed user-supplied XYZ, `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` (11 atoms); this frontier-orbitals task did not relax the geometry. Environment: **gas phase** (`solvent: null`). Charge 0, multiplicity 1. Software/backend: PySCF (version not reported by the tool). SCF converged: true, in 10 cycles. Engine integrity trustworthy: **true**.\n\nComputed orbital energies from the tool:\n- HOMO = **-7.2525992 eV**\n- LUMO = **-1.112786 eV**\n- HOMO\u2013LUMO gap = **6.1398131 eV**\n\nAdditional returned values: total electronic energy = **-248.3782 hartree** = **-6758.7152 eV**; n_orbitals = 216; n_occupied = 21.\n\nWarnings: no warnings were reported by the tool result.\n\nReproducibility: chemkit skill used: `frontier-orbitals`. Tool-reported CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --out /home/erobles/chem-skills/.fidelity_scratch/tmprtdrwy68/live.json`. The returned JSON did not include a live `.out` log path, so I cannot truthfully name one beyond the artifacts reported by the tool."
+}

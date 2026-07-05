@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 270.26,
+    "llm_s": 64.62,
+    "engine_s": 200.47,
+    "turns": 8,
+    "tool_calls": 5
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance block\n\u2022 Property: frontier-orbital energies and HOMO\u2013LUMO gap (eV), single-point; Koopmans descriptors included.\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (exact four-center integrals, density fitting OFF).\n\u2022 Geometry provenance: user-supplied fixed geometry tempo.xyz (no relaxation) \u2192 single-point B3LYP/def2-TZVP//input-xyz.\n\u2022 Environment: gas phase (no implicit solvent).\n\u2022 Charge 0; multiplicity 2 (open-shell doublet, UKS).\n\u2022 Software: PySCF via chemkit \u201cfrontier-orbitals\u201d skill.\n\u2022 Convergence: SCF converged in 12 cycles; integrity.trustworthy = true.\n\u2022 Warnings: none reported.\n\nKey numerical results (eV)\n  HOMO-2  \u22127.3057732\n  HOMO-1  \u22126.9286592\n  HOMO    \u22126.3375439\n  LUMO    \u22122.4651235\n  LUMO+1   0.58631725\n  LUMO+2   0.59688153\n  \u2192 HOMO\u2013LUMO gap = 3.8724203 eV\n\nKoopmans-type descriptors\n  Vertical IP  = 6.3375439 eV\n  Vertical EA  = 2.4651235 eV\n  Electronegativity = 4.4013337 eV\n  Chemical hardness = 1.9362102 eV\n  Chemical softness  = 0.51647286 eV\u207b\u00b9\n  Electrophilicity index = 5.0024886 eV\n\nNo warnings were emitted by chemkit; result is flagged trustworthy. Live PySCF log was written during the run (frontier_*.out) and contains full SCF details and the cli_invocation for reproducibility."
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.09,
+    "llm_s": 23.11,
+    "engine_s": 4.24,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": 3,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water frontier-orbital analysis (HOMO\u2013LUMO gap)**\n\n**Method-provenance block**\n- **Property:** Frontier orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (functional and basis were both set explicitly, matching the tier). Density fitting was **OFF** (exact four-center two-electron integrals, plain RKS).\n- **Software:** PySCF (`pyscf`), invoked via the chemkit `frontier` engine subcommand.\n- **Geometry provenance:** Single point on the user-supplied geometry file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` (3 atoms: O, H, H). The geometry was used as-is; it was **not** re-optimized as part of this task.\n- **Solvent / environment:** **Gas phase** (no implicit solvent; `solvent: null`).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (closed-shell singlet, RKS), as requested.\n- **Convergence:** SCF **converged** in 7 cycles.\n\n**Results**\n- **HOMO\u2013LUMO gap = 8.9407 eV** (headline value; full precision from the engine: 8.9406687 eV).\n- HOMO (index 4) = \u22128.6037 eV; LUMO (index 5) = +0.33695 eV.\n- Occupied side: HOMO\u22122 = \u221214.444 eV, HOMO\u22121 = \u221210.679 eV, HOMO = \u22128.6037 eV.\n- Virtual side: LUMO = +0.33695 eV, LUMO+1 = +2.3908 eV, LUMO+2 = +9.5973 eV.\n- Total electronic energy = \u221276.462901 Hartree (\u22122080.6615 eV). Note this is a B3LYP electronic energy with its own energy zero \u2014 it is only directly comparable to other B3LYP/def2-TZVP energies, not to xtb/PM7/HF values.\n- Koopmans-derived descriptors: vertical IP = 8.6037 eV, vertical EA = \u22120.33695 eV, electronegativity = 4.1334 eV, chemical hardness = 4.4703 eV, chemical softness = 0.22370 eV\u207b\u00b9, electrophilicity index = 1.9109 eV.\n\n**Integrity / warnings**\n- Engine integrity verdict: status **ok**, **trustworthy = true** (energy finite \u2713, SCF converged \u2713, schema header \u2713, headline field present \u2713).\n- **No warnings were reported by the engine** (the `warnings` array was empty \u2014 clean run).\n\n**Reproducibility**\n- Exact command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpwasp92cs/live.json`\n- The `--accept-defaults` flag was passed to consent to chemkit's gas-phase default (no solvent requested); the level of theory itself (B3LYP/def2-TZVP) was set explicitly, not silently defaulted.\n- Note: the live `.out` log and result JSON are written relative to the engine's run directory (a scratch path, `.fidelity_scratch/tmpwasp92cs/live.json`), which may differ from your cwd.\n\nNo experimental/literature comparison is offered \u2014 ask if you want one and I will verify a source first."
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 113.37,
+    "llm_s": 15.56,
+    "engine_s": 97.1,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "TEMPO frontier orbital energies and HOMO\u2013LUMO gap were calculated using DFT with the B3LYP functional and def2-TZVP basis set (PySCF, tier 'standard'). The calculation employed an open-shell UKS formalism appropriate for the neutral doublet radical (charge 0, multiplicity 2). The geometry was taken from the user-supplied .xyz file without re-optimization (single-point calculation on a fixed geometry, gas phase). The SCF converged in 12 cycles with full integrity. The headline result is the HOMO\u2013LUMO gap, defined as the difference between HOMO (\u20136.3375439 eV, orbital 86) and LUMO (\u20132.4651235 eV, orbital 87) orbital energies. The gap value is 3.8724203 eV, reported to 8 significant figures exactly as returned by the calculation. The calculation is trustworthy; no warnings were reported. The live calculation log was streamed to /home/erobles/chem-skills/.fidelity_scratch/tmpxis8d2el/live.json during execution.</prose>\n<parameter name=\"warnings\">[]"
+}

@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 124.83,
+    "llm_s": 23.47,
+    "engine_s": 100.59,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Frontier-orbital analysis of TEMPO\n\n**Method-provenance block**\n- **Property:** Frontier molecular orbital energies (HOMO/SOMO, LUMO) and the HOMO\u2013LUMO gap; Koopmans-derived reactivity descriptors.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`, which resolves to exactly this functional/basis). Exact four-center two-electron integrals (density fitting OFF by default). Because the system is open-shell (multiplicity 2), this is a **UKS** (unrestricted Kohn\u2013Sham) calculation.\n- **Geometry provenance:** Single point at the user-supplied fixed geometry `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz` (29 atoms). The geometry was used **as-is** \u2014 not re-optimized in this run.\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** charge **0**, multiplicity **2** (doublet radical) \u2014 both as explicitly requested.\n- **Software:** PySCF.\n- **Convergence:** SCF **converged** in 12 cycles.\n\n**Results (all energies in eV):**\n- HOMO (index 86, occ 1.0) = **\u22126.3375 eV**\n- LUMO (index 87, occ 0.0) = **\u22122.4651 eV**\n- **HOMO\u2013LUMO gap = 3.8724 eV** (headline value)\n- HOMO-1 = \u22126.9287 eV; HOMO-2 = \u22127.3058 eV; LUMO+1 = +0.58632 eV; LUMO+2 = +0.59688 eV\n\nNote that TEMPO is a persistent nitroxide radical; with multiplicity 2 the singly-occupied frontier orbitals carry occupation 1.0, so the \"HOMO\" here is the highest singly-occupied (SOMO-type) level in this UKS treatment.\n\n**Koopmans-derived descriptors:**\n- Vertical IP = 6.3375 eV; vertical EA = 2.4651 eV\n- Electronegativity = 4.4013 eV; chemical hardness = 1.9362 eV; softness = 0.51647 eV\u207b\u00b9; electrophilicity index = 5.0025 eV\n\n**Total electronic energy:** \u2212483.88366 Hartree (= \u221213167.145 eV = \u2212303641.58 kcal/mol), zero = electronic energy (bare nuclei + electrons). This is a B3LYP/def2-TZVP value and is only comparable to same-method, same-basis energies.\n\n**Integrity / warnings:** The engine reports integrity status **ok**, **trustworthy = true**; all checks passed (energy finite, SCF converged, schema header/headline present). The result JSON contained **no warnings** (empty warnings \u2014 clean run).\n\n**Reproducibility:** Command run \u2014 `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 2 <tempo.xyz>`. Result JSON written to `/home/erobles/tempo_frontier_dft.json`.\n\nNo experimental or literature comparison is offered (none was requested); the reported values are computed only."
+}

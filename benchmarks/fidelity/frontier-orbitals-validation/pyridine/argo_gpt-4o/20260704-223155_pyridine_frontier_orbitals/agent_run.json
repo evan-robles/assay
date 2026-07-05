@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.05,
+    "llm_s": 3.92,
+    "engine_s": 11.13,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbitals for pyridine were calculated using density functional theory (DFT) with the B3LYP functional and def2-TZVP basis set (PySCF). This was performed in the gas phase, with charge 0 and multiplicity 1, at the geometry provided in `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` \u2014 used as-is without further optimization.\n\nSCF computations converged cleanly in 10 cycles. The final total energy was \u22126758.72 eV (\u2248 \u2212248.38 Hartree), and the HOMO and LUMO orbital energies are \u22127.2526 eV and \u22121.1128 eV, respectively. The resulting HOMO\u2013LUMO gap is **6.1398 eV**. No warnings were reported during the calculation. Engine resolve: trustworthy (mechanical integrity checks passed).\n\nCommand issued: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --solvent none --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out frontier_orbitals_pyridine_b3lyp.json`. Output JSON captured at: `/home/erobles/chem-skills/.fidelity_scratch/tmpdbkw_a57/live.json`."
+}

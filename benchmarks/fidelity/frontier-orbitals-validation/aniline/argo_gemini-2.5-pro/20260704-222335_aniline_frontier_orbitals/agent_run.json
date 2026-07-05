@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 60.39,
+    "llm_s": 29.0,
+    "engine_s": 30.82,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier molecular orbital energies for aniline were calculated in the gas phase using DFT. The calculation was performed at the B3LYP/def2-TZVP level of theory (chemkit's tier 'standard') with the PySCF program, using the user-provided geometry at a charge of 0 and multiplicity of 1. The SCF calculation converged successfully.\n\nThe resulting energies are:\n* HOMO: -5.5538 eV\n* LUMO: -0.2490 eV\n\nThe HOMO-LUMO gap is 5.3048 eV."
+}

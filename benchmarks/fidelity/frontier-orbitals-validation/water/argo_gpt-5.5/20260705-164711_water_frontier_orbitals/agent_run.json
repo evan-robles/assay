@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 30.84,
+    "llm_s": 25.55,
+    "engine_s": 4.53,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water frontier-orbital result** \u2014 Property: HOMO\u2013LUMO orbital gap. Level of theory: DFT tier `standard` with explicitly requested **B3LYP/def2-TZVP** using PySCF; density fitting was not requested, so this was the plain PySCF DFT path. Geometry: fixed, user-supplied coordinates from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` (3 atoms); this frontier-orbitals task is a single-point orbital calculation, not a geometry optimization. Environment: **gas phase** (`solvent: null`). Charge 0, multiplicity 1.\n\nHeadline value: **HOMO\u2013LUMO gap = 8.9406687 eV**.\n\nAdditional returned orbital quantities: HOMO = -8.6037183 eV; LUMO = 0.33695037 eV. Total electronic energy = -76.462901 hartree = -2080.6615 eV. SCF converged: true; SCF cycles: 7. Integrity trustworthy verdict: **true**.\n\nWarnings: no warnings were reported by the tool result.\n\nReproducibility: chemkit command returned by the engine was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout json /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmps9xatn9m/live.json`. The result JSON path in that invocation is `/home/erobles/chem-skills/.fidelity_scratch/tmps9xatn9m/live.json`. I announced the live `.out` log generically when the run was launched, but the chemkit tool response did not expose the exact timestamped `.out` path, so I will not fabricate one."
+}

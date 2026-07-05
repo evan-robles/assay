@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 35.98,
+    "llm_s": 30.89,
+    "engine_s": 4.36,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on molecular oxygen (O\u2082, 2 atoms) at the DFT level, tier 'standard' \u2192 B3LYP/def2-TZVP (PySCF UKS, exact four-centre integrals, no density fitting), gas phase, charge 0, multiplicity 3 (triplet ground state). Geometry: user-supplied .xyz, used as-is (single-point). SCF converged in 7 cycles. No warnings reported (clean run). Integrity: trustworthy=true, all checks passed.\n\nHOMO energy: \u22128.8739616 eV (degenerate with HOMO\u22121)\nLUMO energy: \u22123.5859031 eV (degenerate with LUMO+1)\nHOMO\u2013LUMO gap (headline value): 5.2880586 eV\nTotal energy: \u2212150.38872 Hartree (\u22124092.2855 eV)\n\nThe HOMO/LUMO degeneracy reflects the degenerate \u03c0* SOMOs of the triplet O\u2082 ground state.\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 3 --stdout json"
+}

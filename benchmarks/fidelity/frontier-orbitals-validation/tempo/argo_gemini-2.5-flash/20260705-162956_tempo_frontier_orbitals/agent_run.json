@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 128.28,
+    "llm_s": 14.65,
+    "engine_s": 112.52,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": -6.3375439,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital energies for TEMPO have been computed using the `orbitals` skill with DFT at the B3LYP functional and def2-TZVP basis set (tier `standard`).\n\n**Methodology**:\n*   **Property**: Frontier orbital energies (HOMO and LUMO)\n*   **Level of theory**: DFT, tier `standard` (B3LYP/def2-TZVP) with density fitting enabled (PySCF)\n*   **Geometry provenance**: Input geometry from user-provided `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`. This was a single-point calculation on a fixed geometry.\n*   **Solvent / environment**: gas phase\n*   **Charge and multiplicity**: charge 0, multiplicity 2 (open-shell UKS calculation)\n*   **Software + version**: PySCF\n*   **Convergence + caveats**: SCF converged.\n*   **Live output log**: The calculation's live output was written to `/home/erobles/chem-skills/.fidelity_scratch/tmpnm95x7yp/live.out`.\n\n**Results**:\nFor this open-shell system (multiplicity 2), the unrestricted Kohn-Sham (UKS) calculation yielded distinct alpha and beta molecular orbitals.\nThe highest occupied molecular orbital (HOMO) is the alpha HOMO with an energy of **-6.33754 eV**.\nThe lowest unoccupied molecular orbital (LUMO) is the beta LUMO with an energy of **-2.46512 eV**."
+}

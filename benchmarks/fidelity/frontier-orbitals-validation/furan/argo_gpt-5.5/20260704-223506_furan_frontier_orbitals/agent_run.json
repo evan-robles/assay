@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.55,
+    "llm_s": 24.32,
+    "engine_s": 8.7,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbitals result** \u2014 Property: HOMO\u2013LUMO gap from a DFT frontier-orbitals single-point calculation. Level of theory: tier `standard` (**B3LYP/def2-TZVP**) with PySCF (`method` returned as `b3lyp/def2-tzvp`). Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz` (9 atoms); no geometry relaxation was performed in this task. Environment: **gas phase** (`solvent: null`). Charge 0, multiplicity 1. SCF converged in 9 cycles. Engine integrity verdict: `trustworthy: true`. Provenance: computed.\n\nHeadline HOMO\u2013LUMO gap: **6.2573602 eV**.\n\nOrbital energies returned by chemkit:\n- HOMO = **-6.3597638 eV**\n- LUMO = **-0.1024036 eV**\n- HOMO\u2013LUMO gap = **6.2573602 eV**\n\nAdditional returned quantities:\n- Total electronic energy = **-230.11429 hartree** = **-6261.7289 eV**\n- HOMO index = 17; LUMO index = 18\n- SCF convergence: `scf_converged: true`; `scf_cycles: 9`\n\nWarnings: no warnings were reported by the tool result.\n\nReproducibility: chemkit returned this CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout path /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmplri8wd7o/live.json`. The tool result did not include a live `.out` log path, so I am not inventing one."
+}

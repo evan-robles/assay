@@ -1,0 +1,21 @@
+# chemkit live log
+# subcommand : frontier
+# args       : --method tier standard --functional b3lyp --basis def2-tzvp --solvent none --charge 0 --mult 2 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpd4vm3npd/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli frontier --method tier standard --functional b3lyp --basis def2-tzvp --solvent none --charge 0 --mult 2 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpd4vm3npd/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/argo_gpt-4.1-nano/20260704-223537_tempo_frontier_orbitals
+# started    : 20260704-223543
+# ============================================================
+usage: chemkit frontier [-h] --method {xtb,mopac,dft,hf} [--charge CHARGE]
+                        [--mult MULTIPLICITY] [--solvent SOLVENT]
+                        [--solvent-model {ddcosmo,cpcm,iefpcm}]
+                        [--tier {fast,standard,accurate}]
+                        [--functional FUNCTIONAL] [--basis BASIS]
+                        [--density-fit] [--out OUT] [--accept-defaults]
+                        [--stdout {json,path,none}] [--allow-unconverged]
+                        [--verbose VERBOSE] [--nfrontier NFRONTIER]
+                        input
+chemkit frontier: error: argument --method: invalid choice: 'tier' (choose from xtb, mopac, dft, hf)
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

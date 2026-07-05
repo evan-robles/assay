@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 120.87,
+    "llm_s": 20.33,
+    "engine_s": 99.8,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO Frontier-Orbital Analysis \u2014 DFT B3LYP/def2-TZVP**\n\n**Method provenance:**\n- **Property:** HOMO\u2013LUMO gap (frontier orbital energy difference).\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (exact four-center integrals, no density fitting), PySCF backend.\n- **Geometry provenance:** User-supplied fixed `.xyz` file (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`); single-point calculation, geometry not relaxed at DFT.\n- **Solvent:** Gas phase (no implicit solvation).\n- **Charge and multiplicity:** Charge 0, multiplicity 2 (open-shell doublet, UKS).\n- **Software:** PySCF.\n- **Convergence:** SCF converged in 12 cycles; **trustworthy = true**; no warnings reported.\n\n**Headline Result:**\nThe **HOMO\u2013LUMO gap of TEMPO is 3.8724203 eV** at DFT (B3LYP/def2-TZVP) in the gas phase with multiplicity 2.\n\n**Detailed Frontier Orbitals:**\n- HOMO (index 86): \u22126.3375439 eV\n- LUMO (index 87): \u22122.4651235 eV\n- Gap: 3.8724203 eV\n\n**Supporting Koopmans Descriptors:**\n- Vertical ionization potential: 6.3375 eV\n- Vertical electron affinity: 2.4651 eV\n- Electronegativity (\u03c9): 4.4013 eV\n- Chemical hardness (\u03b7): 1.9362 eV\n- Electrophilicity index: 5.0025 eV\n\n**System:** TEMPO radical (2,2,6,6-tetramethylpiperidine 1-oxide), 29 atoms, 87 occupied orbitals in 898-basis UKS expansion. Total electronic energy: \u221213,167.145 eV (\u2212483.8837 Hartree).\n\nThe calculation was executed via `chemkit frontier-orbitals --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 2 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`.</prose>\n<parameter name=\"warnings\">[]"
+}

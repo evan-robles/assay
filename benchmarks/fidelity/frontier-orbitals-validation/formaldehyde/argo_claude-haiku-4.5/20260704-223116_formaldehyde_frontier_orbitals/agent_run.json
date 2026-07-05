@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.18,
+    "llm_s": 13.12,
+    "engine_s": 4.53,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde frontier-orbital gap (HOMO\u2013LUMO)** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, no density fitting) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied formaldehyde.xyz (4 atoms: O, C, H, H), used as-is (single point, not re-optimized). SCF converged in 8 cycles.\n\n**Results:**\n- **HOMO\u2013LUMO gap: 5.87 eV** (Koopmans-style orbital gap; this is the difference between the highest occupied and lowest unoccupied orbital energies, not an excitation energy)\n- HOMO (orbital index 7, doubly occupied): \u22127.652 eV\n- LUMO (orbital index 8, empty): \u22121.783 eV\n- Total energy: \u2212114.553 Hartree (\u22123117.153 eV, \u221271883.3 kcal/mol)\n\n**Frontier-orbital manifold** (\u00b13 orbitals around the gap):\n  - HOMO\u22122: \u221212.487 eV (2e\u207b)\n  - HOMO\u22121: \u221211.002 eV (2e\u207b)\n  - HOMO: \u22127.652 eV (2e\u207b)\n  - LUMO: \u22121.783 eV (0e\u207b)\n  - LUMO+1: +1.392 eV (0e\u207b)\n  - LUMO+2: +2.840 eV (0e\u207b)\n\n**Koopmans descriptors** (from frontier orbitals):\n  - Vertical ionization potential: 7.652 eV\n  - Vertical electron affinity: 1.783 eV\n  - Electronegativity (Pearson): 4.717 eV\n  - Chemical hardness: 2.935 eV\n  - Electrophilicity index: 3.791 eV\n\n**Computation details:** The calculation used PySCF with the B3LYP functional, def2-TZVP basis set, and exact (four-center) two-electron integrals (density fitting OFF). The molecule was treated in the gas phase (no solvent). All convergence and integrity checks passed; the calculation is trustworthy."
+}

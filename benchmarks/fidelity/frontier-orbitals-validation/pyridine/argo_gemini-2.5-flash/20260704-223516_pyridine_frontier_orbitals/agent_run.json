@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.61,
+    "llm_s": 11.46,
+    "engine_s": 11.57,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Frontier Orbital Analysis**\n\nA frontier orbital analysis was performed for pyridine using Density Functional Theory (DFT). The molecule's HOMO and LUMO energies, and their energy gap, were computed.\n\n**Method Provenance Block:**\n*   **Property**: Frontier orbital gap, HOMO and LUMO energies (Koopmans-style orbital energies).\n*   **Level of theory**: DFT, tier `standard` (**B3LYP/def2-TZVP**), performed using PySCF. Density fitting (RI/resolution-of-identity approximation) was not explicitly enabled.\n*   **Geometry provenance**: Pyridine geometry was obtained from the user-provided XYZ file: `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`. This was a single-point calculation, so the geometry was not optimized.\n*   **Solvent / environment**: Gas phase.\n*   **Charge and multiplicity**: Charge 0, multiplicity 1.\n*   **Software + version**: PySCF.\n*   **Convergence + caveats**: The Self-Consistent Field (SCF) calculation converged in 10 cycles. No warnings were reported.\n\n**Results:**\n*   HOMO energy: -7.2526 eV\n*   LUMO energy: -1.1128 eV\n*   **HOMO-LUMO Gap**: 6.1398 eV\n\nThe result is trustworthy."
+}

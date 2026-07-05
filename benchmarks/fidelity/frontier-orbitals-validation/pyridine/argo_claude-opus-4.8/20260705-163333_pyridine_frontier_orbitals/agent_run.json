@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 37.94,
+    "llm_s": 25.1,
+    "engine_s": 12.15,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital analysis (HOMO\u2013LUMO gap)**\n\n**Method-provenance block**\n- **Property:** Frontier molecular orbital energies and HOMO\u2013LUMO gap (Koopmans-style; not an excitation energy).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP/def2-TZVP** (as I explicitly set `--functional b3lyp --basis def2-tzvp`, which coincide with the `standard` tier). Exact four-center two-electron integrals \u2014 density fitting (RI) was OFF (chemkit default; I did not pass `--density-fit`).\n- **Geometry provenance:** Single point on the user-supplied geometry `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` (11 atoms: N, 5\u00d7C, 5\u00d7H), used as-is \u2014 the geometry was NOT re-optimized in this run.\n- **Solvent / environment:** **Gas phase** (no `--solvent`; `solvent: null`).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (closed-shell singlet, RKS).\n- **Software:** PySCF.\n- **Convergence:** SCF converged (`scf_converged: true`, 10 cycles).\n\n**Results (eV)**\n- HOMO (index 20) = \u22127.2525992 eV\n- LUMO (index 21) = \u22121.112786 eV\n- **HOMO\u2013LUMO gap = 6.1398131 eV** (headline value)\n- Total electronic energy = \u2212248.3782 Hartree (= \u22126758.7152 eV = \u2212155859.68 kcal/mol); energy zero = electronic energy (bare nuclei + electrons).\n\nAdditional frontier orbitals: HOMO\u22122 = \u22128.0425195 eV, HOMO\u22121 = \u22127.4731156 eV; LUMO+1 = \u22120.67231536 eV, LUMO+2 = 1.1781069 eV.\n\nKoopmans-derived descriptors: vertical IP = 7.2525992 eV, vertical EA = 1.112786 eV, electronegativity = 4.1826926 eV, chemical hardness = 3.0699066 eV, chemical softness = 0.32574281 eV\u207b\u00b9, electrophilicity index = 2.8494218 eV.\n\n**Integrity / warnings:** Engine integrity status = `ok`, `trustworthy: true` (all checks passed: energy finite, SCF converged, schema header/headline present). The result JSON contained **no `warnings` array \u2014 no warnings were reported.**\n\n**Reproducibility**\n- Command: `cli.py frontier /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --out /home/erobles/chem-skills/.fidelity_scratch/tmp543c08g6/live.json`\n- Note: values are reported at DFT precision; the last digits of an absolute DFT energy are basis-/grid-dependent. No experimental/literature comparison is offered (none requested)."
+}

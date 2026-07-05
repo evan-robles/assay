@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 31.88,
+    "llm_s": 23.09,
+    "engine_s": 8.79,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have completed the frontier-orbitals calculation for furan. Here is the report:\n\n**Furan Frontier Orbital Energies**\n\nThis calculation was performed with Density Functional Theory (DFT) at the tier `standard` level, which corresponds to the **B3LYP functional and def2-TZVP basis set**, with density fitting enabled by default. The calculation was run in the **gas phase** on the user-provided geometry, assuming **charge 0 and multiplicity 1**. The calculation was performed using the PySCF software package.\n\nThe SCF calculation converged successfully in 9 cycles. No warnings were reported by the engine.\n\nThe results are as follows:\n*   **HOMO energy**: -6.3598 eV\n*   **LUMO energy**: -0.10240 eV\n*   **HOMO-LUMO gap**: 6.2574 eV"
+}

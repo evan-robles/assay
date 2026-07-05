@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 27.19,
+    "llm_s": 22.09,
+    "engine_s": 4.31,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water frontier-orbital result** \u2014 Property: HOMO\u2013LUMO orbital gap. Level of theory: DFT tier `standard` (**B3LYP/def2-TZVP**) using PySCF. Geometry: fixed user-supplied XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` (single-point frontier-orbital calculation; not geometry-optimized in this run). Environment: **gas phase** (`solvent: null`). Charge 0, multiplicity 1. SCF converged: true, in 7 cycles. Engine integrity trustworthy: true.\n\nHeadline result: **HOMO\u2013LUMO gap = 8.9406687 eV**.\n\nOrbital energies returned by chemkit:\n- HOMO = -8.6037183 eV\n- LUMO = 0.33695037 eV\n- Gap = 8.9406687 eV\n\nTotal electronic energy returned: -76.462901 hartree (-2080.6615 eV).\n\nWarnings: no warnings were reported in the chemkit result.\n\nReproducibility:\n- Chemkit task: `frontier-orbitals`\n- CLI invocation returned by chemkit: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout json /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp346b543y/live.json`\n- Output JSON path in invocation: `/home/erobles/chem-skills/.fidelity_scratch/tmp346b543y/live.json`\n- Note: the chemkit result returned above did not include a separate `.out` log path field, so I cannot report an exact `.out` path without guessing."
+}

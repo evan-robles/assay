@@ -1,0 +1,35 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.52,
+    "llm_s": 4.16,
+    "engine_s": 11.36,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.13981,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "energy_finite: total/electronic energy = -6758.71522481224 (must be a finite number)",
+      "scf_converged: SCF converged successfully",
+      "schema_header: common header present",
+      "schema_headline: headline field 'homo_lumo_gap_eV' = 6.139813146381047 (present and numeric)"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": ""
+}

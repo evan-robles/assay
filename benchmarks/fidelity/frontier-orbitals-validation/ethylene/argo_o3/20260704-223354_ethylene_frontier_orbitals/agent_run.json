@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 48.63,
+    "llm_s": 39.11,
+    "engine_s": 8.98,
+    "turns": 6,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary (all mandatory fields)\n\u2022 Property: frontier orbital energies (HOMO, LUMO) and HOMO\u2013LUMO gap, in eV  \n\u2022 Level of theory: density\u2010functional theory, B3LYP/def2-TZVP (no density fitting)  \n\u2022 Geometry provenance: user-supplied ethylene.xyz (6 atoms), taken as-is; single-point calculation (no further relaxation) \u2013 notation: DFT//input  \n\u2022 Solvent / environment: gas phase (no implicit solvation model)  \n\u2022 Charge 0, multiplicity 1 (closed-shell singlet; RHF \u2192 RKS)  \n\u2022 Software/backend: PySCF (called via chemkit frontier-orbitals skill)  \n\u2022 Convergence & caveats: SCF converged in 6 cycles; integrity.status = ok, trustworthy = true; no engine warnings were reported.\n\nLive log & files\nThe run streamed its progress to a live log written as `<cwd>/frontier_YYYYMMDD-HHMMSS.out` (created automatically by chemkit when the job started).  \nFull result JSON: /home/erobles/chem-skills/.fidelity_scratch/tmp8t20dkqz/live.json (contains all fields, command line, and geometry).\n\nKey numerical results (gas-phase, B3LYP/def2-TZVP)\n\u2022 Total electronic energy  E = \u221278.623486 Eh  (\u22122139.4541 eV)  \n\u2022 HOMO energy             \u03b5_H = \u22127.6155818 eV  \n\u2022 LUMO energy             \u03b5_L = \u22120.17986527 eV  \n\u2022 HOMO\u2013LUMO gap           \u0394\u03b5_HL = 7.4357165 eV   \u2190 headline value  \n\u2022 Koopmans vertical IP    7.6155818 eV (\u2212\u03b5_H)  \n\u2022 Koopmans vertical EA    0.17986527 eV (\u2212\u03b5_L)  \n\nAll results are computed; no experimental comparison was requested. No warnings were emitted by the backend, and the calculation is flagged trustworthy by chemkit\u2019s integrity checker."
+}

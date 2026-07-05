@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 44.62,
+    "llm_s": 34.53,
+    "engine_s": 9.4,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.869671192773015,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance statement\n\u2022 Property: frontier-orbital energies (HOMO, LUMO) and HOMO\u2013LUMO energy gap, in electron-volts (eV).\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP, exact four-center integrals (density fitting OFF).\n\u2022 Geometry provenance: user-supplied Cartesian coordinates (formaldehyde.xyz at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/); single-point calculation on this fixed geometry \u2014 notation B3LYP/def2-TZVP//input geometry (no relaxation performed).\n\u2022 Solvent / environment: gas phase (no implicit solvation model).\n\u2022 Charge = 0, multiplicity = 1 (closed-shell singlet).\n\u2022 Software/backend: PySCF (via chemkit frontier-orbitals skill).\n\u2022 Convergence & caveats: SCF converged in 8 cycles; integrity.trustworthy = true; no warnings reported by chemkit.\n\u2022 Live log: calculation output was streamed in real time to an automatically generated frontier_<timestamp>.out file in the working directory, available for inspection (contains full SCF and orbital details).\n\nKey frontier-orbital energies (eV):\n  HOMO-2  = \u201312.486938\n  HOMO-1  = \u201311.002498\n  HOMO    = \u20137.6523067\n  LUMO    = \u20131.7826355\n  LUMO+1  =  1.3920007\n  LUMO+2  =  2.8396981\n\nHeadline result \u2013 HOMO\u2013LUMO gap: 5.869671192773015 eV (gas phase, B3LYP/def2-TZVP)."
+}

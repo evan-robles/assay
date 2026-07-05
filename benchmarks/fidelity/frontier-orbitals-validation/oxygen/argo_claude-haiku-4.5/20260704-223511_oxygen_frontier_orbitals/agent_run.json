@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 19.83,
+    "llm_s": 15.04,
+    "engine_s": 4.26,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier-Orbital HOMO\u2013LUMO Gap of O\u2082** \u2014 DFT, **B3LYP/def2-TZVP** (tier standard), exact four-center integrals (no density fitting), PySCF backend, gas phase, charge 0, open-shell multiplicity 3 (triplet). Geometry: user-supplied `.xyz` file, single-point evaluation (no relaxation). SCF converged in 7 cycles. HOMO (index 15) = \u22128.8740 eV, LUMO (index 16) = \u22123.5859 eV \u2192 **HOMO\u2013LUMO gap = 5.288 eV** (Koopmans-style orbital separation, not transition energy). No warnings reported. Calculated via chemkit frontier-orbitals skill. Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 3 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`."
+}

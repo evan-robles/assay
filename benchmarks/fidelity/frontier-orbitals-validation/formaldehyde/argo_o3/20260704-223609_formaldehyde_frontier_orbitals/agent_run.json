@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 51.56,
+    "llm_s": 42.16,
+    "engine_s": 8.86,
+    "turns": 6,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: Frontier orbital energies and HOMO\u2013LUMO gap (eV)\nLevel of theory: DFT, B3LYP/def2-TZVP (no density fitting), as requested\nGeometry provenance: single-point on the user-supplied formaldehyde geometry (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz); no relaxation performed (notation: DFT//input)\nSolvent / environment: gas phase (no implicit solvent)\nCharge & multiplicity: 0, 1 (closed-shell singlet)\nSoftware: PySCF 2.x via chemkit frontier-orbitals skill (engine subcommand `frontier`)\nConvergence & caveats: SCF converged in 8 cycles; no warnings reported by engine. Integrity checks status: ok, trustworthy=true. (No warnings.)\nLive log: the run was written live to a `frontier_*.out` file in the working directory (path and timestamp echoed when the calculation was launched); it can be viewed with `tail -f` for full SCF details. Output JSON saved as formaldehyde_frontier_dft.json.\n\nComputed results (selected):\n\u2022 HOMO energy  \u20137.6523067 eV\n\u2022 LUMO energy  \u20131.7826355 eV\n\u2022 HOMO\u2013LUMO gap  5.8696712 eV (Koopmans estimate: vertical gap)\n\nAll values are electronic (no zero-point or thermal corrections). No experimental comparison was requested.\n\n"
+}

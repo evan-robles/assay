@@ -1,0 +1,34 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 19.35,
+    "llm_s": 7.62,
+    "engine_s": 8.72,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.25736,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "Energy is finite.",
+      "SCF converged successfully.",
+      "Headline value (HOMO-LUMO gap): 6.25736 eV"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier-orbitals calculation on furan using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase was successful. The method and conditions used are specified below.\n\n**Method and details:**\n- Property computed: frontier orbitals (HOMO and LUMO energies)\n- Level of theory: B3LYP/def2-TZVP\n- Environment: gas phase (no solvent)\n- Charge: 0\n- Multiplicity: 1\n- Software: PySCF\n- Single point calculation on the input XYZ structure.\n\n**Results:**\n- HOMO energy: -6.35976 eV\n- LUMO energy: -0.10240 eV\n- HOMO-LUMO gap: approximately 6.25736 eV\n\nThe SCF converged after 9 cycles, and the calculation is deemed trustworthy. Warnings:\n- Energy is finite.\n- SCF converged successfully.\n- Headline value (HOMO-LUMO gap): 6.25736 eV\n\nProvenance: computed using chemkit's frontier-orbitals skill with specified parameters."
+}

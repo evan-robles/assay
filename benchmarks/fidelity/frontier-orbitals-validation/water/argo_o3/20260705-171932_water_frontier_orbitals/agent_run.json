@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 35.1,
+    "llm_s": 30.41,
+    "engine_s": 3.89,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance (frontier-orbital gap, water)\n\n\u2022 Property: frontier orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital energy difference), eV\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (exact two-electron integrals; density fitting not enabled)\n\u2022 Geometry: user-supplied Cartesian coordinates (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz); single-point calculation \u2011 geometry not re-optimized\n\u2022 Environment: gas phase (no implicit solvent)\n\u2022 Charge 0, multiplicity 1 (closed-shell singlet)\n\u2022 Software: PySCF (via chemkit frontier-orbitals skill)\n\u2022 Convergence: SCF converged in 7 cycles; integrity.status = \"ok\", trustworthy = true; no warnings reported.\n\u2022 Live log: streamed while running to a frontier_<timestamp>.out file in the working directory; full JSON result at /home/erobles/chem-skills/.fidelity_scratch/tmptrhlirqp/live.json\n\nKey numerical results (eV):\n  HOMO  = \u20118.6037183\n  LUMO  =  +0.33695037\n  HOMO\u2013LUMO gap = 8.9406687   \u2190 headline value\n\nCommand used (reproducibility):\n/ home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmptrhlirqp/live.json\n\nThis is a computed single-point DFT result; orbital gaps are method-dependent and differ from true excitation energies."
+}

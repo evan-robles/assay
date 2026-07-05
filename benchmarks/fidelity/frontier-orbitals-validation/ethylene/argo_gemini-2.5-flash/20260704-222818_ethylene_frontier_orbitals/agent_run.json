@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 22.17,
+    "llm_s": 17.26,
+    "engine_s": 4.39,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene Frontier Orbital Analysis**\n\nThe frontier orbital energies for ethylene were computed using a **DFT single-point calculation** at the **B3LYP/def2-TZVP** level of theory (PySCF) in the **gas phase**, with a **charge of 0** and a **multiplicity of 1**. The geometry was sourced from the user-provided `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz` file and was not optimized as part of this calculation. The SCF converged in 6 cycles. No warnings were reported.\n\nThe following orbital energies were obtained:\n*   **HOMO energy**: -7.61558 eV\n*   **LUMO energy**: -0.17987 eV\n*   **HOMO-LUMO gap**: 7.43572 eV\n\nThe calculation results are trustworthy.\n\nThe raw output can be found at `ethylene_frontier_orbitals.json`."
+}

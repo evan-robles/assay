@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.23,
+    "llm_s": 20.92,
+    "engine_s": 10.73,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier-orbital result** \u2014 Property: HOMO\u2013LUMO gap from a DFT frontier-orbitals calculation. Method used: DFT tier `standard` = **B3LYP/def2-TZVP** in PySCF, with explicit `--functional b3lyp` and `--basis def2-tzvp`; density fitting was not requested. Geometry: fixed, user-supplied XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz` (12 atoms), not relaxed in this task. Environment: **gas phase** (`solvent: null`). Charge 0, multiplicity 1. SCF converged: true, in 8 cycles. Software/version: PySCF; version was not returned by the tool.\n\nHeadline value: **HOMO\u2013LUMO gap = 6.6310857 eV**.\n\nOrbital energies returned by chemkit: HOMO = -7.0468329 eV; LUMO = -0.41574728 eV. The gap is a Kohn\u2013Sham orbital-energy gap, not an excitation energy.\n\nTotal electronic energy returned: -6322.2183 eV = -232.33724 hartree.\n\nWarnings: no warnings were returned in the tool result.\n\nEngine integrity verdict: `trustworthy: true`.\n\nReproducibility: chemkit CLI invocation returned by the engine was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults --stdout json --out /home/erobles/chem-skills/.fidelity_scratch/tmpv62pdfuz/live.json`. The result JSON path embedded in that command is `/home/erobles/chem-skills/.fidelity_scratch/tmpv62pdfuz/live.json`. The chemkit result returned to me did not include a live `.out` log path, so I am not inventing one."
+}

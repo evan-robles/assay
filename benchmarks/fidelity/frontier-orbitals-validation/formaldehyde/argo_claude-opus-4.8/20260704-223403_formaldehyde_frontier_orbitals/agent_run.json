@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 27.21,
+    "llm_s": 22.25,
+    "engine_s": 4.44,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde frontier-orbital analysis (HOMO\u2013LUMO gap)** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**), computed with **PySCF**. Environment: **gas phase** (no solvent; ddCOSMO is the default model but was not invoked since no solvent was set). **Charge 0, multiplicity 1** (closed-shell RKS). Density fitting was OFF (chemkit default: exact four-center integrals). Geometry: used as-is from the user-supplied file `formaldehyde.xyz` (4 atoms: O, C, H, H); this was a single point at that fixed geometry \u2014 the geometry was NOT relaxed at this level. SCF converged in 8 cycles.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 5.8696712 eV** (Koopmans-style orbital gap, not an excitation energy).\n\nFrontier orbital energies:\n- HOMO (index 7): \u22127.6523067 eV\n- LUMO (index 8): \u22121.7826355 eV\n- HOMO\u22121: \u221211.002498 eV; HOMO\u22122: \u221212.486938 eV\n- LUMO+1: +1.3920007 eV; LUMO+2: +2.8396981 eV\n\nKoopmans-derived descriptors (from the frontier orbital energies): vertical IP = 7.6523067 eV, vertical EA = 1.7826355 eV, electronegativity = 4.7174711 eV, chemical hardness = 2.9348356 eV, chemical softness = 0.34073459 eV\u207b\u00b9, electrophilicity index = 3.7914447 eV.\n\nTotal electronic energy: \u2212114.55325 Hartree (= \u22123117.1528 eV = \u221271883.251 kcal/mol); energy zero = electronic energy (bare nuclei + electrons). Note that this energy origin is method-specific and only directly comparable to other B3LYP/def2-TZVP values.\n\n**Integrity:** status = ok, trustworthy = **true**. All integrity checks passed (energy_finite \u2713, scf_converged \u2713, schema_header \u2713, schema_headline \u2713).\n\n**Warnings:** the result JSON contained **no warnings** (clean run).\n\n**Reproducibility** \u2014 Command: `cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --accept-defaults .../formaldehyde/formaldehyde.xyz`. (`--accept-defaults` was passed to consent to gas-phase; functional, basis, and tier were all specified explicitly.) A live `<frontier>_<timestamp>.out` log is streamed to the run directory during execution and can be `tail -f`'d; the result JSON was written to the engine's scratch `live.json`.\n\nReferences for the methods used: B3LYP is a hybrid DFT functional; def2-TZVP is a Karlsruhe triple-zeta valence-polarized basis; SCF performed with PySCF (Sun, Q.; et al. *J. Chem. Phys.* **2020**, *153*, 024109)."
+}

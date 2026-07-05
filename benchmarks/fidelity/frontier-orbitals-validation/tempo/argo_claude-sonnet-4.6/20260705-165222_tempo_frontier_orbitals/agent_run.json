@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 139.37,
+    "llm_s": 44.38,
+    "engine_s": 94.17,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on TEMPO (2,2,6,6-tetramethylpiperidine-1-oxyl), a stable nitroxide radical.\n\n**Method Provenance**\n- Property: Frontier orbital energies (HOMO, LUMO, HOMO\u2013LUMO gap) via Koopmans' theorem\n- Level of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP (exact four-center integrals; density fitting NOT enabled), PySCF backend\n- Geometry provenance: User-supplied .xyz at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz; used as-is (single point, not re-optimized at this level)\n- Solvent/environment: Gas phase (solvent: null confirmed in result)\n- Charge: 0, Multiplicity: 2 (open-shell doublet, UKS)\n- Software: PySCF (via chemkit engine)\n- SCF converged: true, in 12 cycles\n- Warnings: none (warnings array empty \u2014 clean run)\n- Integrity: trustworthy = true, all checks passed\n\n**Headline Result**\nHOMO\u2013LUMO gap = 3.8724203 eV\n\n**Frontier Orbitals**\n- HOMO\u22122 (index 84): \u22127.3057732 eV (occ 1.0)\n- HOMO\u22121 (index 85): \u22126.9286592 eV (occ 1.0)\n- HOMO/SOMO (index 86): \u22126.3375439 eV (occ 1.0)\n- LUMO (index 87): \u22122.4651235 eV (occ 0.0)\n- LUMO+1 (index 88): +0.58631725 eV (occ 0.0)\n- LUMO+2 (index 89): +0.59688153 eV (occ 0.0)\n\n**Koopmans-Theorem Derived Properties**\n- Vertical IP (\u2212\u03b5_HOMO): 6.3375439 eV\n- Vertical EA (\u2212\u03b5_LUMO): 2.4651235 eV\n- Electronegativity \u03c7: 4.4013337 eV\n- Chemical hardness \u03b7: 1.9362102 eV\n- Chemical softness \u03c3: 0.51647286 eV\u207b\u00b9\n- Electrophilicity index \u03c9: 5.0024886 eV\n\n**System**: 29 atoms, 898 basis functions, 87 occupied orbitals, total energy \u2212483.88366 Hartree.\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier tempo.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 2\nOutput: tempo_frontier_dft.json"
+}

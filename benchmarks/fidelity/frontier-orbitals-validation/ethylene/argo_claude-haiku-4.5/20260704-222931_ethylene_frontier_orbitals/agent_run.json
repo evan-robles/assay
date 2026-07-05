@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.67,
+    "llm_s": 21.67,
+    "engine_s": 4.45,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene Frontier-Orbital Gap** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, PySCF, exact integrals), gas phase, charge 0, multiplicity 1. Geometry: provided input `ethylene.xyz`, used as-is (single-point, not re-optimized at DFT). SCF converged in 6 cycles; no warnings. Headline result: HOMO\u2013LUMO gap = **7.4357 eV** (Koopmans-style orbital energy difference: HOMO at \u22127.6156 eV, LUMO at \u22120.1799 eV). Additional frontier orbitals reported: HOMO\u22122 (\u221211.488 eV), HOMO\u22121 (\u22129.884 eV), LUMO+1 (1.720 eV), LUMO+2 (2.380 eV). Koopmans-derived vertical ionization potential (7.6156 eV) and electron affinity (0.1799 eV) are also returned. The gap represents the orbital-based estimate of ionization/affinity energy; it is not an excitation energy without further correction. Total electronic energy: \u221278.6235 Hartree."
+}

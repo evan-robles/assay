@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.06,
+    "llm_s": 26.85,
+    "engine_s": 4.61,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde frontier-orbital result** \u2014 Computed with chemkit `frontier-orbitals` using DFT tier `standard` explicitly set to **B3LYP/def2-TZVP** (`--functional b3lyp --basis def2-tzvp`) in **PySCF**, gas phase, charge 0, multiplicity 1. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz`; this was a frontier-orbital single-point calculation, not a geometry optimization. Density fitting was not requested.\n\nHeadline result: **HOMO\u2013LUMO gap = 5.8696712 eV**.\n\nAdditional orbital energies from the tool:\n- HOMO = -7.6523067 eV\n- LUMO = -1.7826355 eV\n- Total electronic energy = -3117.1528 eV = -114.55325 hartree\n\nConvergence/caveats: SCF converged: true; SCF cycles: 8. No warnings were reported in the chemkit result. Engine integrity verdict: trustworthy = true.\n\nReproducibility: chemkit reported this command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpytgt0ruq/live.json`. Chemkit did not include a live `.out` log path in the returned JSON, so I am not inventing one."
+}

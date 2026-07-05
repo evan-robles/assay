@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.53,
+    "llm_s": 4.34,
+    "engine_s": 4.19,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": 3,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water HOMO\u2013LUMO gap** \u2014 DFT, tier 'standard' (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: fixed coordinates (user-provided `.xyz` file) \u2014 no relaxation run in this task. SCF converged in 7 cycles. HOMO = \u22128.60 eV, LUMO = +0.34 eV \u2192 **gap = 8.94 eV** (Koopmans-style orbital gap, not an excitation energy). The `.xyz` file was `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz`, and the live `.out` log recorded progress at `/home/erobles/chem-skills/.fidelity_scratch/tmp3gmvq7v1/live.json`."
+}

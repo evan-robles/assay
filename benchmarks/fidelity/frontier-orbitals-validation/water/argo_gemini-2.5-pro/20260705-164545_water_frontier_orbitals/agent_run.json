@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.85,
+    "llm_s": 14.82,
+    "engine_s": 4.03,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": 3,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have calculated the frontier molecular orbitals for water using Density Functional Theory (DFT).\n\n**Method Provenance:**\nThe calculation was performed at the **B3LYP/def2-TZVP** level of theory (chemkit tier `standard`) using the PySCF program. The calculation was run in the **gas phase** on the geometry you provided, using a **charge of 0** and a **multiplicity of 1**. The Self-Consistent Field (SCF) procedure converged successfully in 7 cycles.\n\n**Results:**\nThe key orbital energies are:\n*   **HOMO Energy**: -8.6037 eV\n*   **LUMO Energy**: +0.3370 eV\n*   **HOMO-LUMO Gap**: 8.9407 eV\n\nThe engine reported no warnings and found the result to be trustworthy."
+}

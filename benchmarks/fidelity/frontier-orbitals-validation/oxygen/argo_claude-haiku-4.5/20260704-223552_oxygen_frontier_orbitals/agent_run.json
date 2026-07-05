@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.47,
+    "llm_s": 15.69,
+    "engine_s": 4.23,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen (O\u2082) Frontier-Orbital HOMO\u2013LUMO Gap** \u2014 DFT, **B3LYP/def2-TZVP** (PySCF, UKS), gas phase, charge 0, multiplicity 3 (triplet state). Geometry: user-supplied `.xyz` file, used as-is (single-point, not relaxed). SCF converged in 7 cycles. **HOMO\u2013LUMO gap = 5.288 eV** (Koopmans orbital-energy difference). Vertical ionization potential: 8.874 eV; vertical electron affinity: 3.586 eV. The triplet O\u2082 exhibits the expected degenerate \u03c0-orbital character (HOMO-1 and HOMO both at \u22128.87 eV). Total electronic energy: \u2212150.389 Hartree. No convergence issues or warnings. Calculated using chemkit `frontier-orbitals` skill with explicit B3LYP functional and def2-TZVP basis.</prose>\n<parameter name=\"n_atoms\">2"
+}

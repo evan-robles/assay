@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 14.67,
+    "llm_s": 5.25,
+    "engine_s": 8.85,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "Calculation started; it's logging live to '/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --solvent none --tier standard --out /home/erobles/chem-skills/.fidelity_scratch/tmpr4bq_kyp/live.json' \u2014 this is logged during calculation execution."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The HOMO\u2013LUMO gap of furan was calculated as 6.2573602 eV using DFT at the level of B3LYP/def2-TZVP (tier 'standard') with density fitting enabled. The calculation was performed in the gas phase (no solvent). The geometry was provided in file /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz and not re-optimized at DFT. The SCF procedure converged within 9 cycles. HOMO = \u22126.36 eV, LUMO = \u22120.10 eV. The method employed was PySCF with the B3LYP functional and def2-TZVP basis set."
+}

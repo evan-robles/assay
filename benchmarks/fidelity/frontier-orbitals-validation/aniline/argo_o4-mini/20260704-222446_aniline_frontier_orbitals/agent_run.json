@@ -1,0 +1,30 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 59.28,
+    "llm_s": 41.49,
+    "engine_s": 17.24,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Aniline HOMO\u2013LUMO gap \u2014 DFT, B3LYP/def2-TZVP (functional override, no tier preset), gas phase, charge 0, multiplicity 1. Geometry: user-supplied file /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz used as-is (single-point). Software: PySCF via chemkit (exact four-center integrals; density fitting off). SCF converged in 9 cycles; no warnings reported.\n\nHOMO = \u20135.553772 eV\nLUMO = \u20130.2489544 eV\n\u2192 gap = 5.3048177 eV\n\nCommand:\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier \\\n  /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz \\\n  --method dft --functional b3lyp --basis def2-tzvp --nfrontier 3 \\\n  --out /home/erobles/chem-skills/.fidelity_scratch/tmp6jxckumu/live.json \\\n  --stdout path\n\nJSON output written to /home/erobles/chem-skills/.fidelity_scratch/tmp6jxckumu/live.json. Live log: frontier_<timestamp>.out (tail -f available)."
+}

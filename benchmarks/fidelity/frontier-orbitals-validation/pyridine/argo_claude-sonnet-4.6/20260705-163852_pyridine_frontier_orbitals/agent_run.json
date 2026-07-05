@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.84,
+    "llm_s": 37.37,
+    "engine_s": 11.75,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on pyridine (11 atoms: N, C\u00d75, H\u00d75) using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. Exact four-centre integrals (no density fitting). Geometry: user-supplied pyridine.xyz, used as-is (single point \u2014 not re-optimized at this level). SCF converged in 10 cycles. No warnings reported.\n\nResults:\n- HOMO (index 20): \u22127.2525992 eV\n- LUMO (index 21): \u22121.112786 eV\n- HOMO\u2013LUMO gap (headline value): 6.1398131 eV (Koopmans-style orbital energy difference)\n- Total electronic energy: \u2212248.3782 Hartree (\u22126758.7152 eV)\n\nIntegrity: trustworthy = true, status = ok.\n\nCLI: cli.py frontier pyridine.xyz --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1\nOutput JSON: pyridine_frontier_dft.json"
+}

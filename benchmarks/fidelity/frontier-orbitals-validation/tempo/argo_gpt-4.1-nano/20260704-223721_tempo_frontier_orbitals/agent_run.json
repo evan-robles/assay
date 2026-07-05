@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 100.38,
+    "llm_s": 6.16,
+    "engine_s": 91.21,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [
+      "None"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier-orbitals calculation on TEMPO using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase with charge 0 and multiplicity 2 has been successfully performed. The orbitals were computed with SCF convergence achieved and the HOMO-LUMO gap is approximately 3.87242 eV."
+}

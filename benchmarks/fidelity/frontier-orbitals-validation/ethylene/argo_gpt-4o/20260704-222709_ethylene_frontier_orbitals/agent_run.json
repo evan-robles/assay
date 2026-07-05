@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.07,
+    "llm_s": 3.65,
+    "engine_s": 4.42,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.435716547018233,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene HOMO\u2013LUMO gap** \u2014 DFT, tier 'standard' (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-specified fixed coordinates from ethylene.xyz; calculation performed as a single-point energy evaluation at this geometry. SCF converged in 6 cycles.\n\nFrontier orbital energies:\n- HOMO = \u22127.6156 eV\n- LUMO = \u22120.1799 eV\n\nResult:\nHOMO\u2013LUMO gap \u2248 **7.4357 eV** (Koopmans-style orbital gap).\n\nThe calculation followed the user-specified command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --solvent none --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`.\nNo warnings were reported, and the calculation result is marked as trustworthy."
+}

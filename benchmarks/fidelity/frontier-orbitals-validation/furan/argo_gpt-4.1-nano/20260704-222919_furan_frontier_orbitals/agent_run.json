@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.08,
+    "llm_s": 8.52,
+    "engine_s": 9.03,
+    "turns": 5,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-TZVP",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.25736,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "calculated"
+  },
+  "prose": "The frontier-orbitals calculation on furan using DFT with the B3LYP functional, def2-TZVP basis set (tier 'standard'), in the gas phase, charge 0, and multiplicity 1 was successful. The results indicate the HOMO at -6.36 eV and LUMO at -0.10 eV, with a HOMO-LUMO gap of approximately 6.257 eV. The method used is: DFT, B3LYP/def2-TZVP, tier 'standard' in PySCF, gas phase."
+}

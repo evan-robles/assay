@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.8,
+    "llm_s": 24.58,
+    "engine_s": 4.4,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water frontier-orbital result** \u2014 Property: HOMO\u2013LUMO gap from a frontier-orbitals single-point calculation. Method used: DFT tier `standard`, explicitly `b3lyp/def2-tzvp`, run with PySCF; gas phase (`solvent: null`); charge 0; multiplicity 1. Geometry: user-supplied fixed XYZ geometry at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` (3 atoms), not relaxed in this calculation. Density fitting was not enabled. SCF converged: true, in 7 cycles. Engine integrity verdict: trustworthy = true.\n\nHeadline result: **HOMO\u2013LUMO gap = 8.9406687 eV**.\n\nOrbital energies returned by chemkit:\n- HOMO = -8.6037183 eV\n- LUMO = 0.33695037 eV\n- HOMO-1 = -10.678837 eV\n- HOMO-2 = -14.443673 eV\n- LUMO+1 = 2.3908259 eV\n- LUMO+2 = 9.5973296 eV\n\nTotal electronic energy returned: -76.462901 Hartree = -2080.6615 eV. Energy zero: electronic energy (bare nuclei + electrons).\n\nWarnings: no warnings were reported in the tool result.\n\nReproducibility: chemkit CLI invocation returned by the tool was:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout path /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpva5r98fw/live.json`\n\nJSON output path in the invocation: `/home/erobles/chem-skills/.fidelity_scratch/tmpva5r98fw/live.json`. The chemkit result returned to me did not include a live `.out` log path, so I am not inventing one."
+}

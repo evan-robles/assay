@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 19.0,
+    "llm_s": 4.67,
+    "engine_s": 13.81,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline frontier-orbital gap** \u2014 Calculated at the DFT level of theory, B3LYP functional with the def2-TZVP basis set (density-fitting off), using PySCF. Environment: gas phase. Charge state: 0 (neutral); multiplicity: singlet (1). Geometry source: input .xyz file provided at the path \"/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz\" \u2014 the coordinates were used as-is for the single-point calculation without re-optimization. Number of atoms: 14; number of orbitals: 259; SCF convergence achieved in 9 cycles. Total electronic energy: -7829.1453 eV (-287.71578 Hartree; -180544.38 kcal/mol). HOMO energy: -5.553772 eV; LUMO energy: -0.2489544 eV; **HOMO-LUMO gap: 5.304818 eV**. Calculation status: trustworthy and converged. Live log recorded in: \"/home/erobles/chem-skills/.fidelity_scratch/tmpcboi8a_e/live.json\" (completed)."
+}

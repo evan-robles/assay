@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 44.07,
+    "llm_s": 25.9,
+    "engine_s": 17.61,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: Frontier-orbital energies (HOMO, LUMO) and HOMO\u2013LUMO gap of aniline; units eV.\nLevel of theory: DFT, tier \"standard\" = B3LYP/def2-TZVP, exact four-center integrals (density fitting OFF) in PySCF.\nGeometry provenance: user-supplied /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz; single-point only (no re-optimization).\nSolvent / environment: gas phase (no implicit solvation model).\nCharge & multiplicity: 0, 1 (closed-shell singlet).\nSoftware: PySCF backend (version not reported by engine).\nConvergence & caveats: SCF converged in 9 cycles; no warnings reported. integrity.trustworthy = true.  No density-fitting approximation was used.\nLive log: the SCF/analysis output was streamed to the standard chemkit live \u201c.out\u201d file announced at job launch; result JSON written to /home/erobles/chem-skills/.fidelity_scratch/tmp1vkmo868/live.json.\n\nResults (selected):\n\u2022 HOMO energy = \u22125.553772 eV\n\u2022 LUMO energy = \u22120.2489544 eV\n\u2192 HOMO\u2013LUMO gap = 5.3048177 eV (Koopmans-type orbital gap, not an excitation energy)\n\nNo warnings were emitted by the engine.\n\nThe calculation was therefore completed successfully, and the reported gap of 5.3048177 eV is the headline value for the B3LYP/def2-TZVP (gas-phase) single-point on the supplied aniline geometry."
+}

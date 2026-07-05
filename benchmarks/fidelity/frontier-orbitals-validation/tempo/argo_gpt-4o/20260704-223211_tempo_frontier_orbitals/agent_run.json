@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 103.37,
+    "llm_s": 5.1,
+    "engine_s": 97.75,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO frontier-orbital gap** \u2014 DFT, B3LYP/def2-TZVP (density fit), performed using PySCF. Charge 0, multiplicity 2 (open-shell). **Gas phase**. Geometry: loaded from an external file (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz), no re-optimization performed. HOMO = \u22126.3375 eV, LUMO = \u22122.4651 eV \u2192 **gap \u2248 3.8724 eV**. Calculation used 12 SCF cycles and was converged. The output JSON has been written to tempo_frontier.json and the run logged to the live .out file. The calculation is trustworthy and no warnings were reported. Command used: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 2 --solvent none --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out tempo_frontier.json`."
+}

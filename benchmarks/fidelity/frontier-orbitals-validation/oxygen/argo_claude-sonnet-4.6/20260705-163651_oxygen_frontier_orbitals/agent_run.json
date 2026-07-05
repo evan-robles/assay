@@ -1,0 +1,30 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 39.51,
+    "llm_s": 34.0,
+    "engine_s": 4.81,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on O\u2082 (dioxygen, 2 atoms) at DFT, tier 'standard' \u2014 B3LYP/def2-TZVP (exact four-centre integrals, no density fitting) in PySCF (UKS), gas phase, charge 0, multiplicity 3 (triplet ground state). Geometry: user-supplied oxygen.xyz, used as-is (single-point, no re-optimization). SCF converged in 7 cycles. No warnings reported (clean run).\n\nHeadline result \u2014 HOMO\u2013LUMO gap: 5.2880586 eV\nHOMO energy: \u22128.8739616 eV (degenerate pair, indices 14 & 15 \u2014 singly-occupied \u03c0* orbitals)\nLUMO energy: \u22123.5859031 eV (degenerate pair, indices 16 & 17)\nTotal energy: \u2212150.38872 Hartree\n\nIntegrity: status=ok, trustworthy=true. All integrity checks passed.\n\nCLI invocation:\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier \\\n  /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz \\\n  --method dft --tier standard --functional b3lyp --basis def2-tzvp \\\n  --charge 0 --mult 3\nOutput JSON: oxygen_frontier_dft.json"
+}

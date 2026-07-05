@@ -1,0 +1,30 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 42.86,
+    "llm_s": 31.42,
+    "engine_s": 10.91,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": 12,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital calculation for benzene has completed successfully.\n\n**Benzene Frontier Orbital Energies** \u2014 DFT, at the tier `standard` level of theory (**B3LYP/def2-TZVP**) as computed by the PySCF engine. The calculation was performed in the **gas phase** on the provided geometry, assuming **charge 0** and **multiplicity 1**. The SCF calculation converged successfully.\n\nThe frontier orbital energies are:\n*   **HOMO:** -7.0468 eV\n*   **LUMO:** -0.41575 eV\n*   **HOMO-LUMO Gap:** 6.6311 eV\n\nNo warnings were reported by the engine. The result is trustworthy."
+}

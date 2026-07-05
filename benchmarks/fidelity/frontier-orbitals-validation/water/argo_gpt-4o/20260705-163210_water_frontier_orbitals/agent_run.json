@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.81,
+    "llm_s": 6.64,
+    "engine_s": 8.51,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier orbitals of water** \u2014 DFT, B3LYP/def2-TZVP ('standard' tier), density-fitting enabled, PySCF engine, performed in the gas phase (no solvent) with charge 0 and singlet multiplicity. Input used a fixed geometry provided at the path `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz`. The SCF procedure converged in 7 cycles.\n\nKey frontier orbitals:\n- HOMO (highest occupied molecular orbital): -8.6037 eV\n- LUMO (lowest unoccupied molecular orbital): +0.3370 eV\n- HOMO-LUMO gap: **8.9407 eV**, calculated as the difference of HOMO and LUMO energies (Koopmans-compliant).\n\nKoopmans analysis:\n- Vertical ionization potential (IP): 8.6037 eV\n- Vertical electron affinity (EA): -0.3370 eV\n- Electronegativity: 4.1334 eV\n- Chemical hardness: 4.4703 eV\n- Electrophilicity index: 1.9109 eV.\n\nLive calculation progress and SCF details were logged to `/home/erobles/chem-skills/.fidelity_scratch/tmpyqzy8esc/live.log`. Final JSON result written at `/home/erobles/chem-skills/.fidelity_scratch/tmpyqzy8esc/live.json`."
+}

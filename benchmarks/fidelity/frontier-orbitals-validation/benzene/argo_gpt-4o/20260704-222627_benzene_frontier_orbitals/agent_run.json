@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.81,
+    "llm_s": 4.59,
+    "engine_s": 10.58,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": 12,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier HOMO\u2013LUMO gap for benzene was calculated using DFT at B3LYP/def2-TZVP (tier 'standard') in PySCF, gas phase, charge 0, and multiplicity 1. Geometry was taken directly from the given xyz file without re-optimization. SCF converged in 8 cycles. HOMO energy: -7.04683 eV, LUMO energy: -0.41575 eV, giving a Koopmans-style orbital gap of **6.63109 eV**. Header artifacts (xyz input and full JSON file) are at `/home/erobles/chem-skills/.fidelity_scratch/tmpl28g0f2p/live.json`. No warnings reported; integrity checks passed. This result comes from computed data with gas-phase assumptions and no explicit solvent effects."
+}

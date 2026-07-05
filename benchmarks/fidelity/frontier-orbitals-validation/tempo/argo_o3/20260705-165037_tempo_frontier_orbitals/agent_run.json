@@ -1,0 +1,30 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 345.5,
+    "llm_s": 42.87,
+    "engine_s": 301.84,
+    "turns": 6,
+    "tool_calls": 3
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block\nProperty: HOMO\u2013LUMO gap (energy difference between the highest-occupied and lowest-unoccupied molecular orbitals) of TEMPO, reported in eV.\nLevel of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP (no density fitting; exact four-center integrals), as implemented in PySCF via chemkit.\nGeometry provenance: single-point calculation on the user-supplied geometry file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`; no further optimisation (notation: DFT//input-XYZ).\nEnvironment: gas phase (no implicit or explicit solvent).\nCharge and multiplicity: charge 0, doublet (multiplicity 2; unrestricted Kohn\u2013Sham).\nSoftware: chemkit frontier-orbitals skill (engine subcommand `frontier`) calling PySCF 2.x (see `cli_invocation` in result JSON) on the provided coordinates.\nConvergence & warnings: SCF converged in 12 cycles; integrity check status `ok`, trustworthy = true; no warnings reported by the engine.\nLive log & reproducibility: while running, the calculation streamed its full PySCF output to a `frontier_<timestamp>.out` file in the working directory (path echoed at launch). Key artifacts: result JSON at `/home/erobles/chem-skills/.fidelity_scratch/tmpjhyxgp17/live.json` (contains energies, orbital table, SCF metadata) and the input XYZ above. The exact command executed was:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 2 /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`\n\nResult\nThe B3LYP/def2-TZVP gas-phase HOMO\u2013LUMO gap of TEMPO (neutral doublet) is:\n3.8724203 eV\n\nNo engine warnings were issued. All integrity checks passed; the result is considered trustworthy."
+}

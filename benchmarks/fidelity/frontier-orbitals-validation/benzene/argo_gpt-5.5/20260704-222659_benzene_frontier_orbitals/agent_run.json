@@ -1,0 +1,30 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.04,
+    "llm_s": 21.82,
+    "engine_s": 10.65,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier orbitals** \u2014 DFT tier `standard` (**B3LYP/def2-TZVP**) using PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied fixed structure from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz` (12 atoms); this was a single-point frontier-orbital calculation, not a geometry optimization. No density-fitting flag was used. SCF converged in 8 cycles. No warnings array was returned by the tool.\n\nHeadline result: **HOMO\u2013LUMO gap = 6.6310857 eV**.\n- HOMO = -7.0468329 eV\n- LUMO = -0.41574728 eV\n- Gap = 6.6310857 eV\n- Total electronic energy = -232.33724 Hartree = -6322.2183 eV\n\nEngine integrity verdict: `trustworthy: true`.\n\nReproducibility: chemkit command reported by the tool was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 --stdout path /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp61xci96b/live.json`. The tool result did not include a live `.out` log path, so I am not inventing one."
+}
