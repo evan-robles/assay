@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 72.76,
+    "llm_s": 39.14,
+    "engine_s": 33.62,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of acrolein (8 atoms: O, C, C, C, H, H, H, H) using DFT at tier 'standard' (B3LYP/def2-TZVP, density-fitted, PySCF RKS), gas phase, charge 0, multiplicity 1. Geometry was the user-supplied acrolein.xyz, used as-is (no re-optimization). Fukui indices were computed via finite-difference Mulliken population analysis on the neutral (N), cation (N\u22121, doublet), and anion (N+1, doublet) systems.\n\nHeadline result: The most electrophilic site is C4 (\u03b2-carbon, terminal CH\u2082) with f\u207a = 0.64232102, and the most nucleophilic site is O1 (carbonyl oxygen) with f\u207b = 0.39388616. This is consistent with acrolein's well-known Michael acceptor behavior \u2014 nucleophiles preferentially attack the \u03b2-carbon via 1,4-conjugate addition.\n\nFull per-atom Fukui indices (f\u207a, f\u207b, f\u2070, dual descriptor):\n- O1:  f\u207a=0.40136, f\u207b=0.39389, f\u2070=0.39763, \u0394f=+0.00748\n- C2:  f\u207a=0.02226, f\u207b=0.00599, f\u2070=0.01412, \u0394f=+0.01627\n- C3:  f\u207a=0.43405, f\u207b=0.09140, f\u2070=0.26272, \u0394f=+0.34264\n- C4:  f\u207a=0.64232, f\u207b=0.08737, f\u2070=0.36485, \u0394f=+0.55495\n- H5:  f\u207a=\u22120.15726, f\u207b=0.08596, f\u2070=\u22120.03565, \u0394f=\u22120.24322\n- H6:  f\u207a=\u22120.20720, f\u207b=0.18568, f\u2070=\u22120.01076, \u0394f=\u22120.39288\n- H7:  f\u207a=\u22120.06212, f\u207b=0.08449, f\u2070=+0.01118, \u0394f=\u22120.14660\n- H8:  f\u207a=\u22120.07341, f\u207b=0.06523, f\u2070=\u22120.00409, \u0394f=\u22120.13863\n\nIntegrity: trustworthy=true. Charge conservation checks passed: sum(f\u207a)=1.0000, sum(f\u207b)=1.0000. No engine warnings raised."
+}

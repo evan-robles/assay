@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.31,
+    "llm_s": 18.37,
+    "engine_s": 5.94,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui reactivity** \u2014 computed with **GFN2-xTB** (`xtb`) in the **gas phase**, using the user-supplied fixed geometry `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` as-is, charge 0, multiplicity 1. The Fukui analysis used GFN2-xTB Mulliken charges for the neutral, cationic, and anionic states; no geometry relaxation was reported by this task.\n\nHeadline result: the tool identified **Fe atom 11** as both the most electrophilic and most nucleophilic site:\n- Most electrophilic: atom 11, Fe, **f+ = 0.22885456**\n- Most nucleophilic: atom 11, Fe, **f\u2212 = 0.25938191**\n- Condensed radical Fukui value at Fe atom 11: **f0 = 0.24411824**\n- Dual descriptor at Fe atom 11: **\u22120.030527354**\n\nAtoms: 21 total. Partial-charge scheme: **Mulliken (GFN2-xTB)**. Backend/program reported by chemkit: **xtb**. Solvent field returned by the tool was `null`, i.e. gas phase. The engine integrity verdict was **trustworthy: true**.\n\nIntegrity check details returned by the tool:\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nNo `warnings` array was returned by the tool. The chemkit result did not return a live `.out` log path in the JSON; it did return this exact CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp1dow2dc4/live.json`. Plot artifact returned: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_gpt-5.5/20260706-174508_ferrocene_fukui_reactivity/agent_call_01_plot.png`."
+}

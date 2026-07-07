@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 133.29,
+    "llm_s": 20.46,
+    "engine_s": 112.82,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of phenol was performed using DFT at the tier 'standard' (B3LYP/def2-TZVP) level of theory in the gas phase, with a charge of 0 and a multiplicity of 1.\n\nThe calculation successfully completed, and the results indicate the most likely sites for electrophilic, nucleophilic, and radical attack. The Fukui indices (f+, f-, f0) for each atom are listed below. The index `f+` measures reactivity towards a nucleophile, `f-` towards an electrophile, and `f0` towards a radical.\n\n| Atom | Symbol | f+ | f- | f0 |\n|---|---|---|---|---|\n| 1 | O | -0.9951 | 0.1620 | -0.4166 |\n| 2 | C | 0.3993 | 0.0488 | 0.2241 |\n| 3 | C | 2.1028 | 0.0710 | 1.0869 |\n| 4 | C | 1.6197 | 0.0705 | 0.8451 |\n| 5 | C | -0.3420 | 0.0267 | -0.1577 |\n| 6 | C | -0.2891 | 0.0209 | -0.1341 |\n| 7 | C | 1.3080 | 0.1235 | 0.7157 |\n| 8 | H | -0.7339 | 0.0823 | -0.3258 |\n| 9 | H | -0.2747 | 0.0881 | -0.0933 |\n| 10 | H | -0.9171 | 0.0811 | -0.4180 |\n| 11 | H | -0.6299 | 0.0805 | -0.2747 |\n| 12 | H | -0.2959 | 0.0935 | -0.1012 |\n| 13 | H | 0.0479 | 0.0510 | 0.0495 |\n\nBased on these results:\n*   The site most susceptible to **nucleophilic attack** (most electrophilic) is atom 3 (Carbon), with the largest f+ value of 2.1028.\n*   The site most susceptible to **electrophilic attack** (most nucleophilic) is atom 1 (Oxygen), with the largest f- value of 0.1620.\n\nNo warnings were reported during the calculation."
+}

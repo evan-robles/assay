@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 41.54,
+    "llm_s": 30.93,
+    "engine_s": 10.06,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde Fukui reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: fixed user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz` (no geometry optimization). Partial charges: Mulliken (PySCF). SCF converged for the neutral (N), cation (N\u20131; charge +1, multiplicity 2), and anion (N+1; charge \u20131, multiplicity 2) states. Warnings (verbatim):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nResults per atom (atom labels in parentheses, 1-based indexing):\n- f+ (electrophilic Fukui): O (1) = 0.46813824, C (2) = 0.70839130, H (3) = \u20130.088269392, H (4) = \u20130.088260145\n- f\u2013 (nucleophilic Fukui): O (1) = 0.46742464, C (2) = 0.11244422, H (3) = 0.21007563, H (4) = 0.21005551\n- dual descriptor f0: O (1) = 0.00071359555, C (2) = 0.59594709, H (3) = \u20130.29834503, H (4) = \u20130.29831566\nMost electrophilic site: C (atom 2) with f+ = 0.70839130; most nucleophilic site: O (atom 1) with f\u2013 = 0.46742464.\n\nReproducibility: command run was\n```\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpivicz7zs/live.json\n```\nResult JSON was written to `/home/erobles/chem-skills/.fidelity_scratch/tmpivicz7zs/live.json`."
+}

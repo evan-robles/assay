@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.42,
+    "llm_s": 39.37,
+    "engine_s": 10.06,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices and dual descriptor for formaldehyde were calculated using the DFT method with the B3LYP functional and def2-TZVP basis set (tier `standard`, density-fit) in PySCF. The calculation was performed in the gas phase with a charge of 0 and a multiplicity of 1, using the user-provided geometry from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`.\n\nThe Fukui f+ (electrophilic attack), f- (nucleophilic attack), and f0 (radical attack) indices, along with the dual descriptor, for each atom are as follows:\n- **Atom 1 (O)**: f+ = 0.46813824, f- = 0.46742464, f0 = 0.46778144, Dual Descriptor = 0.00071359555\n- **Atom 2 (C)**: f+ = 0.7083913, f- = 0.11244422, f0 = 0.41041776, Dual Descriptor = 0.59594709\n- **Atom 3 (H)**: f+ = -0.088269392, f- = 0.21007563, f0 = 0.060903121, Dual Descriptor = -0.29834503\n- **Atom 4 (H)**: f+ = -0.088260145, f- = 0.21005551, f0 = 0.060897683, Dual Descriptor = -0.29831566\n\nThe most electrophilic site (highest f+ index) is Carbon (Atom 2) with f+ = 0.7083913.\nThe most nucleophilic site (highest f- index) is Oxygen (Atom 1) with f- = 0.46742464.\n\n**Integrity Checks and Warnings:**\n*   fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n*   fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n*   schema_header: common header present"
+}

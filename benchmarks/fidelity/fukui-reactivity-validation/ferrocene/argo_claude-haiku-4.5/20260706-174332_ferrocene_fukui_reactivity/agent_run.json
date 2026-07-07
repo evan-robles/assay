@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 17.19,
+    "llm_s": 10.93,
+    "engine_s": 6.27,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Ferrocene Fukui Reactivity Analysis\n\n**Method Provenance Block:**\n- **Property:** Fukui frontier-atom reactivity (f\u207a, f\u207b, f\u2070, dual descriptor) and partial atomic charges\n- **Level of theory:** GFN2-xTB (semi-empirical tight-binding)\n- **Geometry provenance:** User-supplied ferrocene.xyz (no re-optimization performed; single-point Fukui calculation on the input geometry)\n- **Solvent/environment:** Gas phase\n- **Charge and multiplicity:** Neutral (charge 0, multiplicity 1); Fukui calculations also computed cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2) states for the f\u207a and f\u207b descriptors\n- **Software:** xtb (GFN2-xTB backend)\n- **Convergence:** Calculation converged successfully; charge conservation checks passed (sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000)\n\n**Key Results:**\n\nFerrocene (C\u2081\u2080H\u2081\u2080Fe) comprises two cyclopentadienyl ligands coordinated to an iron center. The Fukui reactivity analysis identifies the iron atom (Fe, atom 11) as the site of both highest electrophilic attack and nucleophilic attack:\n\n- **Most electrophilic site (f\u207a descriptor):** Fe (atom 11), f\u207a = **0.22885456**\n  - The f\u207a index quantifies the propensity to gain electron density (electrophilicity).\n  \n- **Most nucleophilic site (f\u207b descriptor):** Fe (atom 11), f\u207b = **0.25938191**\n  - The f\u207b index quantifies the propensity to lose electron density (nucleophilicity).\n\n- **Dual descriptor at Fe:** **\u22120.030527354**\n  - A negative dual descriptor (f\u207a \u2212 f\u207b) indicates that Fe is more nucleophilic than electrophilic, consistent with the redox-active character of the iron center in ferrocene.\n\nMulliken partial charges (neutral state) show the iron center carries a substantial positive charge (**+0.420**), while the cyclopentadienyl carbons are negatively charged (\u22120.077 each) and their hydrogens positive (+0.035 each). This distribution reflects the back-bonding between the metal and the \u03c0-acceptor cyclopentadienyl ligands.\n\nFukui descriptors for the ligand atoms (C and H) are substantially lower than those of Fe, identifying the metal center as the reactive site for both electrophilic and nucleophilic perturbations.\n\nA visualization plot was generated and saved to the calculation output directory.\n\n**Integrity Check:** All internal self-consistency checks passed (charge conservation, schema validation).\n"
+}

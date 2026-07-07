@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 70.66,
+    "llm_s": 25.25,
+    "engine_s": 45.41,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan Fukui reactivity descriptors** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitting via RIJK) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: provided by `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`, single-point only (no geometry optimization). Mulliken partial charges (PySCF) used to compute the Fukui indices. SCF converged; no warnings reported. The computed atomic Fukui plus indices (f\u207a) are: O(1) = \u22121.3316182, C(2) = 1.2286866, C(3) = 1.2270264, C(4) = 1.9233053, C(5) = 1.9242931, H(6) = \u22121.2190639, H(7) = \u22121.2191056, H(8) = \u22120.7667831, H(9) = \u22120.7667406. The most electrophilic site is atom 5 (C) with f\u207a = 1.9242931. The most nucleophilic site is also atom 5 (C) with f\u207b = 0.1616371."
+}

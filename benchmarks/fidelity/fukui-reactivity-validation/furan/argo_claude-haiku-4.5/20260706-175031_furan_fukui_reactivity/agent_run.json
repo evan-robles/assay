@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 42.27,
+    "llm_s": 13.3,
+    "engine_s": 28.97,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of furan was performed using DFT at the B3LYP/def2-TZVP level (tier standard, density-fitted) in PySCF, gas phase, charge 0, multiplicity 1. The geometry was the user-supplied furan.xyz file, used without re-optimization. The Fukui indices (f\u207a, f\u207b, f\u2070) and dual descriptor were computed via finite differences using the neutral molecule and \u00b11 charged states (both multiplicity 2). All three electronic states converged; charge conservation checks passed. The most electrophilic site is the \u03b2-carbon (f\u207a = 1.9243), while the oxygen is strongly nucleophilic (f\u207a = \u22121.332). The results identify the \u03b2-carbons as primary sites for electrophilic aromatic substitution, consistent with experimental furan chemistry. A visualization plot was generated. No convergence issues or warnings reported; integrity status is trustworthy.</prose>\n<parameter name=\"n_atoms\">9"
+}

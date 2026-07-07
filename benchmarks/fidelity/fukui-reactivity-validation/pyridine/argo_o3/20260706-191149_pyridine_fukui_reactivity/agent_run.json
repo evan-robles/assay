@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 103.61,
+    "llm_s": 45.08,
+    "engine_s": 57.89,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: Fukui f\u207a electrophilic index for pyridine (dimensionless).\nLevel of theory: DFT, B3LYP/def2-TZVP (tier \u201cstandard\u201d), exact four-center integrals (no density fitting) in PySCF.\nGeometry provenance: user-supplied pyridine.xyz; single-point N, N+1, and N-1 calculations on this fixed geometry (no re-optimization).\nEnvironment: gas phase (no implicit solvent).\nCharge & multiplicity: neutral singlet parent (0,1); cation and anion as doublets (\u00b11,2).\nSoftware/backend: chemkit fukui-reactivity skill (engine subcommand fukui, PySCF backend).\nConvergence: SCF converged for all charge states.\nWarnings (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nIntegrity verdict: trustworthy = true.\n\nHeadline result\nMost electrophilic atom: N (atom 1) with f\u207a = 0.48422572."
+}

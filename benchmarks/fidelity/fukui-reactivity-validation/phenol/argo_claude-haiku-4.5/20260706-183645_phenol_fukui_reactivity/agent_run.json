@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 124.96,
+    "llm_s": 14.71,
+    "engine_s": 110.26,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of phenol was computed using DFT with B3LYP/def2-TZVP functional and basis (tier standard, density-fitted) in PySCF, in gas phase, charge 0, multiplicity 1. Both the neutral molecule (N) and the N\u00b11 cation/anion states converged without issue. Mulliken charge analysis identified the hydroxyl oxygen (atom 1) as the most nucleophilic site with f\u207b = 0.162, and the ortho-carbon atoms (atoms 3 and 4, positions C1 and C2 relative to O) as the most electrophilic sites with f\u207a = 2.103 and 1.620, respectively. The dual descriptor at the ortho-carbons (2.032 and 1.549) confirms their electron-deficient character in the N+1 state, making them favorable for nucleophilic aromatic attack. Charge conservation indices (sum of f\u207a and f\u207b both equal to 1.000) confirm SCF convergence and chemical consistency. The Fukui heatmap visualization is available at the output path listed.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}

@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 113.27,
+    "llm_s": 8.38,
+    "engine_s": 104.89,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for aniline were calculated using DFT at the B3LYP/def2-TZVP level (PySCF), gas phase, charge 0, multiplicity 1. The input geometry was taken directly from the provided file (`aniline.xyz`) without further optimization. \n\nKey indices:\n- Most electrophilic atom: Carbon (C, atom 3, f+ = 2.2976).\n- Most nucleophilic atom: Nitrogen (N, atom 1, f\u2013 = 0.20452).\n\nWarnings: The charge conservation checks for the Fukui indices reported exact sums (f+ = 1.0000, f\u2013 = 1.0000) without large drift, and no convergence issues were noted. These results have methodologically trustworthy integrity."
+}

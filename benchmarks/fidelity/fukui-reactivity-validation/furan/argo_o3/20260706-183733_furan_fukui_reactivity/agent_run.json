@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 102.3,
+    "llm_s": 43.1,
+    "engine_s": 58.62,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices of furan \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center RKS) in PySCF, gas phase, charge 0, multiplicity 1.\nGeometry: fixed input coordinates from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz (no re-optimization).  N\u00b11 states treated as doublets.\nSCF cycles for the neutral, cation, and anion all converged.  Density-fitting was NOT used.\n\nHeadline result (most electrophilic site): atom 5 (C) has f\u207a = 1.9242931.\n\nAll warnings reported by the engine (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nIntegrity verdict from chemkit: trustworthy = true.\n\nLive PySCF log was written during the run to a timestamped file named fukui_*.out in the current working directory (tail \u2011f for full SCF details).  Calculation executed with chemkit fukui-reactivity skill using the command recorded in the JSON:\n`cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp \u2026`"
+}

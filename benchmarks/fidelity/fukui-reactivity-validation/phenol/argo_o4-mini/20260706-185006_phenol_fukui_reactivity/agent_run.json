@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 148.22,
+    "llm_s": 37.44,
+    "engine_s": 110.17,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui reactivity** \u2014 DFT, **B3LYP/def2-TZVP** (PySCF, exact integrals), gas phase, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` used as-is (single point). SCF converged for neutral, cation, and anion states. Warnings from integrity checks (verbatim):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nComputed Mulliken-based Fukui indices per atom. The most electrophilic site is atom 3 (a carbon) with f+ = 2.1028319, and the most nucleophilic site is atom 1 (oxygen) with f- = 0.16201477. CLI invocation: `... fukui --method dft --functional b3lyp --basis def2-tzvp --tier standard phenol.xyz --out phenol_fukui_dft_standard.json`. JSON output: `phenol_fukui_dft_standard.json`."
+}

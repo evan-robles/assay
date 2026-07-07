@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 53.81,
+    "llm_s": 25.16,
+    "engine_s": 28.65,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have completed the Fukui reactivity analysis on furan.\n\n**Methodology:**\nThe calculation was performed using Density Functional Theory (DFT) at the tier `standard` level of theory, which corresponds to the **B3LYP functional and def2-TZVP basis set**, as implemented in the PySCF backend. The calculation was run in the **gas phase** on the neutral molecule (charge 0, multiplicity 1). The Fukui indices were computed from Mulliken partial charges for the neutral, cationic (N-1 electron), and anionic (N+1 electron) species.\n\n**Results:**\nThe analysis identifies the local reactivity of each atom in the furan molecule. The Fukui functions indicate the propensity of a site to undergo nucleophilic (f+), electrophilic (f-), or radical (f0) attack.\n\n- The site most susceptible to **nucleophilic attack** (the most electrophilic site) is atom **C5**, with an f+ value of **1.9243**.\n- The site most susceptible to **electrophilic attack** (the most nucleophilic site) is also atom **C5**, with an f- value of **0.1616**.\n- The site most susceptible to **radical attack** is also atom **C5**, with an f0 value of **1.0430**.\n\nThe carbon atom at index 4 shows very similar reactivity indices. Both these carbons (C4 and C5) are the \u03b2-carbons relative to the oxygen atom.\n\nThe full Fukui indices for the non-hydrogen atoms are:\n| Atom | Index | f+ (Electrophilicity) | f- (Nucleophilicity) | f0 (Radical) |\n| :--- | :---- | :--- | :--- | :--- |\n| O | 1 | -1.3316 | 0.0838 | -0.6239 |\n| C | 2 | 1.2287 | 0.0891 | 0.6589 |\n| C | 3 | 1.2270 | 0.0893 | 0.6582 |\n| C | 4 | 1.9233 | 0.1615 | 1.0424 |\n| C | 5 | **1.9243** | **0.1616** | **1.0430** |\n\nThe calculation's integrity was checked and deemed trustworthy, with no warnings reported by the engine."
+}

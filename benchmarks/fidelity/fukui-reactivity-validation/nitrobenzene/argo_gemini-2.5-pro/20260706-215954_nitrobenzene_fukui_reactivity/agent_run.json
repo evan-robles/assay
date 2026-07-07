@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 225.1,
+    "llm_s": 55.85,
+    "engine_s": 169.25,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of nitrobenzene was performed using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (chemkit tier `standard`) in the gas phase. The calculation was for the neutral molecule with a charge of 0 and a spin multiplicity of 1.\n\nThe calculation successfully converged, and no warnings were reported by the engine.\n\nThe results predict the sites for electrophilic and nucleophilic attack:\n*   **Most electrophilic site (most susceptible to nucleophilic attack):** Atom C4, with the largest Fukui(+) index of 0.49642.\n*   **Most nucleophilic site (most susceptible to electrophilic attack):** Atom C5, with the largest Fukui(-) index of 0.10729.\n\nThe full Fukui indices for all atoms are provided below. `f+` predicts reactivity towards a nucleophile, `f-` predicts reactivity towards an electrophile, and `f0` predicts reactivity towards a radical.\n\n| Atom Index | Atom | f(+) | f(-) | f(0) |\n| :--- | :--- | :--- | :--- | :--- |\n| 1 | O | 0.47317 | 0.09702 | 0.28509 |\n| 2 | O | 0.47344 | 0.09677 | 0.28511 |\n| 3 | N | -0.45670 | 0.01724 | -0.21973 |\n| 4 | C | 0.49642 | -0.01429 | 0.24106 |\n| 5 | C | 0.11563 | 0.10729 | 0.11146 |\n| 6 | C | 0.11588 | 0.10724 | 0.11156 |\n| 7 | C | 0.17412 | 0.09492 | 0.13452 |\n| 8 | C | 0.17423 | 0.09489 | 0.13456 |\n| 9 | C | 0.28914 | 0.00831 | 0.14872 |\n| 10 | H | -0.23169 | 0.07521 | -0.07824 |\n| 11 | H | -0.23182 | 0.07520 | -0.07831 |\n| 12 | H | -0.13372 | 0.08388 | -0.02492 |\n| 13 | H | -0.13379 | 0.08388 | -0.02496 |\n| 14 | H | -0.12431 | 0.07243 | -0.02594 |"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 180.66,
+    "llm_s": 9.57,
+    "engine_s": 171.08,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity task on nitrobenzene was successfully completed using DFT at the B3LYP/def2-TZVP level of theory. The calculation was performed in the gas phase with a charge of 0 and multiplicity of 1.\n\nThe most electrophilic site is Carbon (C) at atom index 3 (1-based label 4) with a Fukui f+ index of 0.49641781.\nThe most nucleophilic site is Carbon (C) at atom index 4 (1-based label 5) with a Fukui f- index of 0.1072882.\n\nProvenance:\n- **Property**: Fukui reactivity indices (most electrophilic and nucleophilic sites)\n- **Level of theory**: DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF\n- **Geometry provenance**: User-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`\n- **Solvent / environment**: Gas phase\n- **Charge and multiplicity**: Charge 0, multiplicity 1\n- **Software + version**: chemkit using PySCF\n- **Convergence + caveats**: SCF converged for all states.\n\nWarnings:\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\nThe integrity of the calculation is trustworthy."
+}

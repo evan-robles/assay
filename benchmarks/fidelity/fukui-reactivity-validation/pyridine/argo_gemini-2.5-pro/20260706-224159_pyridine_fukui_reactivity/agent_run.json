@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 84.78,
+    "llm_s": 25.07,
+    "engine_s": 59.71,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of pyridine was completed using DFT at the B3LYP/def2-TZVP level of theory (tier 'standard') in the gas phase, with a charge of 0 and a multiplicity of 1.\n\nThe calculation predicts the following reactivity sites:\n*   **Most electrophilic atom (most susceptible to nucleophilic attack):** Nitrogen (atom 1), with the largest Fukui(+) index (f+) of 0.4842.\n*   **Most nucleophilic atom (most susceptible to electrophilic attack):** Carbon (atom 4), with the largest Fukui(-) index (f-) of 0.1183.\n\nThe full Fukui indices and dual descriptor values for each atom are detailed in the table below. These values help quantify the local reactivity of each atom in the molecule. A positive dual descriptor indicates a site is favorable for electrophilic attack, while a negative value indicates it is favorable for nucleophilic attack.\n\n| Atom | Symbol | f+ | f- | f0 | Dual Descriptor |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| 1 | N | 0.48423 | 0.06412 | 0.27417 | 0.42010 |\n| 2 | C | 0.32447 | 0.00619 | 0.16533 | 0.31828 |\n| 3 | C | 0.14032 | 0.11823 | 0.12928 | 0.02209 |\n| 4 | C | 0.14040 | 0.11826 | 0.12933 | 0.02213 |\n| 5 | C | 0.29963 | 0.11207 | 0.20585 | 0.18756 |\n| 6 | C | 0.29948 | 0.11201 | 0.20574 | 0.18747 |\n| 7 | H | -0.14151 | 0.08285 | -0.02933 | -0.22436 |\n| 8 | H | -0.13368 | 0.09818 | -0.01775 | -0.23186 |\n| 9 | H | -0.13366 | 0.09818 | -0.01774 | -0.23184 |\n| 10 | H | -0.13982 | 0.09496 | -0.02243 | -0.23478 |\n| 11 | H | -0.13985 | 0.09495 | -0.02245 | -0.23479 |\n\nThis calculation was performed using the `chemkit` tool, and the results are deemed trustworthy with no warnings reported by the computational engine."
+}

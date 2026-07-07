@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 74.42,
+    "llm_s": 13.75,
+    "engine_s": 60.66,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of pyridine was performed using DFT with the B3LYP functional and the def2-TZVP basis set (tier 'standard') in the gas phase, with a charge of 0 and a multiplicity of 1.\n\nThe results indicate that the most electrophilic atom, and therefore the most likely site for nucleophilic attack, is the nitrogen atom (N1), with a Fukui(+) index of 0.48423.\nThe most nucleophilic atom, the most likely site for electrophilic attack, is the carbon atom at position 4 (C4), with a Fukui(-) index of 0.11826."
+}

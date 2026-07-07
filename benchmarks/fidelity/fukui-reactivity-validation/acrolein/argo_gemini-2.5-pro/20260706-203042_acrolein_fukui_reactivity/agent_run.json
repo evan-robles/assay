@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 57.88,
+    "llm_s": 13.3,
+    "engine_s": 44.58,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for acrolein was completed using DFT at the B3LYP/def2-TZVP level of theory (tier 'standard') in the gas phase, with a charge of 0 and multiplicity of 1. The results indicate that the most electrophilic site (most susceptible to nucleophilic attack) is atom C4, with a Fukui(+) index of 0.64232. The most nucleophilic site (most susceptible to electrophilic attack) is atom O1, with a Fukui(-) index of 0.39389. The calculation integrity is trustworthy, with no warnings reported."
+}

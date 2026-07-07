@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.06,
+    "llm_s": 16.89,
+    "engine_s": 9.18,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": "true</integrity_trustworthy>\n<parameter name=\"n_atoms\">4",
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of formaldehyde (4 atoms: O, C, 2\u00d7H) using DFT with B3LYP functional and def2-TZVP basis (tier standard, density-fit), PySCF backend, gas phase, neutral singlet ground state and doublet cation/anion states. Mulliken partial charges computed for neutral, +1 (cation, *S* = 1/2), and \u22121 (anion, *S* = 1/2) states. Fukui indices \u0192\u207a, \u0192\u207b, \u0192\u2070 and dual descriptor derived from charge differences. All SCF runs converged; Fukui charge conservation verified (sum \u0192\u207a = 1.0000, sum \u0192\u207b = 1.0000). No warnings. Integrity status: trustworthy.\n\n**Most electrophilic atom:** Carbon (C, index 1, label 2), \u0192\u207a = 0.708, dual descriptor = +0.596 \u2014 primary nucleophilic-attack site.\n\n**Most nucleophilic atom:** Oxygen (O, index 0, label 1), \u0192\u207b = 0.467, dual descriptor \u2248 0 \u2014 lone-pair donor site.\n\n**Visualization:** `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_claude-haiku-4.5/20260706-174614_formaldehyde_fukui_reactivity/agent_call_01_plot.png`\n\n**Command:** `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpvm_2e3gg/live.json`</prose>\n<parameter name=\"value\">0.7083913"
+}

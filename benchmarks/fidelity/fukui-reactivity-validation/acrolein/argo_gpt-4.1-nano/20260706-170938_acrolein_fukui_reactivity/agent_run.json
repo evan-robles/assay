@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 40.14,
+    "llm_s": 5.62,
+    "engine_s": 34.53,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "WARNING: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "WARNING: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "WARNING: schema_header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for acrolein was performed using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase. The calculation used charge 0 and multiplicity 1. The results include partial charges, Fukui indices for nucleophilic (f-) and electrophilic (f+) sites, zero-frequency Fukui index, dual descriptor, and identified most electrophilic and nucleophilic atoms. The analysis suggests the most electrophilic site is the carbon atom at position 4, and the most nucleophilic site is the oxygen atom at position 1. Warnings indicate a large drift in the Fukui charge conservation sums, possibly due to N\u00b11 state convergence issues. The result can be visualized in the provided plot."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 54.96,
+    "llm_s": 26.37,
+    "engine_s": 28.0,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis of Furan\n\n**Method-provenance block**\n- **Property:** Condensed Fukui indices (f\u207a, f\u207b, f\u2070), dual descriptor, and Mulliken partial charges (finite-difference from neutral/cation/anion SCF)\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP/def2-TZVP** (PySCF RKS for the neutral closed shell; UKS doublets for the N\u00b11 states). Density fitting is OFF (chemkit default = exact four-center integrals).\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`, 9 atoms: O, 4\u00d7C, 4\u00d7H). Used as-is \u2014 the Fukui workflow computes single-point energies at this fixed geometry for the neutral (N), cation (N\u22121), and anion (N+1) states; no geometry relaxation.\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** Neutral parent charge 0, multiplicity 1 (closed shell). Cation state: charge +1, multiplicity 2 (doublet, UKS). Anion state: charge \u22121, multiplicity 2 (doublet, UKS).\n- **Software/backend:** PySCF (DFT backend).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Headline result \u2014 most electrophilic site (largest f\u207a):**\n- Atom #5 (1-based), a **carbon**, with **f\u207a = 1.9242931**.\n\nNote: the most-nucleophilic report also lands on atom #5 (C, f\u207b = 0.1616371).\n\n**Per-atom Fukui f\u207a (electrophilic susceptibility):**\n`[-1.3316182, 1.2286866, 1.2270264, 1.9233053, 1.9242931, -1.2190639, -1.2191056, -0.76678308, -0.76674059]`\n\n**Per-atom Fukui f\u207b (nucleophilic susceptibility):**\n`[0.08382155, 0.089103093, 0.089304821, 0.161527, 0.1616371, 0.10248412, 0.1025135, 0.10481615, 0.10479266]`\n\n**Dual descriptor (f\u207a \u2212 f\u207b):**\n`[-1.4154398, 1.1395835, 1.1377216, 1.7617783, 1.762656, -1.3215481, -1.321619, -0.87159923, -0.87153325]`\n\n**Convergence & integrity:**\n- Integrity status: **ok**; engine verdict **trustworthy = true**.\n- The **`warnings` array in the result JSON is empty \u2014 no warnings reported**. The integrity block contains three informational checks, all passing (`ok: true`):\n  - `fukui_charge_conservation_f+`: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  - `fukui_charge_conservation_f-`: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  - `schema_header`: \"common header present\"\n\n**Caveats:** These are Mulliken-based condensed Fukui indices computed by finite difference between separate SCF states at a fixed (non-relaxed) geometry; Mulliken partitioning is basis-set-dependent, so individual atomic values should be read as trends rather than to full displayed precision. Some f\u207a values are negative, which is a known artifact of the finite-difference/Mulliken condensed-Fukui scheme.\n\n**Reproducibility:** Exact command run \u2014\n`cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard <furan.xyz> --out .../live.json`\nPlot artifact written to: `.../20260706-175303_furan_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental/literature comparison is offered (none was requested)."
+}

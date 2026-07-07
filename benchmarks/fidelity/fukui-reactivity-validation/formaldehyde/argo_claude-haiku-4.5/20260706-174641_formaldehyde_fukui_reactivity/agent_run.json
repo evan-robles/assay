@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.32,
+    "llm_s": 13.79,
+    "engine_s": 9.53,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for neutral formaldehyde (CH\u2082O) using DFT, B3LYP/def2-TZVP functional and basis (tier standard), gas phase, charge 0, multiplicity 1, via PySCF. The geometry was a single-point calculation on the supplied coordinates (4 atoms). Three sets of Fukui indices were calculated by computing Mulliken atomic charges on the neutral molecule, its +1 cation, and its \u22121 anion: f\u207a (electrophilic Fukui index) indicates sensitivity to nucleophilic attack; f\u207b (nucleophilic Fukui index) indicates sensitivity to electrophilic attack; f\u2070 is their average (radical Fukui index). The dual descriptor (f\u207a \u2212 f\u207b) predicts whether a site favors electrophilic or nucleophilic activation. SCF converged; Fukui charge conservation checks passed (sum(f\u207a) = 1.0, sum(f\u207b) = 1.0). Most electrophilic site: carbon (f\u207a = 0.7084). Most nucleophilic site: oxygen (f\u207b = 0.4674). Integrity status: trustworthy = true."
+}

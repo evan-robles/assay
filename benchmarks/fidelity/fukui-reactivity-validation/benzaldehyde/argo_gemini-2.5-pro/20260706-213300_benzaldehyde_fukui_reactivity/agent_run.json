@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 266.33,
+    "llm_s": 12.39,
+    "engine_s": 253.94,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of benzaldehyde was performed using DFT at the B3LYP/def2-TZVP level of theory in the gas phase, with a charge of 0 and a multiplicity of 1. The results indicate that the most electrophilic site, susceptible to nucleophilic attack, is atom C3 with an f+ value of 0.39939. The most nucleophilic site, prone to electrophilic attack, is atom O1 with an f- value of 0.23840. The full Fukui indices (f+, f-, f0) and the dual descriptor have been calculated for all 14 atoms. No warnings were reported during the calculation."
+}

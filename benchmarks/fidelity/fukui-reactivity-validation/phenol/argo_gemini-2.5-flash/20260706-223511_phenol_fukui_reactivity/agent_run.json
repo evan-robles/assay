@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 133.78,
+    "llm_s": 20.44,
+    "engine_s": 113.34,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "B3LYP/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "B3LYP",
+    "basis": "def2-TZVP",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis for phenol.\n**Property**: Fukui indices (f+, f-, f0) and Dual Descriptor (DD), identifying most electrophilic and nucleophilic sites.\n**Level of theory**: DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF.\n**Geometry provenance**: Input geometry from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz`; a single-point calculation was performed.\n**Solvent / environment**: Gas phase.\n**Charge and multiplicity**: Neutral molecule: charge 0, multiplicity 1. Cation (N+1 state for f-): charge 1, multiplicity 2. Anion (N-1 state for f+): charge -1, multiplicity 2.\n**Software**: PySCF.\nThe most electrophilic site was found to be Carbon (index 3, 0-based index 2) with an f+ value of 2.1028319.\nThe most nucleophilic site was found to be Oxygen (index 1, 0-based index 0) with an f- value of 0.16201477."
+}

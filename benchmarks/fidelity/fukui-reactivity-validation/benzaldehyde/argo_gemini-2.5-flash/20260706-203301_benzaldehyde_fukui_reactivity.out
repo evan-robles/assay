@@ -1,0 +1,10 @@
+[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:gemini-2.5-flash via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls skill_help('fukui-reactivity') (discovery)
+[live] agent calls chemkit: fukui-reactivity ['--method', 'dft', '--charge', '0', '--mult', '1', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz']
+
+==> ERROR: remote compute host unreachable — CHEMKIT_REMOTE_HOST='x4312c0s5b0n0.hsn.cm.aurora.alcf.anl.gov' unreachable over ssh (rc=255): 
+    Flagged ERRORED and excluded from scoring (not a model failure); the repeat slot will be re-run.
+
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_gemini-2.5-flash/20260706-203301_benzaldehyde_fukui_reactivity

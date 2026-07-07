@@ -1,0 +1,29 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 146.91,
+    "llm_s": 36.98,
+    "engine_s": 109.29,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for phenol were computed with chemkit\u2019s fukui-reactivity skill using DFT at the B3LYP/def2-TZVP level (tier \u201cstandard\u201d) in the gas phase.\n\nMethod provenance\n\u2022 Property: atom-condensed Fukui functions f\u207a (electrophilic), f\u207b (nucleophilic), dual descriptor, most electrophilic/nucleophilic sites (Mulliken partition)\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (no density-fitting), PySCF backend  (chemkit)\n\u2022 Geometry provenance: single-point calculations on the user-supplied geometry file /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz (no further optimisation)\n\u2022 Environment: gas phase (no implicit solvent)\n\u2022 Charge = 0 (neutral); multiplicity = 1 (singlet). N \u00b1 1 states: cation (+1, doublet), anion (\u20131, doublet)\n\u2022 Convergence: all three SCFs (N, N\u20131, N+1) converged; integrity.status = \"ok\", trustworthy = true\n\u2022 Warnings: none reported in result JSON; integrity checks note sums of f\u207a/f\u207b equal 1.0000 (expected), status OK\n\u2022 Live engine log written during execution (path echoed at run time by chemkit; not included in JSON excerpt)\n\nKey numerical results (atomic indices are 0-based, labels 1-based)\nMost electrophilic site: atom 3 (C) with f\u207a = 2.1028319\nMost nucleophilic site: atom 1 (O) with f\u207b = 0.16201477\nSum over atoms: \u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000 (charge conservation satisfied)\n\nThe headline value returned below is the largest electrophilic Fukui index (f\u207a) identified. The complete per-atom f\u207a, f\u207b, f\u2070 and dual-descriptor arrays are available in the output JSON written by chemkit.\n\nProvenance: computed (this work)."
+}

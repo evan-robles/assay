@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 266.55,
+    "llm_s": 37.65,
+    "engine_s": 228.34,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis for benzaldehyde\n\nMethod provenance\nProperty: Condensed Fukui functions f+, f\u2013, f0 (average) and dual descriptor per atom; most electrophilic (max f+) and nucleophilic (max f\u2013) sites highlighted.  \nLevel of theory: DFT, B3LYP/def2-TZVP (tier \"standard\"), no density fitting (exact four-center integrals) in PySCF 2.x via chemkit.  \nGeometry provenance: user-supplied Cartesian coordinates from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz; single-point charge analyses on this fixed geometry (no re-optimization).  \nSolvent / environment: gas phase (no implicit solvation).  \nCharge 0, multiplicity 1 (closed-shell singlet).  \nSCF calculations for the N, N+1, and N\u20131 states all converged; Mulliken charges were used to build condensed Fukui indices.  \nConvergence & integrity: run completed with integrity.status = \"ok\" and trustworthy = true.  \nLive engine log was streamed to the standard chemkit .out file in the working directory during execution (path provided at job launch); result JSON written to /home/erobles/chem-skills/.fidelity_scratch/tmp1ri4idim/live.json.\n\nHeadline results (units dimensionless)\n\u2022 Most electrophilic site: atom 3 (C) with f+ = 0.39938971  \n\u2022 Most nucleophilic site: atom 1 (O) with f\u2013 = 0.23839906  \n\u2022 Dual descriptor highlights atom 3 (\u0394f = +0.3626) and atom 1 (\u0394f = \u20130.1404) as the dominant electrophilic and nucleophilic centers, respectively.\n\nAll-atom condensed Fukui indices (f+, f\u2013, f0):\n1 O  0.3788  0.2384  0.3086  \n2 C \u20130.3517  \u20130.0071  \u20130.1794  \n3 C  0.3994  0.0368  0.2181  \n4 C  0.2116  0.0833  0.1475  \n5 C  0.3372  0.0537  0.1955  \n6 C  0.2848  \u20130.0023  0.1412  \n7 C  0.2792  0.0583  0.1687  \n8 C  0.3587  0.0824  0.2205  \n9 H \u20130.1159  0.0603  \u20130.0278  \n10 H \u20130.2026  0.0587  \u20130.0720  \n11 H \u20130.1270  0.0742  \u20130.0264  \n12 H \u20130.1340  0.0660  \u20130.0340  \n13 H \u20130.1369  0.0715  \u20130.0327  \n14 H \u20130.1817  0.1258  \u20130.0279\n\nWarnings (verbatim from engine):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 common header present\n\nThe analysis indicates that the carbonyl carbon (atom 3) is the primary electrophilic center, while the carbonyl oxygen (atom 1) is the primary nucleophilic site under gas-phase B3LYP/def2-TZVP conditions."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.56,
+    "llm_s": 7.62,
+    "engine_s": 5.94,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of ferrocene was performed using the GFN2-xTB method in the gas phase with charge 0 and multiplicity 1. The most electrophilic site (with the largest Fukui-plus function value, indicating preference for nucleophilic attack) is at the iron atom (Fe), with a Fukui index (f+) of 0.22885456. Similarly, Fe is also the most nucleophilic site (according to the Fukui-minus function), with an f- index of 0.25938191. Calculations converged reliably, and the results are considered trustworthy. Warnings reported by the engine include checks on charge conservation for Fukui functions (both f+ and f- sums are ~1.0 as expected)."
+}

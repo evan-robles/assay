@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 59.48,
+    "llm_s": 30.12,
+    "engine_s": 28.82,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of furan** \u2014 condensed (Mulliken-charge\u2013based) Fukui indices from finite-difference between the neutral, cation (N\u22121), and anion (N+1) states.\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a electrophilic, f\u207b nucleophilic, f\u2070 radical) and the dual descriptor per atom, plus most-electrophilic / most-nucleophilic site identification. Population scheme: Mulliken (PySCF).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (PySCF, RKS for the neutral singlet; UKS for the doublet cation/anion). Density fitting was OFF (chemkit default = exact four-center integrals).\n- **Geometry provenance:** Used as-is from the user-supplied file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz` (9 atoms: O, 4\u00d7C, 4\u00d7H). Geometry was NOT re-optimized \u2014 this is a set of single-point SCF calculations at the provided geometry.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** Neutral parent charge 0, multiplicity 1. Derived states: cation charge +1, multiplicity 2; anion charge \u22121, multiplicity 2.\n- **Software:** PySCF (DFT backend).\n- **Convergence / caveats:** Integrity status **ok**, **trustworthy = true**. Both charge-conservation checks passed: \u03a3f\u207a = 1.0000 and \u03a3f\u207b = 1.0000.\n\n**Headline results**\n- **Most electrophilic site (largest f\u207a):** atom label 5 (1-based), a **carbon**, with **f\u207a = 1.9242931**. (Atom index 4, 0-based.)\n- **Most nucleophilic site (largest f\u207b):** the same atom \u2014 carbon, label 5 \u2014 with **f\u207b = 0.1616371**.\n\nPer-atom results (order: O, C, C, C, C, H, H, H, H):\n- f\u207a: [\u22121.3316182, 1.2286866, 1.2270264, 1.9233053, 1.9242931, \u22121.2190639, \u22121.2191056, \u22120.76678308, \u22120.76674059]\n- f\u207b: [0.08382155, 0.089103093, 0.089304821, 0.161527, 0.1616371, 0.10248412, 0.1025135, 0.10481615, 0.10479266]\n- f\u2070: [\u22120.62389834, 0.65889484, 0.65816562, 1.0424161, 1.0429651, \u22120.55828991, \u22120.55829603, \u22120.33098346, \u22120.33097396]\n- dual descriptor: [\u22121.4154398, 1.1395835, 1.1377216, 1.7617783, 1.762656, \u22121.3215481, \u22121.321619, \u22120.87159923, \u22120.87153325]\n\nNote: several f\u207a values are negative, which reflects the Mulliken condensed-to-atom finite-difference partitioning (Mulliken charges are basis-set sensitive and can produce non-physical negative condensed Fukui values, especially with larger basis sets like def2-TZVP); interpret the ranking with that caveat in mind.\n\n**Warnings (verbatim from the integrity checks):**\n1. fukui_charge_conservation_f+ (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. fukui_charge_conservation_f- (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. schema_header (severity: warning): \"common header present\"\n\nAll three checks reported ok=true; no fallbacks fired.\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp74l3kvk4/live.json`\n- Bar-chart plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_claude-opus-4.8/20260706-175359_furan_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental/literature comparison is offered; this is a computed result only."
+}

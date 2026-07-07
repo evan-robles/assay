@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 145.1,
+    "llm_s": 39.17,
+    "engine_s": 105.93,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for phenol (13 atoms) were computed using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. The Fukui indices were derived via finite differences of Mulliken partial charges across the neutral, cationic (+1, mult 2), and anionic (\u22121, mult 2) species. The most electrophilic site is atom 3 (C) with f\u207a = 2.1028319 (maximum), and the most nucleophilic site is atom 1 (O) with f\u207b = 0.16201477 (maximum). The dual descriptor is largest and positive on ring carbons (atoms 3, 4, 7), consistent with electrophilic character at those positions. The integrity check returned trustworthy: true, with both f\u207a and f\u207b summing exactly to 1.0000. No convergence failures or problematic warnings were reported. The geometry was taken directly from the user-supplied phenol.xyz without re-optimization at the DFT level."
+}

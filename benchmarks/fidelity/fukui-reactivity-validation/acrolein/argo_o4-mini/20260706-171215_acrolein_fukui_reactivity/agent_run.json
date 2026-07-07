@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 74.96,
+    "llm_s": 39.48,
+    "engine_s": 34.97,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis (most electrophilic site)** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, exact integrals) in PySCF via chemkit, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`, single-point fukui (no geometry optimization). SCF converged (integrity.status = ok). Integrity checks all passed; trustworthy: true; no warnings reported. Results: fukui+ (electrophilic) per atom [O1: 0.40136419; C2: 0.022255106; C3: 0.43404673; C4: 0.64232102; H5: -0.1572595; H6: -0.2072029; H7: -0.062116996; H8: -0.073407645]. The most electrophilic atom is C4 (atom index 4) with f+ = 0.64232102; the most nucleophilic atom is O1 (atom index 1) with f- = 0.39388616. Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpvpgz175s/live.json`. Output JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmpvpgz175s/live.json`."
+}

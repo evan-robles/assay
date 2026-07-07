@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.75,
+    "llm_s": 27.05,
+    "engine_s": 9.7,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\nProperty: Fukui functions of ferrocene (f+, f\u2212, f0, dual descriptor); most electrophilic Fukui index reported here.\nLevel of theory: GFN2-xTB (semi-empirical extended tight-binding)\nGeometry provenance: user-supplied Cartesian coordinates (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz) used as-is; no further optimization was performed (single-point property evaluation).\nSolvent / environment: gas phase (no implicit solvent model applied).\nCharge and multiplicity: 0, 1 (closed-shell singlet).\nSoftware/backend: xtb via chemkit fukui-reactivity skill (GFN2-xTB Hamiltonian; Mulliken charge partitioning).\nConvergence & warnings: calculation completed; Fukui charge-conservation checks passed (\u03a3f+ = \u03a3f\u2212 = 1.0000).  The engine emitted the warnings reproduced below verbatim.  The live stdout/stderr of the xtb run was written during execution; see the run log indicated in the cli invocation recorded in the result JSON for full SCF details.\n\nHeadline result\nMost electrophilic site (highest f+): Fe (atom 11)  \u2192  f+ = 0.22885456 (dimensionless)\n\nVerbatim warnings from chemkit result\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nInterpretation & caveats\nThe GFN2-xTB method provides semi-empirical Fukui indices suitable for qualitative reactivity trends; absolute values carry the typical limitations of tight-binding charge models and single-conformer treatment.  The Fe center (atom 11) emerges as both the most electrophilic (highest f+) and most nucleophilic (highest f\u2212) site in this ferrocene geometry.\n\nResult integrity: trustworthy (chemkit integrity checks passed)."
+}

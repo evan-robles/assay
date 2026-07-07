@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 64.34,
+    "llm_s": 31.92,
+    "engine_s": 32.43,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for furan were computed at the DFT level using B3LYP/def2-TZVP (tier 'standard', density-fitted) in PySCF, gas phase, charge 0, multiplicity 1. The N\u00b11 states used charge \u00b11, multiplicity 2. Partial charges were computed via the Mulliken scheme. The geometry was taken directly from the provided furan.xyz file (not re-optimized at this level). The headline value reported is the maximum f\u207a (electrophilic Fukui index), found at atom C5 (1-based): f\u207a = 1.9242931. The most nucleophilic site (largest f\u207b) is also C5, f\u207b = 0.16164. The dual descriptor is most positive at C4 and C5 (the \u03b1-carbons), consistent with furan's known \u03b1-selectivity in electrophilic aromatic substitution. integrity.trustworthy = true; all conservation checks passed (sum f\u207a = sum f\u207b = 1.0000). Warnings (all informational, all passed): [1] fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); [2] fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); [3] schema_header: common header present. No warnings were raised beyond these informational conservation checks, all of which passed cleanly."
+}

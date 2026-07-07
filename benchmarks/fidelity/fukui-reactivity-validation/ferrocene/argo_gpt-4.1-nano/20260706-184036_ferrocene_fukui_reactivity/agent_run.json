@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.24,
+    "llm_s": 5.86,
+    "engine_s": 9.37,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui-reactivity calculation on ferrocene was completed using the chemkit tool with the GFN2-xTB method in the gas phase. The calculation was performed with charge 0 and multiplicity 1. The result includes detailed Fukui indices, dual descriptor, electrophilic and nucleophilic sites, and visual plot paths. Provenance: The calculation was executed with the chemkit tool using the `fukui-reactivity` skill, method `xtb`, and specified parameters."
+}

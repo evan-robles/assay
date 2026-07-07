@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 213.95,
+    "llm_s": 34.58,
+    "engine_s": 178.76,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui electrophilic index (f\u207a) of the most electrophilic atom (C4) in nitrobenzene: 0.4964178 (dimensionless)\n\nMethod provenance:\n\u2022 Property: Atom-condensed Fukui functions (f\u207a, f\u207b, dual descriptor); headline value is the maximum f\u207a.\n\u2022 Level of theory: DFT, tier standard \u2192 B3LYP/def2-TZVP (exact four-center integrals, no density fitting) in PySCF 2.x.\n\u2022 Geometry provenance: fixed input coordinates supplied by the user (/home/erobles/\u2026/nitrobenzene.xyz); no re-optimization \u2013 single-point charges on that geometry.\n\u2022 Environment: gas phase (no continuum solvent model).\n\u2022 Charge 0, multiplicity 1 (closed-shell singlet parent); cation/anion states treated as doublets (M + 1).\n\u2022 Software: chemkit fukui-reactivity skill (engine subcommand `fukui` \u2192 PySCF backend).\n\u2022 Convergence: all three single-point SCFs converged; integrity.status = \"ok\".\n\nWarnings returned by chemkit (verbatim):\n\u2013 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 common header present\n\nLive run log was streamed during execution (path printed at launch by chemkit; available for inspection).\n\nResult integrity verdict: trustworthy (chemkit integrity.status = ok)."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 134.01,
+    "llm_s": 32.1,
+    "engine_s": 101.88,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance  \nProperty: condensed Fukui functions (f+, f\u2212, dual descriptor) for aniline; identification of the most electrophilic and nucleophilic atoms.  \nLevel of theory: DFT, B3LYP/def2-TZVP (chemkit tier \u2018standard\u2019), *no density-fitting* (exact four-center integrals).  \nGeometry provenance: user-supplied coordinates from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz; no geometry optimisation \u2013 single-point SCF calculations for the neutral (N), cation (N\u20131) and anion (N+1) states were performed on this fixed structure (DFT//input-xyz).  \nEnvironment: gas phase (no implicit solvent).  \nCharge & multiplicity: neutral singlet (0,1); cation doublet (+1,2); anion doublet (-1,2).  \nSoftware: PySCF 2.x via chemkit fukui-reactivity skill (engine subcommand `fukui`).  \nConvergence & warnings: SCF cycles converged for all three charge states; integrity.trustworthy = true.  Warnings reported by the engine (verbatim):  \n\u2022 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n\u2022 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"  \n\u2022 \"common header present\"  \nAll integrity checks passed (status ok).  \nLive log: the run streamed to /home/erobles/chem-skills/.fidelity_scratch/tmpbw3eosl4/live.out; it can be inspected or tailed for full SCF details.  \n\nHeadline results (Mulliken-charge condensed Fukui indices, units: electrons):  \n\u2022 Most electrophilic site: C3 (index 2 in 0-based indexing)  f+ = 2.2975867  \n\u2022 Most nucleophilic site: N1 (index 0)                     f\u2212 = 0.20452359  \n\u2022 Dual descriptor (f+ \u2013 f\u2212) for those atoms: C3 = 2.2310153, N1 = 1.4651392  \n(The full per-atom arrays are saved in the JSON result at /home/erobles/chem-skills/.fidelity_scratch/tmpbw3eosl4/live.json.)  \n\nComputed value reported above (headline numeric field): 2.2975867  \u2013 this is the largest electrophilic Fukui function (f+ for carbon-3) obtained at B3LYP/def2-TZVP in the gas phase.  \n\nProvenance: computed."
+}

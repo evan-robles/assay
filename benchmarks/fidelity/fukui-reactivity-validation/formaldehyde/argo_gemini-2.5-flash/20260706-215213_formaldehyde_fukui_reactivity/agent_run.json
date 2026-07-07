@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.91,
+    "llm_s": 18.93,
+    "engine_s": 10.02,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for formaldehyde have been calculated using Density Functional Theory (DFT) with the B3LYP functional and def2-TZVP basis set (tier `standard`) in the gas phase, with charge 0 and multiplicity 1. This calculation was performed using the chemkit `fukui-reactivity` skill.\n\n**Formaldehyde Fukui Reactivity Analysis**\n\u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`. SCF converged.\n\u2014 Most Electrophilic Atom (site of nucleophilic attack): **Carbon** (atom 2), with a Fukui f+ index of **0.70839**.\n\u2014 Most Nucleophilic Atom (site of electrophilic attack): **Oxygen** (atom 1), with a Fukui f- index of **0.46742**.\n\n**Atomic Fukui Indices:**\n| Atom | Symbol | Fukui f+ (Electrophilicity) | Fukui f- (Nucleophilicity) | Dual Descriptor |\n|------|--------|-----------------------------|----------------------------|-----------------|\n| 1    | O      | 0.46814                     | 0.46742                    | 0.00071         |\n| 2    | C      | 0.70839                     | 0.11244                    | 0.59595         |\n| 3    | H      | -0.08827                    | 0.21008                    | -0.29835        |\n| 4    | H      | -0.08826                    | 0.21006                    | -0.29832        |\n\n**Warnings:**\n*   `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n*   `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`"
+}

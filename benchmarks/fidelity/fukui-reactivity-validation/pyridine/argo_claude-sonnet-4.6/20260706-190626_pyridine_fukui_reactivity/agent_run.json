@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 97.83,
+    "llm_s": 39.51,
+    "engine_s": 58.32,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for pyridine computed at DFT tier 'standard' (B3LYP/def2-TZVP, density-fit, PySCF RKS), gas phase, charge 0, multiplicity 1. Geometry: user-supplied pyridine.xyz, used as-is (no re-optimization at DFT level). Partial charges via Mulliken (PySCF). Cation: charge +1, mult 2; Anion: charge \u22121, mult 2.\n\nHeadline result: most electrophilic site is N (atom 1) with f\u207a = 0.48422572; most nucleophilic site is C (atom 4) with f\u207b = 0.1182626.\n\nFull per-atom Fukui indices (f\u207a, f\u207b, f\u2070, dual descriptor):\n  Atom 1  N:  f+ = 0.48423, f- = 0.06412, f0 = 0.27417, dual = +0.42010\n  Atom 2  C:  f+ = 0.32447, f- = 0.00619, f0 = 0.16533, dual = +0.31828\n  Atom 3  C:  f+ = 0.14032, f- = 0.11823, f0 = 0.12928, dual = +0.02209\n  Atom 4  C:  f+ = 0.14040, f- = 0.11826, f0 = 0.12933, dual = +0.02213\n  Atom 5  C:  f+ = 0.29963, f- = 0.11207, f0 = 0.20585, dual = +0.18756\n  Atom 6  C:  f+ = 0.29948, f- = 0.11201, f0 = 0.20574, dual = +0.18747\n  Atom 7  H:  f+ = \u22120.14151, f- = 0.08285, f0 = \u22120.02933, dual = \u22120.22436\n  Atom 8  H:  f+ = \u22120.13368, f- = 0.09818, f0 = \u22120.01775, dual = \u22120.23186\n  Atom 9  H:  f+ = \u22120.13366, f- = 0.09818, f0 = \u22120.01774, dual = \u22120.23184\n  Atom 10 H:  f+ = \u22120.13982, f- = 0.09496, f0 = \u22120.02243, dual = \u22120.23478\n  Atom 11 H:  f+ = \u22120.13985, f- = 0.09495, f0 = \u22120.02245, dual = \u22120.23479\n\nIntegrity: status ok, trustworthy true. f+ sum = 1.0000, f- sum = 1.0000. No warnings reported by engine. Warnings array is empty."
+}

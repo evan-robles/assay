@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 265.58,
+    "llm_s": 37.2,
+    "engine_s": 227.83,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance \u2013 condensed Fukui functions (f+, f\u2212, f0) for benzaldehyde\nProperty: Condensed Fukui functions per atom (electrophilic attack f+, nucleophilic attack f\u2212, radical attack f0) and dual descriptor; identification of most electrophilic/nucleophilic sites.\nLevel of theory: DFT, B3LYP/def2-TZVP (tier \u201cstandard\u201d in chemkit; no density-fitting \u2013 exact four-center integrals) via PySCF 2.* backend.\nGeometry provenance: user-supplied Cartesian coordinates file \u201cbenzaldehyde.xyz\u201d; no further optimisation \u2013 single-point population analyses only (DFT//input-xyz).\nSolvent / environment: gas phase (no implicit solvent requested).\nCharge & multiplicity: charge 0, multiplicity 1 (closed-shell singlet). N\u00b11 states were computed as doublets (cation charge +1, mult 2; anion charge \u22121, mult 2).\nConvergence & warnings: SCF cycles for the neutral, cation, and anion all converged; chemkit\u2019s integrity checks report status \"ok\" and trustworthy = true, with three warnings reproduced verbatim below. No fall-backs or non-convergence occurred.\nLive log / artifact paths: calculation was run through chemkit skill \u201cfukui-reactivity\u201d; live engine output was streamed to its .out file (path announced at run start) and the final JSON written to /home/erobles/chem-skills/.fidelity_scratch/tmp052d3xk1/live.json. A bar-chart PNG of the atom-wise indices is at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_o3/20260706-174036_benzaldehyde_fukui_reactivity/agent_call_01_plot.png.\n\nHeadline results (Mulliken-charge based):\n\u2022 Most electrophilic atom: C (atom 3, carbonyl carbon), f+ = 0.39938964\n\u2022 Most nucleophilic atom: O (atom 1, carbonyl oxygen), f\u2212 = 0.23839906\n\nSelected condensed Fukui indices (atoms 1\u201314 in input order):\nAtom 1 (O)  f+ 0.3788   f\u2212 0.2384   f0 0.3086   dual 0.1404\nAtom 2 (C)  f+ \u22120.3517  f\u2212 \u22120.0071  f0 \u22120.1794  dual \u22120.3446\nAtom 3 (C)  f+ 0.3994   f\u2212 0.0368   f0 0.2181   dual 0.3626\n\u2026 (full vector in JSON result)\n\nAll warnings from chemkit (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nIntegrity verdict: trustworthy = true\n\nThe reported f+ value of 0.39938964 (for atom 3) is provided exactly as returned by chemkit. No experimental comparison was requested or supplied."
+}

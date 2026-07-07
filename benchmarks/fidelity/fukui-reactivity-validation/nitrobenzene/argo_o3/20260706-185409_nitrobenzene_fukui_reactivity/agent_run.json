@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 209.07,
+    "llm_s": 33.97,
+    "engine_s": 175.09,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed property: Fukui electrophilic descriptor (f+)\nLevel of theory: DFT, B3LYP/def2-TZVP (density-fit default in PySCF)\nGeometry provenance: fixed input geometry from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz (no re-optimization); single-point populations for the neutral (0,1), cation (1,2) and anion (\u22121,2) states \u2014 i.e. B3LYP/def2-TZVP//input-xyz protocol.\nEnvironment: gas phase (no implicit solvent)\nCharge / multiplicity: 0, 1 (neutral singlet) for the reference state; cation (charge +1, doublet) and anion (charge \u22121, doublet) for the N\u00b11 states as required by the Fukui scheme.\nSoftware: PySCF 2.x backend via chemkit fukui-reactivity skill.\nConvergence & warnings: SCF cycles converged for all three charge states. All engine warnings reproduced verbatim below.\nLive log: the run streamed to a timestamped fukui_<timestamp>.out file in the working directory; it can be tailed for full SCF and population details.\n\nHeadline result (most electrophilic site):\nAtom 4 (C, ring ortho to the nitro group) has f\u207a = 0.49641782 (dimensionless Mulliken-based Fukui function).\n\nAtom count: 14 atoms.\n\nWarnings (verbatim from integrity checks):\n\u2022 fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 schema_header: common header present\n\nIntegrity verdict: trustworthy = true.\n\nThis value is a computed quantum-chemical estimate; no experimental analogue is implied.\n"
+}

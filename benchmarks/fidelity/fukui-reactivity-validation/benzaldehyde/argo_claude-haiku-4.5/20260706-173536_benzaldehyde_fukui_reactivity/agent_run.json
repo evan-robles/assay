@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 234.86,
+    "llm_s": 16.42,
+    "engine_s": 218.44,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of benzaldehyde was performed using **DFT with B3LYP/def2-TZVP** (tier `standard`) in PySCF, gas phase, charge 0, multiplicity 1 for the parent molecule, with cation and anion states (charges +1 and \u22121, both multiplicity 2) used to compute f\u207a and f\u207b. The input geometry was user-supplied and not re-optimized at this level. Mulliken partial charges were used to compute the Fukui indices. All SCF calculations converged and charge-conservation checks passed (\u2211f\u207a = 1.0000, \u2211f\u207b = 1.0000). The most electrophilic atom is **carbon at index 2** (1-based label 3, aromatic ortho carbon relative to the aldehyde), with **f\u207a = 0.39938968**. The most nucleophilic atom is the **carbonyl oxygen** (atom 0, 1-based label 1), with **f\u207b = 0.23839906**. The integrity status is `trustworthy: true`, with all validation checks passed. Full atom-resolved Fukui indices (f\u207a, f\u207b, f\u2070) and dual descriptors are available in the result block above.</prose>\n<parameter name=\"n_atoms\">14"
+}

@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.26,
+    "llm_s": 4.08,
+    "engine_s": 9.18,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "Warning: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "Warning: sum(f\u2212) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "calculated"
+  },
+  "prose": "The Fukui reactivity analysis was performed using DFT at the B3LYP/def2-TZVP level with tier 'standard' in the gas phase. The most electrophilic site identified is the carbon atom (atom index 2), with a Fukui plus value of approximately 0.7084, indicating susceptibility to nucleophilic attack. The most nucleophilic site is the oxygen atom (atom index 1), with a Fukui minus value of approximately 0.4674, indicating susceptibility to electrophilic attack. The analysis confirms the expected reactivity pattern of formaldehyde, with the carbon being the primary electrophilic center and the oxygen being the primary nucleophilic center. Warnings included charge conservation hints suggesting potential convergence issues for specific states, but overall the trustworthiness is confirmed."
+}

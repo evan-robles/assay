@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 106.49,
+    "llm_s": 40.98,
+    "engine_s": 59.66,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) \u2014 PASSED",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) \u2014 PASSED",
+      "common header present \u2014 PASSED"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for pyridine computed at DFT level, tier 'standard' (B3LYP/def2-TZVP, density-fitted) in PySCF, gas phase, charge 0, multiplicity 1. Geometry taken from user-supplied .xyz file (not re-optimized at DFT). Partial charges via Mulliken (PySCF). Cation/anion states: charge \u00b11, multiplicity 2 (open-shell doublets). All SCFs converged; charge conservation checks passed (sum f+ = 1.0000, sum f- = 1.0000). Integrity: trustworthy = true. Most electrophilic site: Atom 1 (N), f+ = 0.48422572. Most nucleophilic site: Atom 4 (C), f- = 0.11826260. Negative f+ values on H atoms are a known Mulliken artifact. Live log: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_claude-sonnet-4.6/20260706-190301_pyridine_fukui_reactivity/fukui_20260706-190315.out"
+}

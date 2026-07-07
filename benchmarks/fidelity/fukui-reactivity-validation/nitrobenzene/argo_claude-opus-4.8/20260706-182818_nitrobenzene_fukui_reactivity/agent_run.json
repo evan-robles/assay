@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 199.97,
+    "llm_s": 23.66,
+    "engine_s": 175.77,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ [severity: warning, ok]: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- [severity: warning, ok]: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header [severity: warning, ok]: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis \u2014 Nitrobenzene\n\n**Method-provenance block**\n- **Property:** Condensed (Mulliken-based) Fukui reactivity descriptors \u2014 f\u207a (nucleophilic attack / electrophilicity), f\u207b (electrophilic attack / nucleophilicity), f\u2070, and the dual descriptor \u2014 computed from a finite-difference (\u0394N = \u00b11) three-point scheme (neutral, cation, anion).\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** \u2014 this is chemkit tier `standard` (B3LYP/def2-TZVP) with the functional and basis also passed explicitly. Exact four-center two-electron integrals (density fitting OFF, chemkit default).\n- **Software:** PySCF (RKS for the neutral singlet; UKS for the doublet cation and doublet anion).\n- **Geometry provenance:** User-supplied `nitrobenzene.xyz` (14 atoms: C\u2086H\u2085NO\u2082). The geometry was used **as-is** \u2014 the fukui-reactivity skill does not re-optimize; all three charge states (neutral, N\u22121 cation, N+1 anion) are single-point evaluations at this fixed geometry.\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge & multiplicity:** Neutral parent charge 0, multiplicity 1 (as requested). Derived states: cation charge +1, multiplicity 2; anion charge \u22121, multiplicity 2.\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Headline result**\n- **Most electrophilic site (largest f\u207a):** atom index 4 (1-based), a **carbon**, with **f\u207a = 0.4964178**. This is the site most susceptible to nucleophilic attack.\n- **Most nucleophilic site (largest f\u207b):** atom index 5 (1-based), a **carbon**, with **f\u207b = 0.1072882** (site most susceptible to electrophilic attack).\n\n**Convergence / integrity:** Integrity status **ok**, **trustworthy = true**. Charge conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Warnings (reproduced verbatim; all three integrity checks passed, `ok: true`):**\n1. `fukui_charge_conservation_f+` (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. `fukui_charge_conservation_f-` (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. `schema_header` (severity: warning): \"common header present\"\n\n**Notes / caveats:** Condensed Fukui indices are derivative of the partial-charge partitioning scheme (Mulliken here), which is basis-set dependent and not a physical observable \u2014 treat the per-atom values as trend indicators. Descriptors are single-point at the supplied geometry (no re-optimization, no conformer/Boltzmann averaging).\n\n**Reproducibility**\n- Command: `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard nitrobenzene.xyz`\n- Result JSON written to `.../live.json`; bar-chart PNG at `.../agent_call_01_plot.png`.\n\nNo experimental/literature comparison is offered; ask if you want one and I will verify a source first."
+}

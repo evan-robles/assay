@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 46.39,
+    "llm_s": 17.19,
+    "engine_s": 29.2,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis: Furan**\n\n**Method:** DFT, B3LYP/def2-TZVP (tier standard, density-fit), PySCF, gas phase, charge 0, multiplicity 1 (neutral), +1 and \u22121 ionization states computed at the same level with multiplicities 2 (UKS). Geometry: user-supplied furan.xyz, used as-is. Mulliken population analysis for partial charges and Fukui indices. SCF converged for all states; charge conservation verified (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000).\n\n**Fukui Indices (site reactivity descriptors):**\n\nThe Fukui function quantifies the local reactivity of each atom toward electrophilic (f\u207a) and nucleophilic (f\u207b) attack. Positive values indicate enhanced reactivity; negative values indicate deactivation.\n\n- **Most electrophilic carbon** (most susceptible to nucleophilic attack): C4 (1-indexed position 5, an \u03b1-carbon adjacent to oxygen), f\u207a = **1.9243**\n- **Oxygen** (electron-rich heterocycle): f\u207a = **\u22121.3316** (strongly deactivated toward electrophiles)\n- **Overall trend:** The carbon atoms bearing hydrogen show higher f\u207a values (1.2\u20131.9), making them the primary nucleophilic-attack sites. The oxygen acts as an electron donor (negative f\u207a).\n\n**Mulliken partial charges (neutral):** O \u22120.221, C 0.017 (\u03b1,\u03b2-positions), C \u22120.163 (ortho-C), H +0.121\u2013+0.137.\n\n**Dual descriptor (f\u207a \u2212 f\u207b):** C4 shows +1.76, indicating selective activation toward nucleophiles; oxygen shows \u22121.42, indicating general deactivation.\n\n**Output artifacts:** Fukui index visualization plot generated; full result JSON in temporary directory. All integrity checks passed.</prose>\n<parameter name=\"value\">1.9243"
+}

@@ -43,6 +43,22 @@ activate() {
     export SKIP_WARMUP=1
 }
 
+# Is the argo proxy (the login-node tunnel from the user's Mac) actually up?
+# When the Mac disconnects, the RemoteForward 127.0.0.1:60639 tunnel dies, so
+# every agentic run in the NEXT generation would get no LLM endpoint -> the
+# driver crashes (exit=2) -> ERROR slots -> the target never completes -> the
+# holder self-clones anyway -> the next generation ALSO runs against a dead
+# tunnel -> repeat. That disconnect->churn loop is what silently burned ~140
+# node-hours. This gate stops the sweep BEFORE launching a cycle into a dead
+# tunnel. Returns 0 (up) only on a real HTTP 200 from the models endpoint.
+ARGO_URL="${CHEMKIT_LLM_BASE_URL:-http://127.0.0.1:60639/v1}/models"
+argo_up() {
+    local code
+    code=$(curl -s --max-time 8 --noproxy '*' -o /dev/null -w '%{http_code}' \
+                "$ARGO_URL" 2>/dev/null)
+    [ "$code" = "200" ]
+}
+
 # Sweep complete? every (molecule,model) has REPEAT REAL (PASS/FAIL) runs.
 # CRITICAL: count only scored runs, NOT ERROR result.jsons (dead-node
 # remote_host_unreachable, no_agent_run, encoding corruption). An ERROR is an
@@ -142,6 +158,16 @@ holder_running() {
 # allocation). We also relaunch if the sweep process died while the holder is
 # still up (mid-window crash).
 
+# Starting this watcher IS the resume signal (the user reconnected and re-launched
+# it). Clear any stale disconnect/stall markers from a PRIOR aborted run so a fresh
+# node-holder's startup guard (in aurora_nodeholder.pbs) does not immediately bail
+# thinking the sweep is still disconnected. .sweep_done is left intact — a truly
+# complete sweep should stay complete.
+if [ -f "$REPO/.sweep_disconnected" ] || [ -f "$REPO/.sweep_stalled" ]; then
+    log "clearing stale marker(s) from a prior aborted run: $(ls "$REPO"/.sweep_disconnected "$REPO"/.sweep_stalled 2>/dev/null | xargs -n1 basename | tr '\n' ' ')"
+    rm -f "$REPO/.sweep_disconnected" "$REPO/.sweep_stalled"
+fi
+
 log "watching gen counter; suite=$SUITE repeat=$REPEAT models=${MODELS[*]}"
 last_gen=""
 while true; do
@@ -174,6 +200,22 @@ PY
     # nodes during the queue gap between a holder's death and its clone starting.
     if [ -n "$gen" ] && [ -s "$NODES_FILE" ] && [ "$running" -eq 0 ] \
        && { [ "$gen" != "$last_gen" ] || holder_running; } && holder_running; then
+        # ── Connectivity gate (disconnect guard): NEVER launch a new cycle into a
+        # dead argo tunnel. If the user's Mac dropped the login-node RemoteForward,
+        # the endpoint is unreachable and every run this generation would crash
+        # (exit=2) -> ERROR slots -> unreachable target -> self-clone -> churn.
+        # Behavior on disconnect: leave any CURRENTLY-RUNNING generation alone (we
+        # only reach here when running==0, i.e. nothing is in flight), STOP the next
+        # cycle, release the held nodes so billing stops immediately, and exit. The
+        # sweep is resume-safe: re-launch this watcher once reconnected.
+        if ! argo_up; then
+            log "ARGO TUNNEL DOWN (${ARGO_URL} not 200) — login-node/Mac disconnect."
+            log "NOT launching the next cycle. Releasing held nodes to stop billing,"
+            log "then exiting. Re-run this watcher after reconnecting (resume-safe)."
+            { echo "argo disconnect at gen=$gen ($(date '+%F %T')); next cycle withheld, holders released"; } > "$REPO/.sweep_disconnected"
+            qdel_holders
+            exit 5
+        fi
         log "gen=$gen (was ${last_gen:-none}), holder=R, sweep=0 -> launching against $(wc -l <"$NODES_FILE") nodes"
         activate
         PBS_NODEFILE="$NODES_FILE" nohup bash tools/parallel_suite.sh "$SUITE" "$REPEAT" "${MODELS[@]}" \

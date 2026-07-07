@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 83.36,
+    "llm_s": 20.58,
+    "engine_s": 62.78,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis: Pyridine**\n\n**Method Provenance Block:**\n- **Property:** Fukui reactivity indices (nucleophilicity f\u207b, electrophilicity f\u207a, dual descriptor)\n- **Level of theory:** DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit)\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz` (11 atoms: 1 nitrogen + 5 carbons + 5 hydrogens); used as-is in single-point calculations for the neutral, cationic (charge +1, multiplicity 2), and anionic (charge \u22121, multiplicity 2) species.\n- **Solvent / environment:** Gas phase\n- **Charge and multiplicity:** Neutral: charge 0, multiplicity 1; Cation: charge +1, multiplicity 2; Anion: charge \u22121, multiplicity 2\n- **Software:** PySCF (DFT backend)\n- **Convergence:** SCF converged for all three species; charge conservation checks passed (\u03a3(f\u207a) = 1.0000, \u03a3(f\u207b) = 1.0000).\n\n**Key Results:**\n\nFukui indices were computed by finite differences in Mulliken atomic charges across the neutral, singly oxidized, and singly reduced species.\n\n**Most electrophilic site:** Nitrogen (atom 1) with f\u207a = **0.48422572** \u2014 highly susceptible to nucleophilic attack.\n\n**Most nucleophilic site:** Carbon at position 4 (index 3) with f\u207b = **0.1182626** \u2014 the meta carbon, most susceptible to electrophilic attack.\n\n**Full per-atom Fukui indices:**\n- Neutral charges (Mulliken): N \u22120.227, C\u2081 \u22120.098, C\u2082 \u22120.101, C\u2083 \u22120.101, C\u2084 \u22120.034, C\u2085 \u22120.034, H\u00d75 +0.112 to +0.120\n- f\u207a (electrophilicity): N 0.4842, C\u2081 0.3245, C\u2082 0.1403, C\u2083 0.1404, C\u2084 0.2996, C\u2085 0.2995, H \u22120.14 to \u22120.14\n- f\u207b (nucleophilicity): N 0.0641, C\u2081 0.0062, C\u2082 0.1182, C\u2083 0.1183, C\u2084 0.1121, C\u2085 0.1120, H +0.083 to +0.098\n- f\u2070 (dual descriptor): N 0.2742, C\u2081 0.1653, C\u2082 0.1293, C\u2083 0.1293, C\u2084 0.2058, C\u2085 0.2057, H \u22120.023 to \u22120.029\n- Dual descriptor (f\u207a \u2212 f\u207b): N 0.4201, C\u2081 0.3183, C\u2082 0.0221, C\u2083 0.0221, C\u2084 0.1876, C\u2085 0.1875, H \u22120.224 to \u22120.235\n\nThe results confirm pyridine's known reactivity: the nitrogen is dominantly electrophilic, the meta carbons are most nucleophilic, and hydrogens are universally soft (negative dual descriptor). A visualization was generated at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_claude-haiku-4.5/20260706-185044_pyridine_fukui_reactivity/agent_call_01_plot.png`.\n\n**Integrity check:** `trustworthy: true` \u2014 all internal consistency checks passed."
+}

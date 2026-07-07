@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 42.55,
+    "llm_s": 35.82,
+    "engine_s": 6.2,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui reactivity (Fukui indices f\u207a/f\u207b)** \u2014 semi-empirical tight-binding, GFN2-xTB (xtb), gas phase, charge 0, multiplicity 1.\nGeometry: user-supplied `/home/erobles/\u2026/ferrocene.xyz`, fixed (no optimization).\nCalculated with neutral, cation (+1), and anion (\u20131) single points at GFN2-xTB to estimate atom-condensed Fukui functions. SCF converged for all states; no warnings reported.\n\nResults (Mulliken scheme):\n\u2022 Atoms C1\u2013C5 & C12\u2013C16: f\u207a \u2248 0.013638348, f\u207b \u2248 0.012179196  \n\u2022 H atoms:             f\u207a \u2248 0.063476418, f\u207b \u2248 0.061882787  \n\u2022 Fe (atom 11):       f\u207a = 0.22885456, f\u207b = 0.25938191 \u2190 **most electrophilic/nucleophilic site**  \n\nCommand run:  \n```\n/home/erobles/\u2026/cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/\u2026/ferrocene.xyz --out /home/erobles/\u2026/ferrocene_fukui_reactivity_live.json\n```  \nOutput JSON: `/home/erobles/\u2026/ferrocene_fukui_reactivity_live.json`  "
+}

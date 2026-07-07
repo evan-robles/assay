@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.77,
+    "llm_s": 26.66,
+    "engine_s": 23.11,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui functions (electrophilic f+, nucleophilic f\u2212, and dual descriptor) were computed for ferrocene with the chemkit `fukui-reactivity` skill at the GFN2-xTB level (xtb backend), gas phase.  \n\u2022 Geometry: taken as-is from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz (no re-optimization).  \n\u2022 Electronic states: neutral (charge 0, multiplicity 1), cation (charge +1, multiplicity 2), and anion (charge \u20131, multiplicity 2) were each run as single-point GFN2-xTB calculations; Fukui indices were obtained by finite-difference of Mulliken charges.  \n\u2022 Environment: gas phase (no implicit solvent).  \n\u2022 Software: xtb 6.x (called via chemkit), tight-binding Hamiltonian GFN2-xTB. SCF cycles converged automatically (xtb default).  \n\nHeadline result \u2013 most electrophilic site: Fe atom (index 11, 1-based) with f+ = 0.22885456 (dimensionless). The same Fe atom is also the most nucleophilic with f\u2212 = 0.25938191.  \n\nLive log: the run streamed to the file fukui_<timestamp>.out in the working directory; it can be inspected or tailed for SCF details and convergence history.  \n\nWarnings from chemkit (verbatim):  \n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n\u2022 common header present  \n\nThe integrity check reports status \u201cok\u201d with trustworthy = true. All required conservation tests (\u03a3f\u22481) passed.  \n\nThe values reported are computed; no experimental reference is supplied here."
+}

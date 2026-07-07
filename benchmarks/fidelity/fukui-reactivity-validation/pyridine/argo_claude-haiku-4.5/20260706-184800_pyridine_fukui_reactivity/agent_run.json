@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 81.74,
+    "llm_s": 18.3,
+    "engine_s": 63.44,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were calculated for pyridine using DFT with B3LYP/def2-TZVP basis set (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. The analysis included finite-difference Fukui descriptors for nucleophilic (f\u207b) and electrophilic (f\u207a) attack sites, plus the dual descriptor. The most electrophilic site is the nitrogen atom (f\u207a = 0.48423), indicating strong preference for nucleophilic addition at N. The most nucleophilic site is ortho-carbon C4 (f\u207b = 0.11826), showing secondary reactivity. All per-atom Fukui indices, charges, and dual descriptors are reported in the results table. SCF converged with charge conservation passed (sum f\u207a = 1.0000, sum f\u207b = 1.0000). Integrity status: OK, trustworthy. The calculation was a single point on the provided pyridine.xyz geometry without relaxation. A Fukui reactivity plot was generated and saved to the output directory.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}

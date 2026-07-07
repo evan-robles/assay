@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 121.66,
+    "llm_s": 16.8,
+    "engine_s": 104.86,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Aniline**\n\nFukui reactivity indices were computed using DFT at the B3LYP/def2-TZVP level (tier `standard`) in the gas phase, with charge 0 and multiplicity 1 for the neutral molecule. The cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2) were computed to derive f\u207a and f\u207b indices. Mulliken population analysis provided charge distributions. The geometry was user-supplied and not re-optimized at DFT level.\n\n**Key findings:**\n- **Most electrophilic site:** Ortho-carbon (C3), f\u207a = +2.298, dual descriptor = +2.231\n- **Most nucleophilic site:** Nitrogen (N), f\u207b = +0.205, dual descriptor = +1.465\n- All SCF states converged; charge conservation checks passed (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000)\n\nThe results are consistent with aniline's known preference for ortho/para electrophilic aromatic substitution, driven by the electron-donating amino group. A reactivity visualization has been generated. All convergence and integrity checks returned `ok` with `trustworthy = true`.\n\n**Method:** DFT, B3LYP/def2-TZVP (PySCF), gas phase, neutral/cation/anion states, Mulliken charges, ASE-based property definitions.</prose>\n<parameter name=\"value\">2.2975867"
+}

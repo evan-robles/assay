@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 138.7,
+    "llm_s": 25.54,
+    "engine_s": 112.58,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Property:** Condensed Fukui reactivity descriptors (f\u207a, f\u207b, dual descriptor) for phenol, from finite-difference Mulliken atomic charges of the neutral, cation (N\u22121), and anion (N+1) states.\n\n**Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`, which expands to exactly this functional/basis), computed with PySCF. Exact four-center two-electron integrals were used (density fitting OFF by default). Frontier states: cation charge +1, multiplicity 2; anion charge \u22121, multiplicity 2 (auto-derived from the singlet parent). Partial charges: Mulliken (PySCF).\n\n**Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (13 atoms), used as-is \u2014 this is a single-point Fukui analysis at that fixed geometry, not re-optimized.\n\n**Environment:** Gas phase (no implicit solvent), as requested.\n\n**Charge / multiplicity:** Parent charge 0, multiplicity 1 (closed-shell); open-shell N\u00b11 states treated as doublets (UKS).\n\n**Software:** PySCF (DFT backend).\n\n**Results (headline):**\n- **Most electrophilic site** (largest f\u207a): atom index 3 (1-based), a ring carbon (C), **f\u207a = 2.1028319** \u2014 this is the reported headline value.\n- **Most nucleophilic site** (largest f\u207b): atom index 1 (1-based), the oxygen (O), **f\u207b = 0.16201477**.\n\nPer-atom (order O, C, C, C, C, C, C, H, H, H, H, H, H):\n- f\u207a = [\u22120.99514, 0.39933, 2.10283, 1.61968, \u22120.34201, \u22120.28911, 1.30798, \u22120.73392, \u22120.27466, \u22120.91706, \u22120.62992, \u22120.29592, 0.04790]\n- f\u207b = [0.16201, 0.04877, 0.07097, 0.07050, 0.02670, 0.02095, 0.12352, 0.08232, 0.08815, 0.08111, 0.08049, 0.09350, 0.05101]\n- dual descriptor (f\u207a\u2212f\u207b) = [\u22121.15715, 0.35056, 2.03186, 1.54918, \u22120.36871, \u22120.31006, 1.18446, \u22120.81624, \u22120.36280, \u22120.99817, \u22120.71040, \u22120.38941, \u22120.00311]\n\nNote: some individual f\u207a values are large and negative, which is common when the N+1 (anion) Mulliken populations are diffuse/poorly localized in a large basis like def2-TZVP; Mulliken-based Fukui indices are basis-set sensitive and best read as qualitative site rankings rather than precise magnitudes.\n\n**Convergence / integrity:** The engine's integrity gate returned **status = ok, trustworthy = true**. All integrity checks passed:\n- `fukui_charge_conservation_f+`: ok \u2014 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `fukui_charge_conservation_f-`: ok \u2014 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- `schema_header`: ok \u2014 \"common header present\"\n\n**Warnings:** No warnings were reported by the tool (the result JSON contained no `warnings` array entries; the integrity `checks` above all passed).\n\n**Reproducibility:** Command \u2014 `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard <phenol.xyz>`. A per-atom bar chart of f\u207a/f\u207b/dual was written to `.../20260706-184825_phenol_fukui_reactivity/agent_call_01_plot.png`.\n\nNo experimental/literature comparison is offered; this is a purely computed result."
+}

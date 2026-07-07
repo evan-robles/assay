@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 85.58,
+    "llm_s": 24.97,
+    "engine_s": 60.61,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui Reactivity Analysis for Pyridine\n\nFukui reactivity indices for pyridine were computed using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (tier `standard`, density-fit) in the gas phase. The calculation was performed using PySCF with a charge of 0 and a multiplicity of 1 for the neutral molecule. The input geometry was provided by the user at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz` and was not optimized at this level of theory. SCF converged for all states.\n\nThe fukui indices are as follows (values for f+, f-, f0, and dual descriptor):\n\n| Atom | Symbol | f+ (Electrophilic Attack) | f- (Nucleophilic Attack) | f0 (Radical Attack) | Dual Descriptor (f0 - f+) |\n|---|---|---|---|---|---|\n| 1 | N | 0.48422572 | 0.064122671 | 0.2741742 | 0.42010305 |\n| 2 | C | 0.32447225 | 0.0061877146 | 0.16532998 | 0.31828454 |\n| 3 | C | 0.14032092 | 0.11823139 | 0.12927615 | 0.02208953 |\n| 4 | C | 0.14039588 | 0.11826260 | 0.12932924 | 0.022133281 |\n| 5 | C | 0.29962627 | 0.11206595 | 0.20584611 | 0.18756032 |\n| 6 | C | 0.29947707 | 0.11200985 | 0.20574346 | 0.18746722 |\n| 7 | H | -0.14151320 | 0.08284851 | -0.029332343 | -0.22436171 |\n| 8 | H | -0.13368410 | 0.09817949 | -0.017752309 | -0.23186359 |\n| 9 | H | -0.13365905 | 0.09818226 | -0.017738396 | -0.23184131 |\n| 10 | H | -0.13981630 | 0.09496009 | -0.022428104 | -0.23477639 |\n| 11 | H | -0.13984545 | 0.09494948 | -0.02244799 | -0.23479493 |\n\nThe most electrophilic site is Atom 1 (N), with an f+ value of 0.48422572.\nThe most nucleophilic site is Atom 4 (C), with an f- value of 0.11826260.\n\n**Warnings:**\n- `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\\u00b11 state did not converge)`\n- `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\\u00b11 state did not converge)`"
+}

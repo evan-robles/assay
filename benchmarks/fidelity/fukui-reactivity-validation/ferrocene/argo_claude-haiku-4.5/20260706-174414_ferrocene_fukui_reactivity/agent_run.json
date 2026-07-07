@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.84,
+    "llm_s": 14.61,
+    "engine_s": 6.22,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui Reactivity Analysis** \u2014 GFN2-xTB (xtb, semi-empirical tight-binding), gas phase, charge 0 / multiplicity 1 (with cation +1/doublet and anion \u22121/doublet computed to derive the Fukui indices). Geometry: input structure from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` (21 atoms, not re-optimized). Fukui indices computed via finite differences in partial atomic charges (Mulliken, GFN2-xTB scheme) between neutral, singly oxidized (cation), and singly reduced (anion) states. Both charged states converged; charge conservation checks passed (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000). **Key finding:** The iron center is the most electrophilic (f\u207a = 0.22885) and most nucleophilic (f\u207b = 0.25938) site in ferrocene, reflecting its central role in the molecule's electronic structure and reactivity. The dual descriptor (f\u207a \u2212 f\u207b = \u22120.0305) indicates slight nucleophilic preference. Cyclopentadienyl carbons and hydrogens show much lower Fukui indices (~0.01\u20130.06), confirming they are far less reactive than the Fe center. Visualization saved to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-haiku-4.5/20260706-174414_ferrocene_fukui_reactivity/agent_call_01_plot.png`.</prose>\n<parameter name=\"value\">0.22885"
+}

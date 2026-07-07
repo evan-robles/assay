@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 131.35,
+    "llm_s": 25.44,
+    "engine_s": 105.4,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Property** \u2014 Condensed Fukui reactivity descriptors (finite-difference, from Mulliken partial charges) for aniline, identifying the most electrophilic and most nucleophilic sites.\n\n**Level of theory** \u2014 DFT, tier `standard` = **B3LYP/def2-TZVP** (explicitly requested functional=b3lyp, basis=def2-tzvp), in **PySCF**. Density fitting was OFF (chemkit default \u2014 exact four-center integrals, plain RKS/UKS).\n\n**Geometry provenance** \u2014 User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`, 14 atoms). The descriptors were computed at that geometry as supplied; the geometry was not re-optimized in this run (a Fukui run performs single-point SCFs on the neutral, cation, and anion states at the given geometry).\n\n**Solvent / environment** \u2014 **Gas phase** (no solvent).\n\n**Charge & multiplicity** \u2014 Parent: charge 0, multiplicity 1 (closed-shell RKS). N\u22121 cation state: charge +1, multiplicity 2 (UKS doublet). N+1 anion state: charge \u22121, multiplicity 2 (UKS doublet).\n\n**Software** \u2014 PySCF via chemkit (`dft` backend). Partial-charge scheme: Mulliken (PySCF).\n\n**Results (dimensionless condensed Fukui indices):**\n- **Most electrophilic site (largest f\u207a): atom 3 (C), f\u207a = 2.2975867** \u2014 this is the headline value. (Atom 4, also C, is essentially degenerate at f\u207a = 2.2965637, reflecting the ortho-related ring carbons.)\n- **Most nucleophilic site (largest f\u207b): atom 1 (N), f\u207b = 0.20452359** \u2014 the amino nitrogen, as chemically expected for aniline.\n\n**Convergence & integrity** \u2014 Integrity status: **ok**, trustworthy: **true**. All integrity checks passed: f\u207a charge conservation sum(f\u207a) = 1.0000, f\u207b charge conservation sum(f\u207b) = 1.0000, and schema header present. The engine's `warnings` array was empty \u2014 **no warnings reported**. (Note: a large drift from 1.0 in either Fukui sum would indicate an N\u00b11 state failed to converge; here both sum to 1.0000, so the cation and anion SCFs converged cleanly.)\n\n**A note on the f\u207a magnitude:** condensed Fukui indices from finite differences of Mulliken charges can take values well outside the naive [0,1] range for individual atoms (and even go negative) because Mulliken populations redistribute strongly upon adding/removing an electron; the sums are what are conserved to 1.0. So f\u207a = 2.30 for the ring carbon is a valid Mulliken-condensed value, not an error \u2014 it simply reflects Mulliken's known basis-set sensitivity at this larger def2-TZVP basis. Interpret the values comparatively (which site is most reactive) rather than as absolute probabilities.\n\n**Reproducibility** \u2014 Command: `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard <aniline.xyz>`. A per-atom bar chart of f\u207a/f\u207b/dual was written to `.../20260706-171631_aniline_fukui_reactivity/agent_call_01_plot.png`. The live engine `.out` log is streamed to the caller's cwd as `fukui_<timestamp>.out` during the run.\n\nNo experimental or literature comparison is offered (none was requested)."
+}

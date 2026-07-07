@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 146.21,
+    "llm_s": 34.18,
+    "engine_s": 111.39,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Phenol Fukui reactivity descriptors** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals, no density fitting) in PySCF via chemkit, gas phase, charge 0, multiplicity 1. Geometry: fixed input from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (no optimization). Fukui f\u207a/f\u207b/dual descriptors computed as single points on the neutral geometry; cation and anion states treated at their respective gas-phase doublet spin. SCF converged; integrity checks passed.\n\nMost electrophilic site: C atom 3 (1-based indexing) with f\u207a = 2.1028319  \nMost nucleophilic site: O atom 1 with f\u207b = 0.16201477  \n\nWarnings (verbatim):  \n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n- common header present  \n\nOutput JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmpb0rlvrxp/live.json`  \nCLI invocation:  \n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpb0rlvrxp/live.json`"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.47,
+    "llm_s": 14.7,
+    "engine_s": 9.77,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of ferrocene was performed using the GFN2-xTB method in the gas phase, with a charge of 0 and multiplicity of 1.\n\nThe results indicate that the iron atom (atom 11) is the most reactive site for both electrophilic and nucleophilic attack.\n\n*   **Susceptibility to Nucleophilic Attack (f+)**: The iron atom is the most electrophilic site, with a Fukui(+) index of **0.22885**.\n*   **Susceptibility to Electrophilic Attack (f-)**: The iron atom is also the most nucleophilic site, with a Fukui(-) index of **0.25938**.\n*   **Susceptibility to Radical Attack (f0)**: The Fukui(0) index for the iron atom is **0.24412**.\n\nThe calculation's integrity is rated as trustworthy. The sum of both f+ and f- indices across all atoms is 1.0000, which is consistent with theory and suggests the underlying single-point calculations for the neutral, cation, and anion states were reliable."
+}

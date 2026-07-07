@@ -1,0 +1,31 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 54.64,
+    "llm_s": 6.52,
+    "engine_s": 48.12,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "charge conservation warnings indicating drift in the N+1 and N\u22121 states"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis on acrolein was performed using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase. The calculation used charge 0 and multiplicity 1. Results indicate the most electrophilic site is the carbon atom labeled 4, with a Fukui plus value of approximately 0.6423, while the most nucleophilic site is the oxygen atom labeled 1, with a Fukui minus value of approximately 0.3939. The dual descriptor values suggest regions of nucleophilicity and electrophilicity consistent with the molecular structure. The analysis includes plots and charge conservation warnings, noting a large drift suggesting that the N+1 and N\u22121 states did not fully converge, which adds some caution to the interpretation."
+}

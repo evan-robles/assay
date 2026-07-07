@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 58.21,
+    "llm_s": 23.54,
+    "engine_s": 33.9,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis of Acrolein\n\n**Method Provenance Block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, dual descriptor) from finite-difference frozen-geometry Mulliken populations of the N, N\u22121 (cation), and N+1 (anion) states.\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (functional and basis explicitly requested). Density fitting **OFF** (chemkit default = exact four-center integrals, plain RKS/UKS).\n- **Software:** PySCF (via chemkit `fukui` engine subcommand).\n- **Geometry provenance:** User-supplied `.xyz` (`acrolein.xyz`, 8 atoms: O, C, C, C, H, H, H, H). Used **as-is** \u2014 the Fukui workflow does single-point energies on the fixed input geometry for all three charge states; no geometry optimization was performed at this level.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** Parent state charge 0, multiplicity 1 (closed-shell singlet, RKS). Cation state: charge +1, multiplicity 2 (doublet, UKS). Anion state: charge \u22121, multiplicity 2 (doublet, UKS).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Headline result**\n- **Most electrophilic site (largest f\u207a):** atom index 4 (1-based), **carbon**, with **f\u207a = 0.64232** \u2014 this is the terminal (\u03b2) carbon of the C=C\u2013C=O system, the expected site of nucleophilic attack (Michael acceptor position).\n- **Most nucleophilic site (largest f\u207b):** atom index 1 (1-based), **oxygen**, with **f\u207b = 0.39389**.\n\n**Per-atom Fukui functions** (order: O, C, C, C, H, H, H, H)\n- f\u207a: [0.40136, 0.022255, 0.43405, 0.64232, \u22120.15726, \u22120.20720, \u22120.062117, \u22120.073408]\n- f\u207b: [0.39389, 0.0059884, 0.091403, 0.087370, 0.085961, 0.18568, 0.084486, 0.065226]\n- dual descriptor (f\u207a \u2212 f\u207b): [0.0074780, 0.016267, 0.34264, 0.55495, \u22120.24322, \u22120.39288, \u22120.14660, \u22120.13863]\n\n**Convergence / integrity**\n- Engine integrity verdict: **status = ok, trustworthy = true**.\n- Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (both ~1.0, confirming the N\u00b11 states converged properly), and the schema header check passed.\n- **Warnings:** the result JSON's `warnings` array contained **no items \u2014 no warnings reported.** (The three integrity `checks` entries are informational and all passed with `ok: true`.)\n\n**Caveats (honest scope):** These are condensed Fukui indices derived from Mulliken populations, which are basis-set dependent and carry known limitations; treat them as reactivity *trends*, not absolute quantities. All three charge states were evaluated at the same fixed input geometry (no relaxation, no conformer averaging), gas phase only.\n\n**Reproducibility**\n- Command: `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard <acrolein.xyz>`\n- Bar-chart plot: `.../20260706-171103_acrolein_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental or literature comparison is offered (none was requested); this is a computed result."
+}

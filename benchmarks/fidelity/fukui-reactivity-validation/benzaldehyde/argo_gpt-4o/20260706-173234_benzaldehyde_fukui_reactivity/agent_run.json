@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 259.97,
+    "llm_s": 23.89,
+    "engine_s": 236.08,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Benzaldehyde**\n\nPerformed at the **DFT level of theory (B3LYP/def2-TZVP)**, tier `standard`, in the **gas phase**, with **charge 0** and **multiplicity 1**, using PySCF. Geometry was the provided input structure, no re-optimization performed.\n\n### Key Reactivity Indices (Mulliken scheme):\n- Most electrophilic atom (best nucleophile target): **C (atom 3, f\u207a = 0.3994)**\n- Most nucleophilic atom (best electrophile target): **O (atom 1, f\u207b = 0.2384)**\n\n### Fukui functions per atom:\n- f\u207a (N \u2192 N+1 perturbation): `[0.3788, -0.3517, 0.3994, 0.2116, ..., -0.1817]`\n- f\u207b (N \u2192 N\u22121 perturbation): `[0.2384, -0.0071, 0.0368, ..., 0.1258]`\n- Dual descriptor (local \u0394f): `[0.1404, -0.3446, 0.3626, ..., -0.3076]`\n\n### Result Visual:\nThe fukui property plot for the molecule (indicating nucleophilic/electrophilic sites) is available at this path: \n`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_gpt-4o/20260706-173234_benzaldehyde_fukui_reactivity/agent_call_01_plot.png`.\n\n### Reliability:\n- Integrity checks: Status **ok**, `trustworthy: true`. \n- Caveat-free charge conservation for f\u207a and f\u207b (each sum \u2248 1.0), no signs of state convergence drift.\n\nFor full data and Fukui indices `Nf+/-` explainability-ready mapped, report generation soon standard tightened tagged layer reliability"
+}

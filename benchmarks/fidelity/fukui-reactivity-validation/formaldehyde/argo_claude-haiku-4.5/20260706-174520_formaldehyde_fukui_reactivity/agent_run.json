@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.86,
+    "llm_s": 14.4,
+    "engine_s": 9.46,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde Fukui Reactivity** \u2014 DFT, B3LYP/def2-TZVP (tier `standard`, density-fitted), PySCF backend. Gas phase; charge 0 (neutral), multiplicity 1 (singlet ground state). Fukui indices computed via finite-difference Mulliken charges on neutral (N), cationic (N+1, doublet), and anionic (N\u22121, doublet) states, all SCF-converged.\n\n**Key results:**\n- **Most electrophilic atom:** Carbon (f\u207a = 0.7084), dual descriptor +0.5959\n- **Most nucleophilic atom:** Oxygen (f\u207b = 0.4674), dual descriptor +0.0007\n- **Hydrogen atoms:** f\u207a \u2248 \u22120.0883 (slightly nucleophilic), f\u207b \u2248 0.2101\n\nFukui + and \u2212 indices sum to 1.0 each (convergence confirmed). The high electrophilic character of the carbon confirms the expected reactivity: C=O is the primary site for nucleophilic addition. Mulliken charges and derivative Fukui values are reported to 5 significant figures as returned by the tool.\n\n**Method:** DFT with B3LYP functional, def2-TZVP basis, density fitting enabled (tier `standard` defaults). Geometry: fixed from user-supplied formaldehyde.xyz. No geometry optimization performed at this level.\n\n**Integrity:** `trustworthy: true`; all convergence checks passed.</prose>\n<parameter name=\"value\">0.7084"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.96,
+    "llm_s": 21.6,
+    "engine_s": 28.37,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan Fukui reactivity \u2014 computed result.** Method used: DFT with **b3lyp/def2-tzvp** as returned by chemkit, tier `standard`, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied fixed XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz` (9 atoms); the tool did not report a geometry optimization. Charge scheme: Mulliken (PySCF). Cation state used by the tool: charge +1, multiplicity 2; anion state: charge \u22121, multiplicity 2.\n\nHeadline site assignments from the chemkit result:\n- **Most electrophilic site**: atom 5 (C), `f_plus = 1.9242931`\n- **Most nucleophilic site**: atom 5 (C), `f_minus = 0.1616371`\n\nPer-atom values, in atom order O, C, C, C, C, H, H, H, H:\n- `fukui_plus`: [-1.3316182, 1.2286866, 1.2270264, 1.9233053, 1.9242931, -1.2190639, -1.2191056, -0.76678308, -0.76674059]\n- `fukui_minus`: [0.08382155, 0.089103093, 0.089304821, 0.161527, 0.1616371, 0.10248412, 0.1025135, 0.10481615, 0.10479266]\n- `fukui_zero`: [-0.62389834, 0.65889485, 0.65816561, 1.0424161, 1.0429651, -0.55828991, -0.55829603, -0.33098347, -0.33097396]\n- `dual_descriptor`: [-1.4154398, 1.1395835, 1.1377216, 1.7617783, 1.762656, -1.3215481, -1.321619, -0.87159923, -0.87153325]\n\nReproducibility artifacts returned by chemkit:\n- Plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_gpt-5.5/20260706-175135_furan_fukui_reactivity/agent_call_01_plot.png`\n- CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpvehb8sbb/live.json`\n- The returned result did not include a live `.out` log path; it did include the JSON output path in the CLI invocation above.\n\nIntegrity verdict from chemkit: `trustworthy: true`.\n\nWarnings/check details surfaced verbatim from the tool result:\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present"
+}

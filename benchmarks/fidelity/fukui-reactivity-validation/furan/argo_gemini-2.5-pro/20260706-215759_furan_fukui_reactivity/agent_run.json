@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 55.08,
+    "llm_s": 26.56,
+    "engine_s": 28.52,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have calculated the Fukui reactivity indices for furan using DFT at the B3LYP/def2-TZVP level of theory (tier 'standard') in the gas phase. The calculation was performed on the geometry provided in `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz` with a charge of 0 and a multiplicity of 1.\n\nThe Fukui indices predict sites for nucleophilic (f+), electrophilic (f-), and radical (f0) attack:\n\n| Atom | Symbol | f+      | f-      | f0      |\n|------|--------|---------|---------|---------|\n| 1    | O      | -1.3316 | 0.0838  | -0.6239 |\n| 2    | C      | 1.2287  | 0.0891  | 0.6589  |\n| 3    | C      | 1.2270  | 0.0893  | 0.6582  |\n| 4    | C      | 1.9233  | 0.1615  | 1.0424  |\n| 5    | C      | 1.9243  | 0.1616  | 1.0430  |\n| 6    | H      | -1.2191 | 0.1025  | -0.5583 |\n| 7    | H      | -1.2191 | 0.1025  | -0.5583 |\n| 8    | H      | -0.7668 | 0.1048  | -0.3310 |\n| 9    | H      | -0.7667 | 0.1048  | -0.3310 |\n\nBased on these results, the most reactive site for both electrophilic and nucleophilic attack is atom 5 (a carbon atom), with the highest f+ value of 1.9243 and the highest f- value of 0.1616.\n\nNo warnings were reported by the calculation engine."
+}

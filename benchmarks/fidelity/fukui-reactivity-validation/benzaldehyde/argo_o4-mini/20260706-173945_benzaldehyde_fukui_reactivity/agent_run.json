@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 294.83,
+    "llm_s": 39.38,
+    "engine_s": 254.89,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzaldehyde Fukui reactivity (most electrophilic site f\u207a)** \u2014 DFT, tier standard (B3LYP/def2-TZVP, no density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: fixed at input `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz` (no optimization). SCF converged in all N, N+1, and N\u20131 states. Integrity checks: \n- fukui_charge_conservation_f\u207a OK; warning: \u201csum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d  \n- fukui_charge_conservation_f\u207b OK; warning: \u201csum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d  \n- schema_header OK; warning: \u201ccommon header present\u201d  \n\nMost electrophilic atom: C\u2083 (f\u207a = 0.39938963). Calculation command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpa7wpv493/live.json`."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 118.63,
+    "llm_s": 84.16,
+    "engine_s": 34.48,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for acrolein \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0, multiplicity 1.  Geometry: user-supplied acrolein.xyz (no further relaxation; single-point N, N+1, and N\u22121 states were computed on that fixed geometry).  The f+ descriptor indicates the \u03b2-carbon of the enal (atom 4, index 3, symbol C) is the most electrophilic site with f+ = 0.64232102; the carbonyl oxygen (atom 1, index 0, symbol O) is the most nucleophilic with f\u2013 = 0.39388616.  The full per-atom descriptors are included in the JSON result, together with the dual descriptor.\n\nMethod provenance\n\u2022 Property: atom-condensed Fukui functions (f+, f\u2013, f0) and dual descriptor\n\u2022 Level of theory: B3LYP/def2-TZVP (density-fitted)  \u2014 chemkit tier `standard`\n\u2022 Geometry provenance: single-point on supplied /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz (no DFT re-optimization)\n\u2022 Solvent: gas phase (no continuum model)\n\u2022 Charge 0, multiplicity 1; cation (+1, doublet) and anion (\u20131, doublet) states computed for f\u00b1\n\u2022 Software: PySCF via chemkit fukui-reactivity skill (backend version bundled with chemkit 1.0.0)\n\u2022 Convergence: SCF for all three charge states converged; integrity check status OK, trustworthy = true.\n\nWarnings (verbatim from engine):\n1. sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n2. sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n3. common header present\n\nLive log: the calculation streamed to a fukui_\u2026\u2026out file in the working directory while running (available upon request)."
+}

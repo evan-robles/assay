@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 56.7,
+    "llm_s": 27.71,
+    "engine_s": 28.98,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis was performed on furan using DFT, as you requested.\n\n**Furan Fukui reactivity indices** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. The geometry was used as provided in `furan.xyz` without further optimization. The analysis involves three separate single-point energy calculations (for the neutral, cationic, and anionic species), all of which converged successfully. No warnings were reported by the engine.\n\nThe Fukui functions quantify an atom's reactivity toward different types of attack:\n*   **f(+) (or f_plus)**: Susceptibility to **nucleophilic attack** (the atom acts as an electrophile). A higher value indicates a better site for a nucleophile to attack.\n*   **f(-) (or f_minus)**: Susceptibility to **electrophilic attack** (the atom acts as a nucleophile). A higher value indicates a site that is more likely to attack an electrophile.\n*   **f(0) (or f_zero)**: Susceptibility to **radical attack**.\n\nBased on the calculation:\n*   The site most susceptible to nucleophilic attack (the most electrophilic site) is **atom C5**, with an f(+) value of 1.924.\n*   The site most susceptible to electrophilic attack (the most nucleophilic site) is also **atom C5**, with an f(-) value of 0.162.\n\nThe full Fukui indices for each atom are as follows:\n\n| Atom | Symbol | f(+) | f(-) | f(0) |\n|---:|:---|---:|---:|---:|\n| 1 | O | -1.332 | 0.084 | -0.624 |\n| 2 | C | 1.229 | 0.089 | 0.659 |\n| 3 | C | 1.227 | 0.089 | 0.658 |\n| 4 | C | 1.923 | 0.162 | 1.042 |\n| 5 | C | 1.924 | 0.162 | 1.043 |\n| 6 | H | -1.219 | 0.102 | -0.558 |\n| 7 | H | -1.219 | 0.103 | -0.558 |\n| 8 | H | -0.767 | 0.105 | -0.331 |\n| 9 | H | -0.767 | 0.105 | -0.331 |\n\nThe results indicate that the carbon atoms C4 and C5 are the most reactive sites in furan for all types of attack considered."
+}

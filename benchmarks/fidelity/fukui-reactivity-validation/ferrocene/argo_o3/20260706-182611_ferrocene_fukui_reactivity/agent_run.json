@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.71,
+    "llm_s": 19.71,
+    "engine_s": 6.99,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance & key results\nProperty: Atom-condensed Fukui functions f\u207a, f\u207b, f\u2070 and dual descriptor for ferrocene; identification of the most electrophilic (largest f\u207a) and most nucleophilic (largest f\u207b) sites.\nLevel of theory: GFN2-xTB (semi-empirical tight-binding) as implemented in the xtb 6 program.\nGeometry provenance: single-point Fukui analysis performed directly on the user-supplied geometry (/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz); no further optimization (GFN2-xTB//user geometry).\nSolvent / environment: gas phase (no implicit solvation model).\nCharge & multiplicity: neutral singlet parent (charge 0, multiplicity 1); cationic state (charge +1, multiplicity 2) and anionic state (charge \u20131, multiplicity 2) used for the finite-difference Fukui derivatives.\nSoftware: xtb 6 (called via chemkit fukui-reactivity skill).\nConvergence & caveats: run completed; integrity check status \"ok\" (trustworthy = true).  The following warnings were issued by the engine and are reproduced verbatim:\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nLive log file: written during the run by chemkit as <skill>_<timestamp>.out in the current working directory (available for inspection with `tail -f`).\n\nHeadline numerical findings (GFN2-xTB, gas phase)\nMost electrophilic atom (largest f\u207a): Fe (atom 11)  f\u207a = 0.22885456\nMost nucleophilic atom (largest f\u207b):  Fe (atom 11)  f\u207b = 0.25938191\n\nAbridged Fukui indices (per atom, 1-based indexing):\nAtom  f\u207a        f\u207b        f\u2070        Dual\n 1 C  0.0136383 0.0121792 0.0129088  0.0014592\n \u2026 (symmetry-equivalent cyclopentadienyl C/H atoms omitted for brevity) \u2026\n11 Fe 0.22885456 0.25938191 0.24411824 \u22120.030527354\n\nThe full table, dual descriptor map, and the plot image are available in the output directory along with the JSON result file (`\u2026/live.json`)."
+}

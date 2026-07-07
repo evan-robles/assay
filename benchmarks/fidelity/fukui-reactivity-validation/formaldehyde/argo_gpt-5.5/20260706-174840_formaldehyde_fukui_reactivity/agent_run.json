@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.32,
+    "llm_s": 18.99,
+    "engine_s": 9.33,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde Fukui reactivity \u2014 computed result.**\n\n**Method used:** DFT, tier `standard` with **B3LYP/def2-TZVP**, gas phase, charge 0, multiplicity 1. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz` (4 atoms; no geometry optimization reported by this skill result). Charges/Fukui functions used **Mulliken (PySCF)** populations. The tool result reported `program: dft`; no backend version string was returned.\n\n**Headline result:** most electrophilic site is atom 2, **C**, with **f+ = 0.7083913**. Most nucleophilic site is atom 1, **O**, with **f\u2212 = 0.46742464**.\n\nPer-atom values returned by chemkit:\n\n| atom label | element | f+ | f\u2212 | f0 | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | O | 0.46813824 | 0.46742464 | 0.46778144 | 0.00071359555 |\n| 2 | C | 0.7083913 | 0.11244422 | 0.41041776 | 0.59594709 |\n| 3 | H | -0.088269392 | 0.21007563 | 0.060903121 | -0.29834503 |\n| 4 | H | -0.088260145 | 0.21005551 | 0.060897683 | -0.29831566 |\n\nPartial charges returned: neutral = [-0.26363838, 0.083610379, 0.090009268, 0.090018737]; cation = [0.20378626, 0.19605459, 0.3000849, 0.30007425]; anion = [-0.73177662, -0.62478092, 0.17827866, 0.17827888]. The cation/anion states used charge +1/-1 and multiplicity 2.\n\n**Warnings / caveats surfaced verbatim from the tool result integrity checks:**\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nThe result did not include a separate `warnings` array. Engine integrity verdict: `trustworthy: true` (`status: ok`). Provenance: computed.\n\nReproducibility: CLI invocation returned by chemkit was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp2o5swxu2/live.json`. Plot written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_gpt-5.5/20260706-174840_formaldehyde_fukui_reactivity/agent_call_01_plot.png`. The tool response did not return a live `.out` log path, so I cannot report one without inventing it."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 47.54,
+    "llm_s": 37.22,
+    "engine_s": 9.79,
+    "turns": 5,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity indices (f+, f\u2013, dual descriptor)** \u2014 GFN2-xTB semi-empirical tight-binding (xtb), gas phase, charge 0, multiplicity 1. Geometry: user-supplied ferrocene.xyz, single-point (no geometry re-optimization). Partial charges: Mulliken (GFN2-xTB); anion/cation states derived from singlet parent (\u2192 doublet N\u00b11). Calculation converged; integrity.trustworthy = true. Integrity checks (all ok, severity \u201cwarning\u201d):   \u2022 \u201csum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d   \u2022 \u201csum(f\u2212) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d   \u2022 \u201ccommon header present\u201d  Most electrophilic site: atom 11 (Fe) with f+ = 0.22885456.  Most nucleophilic site: atom 11 (Fe) with f\u2013 = 0.25938191.  Command (JSON output):  /\u2026/cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpqthmdp14/live.json"
+}

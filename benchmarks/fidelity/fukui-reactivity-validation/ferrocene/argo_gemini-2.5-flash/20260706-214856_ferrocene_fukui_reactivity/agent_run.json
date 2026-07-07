@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.41,
+    "llm_s": 14.36,
+    "engine_s": 10.05,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for ferrocene were computed using the GFN2-xTB method (xtb backend) in the gas phase, with a charge of 0 and a multiplicity of 1. The geometry was taken from the user-provided file: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`. The most electrophilic site is the Iron (Fe) atom (atom index 10, label 11) with an f+ value of 0.22885456. The most nucleophilic site is also the Iron (Fe) atom (atom index 10, label 11) with an f- value of 0.25938191."
+}

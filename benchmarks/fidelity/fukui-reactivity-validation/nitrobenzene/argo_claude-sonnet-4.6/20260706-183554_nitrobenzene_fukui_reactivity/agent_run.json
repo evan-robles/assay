@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 210.66,
+    "llm_s": 38.0,
+    "engine_s": 172.66,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for nitrobenzene (14 atoms: 2 O, 1 N, 6 C, 5 H) computed at DFT tier 'standard' \u2014 B3LYP/def2-TZVP (PySCF RKS, density-fit RI) \u2014 gas phase, charge 0, multiplicity 1. Geometry: user-supplied nitrobenzene.xyz, taken as-is (no re-optimization). N\u00b11 states: cation (charge +1, mult 2), anion (charge \u22121, mult 2). Partial charges via Mulliken (PySCF). SCF converged; integrity status ok; trustworthy: true; sum(f+) = 1.0000; sum(f\u2212) = 1.0000. No warnings reported.\n\nHeadline result: the most electrophilic atom is Atom 4 (C, ipso carbon bearing \u2013NO\u2082) with f\u207a = 0.49641781. The most nucleophilic atom is Atom 5 (C, ortho carbon) with f\u207b = 0.10729. The \u2013NO\u2082 oxygens (atoms 1 & 2) each show f\u207a \u2248 0.473, consistent with their electron-withdrawing character. The dual descriptor for the ipso carbon is +0.51071, the largest in the molecule, classifying it as the strongest electrophilic center. No warnings were reported \u2014 this was a clean, fully converged run."
+}

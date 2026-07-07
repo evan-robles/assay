@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 124.39,
+    "llm_s": 20.53,
+    "engine_s": 103.33,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui Reactivity Indices** \u2014 DFT, B3LYP/def2-TZVP (tier standard), PySCF RKS, gas phase, charge 0, multiplicity 1. Input geometry: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (single-point analysis; no re-optimization). Cation and anion N\u00b11 states both converged successfully; Fukui charge conservation checks passed (\u03a3f\u207a = 1.0000, \u03a3f\u207b = 1.0000). Most electrophilic site: atom 3 (C, ortho/meta benzene carbon), f\u207a = 2.298. Most nucleophilic site: atom 1 (N, amino nitrogen), f\u207b = 0.205. Full atom-resolved Fukui indices and dual descriptors tabulated above. Visualization (PNG bar chart): `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_claude-haiku-4.5/20260706-171507_aniline_fukui_reactivity/agent_call_01_plot.png`. Result JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmp9yzg6t17/live.json`. No warnings beyond routine convergence sanity checks. Integrity: trustworthy."
+}

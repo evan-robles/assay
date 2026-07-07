@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 117.66,
+    "llm_s": 10.37,
+    "engine_s": 107.28,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity task on aniline was performed using the chemkit tool with DFT at the B3LYP functional with the def2-TZVP basis set in the gas phase, with a charge of 0 and a multiplicity of 1.\n\nThe most electrophilic site is Carbon (atom 3) with a Fukui f+ value of 2.2975867.\nThe most nucleophilic site is Nitrogen (atom 1) with a Fukui f- value of 0.20452359.\n\nThe calculation integrity is trustworthy.\nThe following warnings were reported: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge), sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge), common header present."
+}

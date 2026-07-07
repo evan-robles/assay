@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 41.85,
+    "llm_s": 13.16,
+    "engine_s": 28.69,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of furan was computed using **DFT, tier `standard` (B3LYP/def2-TZVP, density-fit)** in PySCF, gas phase, charge 0, multiplicity 1 (for the neutral parent) with N\u00b11 states (cation at +1/mult 2, anion at \u22121/mult 2). The geometry was the user-supplied furan.xyz structure, used as-is without re-optimization. Mulliken charge analysis was used to compute the Fukui indices f\u207a, f\u207b, and f\u2070, as well as the dual descriptor \u0394f. SCF converged; charge conservation checks passed (sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000). The most electrophilic site is C at position 5 (f\u207a = 1.9243), and the most nucleophilic site is also C at position 5 (f\u207b = 0.1616). The engine reports integrity status `ok` with `trustworthy: true`. A visualization plot was generated and saved to the agent's output directory."
+}

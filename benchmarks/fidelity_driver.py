@@ -398,6 +398,62 @@ def _has_encoding_corruption(*texts: Any) -> bool:
     return False
 
 
+# Fragments of the model's tool-calling machinery that must NEVER appear in the
+# agent's natural-language report. When the argo proxy garbles a response, the
+# internal tool-call scaffolding sometimes leaks verbatim into the report prose
+# (observed 2026-07-06: a gpt-4o run whose provenance text came back as
+# "ucingtion.finisha,smulti_tool_use.parallel(return<size/group/api ... sancicator
+# ... woulbx ...") — token-salad interleaved with tool-call tokens). These markers
+# are specific to that scaffolding and do not occur in legitimate chemistry prose,
+# so matching them does not false-positive on a real (if wrong) model answer.
+# NOTE: markers must be strict enough that they CANNOT collide with legitimate
+# report prose OR with metric keys that ride along in a result (e.g. the timing
+# field carries "tool_calls": N — so a bare "tool_call" substring would match
+# every clean run and wrongly flag it corrupt; verified 2026-07-06). Each entry
+# below is a scaffolding token that has no legitimate reason to appear in the
+# agent's natural-language chemistry report.
+_TOOLCALL_LEAK_MARKERS = (
+    "multi_tool_use.parallel",   # the exact leaked scaffolding seen in the wild
+    "multi_tool_use",            # any form of the parallel-tool wrapper
+    "<|im_start|>", "<|im_end|>",  # chat-template delimiters leaking into prose
+    "<|eot_id|>", "<|start_header_id|>",
+)
+
+
+def _has_token_corruption(*texts: Any) -> bool:
+    """Detect the SECOND argo-transport corruption flavor: not C0 control chars
+    (that is _has_encoding_corruption) but printable-ASCII token-salad in which the
+    model's tool-call scaffolding has leaked into what should be plain report text.
+
+    This is deliberately CONSERVATIVE — it fires ONLY on the presence of tool-call
+    machinery markers (_TOOLCALL_LEAK_MARKERS), which never legitimately appear in
+    a chemistry report. It does NOT try to judge 'gibberish' heuristically (word
+    entropy, dictionary hits, etc.): those would risk discarding a real but poorly
+    worded model answer, and a real wrong answer must be scored FAIL, not silently
+    re-run. Like _has_encoding_corruption, a hit means the run's data is a
+    transport fault and is flagged ERRORED / excluded from fidelity scoring."""
+    for t in texts:
+        if isinstance(t, str):
+            low = t.lower()
+            if any(m in low for m in _TOOLCALL_LEAK_MARKERS):
+                return True
+        elif isinstance(t, (list, tuple)):
+            if _has_token_corruption(*t):
+                return True
+        elif isinstance(t, dict):
+            if _has_token_corruption(*t.values()):
+                return True
+    return False
+
+
+def _has_transport_corruption(*texts: Any) -> bool:
+    """Any argo-transport corruption: malformed-Unicode C0 control chars OR
+    tool-call-scaffolding token-salad. This is the single predicate the driver
+    uses to decide a response is transport-corrupted (retry, then ERROR-exclude).
+    Both flavors are transit faults, never model-fidelity failures."""
+    return _has_encoding_corruption(*texts) or _has_token_corruption(*texts)
+
+
 class _Tee:
     """Duplicate writes to several streams (e.g. the real stdout AND a per-run
     .out log file), flushing each write so a `tail -f` on the file sees output
@@ -1842,8 +1898,15 @@ _CHEMKIT_TOOL = {
                 "functional": {"type": ["string", "null"], "description": "DFT functional"},
                 "basis": {"type": ["string", "null"], "description": "DFT/HF basis set"},
                 "tier": {"type": ["string", "null"],
-                         "enum": ["fast", "standard", "accurate", None],
-                         "description": "DFT tier preset"},
+                         # NOTE: null is expressed via the "null" in `type`, NOT by
+                         # putting None in `enum`. A None enum member is rejected by
+                         # stricter OpenAI-compatible backends (argo's Gemini
+                         # endpoint returns HTTP 500 "enum.N Input should be a valid
+                         # string" from Pydantic; observed 2026-07-06, all
+                         # gemini-2.5-pro/flash calls failed). Enum values must all
+                         # be strings; nullability comes from the type union above.
+                         "enum": ["fast", "standard", "accurate"],
+                         "description": "DFT tier preset (optional; omit for default)"},
                 "extra_args": {"type": "array", "items": {"type": "string"},
                                "description": "rare skill-specific CLI flags only "
                                               "(e.g. ['--nfrontier','3'])"},
@@ -2317,18 +2380,24 @@ def score_agent_run(spec: Dict[str, Any], truth: Dict[str, Any],
     # it as a fidelity pass/fail — same treatment as a crash. Excluded from the
     # pass-rate so the transport bug is not blamed on the model.
     reported = agent_run.get("reported", {}) or {}
-    if _has_encoding_corruption(reported, agent_run.get("prose")):
+    if _has_transport_corruption(reported, agent_run.get("prose")):
+        _enc = _has_encoding_corruption(reported, agent_run.get("prose"))
         result_record["overall"] = "ERROR"
         result_record["exit_code"] = 2
-        result_record["error"] = "encoding_corruption"
+        result_record["error"] = ("encoding_corruption" if _enc
+                                   else "token_corruption")
         result_record["error_detail"] = (
-            "agent output contains control-char corruption from malformed "
-            "Unicode escaping in transit (see _has_encoding_corruption); "
-            "excluded from fidelity scoring")
+            "agent output is corrupted in transit — "
+            + ("malformed Unicode escaping (C0 control chars; see "
+               "_has_encoding_corruption)" if _enc else
+               "tool-call scaffolding leaked into report prose (token-salad; "
+               "see _has_token_corruption)")
+            + "; excluded from fidelity scoring")
         if emit:
             print("\n==> DATA-INTEGRITY ERROR: agent output is corrupted "
-                  "(malformed Unicode escapes in transit) — run excluded from "
-                  "fidelity scoring, not counted as a model failure.")
+                  f"({'malformed Unicode escapes' if _enc else 'tool-call token-salad'} "
+                  "in transit) — run excluded from fidelity scoring, not counted "
+                  "as a model failure.")
         return result_record
 
     vfield = spec.get("report_value_field", "total_energy_eV")
@@ -2723,15 +2792,15 @@ def main() -> int:
             agent_run = run_live_agent(spec, run_dir=run_dir, model=model)
             if agent_run is None:
                 break  # agent died (not transport corruption) — handled below
-            if not _has_encoding_corruption(agent_run.get("reported", {}) or {},
-                                            agent_run.get("prose")):
+            if not _has_transport_corruption(agent_run.get("reported", {}) or {},
+                                             agent_run.get("prose")):
                 break  # clean response — proceed to scoring
             if _attempt < _max_retries:
-                print(f"[live] encoding corruption in transit (malformed Unicode "
-                      f"escapes) — retrying agent call "
+                print(f"[live] transport corruption in transit (malformed Unicode "
+                      f"escapes or tool-call token-salad) — retrying agent call "
                       f"({_attempt + 1}/{_max_retries})")
             else:
-                print(f"[live] encoding corruption persisted after "
+                print(f"[live] transport corruption persisted after "
                       f"{_max_retries} retries — giving up; run will be flagged "
                       f"ERRORED and excluded from scoring.")
         except RemoteHostUnreachable as e:

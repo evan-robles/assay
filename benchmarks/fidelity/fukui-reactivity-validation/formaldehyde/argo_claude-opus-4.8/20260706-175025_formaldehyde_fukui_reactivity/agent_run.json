@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.76,
+    "llm_s": 23.56,
+    "engine_s": 10.2,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis \u2014 Formaldehyde (H\u2082C=O)\n\n**Method-provenance block**\n- **Property:** Condensed-to-atom Fukui functions (f\u207a, f\u207b, f\u2070) and the dual descriptor, from a finite-difference (\u0394N = \u00b11) analysis of Mulliken atomic charges (scheme: Mulliken, PySCF).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (PySCF; density fitting is on by default in chemkit).\n- **Geometry provenance:** User-supplied `.xyz` (`.../formaldehyde/formaldehyde.xyz`, 4 atoms: O, C, H, H). Used **as-is**; the geometry was not re-optimized as part of this task \u2014 the reported values are a single-point-based condensed Fukui analysis at that fixed geometry.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** Reference (N) state \u2014 **charge 0, multiplicity 1 (singlet)**. The finite-difference states were computed as the cation (charge +1, multiplicity 2, doublet, UKS) and the anion (charge \u22121, multiplicity 2, doublet, UKS).\n- **Software:** PySCF (DFT backend).\n- **Convergence / integrity:** Integrity status **ok**, **trustworthy: true**. Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000.\n\n**Results** (atom order: 1=O, 2=C, 3=H, 4=H)\n\n| Atom | f\u207a (electrophilic attack) | f\u207b (nucleophilic attack) | f\u2070 | dual descriptor |\n|------|--------|--------|--------|--------|\n| O (1) | 0.46813824 | 0.46742464 | 0.46778144 | 0.00071360 |\n| C (2) | 0.70839130 | 0.11244422 | 0.41041776 | 0.59594709 |\n| H (3) | \u22120.08826939 | 0.21007563 | 0.06090312 | \u22120.29834503 |\n| H (4) | \u22120.08826015 | 0.21005551 | 0.06089768 | \u22120.29831566 |\n\n- **Most electrophilic site** (largest f\u207a, most susceptible to nucleophilic attack): **carbon (atom 2), f\u207a = 0.7083913** \u2014 consistent with the electrophilic carbonyl carbon. This is the headline value.\n- **Most nucleophilic site** (largest f\u207b, most susceptible to electrophilic attack): **oxygen (atom 1), f\u207b = 0.46742464**.\n- Mulliken partial charges (neutral): O \u22120.26363838, C +0.08361038, H +0.09000927, H +0.09001874.\n\n**Warnings (verbatim from the engine):**\n1. `fukui_charge_conservation_f+` (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. `fukui_charge_conservation_f-` (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. `schema_header` (severity: warning): \"common header present\"\n\nThese three checks are the engine's integrity checks and all passed (`ok: true`).\n\n**Reproducibility**\n- Command: `.../cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard .../formaldehyde.xyz --out .../live.json`\n- Note: Fukui functions are model-dependent (partition-scheme\u2013dependent); Mulliken-based condensed Fukui indices are known to be basis-set sensitive. Values are reported at the precision the engine returned; treat trends (which atom is most reactive) as more robust than absolute magnitudes. No experimental/literature comparison is offered."
+}

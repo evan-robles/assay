@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 44.67,
+    "llm_s": 16.25,
+    "engine_s": 28.43,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity Analysis of Furan** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, density-fit), PySCF backend, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `.xyz` file, used as-is (single-point calculation). Cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2) states computed for Fukui index calculation. All states converged successfully; charge conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000. Partial charges computed by Mulliken scheme (PySCF).\n\n**Fukui Indices (Mulliken-derived):**\n- Atom 1 (O): f\u207a = \u22121.332, f\u207b = +0.084, f\u2070 = \u22120.624, dual descriptor = \u22121.415\n- Atom 2 (C): f\u207a = +1.229, f\u207b = +0.089, f\u2070 = +0.659, dual descriptor = +1.140\n- Atom 3 (C): f\u207a = +1.227, f\u207b = +0.089, f\u2070 = +0.658, dual descriptor = +1.138\n- Atom 4 (C): f\u207a = +1.923, f\u207b = +0.162, f\u2070 = +1.042, dual descriptor = +1.762\n- Atom 5 (C): f\u207a = +1.924, f\u207b = +0.162, f\u2070 = +1.043, dual descriptor = +1.763\n- Atoms 6\u20139 (H): f\u207a ranging \u22121.219 to \u22120.767, f\u207b ranging +0.102 to +0.105, dual descriptors negative (\u22121.322 to \u22120.872)\n\n**Most Electrophilic Site:** Atom 5 (C, \u03b2-carbon), f\u207a = 1.9242931\n**Most Nucleophilic Site:** Atom 5 (C, \u03b2-carbon), f\u207b = 0.1616371\n\nThe strongly positive dual descriptors at atoms 4\u20135 (\u03b2-carbons) indicate these sites are electrophilic and preferentially undergo electrophilic aromatic substitution, consistent with furan's known chemical reactivity. The oxygen and hydrogens show nucleophilic character (negative dual descriptors).\n\nNo warnings reported. Integrity status: `ok`, `trustworthy: true`. All convergence checks passed."
+}

@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 120.8,
+    "llm_s": 7.48,
+    "engine_s": 113.32,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for phenol were computed using DFT at the B3LYP/def2-TZVP level of theory (PySCF) with density fitting enabled. The calculation was in the gas phase, with charge 0 and multiplicity 1.\n\nKey results include:\n1. **Most electrophilic site**: Carbon atom at position 3 (atomic index 2), with f\u207a = 2.102832.\n2. **Most nucleophilic site**: Oxygen atom at position 1 (atomic index 0), with f\u207b = 0.162015.\n\nWarnings (reported verbatim):\n- \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n\nThe integrity check returned \"trustworthy\" for this computation."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 269.49,
+    "llm_s": 41.63,
+    "engine_s": 227.85,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Most electrophilic site in benzaldehyde by the Fukui-plus (f+) index \u2014 DFT, tier `standard` (B3LYP/def2-TZVP with density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: fixed from the user-supplied benzaldehyde.xyz (no optimization). SCF converged cleanly with no warnings. Mulliken Fukui-plus indices were computed from the neutral and cationic states; the maximum f+ = 0.39938970 occurs at atom 3 (carbon)."
+}

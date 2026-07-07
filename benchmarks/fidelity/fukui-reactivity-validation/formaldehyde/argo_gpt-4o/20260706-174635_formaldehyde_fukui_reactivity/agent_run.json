@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.4,
+    "llm_s": 9.03,
+    "engine_s": 9.37,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity functions were computed for formaldehyde using DFT at the B3LYP/def2-TZVP level (tier `standard`) in the gas phase. A neutral singlet charge state (charge = 0, multiplicity = 1) was used for the neutral formaldehyde. The calculations were run using PySCF.\n\nKey Fukui Reactivity Values:\n- **Most Electrophilic Atom** (Maximum Fukui +): Carbon (C), Atom Index: 2, f\u207a = 0.7084\n- **Most Nucleophilic Atom** (Maximum Fukui -): Oxygen near: bond adjus, Atom-index ATtie. Bond adjacent: B}}.."
+}

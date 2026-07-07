@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 266.39,
+    "llm_s": 5.11,
+    "engine_s": 261.28,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui-reactivity analysis on benzaldehyde was performed using DFT at the B3LYP functional with the def2-TZVP basis set, in the gas phase, with charge 0 and multiplicity 1. The results include the partial charges, Fukui indices for nucleophilic and electrophilic attack, and the dual descriptor, along with the most reactive sites identified on the molecule.\n\nMethod used: DFT, tier 'standard' (B3LYP/def2-TZVP), in PySCF, gas phase.\n\nWarnings:\n- The sum of Fukui functions for f+ and f- show large drift, suggesting an N+1 or N-1 state may not have fully converged in charge conservation."
+}

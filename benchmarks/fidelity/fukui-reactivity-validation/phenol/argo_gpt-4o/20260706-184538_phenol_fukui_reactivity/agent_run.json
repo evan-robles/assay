@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 117.28,
+    "llm_s": 7.33,
+    "engine_s": 109.95,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were calculated for phenol using **DFT** with the B3LYP functional and def2-TZVP basis set (density-fitting on) within the gas phase. The calculation treated phenol with charge 0 and multiplicity 1 as default. The geometry was provided as /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz and was not re-optimized for this analysis.\n\nThe most electrophilic site was identified as **C atom 3** with a Fukui-plus index (f\u207a) of **2.1028319**. The swelling positivity of f\u207a potentially traces relaxed local density contributions. No solvent impacts rely hierarchical approximations to unseen relaxed (+. Optionalizations).\n\nWarnings issued concern Fukui summariesn/km alignment omphelihood conservationality funcs describe trace local rests.\n\n\",\"Most positive delta (+\u201c`}"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 74.95,
+    "llm_s": 40.92,
+    "engine_s": 34.03,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Based on your request, I have completed the Fukui reactivity analysis for acrolein.\n\nThe calculation was performed using Density Functional Theory (DFT) at the `standard` tier, which corresponds to the B3LYP functional and the def2-TZVP basis set. The calculation was run in the gas phase with a charge of 0 and a multiplicity of 1.\n\nThe results indicate the following sites of reactivity:\n\n*   **Susceptibility to Nucleophilic Attack (Electrophilic Site):** The most electrophilic atom, and therefore the most susceptible to nucleophilic attack, is the fourth atom (C4), with a Fukui(+) index of **0.64232**.\n*   **Susceptibility to Electrophilic Attack (Nucleophilic Site):** The most nucleophilic atom, and therefore the most susceptible to electrophilic attack, is the first atom (O1), with a Fukui(-) index of **0.39389**.\n\nThe atom ordering in the input structure was: O, C, C, C, H, H, H, H.\n\nThe full Fukui indices are as follows:\n*   `fukui_plus` (for nucleophilic attack): `[0.40136, 0.022255, 0.43405, 0.64232, -0.15726, -0.20720, -0.062117, -0.073408]`\n*   `fukui_minus` (for electrophilic attack): `[0.39389, 0.0059884, 0.091403, 0.087370, 0.085961, 0.18568, 0.084486, 0.065226]`\n*   `fukui_zero` (for radical attack): `[0.39763, 0.014122, 0.26272, 0.36485, -0.035649, -0.010762, 0.011184, -0.0040910]`\n\nThe calculation was completed successfully, and the engine's integrity check reported that the results are trustworthy. No warnings were issued."
+}

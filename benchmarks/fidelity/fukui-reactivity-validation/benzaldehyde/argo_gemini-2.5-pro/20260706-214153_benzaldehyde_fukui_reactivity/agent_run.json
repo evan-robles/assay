@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 256.26,
+    "llm_s": 32.91,
+    "engine_s": 223.36,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis was performed on benzaldehyde using Density Functional Theory (DFT) at the `tier 'standard'` level, which corresponds to the B3LYP functional and the def2-TZVP basis set. The calculation was run in the gas phase with a charge of 0 and a multiplicity of 1.\n\nThe calculation completed successfully, and the results indicate the sites most susceptible to electrophilic, nucleophilic, and radical attack.\n\n**Fukui Indices:**\n\n*   **f(+) (electrophilic attack):** The site most susceptible to attack by an electrophile (where a nucleophile would attack) is atom C3, with a value of 0.3994.\n*   **f(-) (nucleophilic attack):** The site most susceptible to attack by a nucleophile (where an electrophile would attack) is atom O1, with a value of 0.2384.\n*   **f(0) (radical attack):** The site most susceptible to radical attack is atom O1, with a value of 0.3086.\n\nThe full Fukui indices for each atom are as follows:\n\n| Atom | Symbol | f(+) | f(-) | f(0) |\n| :--- | :--- | :--- | :--- | :--- |\n| 1 | O | 0.3788 | 0.2384 | 0.3086 |\n| 2 | C | -0.3517 | -0.0071 | -0.1794 |\n| 3 | C | 0.3994 | 0.0368 | 0.2181 |\n| 4 | C | 0.2116 | 0.0833 | 0.1475 |\n| 5 | C | 0.3372 | 0.0537 | 0.1955 |\n| 6 | C | 0.2848 | -0.0023 | 0.1412 |\n| 7 | C | 0.2792 | 0.0583 | 0.1687 |\n| 8 | C | 0.3587 | 0.0824 | 0.2205 |\n| 9 | H | -0.1159 | 0.0603 | -0.0278 |\n| 10 | H | -0.2026 | 0.0587 | -0.0720 |\n| 11 | H | -0.1270 | 0.0742 | -0.0264 |\n| 12 | H | -0.1340 | 0.0660 | -0.0340 |\n| 13 | H | -0.1369 | 0.0715 | -0.0327 |\n| 14 | H | -0.1817 | 0.1258 | -0.0279 |\n\nThe calculation was performed with PySCF, and no warnings were reported. The results are trustworthy. The sum of f(+) and f(-) values are both 1.0000, indicating good numerical conservation."
+}

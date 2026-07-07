@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 215.86,
+    "llm_s": 43.82,
+    "engine_s": 172.04,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for nitrobenzene computed at the DFT level using B3LYP/def2-TZVP (PySCF, tier 'standard', density-fit RI), gas phase, charge 0, multiplicity 1. Geometry: user-supplied .xyz, not re-optimized (single-point Fukui). Partial charges via Mulliken (PySCF). N\u00b11 states: cation charge +1 mult 2, anion charge \u22121 mult 2. SCF converged; integrity.trustworthy = true; sum(f+) = 1.0000, sum(f\u2212) = 1.0000. No warnings reported. Headline value is the highest f+ (most electrophilic atom): atom 4 (C, ipso carbon bonded to \u2013NO\u2082), f+ = 0.49641783. Most nucleophilic atom: atom 5 (C, ortho), f\u2212 = 0.10728820. Method: DFT B3LYP/def2-TZVP via PySCF chemkit backend. CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard nitrobenzene.xyz."
+}

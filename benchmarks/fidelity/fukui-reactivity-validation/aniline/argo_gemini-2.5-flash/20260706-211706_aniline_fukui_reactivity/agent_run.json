@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 138.79,
+    "llm_s": 33.05,
+    "engine_s": 105.74,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for aniline were computed using Density Functional Theory (DFT) at the **B3LYP/def2-TZVP** level of theory (tier `standard`, density-fit) in PySCF. The calculation was performed in the **gas phase**, with a **charge of 0** and a **multiplicity of 1**. The geometry was taken from the user-supplied XYZ file at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`. This calculation was a single point on the provided geometry and did not involve optimization. The calculation internally determined the electron densities for the neutral, cationic (charge +1, multiplicity 2), and anionic (charge -1, multiplicity 2) states to derive the Fukui functions.\n\nThe most electrophilic site is **Carbon (C) at atom index 2** (1-based label 3), with a Fukui f+ index of **2.2975867**.\nThe most nucleophilic site is **Nitrogen (N) at atom index 0** (1-based label 1), with a Fukui f- index of **0.20452359**.\n\nThe Fukui indices for all atoms are as follows (atom order: N, C, C, C, C, C, C, H, H, H, H, H, H, H):\n*   **fukui_plus (electrophilicity):** [1.6696628, -1.9009183, 2.2975867, 2.2965637, -0.28837103, -0.28784779, 1.4031745, -0.35138762, -0.35134383, -0.82107488, -0.82130627, -0.34268953, -0.75088374, -0.75116473]\n*   **fukui_minus (nucleophilicity):** [0.20452359, -0.0037260934, 0.066571393, 0.066588805, 0.0083458972, 0.0083790984, 0.10973255, 0.08199599, 0.082013935, 0.076354671, 0.0763456, 0.087365768, 0.067758118, 0.067750673]\n*   **fukui_zero (radical attack):** [0.93709321, -0.95232219, 1.182079, 1.1815763, -0.14001256, -0.13973435, 0.7564535, -0.13469582, -0.13466495, -0.3723601, -0.37248033, -0.12766188, -0.34156281, -0.34170703]\n*   **dual_descriptor:** [1.4651392, -1.8971922, 2.2310153, 2.2299749, -0.29671692, -0.29622689, 1.2934419, -0.43338362, -0.43335776, -0.89742955, -0.89765187, -0.4300553, -0.81864186, -0.81891541]\n\nA plot summarizing the Fukui reactivity is available at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_gemini-2.5-flash/20260706-211706_aniline_fukui_reactivity/agent_call_01_plot.png`.\nThe calculation output log is at `/home/erobles/chem-skills/.fidelity_scratch/tmp7gz7htfv/live.json`."
+}

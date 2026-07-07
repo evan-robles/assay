@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 133.85,
+    "llm_s": 25.96,
+    "engine_s": 107.88,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [check ok: true]",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [check ok: true]",
+      "schema_header (severity: warning): common header present [check ok: true]"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui reactivity analysis of phenol\n\n**Method-provenance block**\n- **Property:** Fukui reactivity descriptors (condensed-to-atom f\u207a, f\u207b, f\u2070, and dual descriptor) from Mulliken finite-difference charges of the neutral, cation, and anion.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (this matches chemkit tier `standard`), via PySCF. Density fitting is on by default in chemkit. No functional/basis approximations beyond those.\n- **Geometry provenance:** user-supplied file `phenol.xyz` (13 atoms), used as-is \u2014 this is a single-point-type finite-difference property calculation; the geometry was **not** re-optimized at this level. All three charge states (N, N+1, N\u22121) were evaluated at the same input geometry.\n- **Solvent / environment:** **gas phase** (no implicit solvation).\n- **Charge & multiplicity:** neutral N = charge 0, multiplicity 1 (as requested). For the finite-difference states the engine used cation = charge +1, multiplicity 2 (open-shell, UKS) and anion = charge \u22121, multiplicity 2 (open-shell, UKS).\n- **Partial-charge scheme:** Mulliken (PySCF).\n- **Software:** PySCF (DFT backend).\n\n**Results**\n- **Most electrophilic site** (largest f\u207a, susceptible to nucleophilic attack): **atom 3 (C), f\u207a = 2.1028** \u2014 this is the headline value reported.\n- **Most nucleophilic site** (largest f\u207b, susceptible to electrophilic attack): **atom 1 (O), f\u207b = 0.16201**.\n\nPer-atom descriptors (atoms in input order O, C, C, C, C, C, C, H, H, H, H, H, H):\n- f\u207a (nucleophilic-attack susceptibility): [-0.99514, 0.39933, 2.10283, 1.61968, -0.34201, -0.28911, 1.30798, -0.73392, -0.27466, -0.91706, -0.62992, -0.29592, 0.047899]\n- f\u207b (electrophilic-attack susceptibility): [0.16201, 0.048773, 0.070972, 0.070499, 0.026705, 0.020949, 0.12352, 0.082321, 0.088148, 0.081106, 0.080487, 0.093496, 0.051014]\n- f\u2070 (radical): [-0.41656, 0.22405, 1.08690, 0.84509, -0.15765, -0.13408, 0.71575, -0.32580, -0.093254, -0.41798, -0.27471, -0.10121, 0.049457]\n- dual descriptor (f\u207a \u2212 f\u207b): [-1.15715, 0.35056, 2.03186, 1.54918, -0.36871, -0.31006, 1.18446, -0.81624, -0.36280, -0.99817, -0.71040, -0.38941, -0.0031148]\n\n**Convergence / integrity:** Engine integrity status = **ok, trustworthy = true**. All three integrity checks passed (ok: true). Charge conservation held: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000, indicating the N\u00b11 states converged properly.\n\n**Warnings (reproduced verbatim from the integrity checks):**\n1. fukui_charge_conservation_f+ (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check ok: true\n2. fukui_charge_conservation_f- (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check ok: true\n3. schema_header (severity: warning): \"common header present\" \u2014 check ok: true\n\n**Caveats:** Condensed Fukui functions are sensitive to the population-analysis scheme; Mulliken charges are basis-set dependent and can give large/negative condensed values (as seen here for several atoms), so relative ordering of sites is more robust than absolute magnitudes. Because f\u207a derives from the open-shell anion (radical N+1 state), those values are the least numerically stable of the set. The geometry was used as provided and not re-optimized at B3LYP/def2-TZVP.\n\n**Reproducibility:** command \u2014 `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard .../phenol.xyz`. A plot was written to `.../20260706-184139_phenol_fukui_reactivity/agent_call_01_plot.png`.\n\nNo experimental or literature comparison is offered."
+}

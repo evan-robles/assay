@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 211.76,
+    "llm_s": 32.39,
+    "engine_s": 178.82,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui indices for nitrobenzene (electrophilic f+, nucleophilic f\u2212, and dual descriptors) were computed via the chemkit fukui-reactivity skill.\n\nMethod provenance\nProperty: atomic Fukui functions f+, f\u2212, f0 and the corresponding dual descriptor; identification of the most electrophilic (largest f+) and most nucleophilic (largest f\u2212) sites.\nLevel of theory: DFT, tier standard \u21d2 B3LYP/def2-TZVP (no density fitting) in PySCF.\nGeometry provenance: single-point calculations on the user-supplied gas-phase geometry at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz (no re-optimization).\nSolvent / environment: gas phase (no implicit solvation model).\nCharge = 0, multiplicity = 1 (closed-shell singlet); cation (N\u22121) and anion (N+1) states treated as doublets.\nSoftware/backend: PySCF (via chemkit fukui-reactivity workflow).\nConvergence & integrity: SCF cycles for N, N\u00b11 states all converged; integrity.status = \"ok\", trustworthy = true.  The following warnings were returned by chemkit verbatim:\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nLive log: the run was streamed in real-time to a file named fukui_<timestamp>.out in the working directory (available for inspection).\n\nKey results\n\u2022 Most electrophilic atom (largest f+): atom 4 (C), f+ = 0.4964178.\n\u2022 Most nucleophilic atom (largest f\u2212): atom 5 (C), f\u2212 = 0.1072882.\n\u2022 Complete per-atom values are provided in the output JSON at /home/erobles/chem-skills/.fidelity_scratch/tmpj98_0mpd/live.json.\n\nHeadline numeric result (reported above as required by the interface): 0.4964178 (f+ on atom 4).\n\nAll results are computed; no experimental data are referenced."
+}

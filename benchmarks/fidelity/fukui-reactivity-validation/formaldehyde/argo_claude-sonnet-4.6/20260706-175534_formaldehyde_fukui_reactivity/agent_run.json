@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 45.61,
+    "llm_s": 36.01,
+    "engine_s": 9.61,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for formaldehyde (CH\u2082O, 4 atoms: O, C, H, H) were computed at the DFT level using B3LYP/def2-TZVP (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 1. Geometry was taken from the user-supplied .xyz file as-is. Partial charges were computed via Mulliken population analysis (PySCF) for the neutral (N), cation (N\u22121, doublet), and anion (N+1, doublet) states.\n\nMethod Provenance: DFT, B3LYP/def2-TZVP (density-fitted), PySCF RKS, gas phase, charge 0, multiplicity 1. Fukui indices derived from finite-difference Mulliken charges.\n\nResults (per atom, 1-based indexing):\n  Atom 1 (O):  f+ = 0.46814,  f- = 0.46742,  f0 = 0.46778,  dual = +0.00071\n  Atom 2 (C):  f+ = 0.70839,  f- = 0.11244,  f0 = 0.41042,  dual = +0.59595\n  Atom 3 (H):  f+ = -0.08827, f- = 0.21008,  f0 = 0.06090,  dual = -0.29835\n  Atom 4 (H):  f+ = -0.08826, f- = 0.21006,  f0 = 0.06090,  dual = -0.29832\n\nMost electrophilic site: C (atom 2), f+ = 0.70839 (headline value reported).\nMost nucleophilic site:  O (atom 1), f- = 0.46742.\n\nThe carbonyl carbon (C) is the dominant electrophilic site\u2014consistent with formaldehyde's well-known susceptibility to nucleophilic addition. The carbonyl oxygen (O) is the dominant nucleophilic site. Negative f+ values on H atoms are a Mulliken-scheme artifact.\n\nNo warnings were reported by the engine. Integrity checks passed: sum(f+) = 1.0000, sum(f-) = 1.0000, schema_header present. integrity.trustworthy = true.\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz\nPlot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_claude-sonnet-4.6/20260706-175534_formaldehyde_fukui_reactivity/agent_call_01_plot.png"
+}

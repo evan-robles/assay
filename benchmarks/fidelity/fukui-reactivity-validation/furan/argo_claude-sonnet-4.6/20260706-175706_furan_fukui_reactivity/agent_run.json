@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 61.37,
+    "llm_s": 33.76,
+    "engine_s": 27.62,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of furan performed with DFT at the B3LYP/def2-TZVP level (tier 'standard', density-fit RI, PySCF), gas phase, charge 0, multiplicity 1. Geometry used as-is from the supplied furan.xyz (9 atoms: O, C, C, C, C, H, H, H, H); no re-optimization. Fukui indices computed via finite-difference Mulliken charges (N, N+1, N-1 states). Integrity: trustworthy=true, all checks passed (sum(f+)=1.0000, sum(f-)=1.0000). The most electrophilic atom is atom 5 (C, one of the two alpha-carbons flanking oxygen) with f+ = 1.9242931, consistent with furan's well-known electrophilic aromatic substitution reactivity at the 2- and 5-positions. Negative Fukui values on O and H atoms are a known Mulliken-scheme artifact. No engine warnings reported. Plot at: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_claude-sonnet-4.6/20260706-175706_furan_fukui_reactivity/agent_call_01_plot.png. CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz"
+}

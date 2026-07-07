@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.59,
+    "llm_s": 19.44,
+    "engine_s": 10.15,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis was performed on formaldehyde using DFT with the B3LYP functional and def2-TZVP basis set (tier 'standard'). The calculation was run in the gas phase with a charge of 0 and a multiplicity of 1, using the PySCF program. No warnings were reported by the tool.\n\nThe results identify the most reactive sites in the molecule:\n\n*   **Site for Nucleophilic Attack (Electrophilic Atom):** The carbon atom (C) is predicted to be the most electrophilic site, making it the most likely target for a nucleophilic attack. It has the highest Fukui index for accepting an electron (f+ = 0.70839).\n*   **Site for Electrophilic Attack (Nucleophilic Atom):** The oxygen atom (O) is predicted to be the most nucleophilic site, making it the most likely target for an electrophilic attack. It has the highest Fukui index for donating an electron (f- = 0.46742).\n\nThe full Fukui indices for the atoms (in the order O, C, H, H) are:\n*   **f+ (attack by a nucleophile):** [0.46813824, 0.7083913, -0.088269392, -0.088260145]\n*   **f- (attack by an electrophile):** [0.46742464, 0.11244422, 0.21007563, 0.21005551]\n*   **f0 (attack by a radical):** [0.46778144, 0.41041776, 0.060903121, 0.060897683]"
+}

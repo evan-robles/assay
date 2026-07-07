@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 91.23,
+    "llm_s": 29.11,
+    "engine_s": 61.48,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis \u2014 Pyridine\n\n**Method-provenance block**\n- **Property:** Condensed (Mulliken-based) Fukui reactivity indices \u2014 f\u207a (electrophilic attack susceptibility), f\u207b (nucleophilic attack susceptibility), f\u2070, and the dual descriptor, per atom.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`, expands to B3LYP/def2-TZVP) in **PySCF**. Exact four-center two-electron integrals (density fitting OFF by default \u2014 no RI approximation).\n- **Geometry provenance:** User-supplied `pyridine.xyz` (11 atoms: N, 5\u00d7C, 5\u00d7H), used **as-is** \u2014 Fukui indices are computed as single-point energies/populations of the N, N\u22121 (cation), and N+1 (anion) states at this fixed geometry. The geometry was not re-optimized.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** Parent \u2014 charge 0, multiplicity 1 (RKS, closed shell). Derived states: cation charge +1, multiplicity 2 (doublet, UKS); anion charge \u22121, multiplicity 2 (doublet, UKS).\n- **Partial-charge scheme:** Mulliken (PySCF).\n- **Software:** PySCF (via chemkit DFT backend).\n- **Convergence / integrity:** Integrity status **ok**, **trustworthy = true**. All three integrity checks passed.\n\n**Headline result**\n- **Most electrophilic site (highest f\u207a): atom 1 = N (nitrogen), f\u207a = 0.48422572.** This is the site most susceptible to nucleophilic... i.e. most reactive toward incoming electron density (electrophilic Fukui function), consistent with the ring nitrogen being the dominant electron-accepting center.\n- **Most nucleophilic site (highest f\u207b): atom 4 = C (a ring carbon), f\u207b = 0.1182626.**\n\n**Per-atom Fukui indices** (atom order: N, C, C, C, C, C, H, H, H, H, H)\n- f\u207a: [0.48422572, 0.32447226, 0.14032092, 0.14039587, 0.29962626, 0.29947706, \u22120.14151319, \u22120.13368411, \u22120.13365905, \u22120.13981630, \u22120.13984545]\n- f\u207b: [0.06412267, 0.00618771, 0.11823139, 0.11826260, 0.11206595, 0.11200985, 0.08284851, 0.09817949, 0.09818226, 0.09496009, 0.09494948]\n- f\u2070: [0.27417420, 0.16532999, 0.12927615, 0.12932924, 0.20584611, 0.20574345, \u22120.02933234, \u22120.01775231, \u22120.01773840, \u22120.02242810, \u22120.02244799]\n- dual descriptor (f\u207a\u2212f\u207b): [0.42010305, 0.31828455, 0.02208953, 0.02213328, 0.18756031, 0.18746722, \u22120.22436170, \u22120.23186359, \u22120.23184131, \u22120.23477639, \u22120.23479493]\n\n**Warnings (reproduced verbatim):** The three integrity checks are stamped with severity \"warning\" but all passed (`ok: true`):\n1. `fukui_charge_conservation_f+`: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. `fukui_charge_conservation_f-`: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. `schema_header`: \"common header present\"\n\nBoth charge-conservation sums equal exactly 1.0000, indicating the N\u00b11 (cation/anion) states converged properly.\n\n**Reproducibility**\n- Exact command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpk8mhm3y6/live.json`\n- Bar-chart PNG: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_claude-opus-4.8/20260706-185729_pyridine_fukui_reactivity/agent_call_01_plot.png`\n- `--accept-defaults` was passed to consent to the gas-phase default (the functional/basis/tier were all specified explicitly as requested).\n\nNote on significant figures: values are reported as returned by the engine; Fukui indices from finite-difference charge differences at the semi-quantitative level should be interpreted for relative trends rather than at full displayed precision.\n\nNo experimental/literature comparison is offered \u2014 this is a purely computed result."
+}

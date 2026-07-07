@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 94.39,
+    "llm_s": 31.52,
+    "engine_s": 62.88,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for pyridine was completed successfully using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (tier 'standard'). The calculation was performed in the gas phase with a charge of 0 and a multiplicity of 1. The results are considered trustworthy, with no warnings issued by the engine.\n\nThe analysis predicts the most likely sites for electrophilic and nucleophilic attack based on the condensed Fukui functions:\n\n*   The site most susceptible to **electrophilic attack** (where a nucleophile would attack) is the nitrogen atom (N1), which has the largest f+ value of 0.48423.\n*   The site most susceptible to **nucleophilic attack** (where an electrophile would attack) is the carbon atom at position 4 (C4), with the largest f- value of 0.11826.\n\nThe full Fukui indices for each atom are as follows:\n\n| Atom | Symbol | f+ (Electrophilic Attack) | f- (Nucleophilic Attack) | f0 (Radical Attack) |\n| :--- | :--- | :--- | :--- | :--- |\n| 1 | N | **0.48423** | 0.06412 | 0.27417 |\n| 2 | C | 0.32447 | 0.00619 | 0.16533 |\n| 3 | C | 0.14032 | 0.11823 | 0.12928 |\n| 4 | C | 0.14040 | **0.11826** | 0.12933 |\n| 5 | C | 0.29963 | 0.11207 | 0.20585 |\n| 6 | C | 0.29948 | 0.11201 | 0.20574 |\n| 7 | H | -0.14151 | 0.08285 | -0.02933 |\n| 8 | H | -0.13368 | 0.09818 | -0.01775 |\n| 9 | H | -0.13366 | 0.09818 | -0.01774 |\n| 10 | H | -0.13982 | 0.09496 | -0.02243 |\n| 11 | H | -0.13985 | 0.09495 | -0.02245 |\n\nThese values represent the change in electron density at each atomic site upon the addition or removal of an electron, guiding predictions of chemical reactivity."
+}

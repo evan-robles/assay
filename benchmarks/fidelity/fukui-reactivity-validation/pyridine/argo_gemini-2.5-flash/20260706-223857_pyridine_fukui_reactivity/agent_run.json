@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 85.68,
+    "llm_s": 25.51,
+    "engine_s": 60.17,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Fukui Reactivity Indices** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz`. SCF converged.\n\nFukui indices are reported per atom. Atom indexing is 0-based.\nAtoms: N (0), C (1), C (2), C (3), C (4), C (5), H (6), H (7), H (8), H (9), H (10)\n\n*   **f+ (electrophilic attack):**\n    - Atom 0 (N): 0.48422572\n    - Atom 1 (C): 0.32447227\n    - Atom 2 (C): 0.1403209\n    - Atom 3 (C): 0.14039586\n    - Atom 4 (C): 0.29962627\n    - Atom 5 (C): 0.29947707\n    - Atom 6 (H): -0.1415132\n    - Atom 7 (H): -0.13368411\n    - Atom 8 (H): -0.13365905\n    - Atom 9 (H): -0.1398163\n    - Atom 10 (H): -0.13984545\n\n*   **f- (nucleophilic attack):**\n    - Atom 0 (N): 0.064122671\n    - Atom 1 (C): 0.0061877146\n    - Atom 2 (C): 0.11823139\n    - Atom 3 (C): 0.1182626\n    - Atom 4 (C): 0.11206595\n    - Atom 5 (C): 0.11200985\n    - Atom 6 (H): 0.08284851\n    - Atom 7 (H): 0.098179487\n    - Atom 8 (H): 0.09818226\n    - Atom 9 (H): 0.094960093\n    - Atom 10 (H): 0.094949479\n\n*   **f0 (radical attack):**\n    - Atom 0 (N): 0.27417419\n    - Atom 1 (C): 0.16532999\n    - Atom 2 (C): 0.12927614\n    - Atom 3 (C): 0.12932923\n    - Atom 4 (C): 0.20584611\n    - Atom 5 (C): 0.20574346\n    - Atom 6 (H): -0.029332344\n    - Atom 7 (H): -0.017752309\n    - Atom 8 (H): -0.017738394\n    - Atom 9 (H): -0.022428103\n    - Atom 10 (H): -0.022447986\n\n*   **Dual Descriptor (f2):**\n    - Atom 0 (N): 0.42010305\n    - Atom 1 (C): 0.31828456\n    - Atom 2 (C): 0.022089517\n    - Atom 3 (C): 0.022133264\n    - Atom 4 (C): 0.18756032\n    - Atom 5 (C): 0.18746723\n    - Atom 6 (H): -0.22436171\n    - Atom 7 (H): -0.23186359\n    - Atom 8 (H): -0.23184131\n    - Atom 9 (H): -0.23477639\n    - Atom 10 (H): -0.23479493\n\n**Most Electrophilic Site:** Atom 0 (N) with f+ = 0.48422572\n**Most Nucleophilic Site:** Atom 3 (C) with f- = 0.1182626"
+}

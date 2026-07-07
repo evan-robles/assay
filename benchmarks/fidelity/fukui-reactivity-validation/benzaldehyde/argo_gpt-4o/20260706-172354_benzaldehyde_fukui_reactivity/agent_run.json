@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 254.52,
+    "llm_s": 25.26,
+    "engine_s": 229.26,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).",
+      "sum(f\u207b) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for benzaldehyde using DFT with the B3LYP functional and def2-TZVP basis set at tier `standard`. The calculation was performed in the gas phase at charge 0 and multiplicity 1 on a fixed geometry sourced from the provided .xyz file (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz`).\n\nKey results include the most electrophilic site at atom C3 (C, f\u207a = 0.39939) and the most nucleophilic site at atom O1 (O, f\u207b = 0.23840). Reactivity maps for nucleophilic and electrophilic regions are available from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_gpt-4o/20260706-172354_benzaldehyde_fukui_reactivity/agent_call_01_plot.png`.\n\nWarnings:\n- \"sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\"\n- \"sum(f\u207b) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\"\n\nThe calculation completed successfully with no integrity violations reported."
+}

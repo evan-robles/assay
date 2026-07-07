@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.66,
+    "llm_s": 15.7,
+    "engine_s": 5.96,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui Reactivity of Ferrocene** \u2014 GFN2-xTB (xtb program), gas phase, neutral (charge 0, multiplicity 1). Fukui descriptors computed from neutral and charged species (cation N+1, anion N\u22121). Partial charges via Mulliken scheme. The iron atom (atom 11) is the most electrophilic (f\u207a = 0.22885456) and most nucleophilic (f\u207b = 0.25938191) site, with a negative dual descriptor indicating net nucleophilicity. The ligand carbon and hydrogen atoms show much lower Fukui indices (~0.014 and ~0.063 respectively), indicating metal-centered reactivity. SCF converged for all three states (N, N+1, N\u22121). Charge conservation check passed: sum(f\u207a) and sum(f\u207b) both equal 1.000. No warnings reported. Integrity status: trustworthy.</prose>\n<parameter name=\"value\">0.25938191"
+}

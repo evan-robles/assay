@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 84.82,
+    "llm_s": 22.96,
+    "engine_s": 61.24,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis \u2014 Pyridine\n\n**Method Provenance Block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor, from finite-difference Mulliken population analysis of the neutral, cation (N\u22121), and anion (N+1) states.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`), PySCF. Density fitting was OFF by default (exact four-center two-electron integrals).\n- **Geometry provenance:** User-supplied geometry file `pyridine.xyz` (11 atoms: N + 5 C + 5 H), used as-is \u2014 this Fukui task does not re-optimize the geometry (single points on the fixed input structure for each charge state).\n- **Solvent / environment:** Gas phase (no implicit solvent).\n- **Charge / multiplicity:** Neutral parent charge 0, multiplicity 1. Cation state: charge +1, multiplicity 2 (doublet). Anion state: charge \u22121, multiplicity 2 (doublet). Open-shell states treated with UKS.\n- **Software:** PySCF (via chemkit `fukui` engine subcommand).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Key Results**\n- **Most electrophilic site (largest f\u207a):** atom 1 = **N**, with **f\u207a = 0.48423** \u2014 the headline value. This is the site most susceptible to nucleophilic attack / electron addition, consistent with the electron-accepting nitrogen center.\n- **Most nucleophilic site (largest f\u207b):** atom 4 = **C**, with f\u207b = 0.11826 \u2014 the site most susceptible to electrophilic attack.\n- **Dual descriptor** is most positive at N (0.42010), reinforcing N as the dominant electrophilic center.\n\n**Convergence & Integrity:** integrity status = **ok**, trustworthy = **true**. All three integrity checks passed. Both charge-conservation checks confirm sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000, indicating the N\u00b11 states converged properly.\n\n**Warnings (reproduced verbatim \u2014 these are the passing integrity checks, all severity \"warning\"):**\n1. `fukui_charge_conservation_f+`: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. `fukui_charge_conservation_f-`: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. `schema_header`: \"common header present\"\n\n**Reproducibility**\n- CLI invocation: `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard .../pyridine.xyz --out .../live.json`\n- Plot: `.../20260706-185901_pyridine_fukui_reactivity/agent_call_01_plot.png`\n\n**Provenance note:** This is a *computed* result (not experimental). No literature comparison is offered; ask if you'd like one and I will verify a source first. Note that condensed Fukui values are Mulliken-population\u2013based and therefore basis-set dependent; the relative site ranking is more transferable than the absolute magnitudes."
+}

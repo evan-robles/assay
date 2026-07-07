@@ -37,6 +37,7 @@ NODES_FILE="$REPO/.sweep_nodes"
 READY_FILE="$REPO/.sweep_ready"
 GEN_FILE="$REPO/.sweep_gen"        # generation counter — bumped each (re)allocation
 DONE_FILE="$REPO/.sweep_done"      # login-side writes this when the sweep completes
+DISC_FILE="$REPO/.sweep_disconnected"  # login-side writes this on argo/Mac disconnect
 NSEL_FILE="$REPO/.sweep_nsel"      # login-side writes desired node count for the clone
 STATE_FILE="$REPO/.holder_resubmits"
 
@@ -47,6 +48,22 @@ MAX_RESUBMITS="${ASSAY_MAX_RESUBMITS:-100}"
 # smaller count to .sweep_nsel (= number of models still needing compute), the
 # clone shrinks to that instead (see do_clone). Shrink-only: never grows past this.
 NSEL=$(sort -u "$PBS_NODEFILE" | wc -l | tr -d ' ')
+
+# ── Startup guard: bail before holding nodes if the sweep is already over ──────
+# A clone can queue at T-10min and only START RUNNING after the sweep completed
+# or the Mac disconnected in the interim. Without this, such a clone would hold a
+# full allocation for its whole walltime doing nothing (this is exactly how clone
+# 8647947 would have burned ~10 node-hours on 2026-07-06 had it started). If a
+# terminal marker is already present when THIS holder begins, exit immediately —
+# hold zero nodes, do not publish, do not bump the generation.
+if [ -f "$DONE_FILE" ]; then
+    echo "[holder] .sweep_done already present at startup — sweep complete. Exiting without holding nodes."
+    exit 0
+fi
+if [ -f "$DISC_FILE" ]; then
+    echo "[holder] .sweep_disconnected already present at startup — argo/Mac disconnect. Exiting without holding nodes."
+    exit 0
+fi
 
 # Publish the unique allocated compute-node hostnames + bump the generation so a
 # login-side relauncher knows a FRESH allocation is available.
@@ -74,10 +91,20 @@ EARLY_SLEEP=$(( WALLTIME_SEC - CLONE_LEAD_SEC ))
 [ "$EARLY_SLEEP" -lt 30 ] && EARLY_SLEEP=30
 
 _cloned=0
-do_clone() {   # submit exactly one clone; guarded + respects .sweep_done + cap
+do_clone() {   # submit exactly one clone; guarded + respects .sweep_done/.sweep_disconnected + cap
     [ "$_cloned" -eq 1 ] && return 0
     if [ -f "$DONE_FILE" ]; then
         echo "[holder] .sweep_done present — sweep complete, NOT cloning."
+        return 1
+    fi
+    # Disconnect guard: when the login-side watcher detects the argo tunnel / Mac
+    # is down it withholds the next cycle and writes .sweep_disconnected. The
+    # holder self-clones INDEPENDENTLY of the watcher, so without this check a
+    # clone that queues just before the disconnect would still start and hold
+    # nodes for an hour into a dead tunnel (observed 2026-07-06: clone 8647947
+    # escaped the watcher's qdel). Refuse to clone if a disconnect was flagged.
+    if [ -f "$DISC_FILE" ]; then
+        echo "[holder] .sweep_disconnected present — argo/Mac disconnect, NOT cloning."
         return 1
     fi
     rc=$(cat "$STATE_FILE" 2>/dev/null || echo 0)

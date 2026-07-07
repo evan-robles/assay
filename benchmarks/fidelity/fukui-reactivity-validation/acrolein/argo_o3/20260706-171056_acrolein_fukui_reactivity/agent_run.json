@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 120.66,
+    "llm_s": 85.09,
+    "engine_s": 34.8,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance block\n\n\u2022 Property: condensed Fukui functions f\u207a, f\u207b, f\u2070 and the dual descriptor for every atom of acrolein; headline number reported here is the largest electrophilic Fukui index f\u207a = 0.64232102 (atom 4, C).\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (tier \u2018standard\u2019; density-fitted) in PySCF.\n\u2022 Geometry provenance: fixed experimental Cartesian coordinates supplied by the user (file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`).  The Fukui analysis was a single-point calculation on this geometry; no further optimisation was performed (notation DFT//input-xyz).\n\u2022 Solvent / environment: gas phase (no implicit continuum).\n\u2022 Charge = 0, multiplicity = 1 (closed-shell singlet) for the neutral state.  The N + 1 and N \u2013 1 states were treated as doublets (charge = +1/\u20131, multiplicity = 2), following the default Fukui protocol.\n\u2022 Software: chemkit fukui-reactivity skill \u2192 PySCF backend.\n\u2022 Convergence & warnings: SCF cycles for all three charge states converged.  The tool returned three warnings verbatim (see below); they note that the integrated f\u207a and f\u207b each sum exactly to 1.0000 \u2013 a diagnostic check which passed.\n\nSelected results (atomic index is 1-based, matching the XYZ order O-C-C-C-H-H-H-H):\n   atom 1 O  f\u207a = 0.4014   f\u207b = 0.3939   f\u2070 \u2248 0.3976   \u0394f = +0.0075\n   atom 2 C  f\u207a = 0.0223   f\u207b = 0.0060   f\u2070 \u2248 0.0141   \u0394f = +0.0163\n   atom 3 C  f\u207a = 0.4340   f\u207b = 0.0914   f\u2070 \u2248 0.2627   \u0394f = +0.3426\n   atom 4 C  f\u207a = 0.6423   f\u207b = 0.0874   f\u2070 \u2248 0.3648   \u0394f = +0.5550   \u2190 most electrophilic\n   most electrophilic site: atom 4 (C), f\u207a = 0.64232102\n   most nucleophilic  site: atom 1 (O), f\u207b = 0.39388616\n\nLive log: the calculation streamed to a `.out` file created automatically by chemkit (path provided at run time; you can `tail -f` it for the full SCF history and Mulliken-charge tables).  Result JSON saved to `/home/erobles/chem-skills/.fidelity_scratch/tmpjo9j7jod/live.json`.\n\nWarnings (verbatim):\n\u2013 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2013 common header present"
+}

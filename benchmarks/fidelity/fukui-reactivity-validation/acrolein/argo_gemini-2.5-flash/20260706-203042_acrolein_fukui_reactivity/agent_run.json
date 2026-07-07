@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 66.07,
+    "llm_s": 20.56,
+    "engine_s": 45.52,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis was performed on acrolein to determine its electrophilic and nucleophilic sites.\n\n**Fukui Reactivity Indices for Acrolein** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied geometry from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`, fixed. The SCF converged.\n\nThe fukui reactivity indices calculated are based on Mulliken partial charges.\n\n*   **Most Electrophilic Atom:** Carbon (atom index 3, 0-indexed, or 4, 1-indexed) with a Fukui f+ index of **0.64232102**.\n*   **Most Nucleophilic Atom:** Oxygen (atom index 0, 0-indexed, or 1, 1-indexed) with a Fukui f- index of **0.39388616**.\n\n**Fukui Indices (f+, f-, f0) and Dual Descriptor per atom:**\n| Atom Label (1-based) | Symbol | f+         | f-         | f0         | Dual Descriptor |\n| :------------------- | :----- | :--------- | :--------- | :--------- | :-------------- |\n| 1                    | O      | 0.40136    | 0.39389    | 0.39763    | 0.00748         |\n| 2                    | C      | 0.02226    | 0.00599    | 0.01412    | 0.01627         |\n| 3                    | C      | 0.43405    | 0.09140    | 0.26272    | 0.34264         |\n| 4                    | C      | 0.64232    | 0.08737    | 0.36485    | 0.55495         |\n| 5                    | H      | -0.15726   | 0.08596    | -0.03565   | -0.24322        |\n| 6                    | H      | -0.20720   | 0.18568    | -0.01076   | -0.39288        |\n| 7                    | H      | -0.06212   | 0.08449    | 0.01118    | -0.14660        |\n| 8                    | H      | -0.07341   | 0.06523    | -0.00409   | -0.13863        |\n\n**Warnings:**\n*   `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n*   `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n\n**Files:** A plot summarizing the Fukui reactivity is available at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_gemini-2.5-flash/20260706-203042_acrolein_fukui_reactivity/agent_call_01_plot.png`."
+}

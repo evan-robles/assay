@@ -1,0 +1,32 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 142.14,
+    "llm_s": 36.32,
+    "engine_s": 105.21,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui reactivity descriptors** \u2014 DFT (PySCF), tier `standard` (B3LYP/def2-TZVP, exact integrals; no density fitting), gas phase, charge 0, multiplicity 1. Geometry: user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`, single-point (no geometry optimization). SCF converged successfully (integrity.status = ok). No top-level warnings array reported; integrity checks revealed:\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\nResults (Mulliken scheme):\n\u2022 Most electrophilic site: atom 3 (C, 1-based index) with f\u207a = 2.2975867\n\u2022 Most nucleophilic site: atom 1 (N) with f\u207b = 0.20452359\n\nOther descriptors per atom (f\u207a, f\u207b, f\u2070, dual): see `/home/erobles/chem-skills/.fidelity_scratch/tmpd9v6l7gy/live.json`. \nCommand: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpd9v6l7gy/live.json`."
+}

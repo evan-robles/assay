@@ -1,0 +1,32 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 269.69,
+    "llm_s": 34.66,
+    "engine_s": 234.49,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method-provenance summary:\nProperty: Condensed Fukui functions (f\u207a, f\u207b, dual descriptor) for benzaldehyde; most electrophilic site (atom 3, C) f\u207a = 0.39938968; most nucleophilic site (atom 1, O) f\u207b = 0.23839906 (units: electrons).\nLevel of theory: DFT, B3LYP/def2-TZVP (exact four-center integrals, no density fitting) in PySCF.\nGeometry provenance: single-point calculations on the fixed Cartesian coordinates supplied in /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz (no further optimisation; reported as DFT//input-geometry).\nEnvironment: gas phase (no implicit solvent).\nCharge & multiplicity: neutral singlet parent state (charge 0, multiplicity 1); cation (+1, doublet) and anion (\u20131, doublet) states generated automatically for the N\u00b11 calculations.\nSoftware/backend: chemkit fukui-reactivity skill (engine subcommand \u201cfukui\u201d) using PySCF (version as bundled with chemkit).\nConvergence & integrity: all SCF calculations converged; integrity.status = \"ok\", trustworthy = true. No separate warnings array was returned; two integrity checks of type \u201cwarning\u201d report exact charge conservation (\u2211f\u207a = 1.0000, \u2211f\u207b = 1.0000), reproduced verbatim below.\n\nLive log: the calculation ran with live output to a *.out* file in the current working directory (path echoed at launch by chemkit; available for inspection or *tail -f*).\n\nVerbatim warnings from the result JSON:\n\u2022 fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\nHeadline result (most electrophilic condensed Fukui index): 0.39938968 electrons (atom 3, carbon)."
+}

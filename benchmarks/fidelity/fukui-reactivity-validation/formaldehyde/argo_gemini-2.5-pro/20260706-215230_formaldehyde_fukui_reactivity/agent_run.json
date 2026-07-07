@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.53,
+    "llm_s": 18.78,
+    "engine_s": 9.75,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have completed the Fukui reactivity analysis for formaldehyde using DFT at the B3LYP/def2-TZVP level of theory in the gas phase. The calculation used the provided geometry at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz` without re-optimization, with a charge of 0 and a multiplicity of 1 for the neutral system.\n\nThe results indicate the most probable sites for electrophilic and nucleophilic attack:\n\n*   **Most electrophilic site (highest f+ value):** The Carbon atom (Atom 2) is the most susceptible to nucleophilic attack, with a Fukui(+) index of 0.708.\n*   **Most nucleophilic site (highest f- value):** The Oxygen atom (Atom 1) is the most susceptible to electrophilic attack, with a Fukui(-) index of 0.467.\n\nThe full Fukui indices, which quantify the reactivity at each atomic site, are as follows:\n\n| Atom | Symbol | Fukui(+) (for nucleophilic attack) | Fukui(-) (for electrophilic attack) | Fukui(0) (for radical attack) |\n| :--- | :--- | :--- | :--- | :--- |\n| 1 | O | 0.4681 | **0.4674** | 0.4678 |\n| 2 | C | **0.7084** | 0.1124 | 0.4104 |\n| 3 | H | -0.0883 | 0.2101 | 0.0609 |\n| 4 | H | -0.0883 | 0.2101 | 0.0609 |\n\nThe analysis was performed by calculating the electron densities of the neutral, cationic (charge +1, multiplicity 2), and anionic (charge -1, multiplicity 2) states. The engine reported that the calculation was successful and trustworthy, with charge conservation checks for both Fukui(+) and Fukui(-) summing to 1.0000. No warnings were issued."
+}

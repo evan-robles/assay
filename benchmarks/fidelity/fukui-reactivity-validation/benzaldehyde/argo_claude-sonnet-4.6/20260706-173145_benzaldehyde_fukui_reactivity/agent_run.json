@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 278.3,
+    "llm_s": 44.16,
+    "engine_s": 233.59,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of benzaldehyde was performed using DFT at the B3LYP/def2-TZVP level (tier 'standard') in the gas phase, charge 0, multiplicity 1, via PySCF (exact four-center integrals, no density fitting). Three single-point SCFs were run (neutral N, cation N\u22121 doublet, anion N+1 doublet) and Mulliken population analysis was used to compute per-atom f+, f\u2212, f0, and dual descriptor. All SCFs converged; integrity.trustworthy = true. Fukui charge sums: sum(f+) = 1.0000, sum(f-) = 1.0000. No engine warnings reported. Headline result: most electrophilic atom is C3 with f+ = 0.39938967; most nucleophilic atom is O1 with f\u2212 = 0.23839906. Full per-atom table reported above. Plot at: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_claude-sonnet-4.6/20260706-173145_benzaldehyde_fukui_reactivity/agent_call_01_plot.png"
+}

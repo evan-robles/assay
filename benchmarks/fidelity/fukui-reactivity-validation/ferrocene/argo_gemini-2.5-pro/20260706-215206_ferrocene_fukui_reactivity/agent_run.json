@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.96,
+    "llm_s": 15.8,
+    "engine_s": 6.16,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of ferrocene was performed using the GFN2-xTB semi-empirical method in the gas phase, with a charge of 0 and a multiplicity of 1.\n\nThe analysis identifies the most likely sites for electrophilic, nucleophilic, and radical attack. The results indicate that the central iron atom (Fe, atom 11) is the most reactive site for all three scenarios:\n*   **Most electrophilic site (subject to nucleophilic attack)**: Fe atom, with an f+ index of 0.22885.\n*   **Most nucleophilic site (subject to electrophilic attack)**: Fe atom, with an f- index of 0.25938.\n\nThe calculation was carried out by the `xtb` program. No warnings were reported during the calculation."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.92,
+    "llm_s": 15.71,
+    "engine_s": 6.22,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for ferrocene (21 atoms: Fe + C\u2085H\u2085 \u00d7 2) using the GFN2-xTB semi-empirical tight-binding method (xtb backend) in the gas phase at charge 0, multiplicity 1. The input geometry was taken from the user-supplied ferrocene.xyz file (no relaxation). Nucleophilic (f\u207b), electrophilic (f\u207a), and dual descriptor (\u0394F) indices were calculated via finite-difference Mulliken partial charges derived from N, N+1, and N\u22121 single-point states. The iron center is the most reactive site: f\u207a = 0.22885456 (electrophilic), f\u207b = 0.25938191 (nucleophilic), dual descriptor \u0394F = \u22120.030527354 (favoring nucleophilic attack). Cyclopentadienyl C atoms show much lower reactivity (~0.0136), and H atoms are intermediate (~0.0635). Mulliken charges reveal the Fe is highly polarized (+0.42 in the neutral species). The calculation converged with full charge conservation (sum(f\u00b1) = 1.0000). Integrity status: trustworthy; all internal checks passed.</prose>\n<parameter name=\"value\">0.25938191"
+}

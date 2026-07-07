@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 31.36,
+    "llm_s": 21.46,
+    "engine_s": 9.9,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Based on a Fukui reactivity analysis of formaldehyde, the sites most susceptible to electrophilic and nucleophilic attack have been identified. The calculation was performed using DFT at the tier 'standard' (B3LYP functional, def2-TZVP basis set) in the gas phase, assuming a neutral charge (0) and singlet state (multiplicity 1) for the ground state molecule.\n\nThe analysis, which computes electronic properties of the neutral, cation, and anion states, yielded the following Fukui indices:\n\n| Atom | Fukui Index (f+) | Fukui Index (f-) | Fukui Index (f0) |\n| :--- | :--- | :--- | :--- |\n| O | 0.46814 | 0.46742 | 0.46778 |\n| C | 0.70839 | 0.11244 | 0.41042 |\n| H | -0.08827 | 0.21008 | 0.06090 |\n| H | -0.08826 | 0.21006 | 0.06090 |\n\n- The **most electrophilic site**, predicted by the largest f+ value, is the **carbon atom (C)**, with an index of **0.70839**. This site is the most susceptible to nucleophilic attack.\n- The **most nucleophilic site**, predicted by the largest f- value, is the **oxygen atom (O)**, with an index of **0.46742**. This site is the most susceptible to electrophilic attack.\n\nThe Fukui function f+ measures the change in electron density when an electron is added, indicating reactivity towards nucleophiles. The f- function measures the change when an electron is removed, indicating reactivity towards electrophiles. The f0 index is the average of the two.\n\nThe calculation was performed using the `fukui-reactivity` skill in the `chemkit` toolkit. No warnings were reported, and the engine's integrity check was passed, confirming the reliability of the underlying single-point energy calculations."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 103.5,
+    "llm_s": 43.99,
+    "engine_s": 58.84,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Fukui reacitivity analysis** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact integrals) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: single-point on user-supplied pyridine.xyz, not optimized. SCF converged; integrity checks issued three warnings verbatim: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge), sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge), common header present. Most electrophilic atom: N (atom 1) with f\u207a = 0.48422572. Most nucleophilic atom: C (atom 4) with f\u207b = 0.11826260."
+}

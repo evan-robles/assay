@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 43.38,
+    "llm_s": 13.15,
+    "engine_s": 30.22,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity indices for acrolein** were computed using **DFT, B3LYP/def2-TZVP**, tier `standard`, in the **gas phase**, with charge 0 and multiplicity 1. The computation was done on the geometry from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz`. These indices used Mulliken partial charges as the scheme, examining both cationic and anionic states. The calculation identified **C-4 (C atom)** with the highest **f+ value = 0.64232**, making it the most electrophilic site, and **O-1 (O atom)** with the highest **f\u2212 value = 0.39389**, marking it as the most nucleophilic. All Fukui charges equilibrated as expected (sum(f+) = 1.0000, sum(f\u2212) = 1.0000), with the tool cautioning against convergence drifts for the N\u00b11 states. Warnings surfaced during the run include: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\", \"sum(f\u2212) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\", and \"common header present.\" The method used is trust-ranked as **trustworthy**. The live log and diagnostic artifacts are located in `/home/erobles/chem-skills/.fidelity_scratch/tmpjvec9o73/live.json`."
+}

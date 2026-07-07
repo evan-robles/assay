@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.07,
+    "llm_s": 23.57,
+    "engine_s": 9.96,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of formaldehyde (H\u2082C=O)** \u2014 condensed Fukui functions from finite-difference (N\u00b11) Mulliken population analysis.\n\n**Method-provenance block**\n- **Property:** Condensed Fukui indices (f\u207a electrophilic, f\u207b nucleophilic, f\u2070, and the dual descriptor \u0394f = f\u207a \u2212 f\u207b) per atom, from finite-difference Mulliken charges of the neutral, cation (N\u22121), and anion (N+1) states.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** \u2014 tier `standard` (which expands to exactly B3LYP/def2-TZVP), with functional and basis also passed explicitly. Backend: **PySCF** (`dft`, RKS parent; UKS doublets for the ionized states). Density fitting was NOT enabled (default off \u2192 exact four-center two-electron integrals).\n- **Geometry provenance:** User-supplied `formaldehyde.xyz` (4 atoms: O, C, H, H), used as-is. This is a single-point Fukui analysis at that fixed geometry \u2014 the structure was **not** re-optimized at this level.\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** Parent charge 0, multiplicity 1 (closed-shell singlet). Cation state: charge +1, multiplicity 2 (doublet, UKS). Anion state: charge \u22121, multiplicity 2 (doublet, UKS).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Results (per atom; order O, C, H, H)**\n- **f\u207a (electrophilic susceptibility):** O = 0.46814, C = 0.70839, H = \u22120.088269, H = \u22120.088260\n- **f\u207b (nucleophilic susceptibility):** O = 0.46742, C = 0.11244, H = 0.21008, H = 0.21006\n- **f\u2070:** O = 0.46778, C = 0.41042, H = 0.060903, H = 0.060898\n- **Dual descriptor (f\u207a \u2212 f\u207b):** O = 0.00071360, C = 0.59595, H = \u22120.29835, H = \u22120.29832\n\n**Key findings**\n- **Most electrophilic site:** the carbonyl **carbon (C, atom 2)** with f\u207a = **0.70839** (headline value). Its large positive dual descriptor (+0.596) confirms C as the preferred site of nucleophilic attack \u2014 consistent with carbonyl chemistry.\n- **Most nucleophilic site:** the **oxygen (O, atom 1)** with f\u207b = 0.46742.\n\n**Convergence / integrity:** Engine integrity status = **ok**, **trustworthy = true**. Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (both ~1.0 as required; large drift would have indicated a non-converged N\u00b11 state). The three integrity checks (`fukui_charge_conservation_f+`, `fukui_charge_conservation_f-`, `schema_header`) all returned ok. The result JSON's `warnings` array contained **no warnings** (empty).\n\n**Reproducibility:** Command \u2014 `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard .../formaldehyde.xyz`. A per-atom f\u207a/f\u207b/dual bar chart was written to `20260706-175100_formaldehyde_fukui_reactivity/agent_call_01_plot.png`.\n\nNo experimental/literature comparison is offered (none was requested); all values above are computed."
+}

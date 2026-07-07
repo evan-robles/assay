@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 222.87,
+    "llm_s": 40.92,
+    "engine_s": 181.35,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance (required details for reproducibility)\n\n\u2022 Property: atom-condensed Fukui functions f\u207a (nucleophilic attack), f\u207b (electrophilic attack), dual descriptor; identification of the most electrophilic and most nucleophilic atomic sites.\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (tier `standard`), no density fitting (exact 4-center integrals) in PySCF 2.x.\n\u2022 Geometry provenance: single-point population analyses on the user-supplied nitro\u00adbenzene geometry `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`; no additional optimisation (`DFT//input geometry`).\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\u2022 Charge & multiplicity: neutral singlet parent (charge 0, multiplicity 1); N\u20131 cation and N+1 anion states treated as doublets (multiplicity 2) per default.\n\u2022 Software/backend: chemkit `fukui` skill (PySCF under the hood). Live log is streamed to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_o3/20260706-185025_nitrobenzene_fukui_reactivity/fukui_20260706-185025.out` (tail this file for SCF details).\n\u2022 Convergence & integrity: all SCF calculations converged; integrity.status = ok, trustworthy = true. Charge-conservation tests passed (\u2211f\u207a = \u2211f\u207b = 1.0000). All warnings are reproduced verbatim below.\n\nKey numerical results (Mulliken scheme)\n\u2022 Most electrophilic site: atom 4 (C), f\u207a = 0.49641781\n\u2022 Most nucleophilic site: atom 5 (C), f\u207b = 0.1072882\n\nSelected per-atom indices (input atom order):\nO1 0.47317 / 0.09702 / 0.37616\u2003\u2003O2 0.47344 / 0.09677 / 0.37667\nN3 \u22120.45670 / 0.01724 / \u22120.47394\u2003C4 0.49642 / \u22120.01429 / 0.51071\nC5 0.11563 / 0.10729 / 0.00834\u2003\u2026 (full table in JSON result `nitrobenzene_fukui_b3lyp_def2tzvp.json`).\n\nVerbatim warnings from chemkit result\n\u2022 fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 schema_header: common header present\n\nThe headline electrophilic Fukui index (largest f\u207a) is reported above. All data are computed; no experimental comparison is provided (ask if needed)."
+}

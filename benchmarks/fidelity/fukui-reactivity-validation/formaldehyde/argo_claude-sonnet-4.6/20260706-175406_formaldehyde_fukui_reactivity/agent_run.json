@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 42.24,
+    "llm_s": 32.09,
+    "engine_s": 10.15,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of formaldehyde (H\u2082C=O) was computed using DFT at the B3LYP/def2-TZVP level (PySCF, tier 'standard', density-fitted RKS), in the gas phase, charge 0, multiplicity 1. Partial charges were computed via Mulliken scheme on the neutral (N), cation (N\u22121, doublet), and anion (N+1, doublet) states. The headline value reported is the maximum f\u207a index, which belongs to the carbon atom (atom 2): f\u207a(C) = 0.70839, identifying it as the most electrophilic site. The most nucleophilic site is oxygen (atom 1): f\u207b(O) = 0.46742. The dual descriptor for C is +0.59595, confirming dominant electrophilic character at the carbonyl carbon \u2014 chemically consistent with the well-known susceptibility of the carbonyl carbon to nucleophilic addition. All integrity checks passed (trustworthy: true); no warnings were issued; Fukui charge conservation sums to 1.0000 for both f\u207a and f\u207b."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 66.19,
+    "llm_s": 32.28,
+    "engine_s": 33.91,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of acrolein (C\u2083H\u2084O, 8 atoms) computed at DFT tier 'standard' = B3LYP/def2-TZVP (PySCF RKS), gas phase, charge 0, multiplicity 1. Partial charges via Mulliken (PySCF). N\u00b11 states: cation (charge +1, mult 2), anion (charge \u22121, mult 2). Geometry taken as-is from the user-supplied .xyz (no re-optimization at this level). Integrity: trustworthy=true, all checks passed. No warnings reported; f\u207a and f\u207b both sum to exactly 1.0000. Headline value reported is the maximum f\u207a (most electrophilic site): C4 with f\u207a = 0.64232102. The most nucleophilic site is O1 with f\u207b = 0.39388616. These results confirm acrolein's well-known Michael-acceptor character at the \u03b2-carbon (C4)."
+}

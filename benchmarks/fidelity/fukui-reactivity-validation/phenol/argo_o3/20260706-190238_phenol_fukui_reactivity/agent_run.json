@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 160.92,
+    "llm_s": 49.31,
+    "engine_s": 110.96,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance:\nProperty: atom\u2010condensed Fukui functions (f\u207a for electrophilicity, f\u207b for nucleophilicity), dual descriptor, and identification of the most electrophilic/nucleophilic sites in phenol.\nLevel of theory: DFT, B3LYP/def2\u2010TZVP (tier `standard`), no density fitting (exact four-center integrals) in PySCF 2.x.\nGeometry provenance: fixed geometry taken as\u2013is from the supplied file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz`; no further optimisation was performed (single-point population analyses on this structure).\nSolvent / environment: gas phase (no implicit solvent).\nCharge & multiplicity: charge 0 (neutral), multiplicity 1 (closed-shell singlet). N\u22121 (cation) and N+1 (anion) states were run as doublets (multiplicity 2) for the finite-difference Fukui derivatives.\nSoftware/backend: chemkit fukui-reactivity skill \u2192 PySCF backend (DFT, B3LYP/def2-TZVP) for the three single-point calculations.\nConvergence & warnings: all three SCF calculations converged; integrity check reports status \"ok\" and trustworthy true.  Warnings returned by chemkit (verbatim) are reproduced below.\n\nLive log: the PySCF stdout/stderr was streamed in real time to a file created by chemkit (e.g. `fukui_YYYYMMDD-HHMMSS.out`) in the working directory while the run was in progress; you can inspect it for full SCF details.\n\nHeadline numerical highlight (most electrophilic site):\n  \u2022 Atom 3 (C) f\u207a = 2.1028319\n\nSelected results (per-atom indices are 1-based, matching the input .xyz):\n  \u2013 Sum of f\u207a = 1.0000; sum of f\u207b = 1.0000 (as expected by definition)\n  \u2013 Most electrophilic atom: index 3 (C), f\u207a = 2.1028319\n  \u2013 Most nucleophilic atom: index 1 (O), f\u207b = 0.16201477\n\nComplete Fukui vectors:\n  f\u207a  = [\u22120.99513677, 0.39933190, 2.10283190, 1.61968060, \u22120.34200645, \u22120.28910826, 1.30797530, \u22120.73391779, \u22120.27465615, \u22120.91706058, \u22120.62991625, \u22120.29591676, 0.047899341]\n  f\u207b  = [ 0.16201477, 0.048772551, 0.070972379, 0.070498539, 0.026704972, 0.020949414, 0.123515490, 0.082321145, 0.088147788, 0.081105985, 0.080487046, 0.093495770, 0.051014152]\n  f\u2070  = [\u22120.41656100, 0.22405223, 1.08690210, 0.84508955, \u22120.15765074, \u22120.13407942, 0.71574540, \u22120.32579832, \u22120.093254181, \u22120.41797730, \u22120.27471460, \u22120.10121050, 0.049456747]\n  \u0394f  (dual) = [\u22121.1571515, 0.35055935, 2.0318595, 1.5491820, \u22120.36871142, \u22120.31005767, 1.1844598, \u22120.81623893, \u22120.36280394, \u22120.99816656, \u22120.71040329, \u22120.38941253, \u22120.0031148109]\n\nWarnings (verbatim from chemkit result):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nThe calculation was carried out with chemkit\u2019s `fukui-reactivity` skill using DFT at B3LYP/def2-TZVP in the gas phase; results are marked trustworthy by the engine\u2019s integrity check."
+}

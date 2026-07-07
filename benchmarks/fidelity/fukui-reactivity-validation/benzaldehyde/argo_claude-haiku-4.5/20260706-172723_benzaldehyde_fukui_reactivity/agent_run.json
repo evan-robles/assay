@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 247.79,
+    "llm_s": 16.31,
+    "engine_s": 231.48,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity calculation on benzaldehyde completed using DFT at the B3LYP/def2-TZVP level (tier standard, density-fitted) in PySCF, gas phase, charge 0, multiplicity 1. The calculation computed Fukui indices (f\u207a, f\u207b, f\u2070) and dual descriptors for all 14 atoms by taking differences in Mulliken charges between the neutral, cationic (+1, doublet), and anionic (\u22121, doublet) states. The most electrophilic site is carbon atom 3 (ortho-position to aldehyde), with f\u207a = 0.39938965 (reported to 8 significant figures as returned). The most nucleophilic site is the oxygen (atom 1), with f\u207b = 0.23839906. Both N\u00b11 states converged; charge conservation checks passed (sum f\u207a = 1.0, sum f\u207b = 1.0). Full atom-by-atom Fukui indices, dual descriptors, and a reactivity visualization plot are in the result. Calculation is trustworthy and reproducible via the CLI invocation provided.</prose>\n<parameter name=\"integrity_trustworthy\">true"
+}

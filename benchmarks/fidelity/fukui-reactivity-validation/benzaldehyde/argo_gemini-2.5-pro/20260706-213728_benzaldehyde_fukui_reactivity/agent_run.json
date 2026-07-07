@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 262.92,
+    "llm_s": 32.32,
+    "engine_s": 230.6,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for benzaldehyde was completed using DFT with the B3LYP functional and the def2-TZVP basis set (tier 'standard') in the gas phase. The calculation was performed on the neutral singlet state (charge 0, multiplicity 1).\n\nThe analysis identifies the most reactive sites for electrophilic and nucleophilic attack:\n*   The most nucleophilic site (most susceptible to electrophilic attack) is the oxygen atom (O1), which has the largest Fukui index for electrophilic attack (f\u207b) of 0.23840.\n*   The most electrophilic site (most susceptible to nucleophilic attack) is an aromatic carbon atom (C3), with the largest Fukui index for nucleophilic attack (f\u207a) of 0.39939.\n\nNo warnings were reported during the calculation, and the engine's integrity checks were all passed, confirming the trustworthiness of the result.\n\nThe full Fukui indices are:\n*   `f+` (for nucleophilic attack): [0.37884, -0.35167, 0.39939, 0.21162, 0.33722, 0.28476, 0.27923, 0.35871, -0.11586, -0.20261, -0.12696, -0.13404, -0.13691, -0.18173]\n*   `f-` (for electrophilic attack): [0.23840, -0.00705, 0.03675, 0.08332, 0.05371, -0.00232, 0.05825, 0.08235, 0.06031, 0.05869, 0.07420, 0.06601, 0.07154, 0.12583]"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 100.65,
+    "llm_s": 41.61,
+    "engine_s": 58.37,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block:\nProperty: Atom-condensed Fukui functions (f\u207a, f\u207b, dual descriptor) for pyridine.\nLevel of theory: DFT, B3LYP/def2-TZVP (exact four-center integrals; density fitting OFF).\nGeometry provenance: user-supplied /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz; single-point charges at this fixed geometry (no re-optimization).\nSolvent / environment: gas phase (no continuum model).\nCharge & multiplicity: neutral singlet (0, 1); cation doublet ( +1, 2); anion doublet ( \u20131, 2).\nSoftware: PySCF via chemkit fukui subcommand.\nConvergence & warnings: SCF converged for all three charge states. The engine flagged three warnings (verbatim below). Integrity status: ok, trustworthy = true.\nLive log: the run streamed to a chemkit fukui .out file in the current directory (e.g. fukui_<timestamp>.out); it can be inspected or tailed for the full SCF transcript.\n\nHeadline results (Mulliken charge scheme):\n\u2022 Most electrophilic site (largest f\u207a): atom 1 (N)\u2003f\u207a = 0.48422572\n\u2022 Most nucleophilic site (largest f\u207b): atom 4 (C)\u2003f\u207b = 0.11826260\n\u2022 Dual descriptor highlights N as the dominant electrophilic center (\u0394 = 0.4201).\nFull per-atom values are available in /home/erobles/chem-skills/.fidelity_scratch/tmp60es5g39/live.json and the bar-chart PNG at the path returned by the skill.\n\nVerbatim engine warnings:\n1. fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n2. fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n3. schema_header: common header present"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 116.69,
+    "llm_s": 15.21,
+    "engine_s": 101.48,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity descriptors computed for aniline using DFT (B3LYP/def2-TZVP, tier standard, gas phase, charge 0, multiplicity 1, PySCF). Condnsed Fukui indices were calculated from Mulliken atomic charges of the neutral, cationic (N\u207a\u00b9, doublet), and anionic (N\u207b\u00b9, doublet) species. Most electrophilic site: ortho carbon (atom 3, C), f\u207a = +2.30. Most nucleophilic site: amino nitrogen (atom 1, N), f\u207b = +0.20. Full per-atom Fukui indices (f\u207a, f\u207b, f\u2070, dual descriptor) listed in the result. SCF converged for all three electronic states; charge conservation checks passed (sum f\u207a = 1.0000, sum f\u207b = 1.0000). No warnings reported. Integrity: trustworthy.</prose>\n<parameter name=\"value\">2.2975867"
+}

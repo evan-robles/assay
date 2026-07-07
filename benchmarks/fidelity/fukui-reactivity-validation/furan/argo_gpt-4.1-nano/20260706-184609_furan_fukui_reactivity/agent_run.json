@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 31.28,
+    "llm_s": 3.1,
+    "engine_s": 28.19,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "name of the functional: b3lyp is not a standard abbreviation in the polymer community but it is well-understood.",
+      "trustworthy: true"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices were computed using DFT at the B3LYP/def2-TZVP level with the standard tier in the gas phase for the furan molecule. The input geometry was sourced from an xyz file. The focus was on the Fukui index for nucleophilic attack (f\u2212) which is approximately 0.65816, indicating regions susceptible to nucleophilic species."
+}

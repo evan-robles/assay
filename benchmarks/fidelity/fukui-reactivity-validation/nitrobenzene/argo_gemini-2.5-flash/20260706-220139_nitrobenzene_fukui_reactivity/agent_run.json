@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 186.62,
+    "llm_s": 8.93,
+    "engine_s": 177.7,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity task was performed on nitrobenzene using Density Functional Theory (DFT) with the B3LYP functional and def2-TZVP basis set (tier `standard`), in the gas phase. The calculation used charge 0 and multiplicity 1 for the neutral molecule. The input geometry was read from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz`.\n\nThe most electrophilic atom (where f+ is highest) is Carbon (atom 4, 0-indexed: 3) with a Fukui f+ index of 0.49641782.\nThe most nucleophilic atom (where f- is highest) is Carbon (atom 5, 0-indexed: 4) with a Fukui f- index of 0.1072882."
+}

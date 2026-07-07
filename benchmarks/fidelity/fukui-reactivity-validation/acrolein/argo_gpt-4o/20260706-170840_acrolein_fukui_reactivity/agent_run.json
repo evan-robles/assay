@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 59.03,
+    "llm_s": 10.2,
+    "engine_s": 48.82,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity calculation for gas-phase acrolein used DFT at the B3LYP functional and def2-TZVP basis set (tier 'standard') with charge 0 and multiplicity 1 in PySCF. \n\nKey results:\n- The most electrophilic site (f+ max) is **C (index 3 in 0-based, atom 4 in 1-based counting)** with f+ = **0.64232102**.\n- The most nucleophilic site (f- max) is **O (index 0 in 0-based, atom 1 in 1-based counting)** with f- = **0.39388616**.\n\nWarnings reported:\n1. `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`.\n2. `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`.\n3. `common header present`.\n\nThe calculation passed integrity checks. A visual plot of regions is additionally saved in the path indicated. Files to reproduce via Command options: Including PySCF invoked log tracking `live.json`, and summary JSON files placed reliably back."
+}

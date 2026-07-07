@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 128.46,
+    "llm_s": 22.63,
+    "engine_s": 105.13,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui-reactivity analysis of aniline\n\n**Method-provenance block**\n- **Property:** Condensed Fukui reactivity descriptors (f\u207a electrophilic, f\u207b nucleophilic, f\u2070, and the dual descriptor) from finite-difference Mulliken charge changes across the neutral (N), cation (N\u22121), and anion (N+1) states.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`, which expands to exactly B3LYP/def2-TZVP), computed in PySCF. Density fitting was NOT enabled (chemkit default = exact four-center integrals / plain RKS/UKS).\n- **Geometry provenance:** User-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (14 atoms). This was used as-is \u2014 the fukui workflow performs single-point energy/charge evaluations on the supplied geometry (no re-optimization at this level).\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** Neutral parent charge 0, multiplicity 1 (closed-shell RKS). Derived states: cation charge +1 / multiplicity 2 and anion charge \u22121 / multiplicity 2 (open-shell UKS doublets).\n- **Partial-charge scheme:** Mulliken (PySCF).\n- **Software / backend:** PySCF (via chemkit `fukui` subcommand).\n\n**Key results**\n- **Most electrophilic site (largest f\u207a):** atom C3 (1-based label 3, 0-based index 2), **f\u207a = 2.2975867**. (A symmetry-equivalent ring carbon C4 gives essentially the same value, f\u207a = 2.2965637.)\n- **Most nucleophilic site (largest f\u207b):** the amine nitrogen N1, **f\u207b = 0.20452359** \u2014 chemically sensible for aniline, where the N lone pair is the nucleophilic center.\n- The dual descriptor is largest and positive at the ring carbons C3/C4 (\u2248 2.23), and most negative at the para/ortho hydrogens, consistent with the ring carbons being the preferred electrophilic-attack sites.\n\nNote: some f\u207a / dual-descriptor values are large in magnitude because the anion (N+1) Mulliken charges shift substantially \u2014 this is a known artifact of Mulliken population analysis with a diffuse-anion state in a large basis (def2-TZVP), so the *ranking* of sites is more reliable than the absolute magnitudes.\n\n**Integrity / convergence:** The engine reports **status = ok, trustworthy = true**. All integrity checks passed: charge conservation for both f\u207a and f\u207b sums to 1.0000 (indicating the N\u00b11 states converged properly), and the schema header is present. The result JSON's `warnings` array contained **no warnings** (empty).\n\n**Reproducibility**\n- Command: `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard <aniline.xyz> --out .../live.json`\n- Bar-chart plot written to: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_claude-opus-4.8/20260706-172303_aniline_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental or literature comparison is offered (none was requested)."
+}

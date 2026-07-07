@@ -1,0 +1,29 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 137.34,
+    "llm_s": 25.79,
+    "engine_s": 110.91,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity indices for phenol**\n\nMethod provenance and calculation details:\nProperty: condensed Fukui functions f\u207a (electrophilic attack), f\u207b (nucleophilic attack), dual descriptor f\u2070, and identification of the most electrophilic/nucleophilic atoms.\nLevel of theory: DFT, B3LYP/def2-TZVP (tier `standard`) with exact four-center integrals (density fitting OFF) in PySCF 2.x.\nGeometry provenance: fixed experimental\u2010like geometry supplied by the user (`phenol.xyz`). No further optimisation was performed; the Fukui analysis was a single-point calculation on this coordinate set (DFT//user geometry).\nSolvent / environment: gas phase (no implicit solvation model).\nCharge and multiplicity: neutral singlet (charge 0, multiplicity 1). The N\u20131 and N+1 states were treated as doublets (charge \u00b11, multiplicity 2) in the finite-difference scheme.\nSoftware: chemkit `fukui` skill (backend PySCF) \u2014 see full CLI in the JSON (`cli_invocation`).\nConvergence & caveats: SCF cycles converged for all three charge states (`integrity.status = ok`, `trustworthy = true`).  Integrity checks note charge-conservation diagnostics:\n\u2022 \u201csum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d  \n\u2022 \u201csum(f\u2212) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\u201d  \nBoth checks passed (`ok: true`).  No other warnings were reported.\nLive log: calculation wrote a live PySCF log to `phenol_fukui.out` (path surfaced while running); final structured result JSON is `phenol_fukui_dft.json`.\n\nHeadline results (atom indices are 1-based as in the output):\nMost electrophilic site (largest f\u207a): atom 3 (C)  f\u207a = 2.1028319  \nMost nucleophilic site (largest f\u207b): atom 1 (O)  f\u207b = 0.16201477\n\nSelected condensed Fukui functions (unitless):\nAtom 1 O  f\u207a = \u22120.99513677   f\u207b = 0.16201477   f\u2070 = \u22120.416561  \nAtom 3 C  f\u207a =  2.1028319    f\u207b = 0.070972379  f\u2070 =  1.0869021  \n(See `phenol_fukui_dft.json` for the complete 13-atom list.)\n\nThe reported headline number in this summary is the largest electrophilic Fukui index (f\u207a) returned by the tool:\n2.1028319\n\nIntegrity verdict: trustworthy = true.\nProvenance: computed (DFT calculation performed as described above)."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 151.36,
+    "llm_s": 48.87,
+    "engine_s": 101.94,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary (fukui reactivity of aniline)\n\n\u2022 Property: condensed Fukui functions (f+, f\u2212, dual descriptor) and most reactive atomic sites. Headline value reported here: maximum nucleophilic Fukui index f\u208b.\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (tier `standard`), no density-fitting (exact four-center integrals) in PySCF 2.x backend.\n\u2022 Geometry provenance: user-supplied Cartesian coordinates from /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz; single-point property evaluation (no re-optimization).\n\u2022 Solvent / environment: gas phase (no implicit solvation model).\n\u2022 Charge = 0, multiplicity = 1 for the neutral state; N\u20131 and N+1 states treated as doublets (default for a closed-shell parent) to obtain f\u2013 and f+.\n\u2022 Software: chemkit fukui-reactivity skill (engine subcommand `fukui`, PySCF backend for DFT).\n\u2022 Convergence & integrity: SCF cycles converged for all three charge states. Integrity checks report status \u201cok\u201d and trustworthy = true. No `warnings` array present; integrity checks flagged only informational warnings:\n  \u2013 fukui_charge_conservation_f+: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  \u2013 fukui_charge_conservation_f-: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  \u2013 schema_header: \"common header present\"\n  (All checks marked ok.)\n\u2022 Live log: the SCF and population-analysis output was streamed in real time to the automatically generated .out file announced at launch (path printed on start; e.g. `fukui_20260706-173112.out`). The summarized JSON result was written to /home/erobles/chem-skills/.fidelity_scratch/tmpr471y4ss/live.json.\n\nResult (headline)\nThe most nucleophilic atom is N (atom 1), with Fukui f\u208b = 0.20452359 (dimensionless).\n\nNo additional warnings were reported by the engine.\n\nThis value is a computed result (DFT single-point on the supplied geometry) and should be interpreted within the known accuracy regime of semi-local DFT partial-charge\u2013derived Fukui indices."
+}

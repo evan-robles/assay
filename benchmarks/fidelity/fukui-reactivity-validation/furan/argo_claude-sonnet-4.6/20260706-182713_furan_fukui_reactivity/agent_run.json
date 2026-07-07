@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 80.45,
+    "llm_s": 47.89,
+    "engine_s": 32.56,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for furan using DFT at the B3LYP/def2-TZVP level (tier 'standard', PySCF backend, density-fit RI), gas phase, charge 0, multiplicity 1. The geometry was taken from the user-supplied .xyz file at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz with no re-optimization. The N\u00b11 states used cation (charge +1, mult 2) and anion (charge \u22121, mult 2). Atom-condensed Mulliken partial charges were used throughout.\n\nHeadline result: the most electrophilic atom is C5 (atom index 5, 1-based), with f\u207a = 1.9242931 \u2014 the largest Fukui-plus value across all 9 atoms. The most nucleophilic atom is also C5, with f\u207b = 0.1616371.\n\nFull per-atom Fukui indices (f\u207a / f\u207b / f\u2070 / dual descriptor):\n  Atom 1  O:  \u22121.3316182 / 0.08382155 / \u22120.62389834 / \u22121.4154398\n  Atom 2  C:   1.2286866 / 0.08910309 /  0.65889485 /  1.1395835\n  Atom 3  C:   1.2270264 / 0.08930482 /  0.65816561 /  1.1377216\n  Atom 4  C:   1.9233053 / 0.16152700 /  1.04241610 /  1.7617783\n  Atom 5  C:   1.9242931 / 0.16163710 /  1.04296510 /  1.7626560\n  Atom 6  H:  \u22121.2190639 / 0.10248412 / \u22120.55828991 / \u22121.3215481\n  Atom 7  H:  \u22121.2191056 / 0.10251350 / \u22120.55829603 / \u22121.3216191\n  Atom 8  H:  \u22120.76678308 / 0.10481615 / \u22120.33098346 / \u22120.87159923\n  Atom 9  H:  \u22120.76674059 / 0.10479266 / \u22120.33097396 / \u22120.87153325\n\nIntegrity checks all passed (trustworthy: true). Both f\u207a and f\u207b sum-conservation checks returned 1.0000. All three integrity check items are reproduced verbatim in the warnings field above.\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz\nPlot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_claude-sonnet-4.6/20260706-182713_furan_fukui_reactivity/agent_call_01_plot.png"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 68.09,
+    "llm_s": 36.67,
+    "engine_s": 31.43,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity indices for furan** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP with RIJK density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: single point on the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz` coordinates (no relaxation at DFT). Mulliken\u2010based Fukui indices (neutral vs. N\u00b11 states) were computed: f+ = [\u22121.3316182, 1.2286866, 1.2270264, 1.9233053, 1.9242931, \u20131.2190639, \u20131.2191056, \u20130.76678308, \u20130.76674059], f- = [0.08382155, 0.089103093, 0.089304821, 0.161527, 0.1616371, 0.10248412, 0.1025135, 0.10481615, 0.10479266], f0 = [\u22120.62389834, 0.65889484, 0.65816562, 1.0424161, 1.0429651, \u20130.55828991, \u20130.55829603, \u20130.33098346, \u20130.33097396], dual descriptor = [\u22121.4154398, 1.1395835, 1.1377216, 1.7617783, 1.762656, \u20131.3215481, \u20131.321619, \u20130.87159923, \u20130.87153325]. The most electrophilic site is C-5 (1-based) with f+ = 1.9242931; the most nucleophilic site is C-5 with f- = 0.1616371. SCF converged; no warnings reported. Command: `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --out <path>.json`. integrity.trustworthy: true."
+}

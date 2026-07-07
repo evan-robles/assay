@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 132.05,
+    "llm_s": 81.62,
+    "engine_s": 49.7,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui electrophilic descriptor (f+) maximum for acrolein = 0.64232102 (dimensionless).\n\nMethod provenance\n\u2022 Property: atom-condensed Fukui indices (f+, f\u2212, dual) for acrolein; headline number is the largest f+ value (atom 4, carbonyl C).\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (tier \u2018standard\u2019) with exact four-center integrals (no RI density-fitting) in PySCF 2.x.\n\u2022 Geometry provenance: fixed XYZ supplied by user (/home/erobles/\u2026/acrolein.xyz); no further optimization (single-point population analysis).\n\u2022 Solvent / environment: gas phase (no continuum model).\n\u2022 Charge & multiplicity: 0, 1 (neutral singlet). N \u00b1 1 states were treated as doublets (charges \u00b11, multiplicity 2) following default rules.\n\u2022 Software: chemkit fukui-reactivity skill (engine subcommand `fukui`, PySCF backend). Command recorded in result JSON (see cli_invocation).\n\u2022 Convergence: SCF cycles for neutral, cation, and anion all converged; integrity.trustworthy = true.\n\nWarnings (verbatim from tool)\n- fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- schema_header: common header present\n\nLive log & reproducibility\nThe run streamed log output live to a timestamped `.out` file in the current working directory (announced at launch); the full JSON result is at /home/erobles/chem-skills/.fidelity_scratch/tmpmb5ao15o/live.json. These files, together with the method block above, allow exact reproduction of the calculation."
+}

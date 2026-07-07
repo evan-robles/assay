@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.46,
+    "llm_s": 23.37,
+    "engine_s": 10.09,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of formaldehyde (H\u2082C=O)**\n\n**Method-provenance block**\n- **Property:** Condensed (atom-resolved) Fukui functions and dual descriptor, from a finite-difference (\u0394N = \u00b11) analysis of Mulliken atomic charges.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`, which for chemkit corresponds exactly to B3LYP/def2-TZVP), density-fitting (RI) on by default. Backend: PySCF.\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`, 4 atoms: O, C, H, H). Used as-is \u2014 a single-point Fukui analysis at that fixed geometry; no geometry optimization was performed at this level.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** Neutral reference state \u2014 charge 0, multiplicity 1. The N+1 (anion) and N\u22121 (cation) states were computed as UKS doublets (anion: charge \u22121, mult 2; cation: charge +1, mult 2).\n- **Partial-charge scheme:** Mulliken (PySCF).\n- **Software:** PySCF via chemkit `fukui` skill.\n\n**Command (reproducibility):**\n`cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard .../formaldehyde.xyz`\n\n**Results (dimensionless, atom-condensed)**\n\nAtom order: [0]=O, [1]=C, [2]=H, [3]=H\n\n- f\u207a (electrophilic-attack susceptibility): O 0.46814, **C 0.70839**, H \u22120.08827, H \u22120.08826\n- f\u207b (nucleophilic/radical, electron loss): O 0.46742, C 0.11244, H 0.21008, H 0.21006\n- f\u2070 (radical): O 0.46778, C 0.41042, H 0.06090, H 0.06090\n- Dual descriptor (f\u207a \u2212 f\u207b): O 0.00071, C 0.59595, H \u22120.29835, H \u22120.29832\n\n**Headline findings**\n- **Most electrophilic site (largest f\u207a): the carbonyl carbon (C), f\u207a = 0.70839.** This is the reported headline number and is chemically consistent with the well-known nucleophilic addition at the carbonyl carbon of formaldehyde.\n- **Most nucleophilic site (largest f\u207b): the oxygen (O), f\u207b = 0.46742.**\n- The dual descriptor is strongly positive at C (+0.59595, electrophilic) and negative at the H atoms, reinforcing C as the preferred site for nucleophilic attack.\n\n**Integrity / convergence:** The engine reports **integrity status = \"ok\", trustworthy = true**. All three integrity checks passed. The Fukui charge-conservation checks confirm sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000, indicating the N\u00b11 states converged properly.\n\n**Warnings (reproduced verbatim, all severity = \"warning\"):**\n1. fukui_charge_conservation_f+: \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. fukui_charge_conservation_f-: \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. schema_header: \"common header present\"\n\n(These three are informational integrity checks that all reported ok=true; there were no failure/error-level messages.)\n\nA Fukui plot was written to: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_claude-opus-4.8/20260706-174912_formaldehyde_fukui_reactivity/agent_call_01_plot.png`\n\n**Caveats:** Fukui functions here are derived from Mulliken charges, which are basis-set dependent; condensed Fukui values should be read as reactivity trends rather than high-precision absolute quantities. No experimental/literature comparison is offered."
+}

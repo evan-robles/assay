@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 10.75,
+    "llm_s": 4.83,
+    "engine_s": 5.92,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis on ferrocene was performed using the chemkit tool with the 'fukui-reactivity' skill, employing the GFN2-xTB method in the gas phase. The computed most electrophilic Fukui index for the Fe atom is approximately 0.22885. No additional items are reported."
+}

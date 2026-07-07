@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 136.61,
+    "llm_s": 34.97,
+    "engine_s": 101.08,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity descriptors** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals) in PySCF via chemkit, gas phase, charge 0, multiplicity 1. Geometry: input from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`, not re-optimized (single-point). SCF converged; integrity checks passed. Warnings:  \n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)  \n- common header present  \nResults: the most electrophilic atom is C(3) with f+ = 2.2975867; the most nucleophilic atom is N(1) with f\u2212 = 0.20452359. Full descriptors (per atom index 1\u201314):  \n\u2022 f+ [1.6696628, \u22121.9009183, 2.2975867, 2.2965637, \u22120.28837102, \u22120.28784777, 1.4031745, \u22120.35138763, \u22120.35134383, \u22120.82107488, \u22120.82130627, \u22120.34268953, \u22120.75088374, \u22120.75116473]  \n\u2022 f\u2212 [0.20452359, \u22120.0037260934, 0.066571393, 0.066588805, 0.0083458972, 0.0083790983, 0.10973255, 0.08199599, 0.082013935, 0.076354671, 0.0763456, 0.087365768, 0.067758118, 0.067750673]  \n\u2022 f\u2070 [0.93709321, \u22120.95232219, 1.182079, 1.1815763, \u22120.14001256, \u22120.13973434, 0.7564535, \u22120.13469582, \u22120.13466495, \u22120.3723601, \u22120.37248033, \u22120.12766188, \u22120.34156281, \u22120.34170703]  \n\u2022 dual descriptor [1.4651392, \u22121.8971922, 2.2310153, 2.2299749, \u22120.29671692, \u22120.29622687, 1.2934419, \u22120.43338362, \u22120.43335776, \u22120.89742955, \u22120.89765187, \u22120.4300553, \u22120.81864186, \u22120.81891541]  \n\nCommand: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmprbd7sivq/live.json`  \nResults JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmprbd7sivq/live.json`  "
+}

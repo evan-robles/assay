@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 31.72,
+    "llm_s": 21.76,
+    "engine_s": 9.95,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde Fukui Reactivity Analysis**\n\nFukui reactivity indices (electrophilic, nucleophilic, and radical) for formaldehyde were computed using Density Functional Theory (DFT) at the tier `standard` level (B3LYP/def2-TZVP, with density fitting) in PySCF, in the gas phase. The geometry was sourced from the user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz` file. The neutral molecule was calculated with charge 0 and multiplicity 1. The N-1 (cation) state was computed with charge 1 and multiplicity 2, and the N+1 (anion) state with charge -1 and multiplicity 2. All states converged successfully.\n\n**Fukui Indices by Atom:**\n*   **Oxygen (O, atom index 0)**:\n    *   Electrophilic Fukui (f+): 0.46813824\n    *   Nucleophilic Fukui (f-): 0.46742464\n    *   Radical Fukui (f0): 0.46778144\n*   **Carbon (C, atom index 1)**:\n    *   Electrophilic Fukui (f+): 0.7083913\n    *   Nucleophilic Fukui (f-): 0.11244422\n    *   Radical Fukui (f0): 0.41041776\n*   **Hydrogen (H, atom index 2)**:\n    *   Electrophilic Fukui (f+): -0.088269392\n    *   Nucleophilic Fukui (f-): 0.21007563\n    *   Radical Fukui (f0): 0.060903121\n*   **Hydrogen (H, atom index 3)**:\n    *   Electrophilic Fukui (f+): -0.088260145\n    *   Nucleophilic Fukui (f-): 0.21005551\n    *   Radical Fukui (f0): 0.060897683\n\n**Most Reactive Sites:**\n*   **Most Electrophilic Atom**: Carbon (C, atom index 1) with an electrophilic Fukui index (f+) of 0.70839.\n*   **Most Nucleophilic Atom**: Oxygen (O, atom index 0) with a nucleophilic Fukui index (f-) of 0.46742."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 196.29,
+    "llm_s": 24.63,
+    "engine_s": 171.67,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ [severity: warning, ok]: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- [severity: warning, ok]: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header [severity: warning, ok]: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis \u2014 Nitrobenzene\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a, f\u207b, f\u2070), dual descriptor, and site reactivity ranking, derived from Mulliken partial charges of the N, N+1, and N\u22121 electronic states (finite-difference/frozen-geometry scheme).\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (chemkit tier `standard`, which expands to exactly B3LYP/def2-TZVP), density-fitting on (PySCF default).\n- **Backend:** PySCF (DFT).\n- **Geometry provenance:** User-supplied `nitrobenzene.xyz` (14 atoms), used **as-is** \u2014 this Fukui workflow does not re-optimize the geometry; all three charge states are single-point calculations at that fixed geometry.\n- **Solvent / environment:** **Gas phase** (no implicit solvation; `solvent: null`).\n- **Charge / multiplicity:** Neutral reference **charge 0, multiplicity 1**. The cation (N\u22121 electrons) was run at charge +1, multiplicity 2, and the anion (N+1) at charge \u22121, multiplicity 2 (both open-shell doublets, UKS).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Headline result**\n- **Most electrophilic site (largest f\u207a): atom C4 (1-based), a ring carbon \u2014 f\u207a = 0.49642.** This is the site most susceptible to nucleophilic attack.\n- **Most nucleophilic site (largest f\u207b): atom C5 (1-based), a ring carbon \u2014 f\u207b = 0.10729.** This is the site most susceptible to electrophilic attack.\n\nThe full condensed Fukui vectors, the dual descriptor, and per-atom charges for all three states were returned; the two ranked sites above are the headline reactivity descriptors.\n\n**Convergence / integrity:** The engine's integrity check reports `status: ok`, `trustworthy: true`. Charge-conservation sanity checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (both consistent with fully converged N\u00b11 states).\n\n**Warnings (reproduced verbatim from the result JSON `integrity.checks`):**\n1. `fukui_charge_conservation_f+` (severity: warning, ok=true): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n2. `fukui_charge_conservation_f-` (severity: warning, ok=true): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n3. `schema_header` (severity: warning, ok=true): \"common header present\"\n\nNo entries were present in a separate `warnings` array; the above are the severity=warning integrity checks (all passed).\n\n**Notes / caveats:** Condensed Fukui indices are Mulliken-population-based and therefore basis-set dependent (Mulliken charges are known to be sensitive to basis set); treat them as relative reactivity trends rather than absolute quantities. The analysis uses a single fixed geometry (no conformer averaging) and the frozen-geometry finite-difference approximation. This is a computed result \u2014 no experimental comparison is offered.\n\n**Reproducibility:** CLI invocation \u2014 `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard .../nitrobenzene.xyz`. A Fukui plot was written to `.../20260706-183822_nitrobenzene_fukui_reactivity/agent_call_01_plot.png`."
+}

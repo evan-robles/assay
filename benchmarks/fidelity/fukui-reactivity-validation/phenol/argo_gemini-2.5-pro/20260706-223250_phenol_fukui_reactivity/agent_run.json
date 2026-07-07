@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 147.95,
+    "llm_s": 34.02,
+    "engine_s": 113.93,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for phenol was completed using Density Functional Theory (DFT) at the tier 'standard' level, which corresponds to the B3LYP functional and def2-TZVP basis set, all performed in the gas phase. The calculation was based on the provided geometry file and used a charge of 0 and multiplicity of 1 for the neutral molecule. The analysis, conducted via PySCF, proceeded without any warnings.\n\nThis analysis predicts sites susceptible to nucleophilic and electrophilic attack based on the Fukui functions, which measure the change in electron density as an electron is added or removed.\n\n*   **Site for Nucleophilic Attack (Electrophilicity):** The results identify atom C3 as the most electrophilic site, with the largest Fukui+ (f+) index of 2.10283. This indicates it is the most likely atom to be attacked by a nucleophile.\n*   **Site for Electrophilic Attack (Nucleophilicity):** The results identify atom O1 as the most nucleophilic site, with the largest Fukui- (f-) index of 0.16201. This indicates it is the most likely atom to be attacked by an electrophile.\n\nThe full lists of calculated Fukui indices are provided below (atom order: O, C, C, C, C, C, C, H, H, H, H, H, H).\n\n*   **f+ (attack by nucleophile):** `[-0.99514, 0.39933, 2.10283, 1.61968, -0.34201, -0.28911, 1.30798, -0.73392, -0.27466, -0.91706, -0.62992, -0.29592, 0.04790]`\n*   **f- (attack by electrophile):** `[0.16201, 0.04877, 0.07097, 0.07050, 0.02670, 0.02095, 0.12352, 0.08232, 0.08815, 0.08111, 0.08049, 0.09350, 0.05101]`\n*   **f0 (attack by radical):** `[-0.41656, 0.22405, 1.08690, 0.84509, -0.15765, -0.13408, 0.71575, -0.32580, -0.09325, -0.41798, -0.27471, -0.10121, 0.04946]`"
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 247.32,
+    "llm_s": 22.91,
+    "engine_s": 224.41,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzaldehyde Fukui reactivity result** \u2014 computed using chemkit `fukui-reactivity` with DFT **B3LYP/def2-TZVP** (tier `standard`), gas phase, charge 0, multiplicity 1. Geometry source: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz`; no geometry optimization was part of this task. Partial charges: Mulliken (PySCF). Software/backend reported by the tool: `program: dft`; PySCF is indicated by the Mulliken charge scheme; version was not returned.\n\nHeadline result: the **most electrophilic site** is atom **3** (1-based label), **C**, with **f+ = 0.39938968**.\n\nMost nucleophilic site: atom **1** (1-based label), **O**, with **f\u2212 = 0.23839906**.\n\nPer-atom Fukui data, in input atom order:\n1. O: f+ 0.37884472; f\u2212 0.23839906; f0 0.30862189; dual 0.14044566\n2. C: f+ -0.35166791; f\u2212 -0.0070527758; f0 -0.17936034; dual -0.34461514\n3. C: f+ 0.39938968; f\u2212 0.036754119; f0 0.2180719; dual 0.36263556\n4. C: f+ 0.2116175; f\u2212 0.083317813; f0 0.14746766; dual 0.12829969\n5. C: f+ 0.33721988; f\u2212 0.053709655; f0 0.19546477; dual 0.28351023\n6. C: f+ 0.28475599; f\u2212 -0.0023209659; f0 0.14121751; dual 0.28707696\n7. C: f+ 0.27923464; f\u2212 0.058253154; f0 0.1687439; dual 0.22098149\n8. C: f+ 0.35870964; f\u2212 0.082353671; f0 0.22053166; dual 0.27635597\n9. H: f+ -0.11586238; f\u2212 0.060314591; f0 -0.027773893; dual -0.17617697\n10. H: f+ -0.20260656; f\u2212 0.05868656; f0 -0.07196; dual -0.26129312\n11. H: f+ -0.12695921; f\u2212 0.074199719; f0 -0.026379746; dual -0.20115893\n12. H: f+ -0.1340356; f\u2212 0.066010688; f0 -0.034012456; dual -0.20004629\n13. H: f+ -0.13691069; f\u2212 0.071541633; f0 -0.032684529; dual -0.20845232\n14. H: f+ -0.18172971; f\u2212 0.12583308; f0 -0.027948318; dual -0.30756279\n\nCharged-state setup used by the tool: cation charge +1, multiplicity 2; anion charge -1, multiplicity 2. Fukui charge-conservation integrity checks passed: sum(f+) = 1.0000 and sum(f\u2212) = 1.0000. Engine integrity trustworthy verdict: **true**.\n\nWarnings: no `warnings` array was returned by the tool.\n\nReproducibility: `cli_invocation` returned by chemkit was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpd6r5w7w0/live.json`. Plot written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_gpt-5.5/20260706-174038_benzaldehyde_fukui_reactivity/agent_call_01_plot.png`. The raw tool result did not return a live `.out` log path, so I cannot provide an exact `.out` filename without guessing."
+}

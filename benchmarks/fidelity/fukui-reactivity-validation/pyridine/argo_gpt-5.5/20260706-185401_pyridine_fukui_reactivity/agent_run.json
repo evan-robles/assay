@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 78.38,
+    "llm_s": 17.39,
+    "engine_s": 60.99,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Fukui reactivity** \u2014 computed with chemkit `fukui-reactivity` using DFT tier `standard` with explicit **B3LYP/def2-TZVP** (`functional=b3lyp`, `basis=def2-tzvp`) in the **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied fixed XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz` (11 atoms); no geometry optimization was requested. Charges/Fukui indices used the tool-reported **Mulliken (PySCF)** charge scheme. Neutral, cation, and anion charge states were evaluated as reported by the tool: neutral charge 0/multiplicity 1, cation charge +1/multiplicity 2, anion charge \u22121/multiplicity 2. Software/backend version was not returned by the tool. The live `.out` log path was not returned by the tool result; the returned result artifact path embedded in the command was `/home/erobles/chem-skills/.fidelity_scratch/tmp5qauz0yq/live.json`.\n\nHeadline result: the most electrophilic site is atom **1 (N)** with **f+ = 0.48422572**. The most nucleophilic site is atom **4 (C)** with **f\u2212 = 0.1182626**.\n\nPer-atom results, in input atom order:\n\n| Atom | Symbol | f+ | f\u2212 | f0 | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | N | 0.48422572 | 0.064122671 | 0.2741742 | 0.42010305 |\n| 2 | C | 0.32447228 | 0.0061877146 | 0.16533 | 0.31828456 |\n| 3 | C | 0.14032091 | 0.11823139 | 0.12927615 | 0.022089526 |\n| 4 | C | 0.14039587 | 0.1182626 | 0.12932923 | 0.022133272 |\n| 5 | C | 0.29962627 | 0.11206595 | 0.20584611 | 0.18756031 |\n| 6 | C | 0.29947706 | 0.11200985 | 0.20574345 | 0.18746721 |\n| 7 | H | -0.1415132 | 0.08284851 | -0.029332344 | -0.22436171 |\n| 8 | H | -0.1336841 | 0.098179487 | -0.017752309 | -0.23186359 |\n| 9 | H | -0.13365905 | 0.09818226 | -0.017738396 | -0.23184131 |\n| 10 | H | -0.1398163 | 0.094960093 | -0.022428102 | -0.23477639 |\n| 11 | H | -0.13984545 | 0.094949479 | -0.022447986 | -0.23479493 |\n\nTool-reported plot: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_gpt-5.5/20260706-185401_pyridine_fukui_reactivity/agent_call_01_plot.png`\n\nExact returned command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp5qauz0yq/live.json`\n\nTool integrity verdict: `integrity.trustworthy = true`.\n\nWarnings/check details surfaced verbatim from the tool result:\n- `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `common header present`"
+}

@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 16.95,
+    "llm_s": 10.76,
+    "engine_s": 6.19,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity indices for ferrocene** \u2014 GFN2-xTB (semi-empirical tight-binding method) in xtb, gas phase, charge 0, multiplicity 1. Geometry was taken from the user-supplied XYZ file at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`. The calculations for the N\u00b11 states, which are used to derive the Fukui functions, converged sufficiently.\n\nThe most electrophilic site is the Iron (Fe) atom, with a Fukui f+ index of 0.22885. The most nucleophilic site is also the Iron (Fe) atom, with a Fukui f- index of 0.25938. The partial charges were calculated using the Mulliken (GFN2-xTB) scheme.\n\n**Warnings from the tool:**\n*   sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n*   sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\nThese warnings indicate that charge conservation checks passed and the N\u00b11 states converged sufficiently."
+}

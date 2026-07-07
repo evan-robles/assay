@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 55.55,
+    "llm_s": 19.46,
+    "engine_s": 34.11,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui-reactivity calculation for acrolein was performed using Density Functional Theory (DFT) at the tier `standard` level, which corresponds to the **B3LYP functional** with the **def2-TZVP basis set**. The calculation was performed in the **gas phase** with a **charge of 0** and a **multiplicity of 1**. The geometry was taken from the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/acrolein.xyz` file. The calculation was run using **PySCF**.\n\nThe calculation converged successfully, and the results are trustworthy.\n\nThe Fukui indices and dual descriptor for each atom are as follows:\n\n| Atom Index (0-based) | Atom Label (1-based) | Symbol | Fukui f+ (Electrophilicity) | Fukui f- (Nucleophilicity) | Fukui f0 (Radical Attack) | Dual Descriptor (f2) |\n|---|---|---|---|---|---|---|\n| 0 | 1 | O | 0.40136419 | 0.39388616 | 0.39762517 | 0.0074780351 |\n| 1 | 2 | C | 0.022255106 | 0.0059884352 | 0.01412177 | 0.01626667 |\n| 2 | 3 | C | 0.43404673 | 0.091403097 | 0.26272491 | 0.34264363 |\n| 3 | 4 | C | 0.64232102 | 0.087369815 | 0.36484542 | 0.5549512 |\n| 4 | 5 | H | -0.1572595 | 0.085961423 | -0.03564904 | -0.24322092 |\n| 5 | 6 | H | -0.2072029 | 0.1856796 | -0.010761648 | -0.39288251 |\n| 6 | 7 | H | -0.062116996 | 0.084485809 | 0.011184406 | -0.14660281 |\n| 7 | 8 | H | -0.073407645 | 0.065225658 | -0.004090993 | -0.1386333 |\n\nThe most electrophilic atom (highest f+) is **C (atom index 3, atom label 4)** with a Fukui f+ value of **0.64232102**.\nThe most nucleophilic atom (highest f-) is **O (atom index 0, atom label 1)** with a Fukui f- value of **0.39388616**.\n\nThe live log file for this calculation is available at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_gemini-2.5-flash/20260706-211609_acrolein_fukui_reactivity/acrolein_fukui_dft.out`."
+}

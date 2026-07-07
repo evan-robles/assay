@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.83,
+    "llm_s": 21.52,
+    "engine_s": 28.3,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [check ok]",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [check ok]",
+      "schema_header (severity: warning): common header present [check ok]"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis of Furan\n\n**Method Provenance Block**\n\n- **Property:** Fukui reactivity descriptors (condensed-to-atom f\u207a, f\u207b, f\u2070, and dual descriptor) from finite-difference Mulliken population analysis.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (chemkit tier `standard`, which corresponds to B3LYP/def2-TZVP), PySCF backend. Density fitting is on by default in chemkit.\n- **Geometry provenance:** User-supplied geometry `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz` (9 atoms: O, 4\u00d7C, 4\u00d7H) used **as-is** \u2014 this Fukui analysis is a set of single-point calculations at the fixed input geometry; no geometry optimization was performed.\n- **Solvent / environment:** **Gas phase** (no implicit solvation applied).\n- **Charge & multiplicity:** Neutral reference state charge 0, multiplicity 1 (closed shell). Finite-difference states: cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2), both open-shell doublets treated with UKS.\n- **Partial-charge scheme:** Mulliken (PySCF).\n- **Software:** PySCF (via chemkit `fukui` skill).\n- **Integrity verdict:** engine reports `integrity.status = ok`, **trustworthy = true**.\n\n**Results**\n\n- **Most electrophilic site** (largest f\u207a, susceptible to nucleophilic attack): **atom 5 (C)**, with **f\u207a = 1.9242931**. (This is the headline value reported.)\n- **Most nucleophilic site** (largest f\u207b, susceptible to electrophilic attack): **atom 5 (C)**, with **f\u207b = 0.1616371**.\n\nCharge conservation checks are satisfied: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000, indicating the N\u00b11 states converged properly.\n\nNote: the Mulliken-based condensed Fukui functions here take on some negative and >1 values on individual atoms (a known artifact of Mulliken population partitioning, especially with larger basis sets like def2-TZVP); the descriptors are best interpreted as relative site rankings rather than strict [0,1] populations.\n\n**Warnings (verbatim, from the engine integrity checks \u2014 all reported `ok`):**\n1. `fukui_charge_conservation_f+` (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check ok\n2. `fukui_charge_conservation_f-` (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check ok\n3. `schema_header` (severity: warning): \"common header present\" \u2014 check ok\n\nNo other warnings were reported by the engine.\n\n**Reproducibility**\n\n- CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`\n- Plot output: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_claude-opus-4.8/20260706-175212_furan_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental or literature comparison is offered (none was requested)."
+}

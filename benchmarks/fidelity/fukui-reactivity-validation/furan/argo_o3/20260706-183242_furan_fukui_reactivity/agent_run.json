@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 96.44,
+    "llm_s": 37.28,
+    "engine_s": 58.6,
+    "turns": 4,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui descriptors for furan \u2014 DFT, B3LYP/def2-TZVP (PySCF, exact two-electron integrals; no density fitting), gas phase, charge 0, multiplicity 1.  Geometry: supplied XYZ (/home/erobles/\u2026/furan.xyz); the calculation is a single-point set of N, N+1, and N-1 SCFs on that fixed geometry (no relaxation).  \n\nMost electrophilic site: C5 (atom index 4) with f\u207a = 1.9242931.  \nMost nucleophilic site: the same carbon C5 with f\u207b = 0.1616371.  \nDual descriptor values mirror the f\u207a/f\u207b trends; full per-atom arrays are in furan_fukui_dft.json.\n\nConvergence: all three SCFs (neutral, cation, anion) converged.  The integrity block returned trustworthy = true.  \nWarnings from the engine (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nLive log: the run streamed to \u2026/20260706-183242_furan_fukui_reactivity/agent_call_02.out (still on disk; tail -f available).  Command: `chemkit fukui --method dft --functional b3lyp --basis def2-tzvp --charge 0 --mult 1 /path/to/furan.xyz`."
+}

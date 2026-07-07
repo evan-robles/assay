@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 128.03,
+    "llm_s": 25.81,
+    "engine_s": 102.22,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis for aniline was performed using DFT at the B3LYP/def2-TZVP level of theory in the gas phase, with a charge of 0 and a multiplicity of 1. The calculation was performed using the `chemkit` toolkit, which uses PySCF as the backend for DFT calculations.\n\nThe results indicate the most probable sites for nucleophilic and electrophilic attack.\n\n*   **Most Nucleophilic Site (most susceptible to electrophilic attack):** Atom 1 (N), with a Fukui index (f-) of 0.2045.\n*   **Most Electrophilic Site (most susceptible to nucleophilic attack):** Atom 3 (C), with a Fukui index (f+) of 2.2976.\n\nThe full Fukui indices for each atom are provided below:\n\n| Atom Index | Symbol | f+ (Electrophilic Attack) | f- (Nucleophilic Attack) | f0 (Radical Attack) | Dual Descriptor |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| 1 | N | 1.6697 | 0.2045 | 0.9371 | 1.4651 |\n| 2 | C | -1.9009 | -0.0037 | -0.9523 | -1.8972 |\n| 3 | C | 2.2976 | 0.0666 | 1.1821 | 2.2310 |\n| 4 | C | 2.2966 | 0.0666 | 1.1816 | 2.2300 |\n| 5 | C | -0.2884 | 0.0083 | -0.1400 | -0.2967 |\n| 6 | C | -0.2878 | 0.0084 | -0.1397 | -0.2962 |\n| 7 | C | 1.4032 | 0.1097 | 0.7565 | 1.2934 |\n| 8 | H | -0.3514 | 0.0820 | -0.1347 | -0.4334 |\n| 9 | H | -0.3513 | 0.0820 | -0.1347 | -0.4334 |\n| 10 | H | -0.8211 | 0.0764 | -0.3724 | -0.8974 |\n| 11 | H | -0.8213 | 0.0763 | -0.3725 | -0.8977 |\n| 12 | H | -0.3427 | 0.0874 | -0.1277 | -0.4301 |\n| 13 | H | -0.7509 | 0.0678 | -0.3416 | -0.8186 |\n| 14 | H | -0.7512 | 0.0678 | -0.3417 | -0.8189 |\n\nThe calculation completed successfully with no warnings."
+}

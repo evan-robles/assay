@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 223.03,
+    "llm_s": 45.4,
+    "engine_s": 171.07,
+    "turns": 3,
+    "tool_calls": 2
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for nitrobenzene (14 atoms: C\u2086H\u2085NO\u2082) at DFT B3LYP/def2-TZVP (PySCF, tier 'standard'), gas phase, charge 0, multiplicity 1. Geometry: user-supplied .xyz file at /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz (not re-optimized at this level). Partial charges via Mulliken (PySCF); Fukui indices obtained by finite-difference of N, N+1 (anion, charge \u22121, mult 2), and N\u22121 (cation, charge +1, mult 2) states. All SCFs converged; integrity trustworthy: true. The headline value reported is the maximum f\u207a (most electrophilic site): atom 4 (C, ipso carbon attached to \u2013NO\u2082) with f\u207a = 0.49641782. The most nucleophilic site is atom 5 (C, ortho) with f\u207b = 0.10728820. Integrity checks passed (sum(f+) = sum(f\u2212) = 1.0000). No convergence failures or engine warnings beyond standard self-check messages."
+}

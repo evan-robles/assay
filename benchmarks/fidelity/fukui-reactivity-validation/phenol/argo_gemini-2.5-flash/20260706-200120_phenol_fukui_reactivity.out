@@ -1,0 +1,25 @@
+[engine reference] REUSED cached engine-reference/ (determinism: migrated; determinism PASS in original run)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:gemini-2.5-flash via argo-proxy http://127.0.0.1:60639/v1
+Traceback (most recent call last):
+  File "/home/erobles/chem-skills/benchmarks/fidelity_driver.py", line 2867, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/erobles/chem-skills/benchmarks/fidelity_driver.py", line 2785, in main
+    agent_run = run_live_agent(spec, run_dir=run_dir, model=model)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/erobles/chem-skills/benchmarks/fidelity_driver.py", line 2191, in run_live_agent
+    resp = client.chat.completions.create(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/erobles/.conda/envs/assay_env/lib/python3.12/site-packages/openai/_utils/_utils.py", line 298, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/erobles/.conda/envs/assay_env/lib/python3.12/site-packages/openai/resources/chat/completions/completions.py", line 1251, in create
+    return self._post(
+           ^^^^^^^^^^^
+  File "/home/erobles/.conda/envs/assay_env/lib/python3.12/site-packages/openai/_base_client.py", line 1332, in post
+    return cast(ResponseT, self.request(cast_to, opts, stream=stream, stream_cls=stream_cls))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/erobles/.conda/envs/assay_env/lib/python3.12/site-packages/openai/_base_client.py", line 1105, in request
+    raise self._make_status_error_from_response(err.response) from None
+openai.InternalServerError: Error code: 500 - {'error': {'message': '1 validation error for Schema\nenum.3\n  Input should be a valid string [type=string_type, input_value=None, input_type=NoneType]\n    For further information visit https://errors.pydantic.dev/2.9/v/string_type', 'type': 'ValidationError', 'code': 'internal_error'}}

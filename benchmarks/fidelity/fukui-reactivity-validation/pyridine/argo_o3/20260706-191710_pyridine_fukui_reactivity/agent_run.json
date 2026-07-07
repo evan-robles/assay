@@ -1,0 +1,29 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 85.21,
+    "llm_s": 27.02,
+    "engine_s": 57.51,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed condensed Fukui functions for pyridine using chemkit\u2019s fukui-reactivity skill at DFT level (functional B3LYP, basis def2-TZVP; tier `standard`) with exact four-center integrals (no RI), in the gas phase.\n\nMethod provenance\n\u2022 Property: atom-condensed Fukui functions f\u207a (nucleophilic attack), f\u207b (electrophilic attack), dual descriptor f\u00b2.\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (PySCF RKS, no density fitting).\n\u2022 Geometry provenance: fixed experimental geometry supplied by user (file \u201c/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz\u201d); single-point charges for N, N\u00b11 electron states calculated at identical coordinates.\n\u2022 Solvent / environment: gas phase (no implicit solvation model).\n\u2022 Charge and multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation and anion states treated as doublets (charges +1/\u22121, multiplicity 2) by default.\n\u2022 Software/backend: PySCF 2.x via chemkit fukui-reactivity skill.\n\u2022 Convergence & integrity: SCF cycles for all three charge states converged; integrity.status = \"ok\", integrity.trustworthy = true. No engine warnings reported. Integrity checks flagged as informational warnings:\n  \u2013 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  \u2013 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n  \u2013 \"common header present\"\n  All checks passed (ok=true) and do not indicate issues.\n\nKey results (atoms numbered as in the supplied .xyz):\n\u2022 Most electrophilic site (largest f\u207a): Atom 1 (N), f\u207a = 0.48422572\n\u2022 Most nucleophilic site (largest f\u207b): Atom 4 (C), f\u207b = 0.11826260\n\nHeadline numeric result reported above is the maximum f\u207a value.\n\nLive log: the run was streamed to a file during execution (path given by chemkit: \u201c/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_o3/20260706-191710_pyridine_fukui_reactivity/fukui_20260706-191710.out\u201d, available for real-time inspection).\n\nProvenance: computed (this work)."
+}

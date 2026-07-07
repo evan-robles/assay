@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 134.89,
+    "llm_s": 23.41,
+    "engine_s": 110.88,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis \u2014 Phenol\n\n**Method-provenance block**\n- **Property:** Condensed Fukui reactivity descriptors (finite-difference f\u207a, f\u207b, f\u2070, and dual descriptor) from Mulliken partial charges of the N, N\u22121, and N+1 electronic states.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** \u2014 tier `standard` (B3LYP/def2-TZVP), functional and basis set explicitly requested. Exact four-center two-electron integrals (density fitting OFF by default in chemkit).\n- **Backend:** PySCF (chemkit `fukui` subcommand, DFT method).\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz` (13 atoms: C\u2086H\u2085OH). Used as-is \u2014 this is a single-point Fukui analysis at the provided geometry; **no geometry optimization was performed** at this or any level.\n- **Environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** Neutral parent \u2014 charge **0**, multiplicity **1** (closed-shell RKS). N\u22121 cation state: charge +1, multiplicity 2 (doublet, UKS); N+1 anion state: charge \u22121, multiplicity 2 (doublet, UKS).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Headline results**\n- **Most electrophilic site (largest f\u207a):** atom index 2 (0-based) / atom label 3 (1-based), a **carbon**, with **f\u207a = 2.1028319**. This is the preferred site for nucleophilic attack.\n- **Most nucleophilic site (largest f\u207b):** atom index 0 (0-based) / atom label 1 (1-based), the **oxygen**, with **f\u207b = 0.16201477**. This is the preferred site for electrophilic attack.\n\n**Convergence & integrity**\n- Integrity status: **ok**, trustworthy = **true**.\n- Charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (both ~1.0 as expected \u2014 no evidence of a non-converged N\u00b11 state); schema header present.\n- **Warnings:** the tool's `warnings` array was **empty \u2014 no warnings reported.** (The three \"integrity checks\" listed carry `severity: warning` but all reported `ok: true`; they are passing sanity checks, not raised warnings.)\n\n**Caveats / regime notes**\n- The Fukui values here are computed from **Mulliken charges**, which are basis-set dependent; the raw magnitudes (note some are negative/large \u2014 e.g. the anion-state Mulliken charges are numerically extreme) should be read as *relative* reactivity indicators rather than rigorous per-atom quantities.\n- This is a **single-conformer, single-geometry** analysis with no Boltzmann averaging and no geometry optimization at the provided coordinates.\n\n**Reproducibility**\n- Command: `.../cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard <phenol.xyz> --out .../live.json`\n- A per-atom bar chart (f\u207a/f\u207b/dual) was written to `.../20260706-184609_phenol_fukui_reactivity/agent_call_01_plot.png`.\n\nNo experimental/literature comparison is offered; ask if you want one and I'll verify a source first."
+}

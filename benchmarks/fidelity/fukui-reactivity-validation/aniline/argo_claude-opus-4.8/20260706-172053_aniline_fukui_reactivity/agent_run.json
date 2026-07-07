@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 128.82,
+    "llm_s": 29.88,
+    "engine_s": 98.34,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis of Aniline\n\n**Method-provenance block**\n- **Property:** Condensed (Mulliken-based) Fukui functions \u2014 f\u207a (electrophilic attack / nucleophilicity toward an incoming electron), f\u207b (nucleophilic attack / susceptibility to electrophiles), f\u2070, and the dual descriptor \u2014 computed by finite difference from the neutral, cation (N\u22121), and anion (N+1) states.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`, which expands to exactly B3LYP/def2-TZVP), via PySCF. Exact four-center two-electron integrals (density fitting OFF by default \u2014 no RI approximation).\n- **Geometry provenance:** user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (14 atoms: C\u2086H\u2085NH\u2082), used as-is (single-point Fukui analysis, geometry not re-optimized).\n- **Solvent / environment:** **gas phase** (no implicit solvent).\n- **Charge / multiplicity:** neutral parent charge **0**, multiplicity **1**; the finite-difference states used were the **cation** (charge +1, multiplicity 2) and the **anion** (charge \u22121, multiplicity 2), open-shell (UKS).\n- **Software:** PySCF (chemkit `dft` backend).\n- **Partial-charge scheme:** Mulliken (PySCF).\n\n**Headline result**\n- **Most electrophilic site:** atom index 3 (1-based), a ring **carbon**, with **f\u207a = 2.2975867** \u2014 this is the reported headline value.\n- **Most nucleophilic site:** atom index 1 (1-based), the amine **nitrogen**, with **f\u207b = 0.20452359** \u2014 consistent with the amine lone pair being the electrophile-attracting site of aniline.\n\nNote that these condensed Fukui values are Mulliken-charge-difference descriptors and are known to be basis-set sensitive (Mulliken populations especially so); the anion (N+1) Mulliken charges are notably large/diffuse, which is typical for anionic states in a triple-zeta basis. The values should be read as relative reactivity indices, not absolute quantities.\n\n**Convergence & integrity:** The run completed with integrity status **ok**, and the engine reports **trustworthy = true**. The charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (as expected; large drift would have indicated a non-converged N\u00b11 state). \n\n**Warnings:** The result JSON's `warnings` array was **empty \u2014 no warnings were reported**. (The three items under `integrity.checks` are informational passing checks, all marked `ok: true`: `fukui_charge_conservation_f+` \u2014 \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"; `fukui_charge_conservation_f-` \u2014 \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"; and `schema_header` \u2014 \"common header present\". These are the passing check details, reproduced verbatim, not warnings.)\n\n**Reproducibility**\n- CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out \u2026/live.json`\n- Bar-chart plot of f\u207a/f\u207b/dual per atom written to: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_claude-opus-4.8/20260706-172053_aniline_fukui_reactivity/agent_call_01_plot.png`\n\nNo experimental or literature comparison is offered; this is a purely computed result."
+}

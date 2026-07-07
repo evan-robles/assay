@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 145.15,
+    "llm_s": 35.73,
+    "engine_s": 109.42,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [PASSED]",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [PASSED]",
+      "common header present [PASSED]"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for phenol computed at DFT tier 'standard' (B3LYP/def2-TZVP, PySCF RKS, density-fit RI) in gas phase, charge 0, multiplicity 1. N\u00b11 species (cation charge +1 mult 2; anion charge -1 mult 2) computed with UKS. Partial charges via Mulliken (PySCF). Geometry taken as-is from user-supplied phenol.xyz (single-point; not re-optimized at this level). Integrity: trustworthy=true; f+ and f- both sum to 1.0000 (conserved). Headline value reported: f+(max) = 2.1028319 at atom 3 (ortho C). Most nucleophilic site: O (atom 1), f- = 0.16201477. Dual descriptor maximum: 2.0318595 at ortho C. Results are chemically consistent with ortho/para-directing OH group in EAS. All three integrity checks passed. No engine warnings beyond passing checks."
+}

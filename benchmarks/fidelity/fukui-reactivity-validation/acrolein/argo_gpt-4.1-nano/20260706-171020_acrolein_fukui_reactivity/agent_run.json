@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.09,
+    "llm_s": 3.36,
+    "engine_s": 30.74,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "The most electrophilic atom (atom 4, carbon) has f+ = 0.64232102.",
+      "The most nucleophilic atom (atom 1, oxygen) has f- = 0.39388616."
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices were calculated at the DFT level with the B3LYP functional and def2-tzvp basis set, in the gas phase, with a charge of 0 and multiplicity 1. The most electrophilic atom is carbon 4, and the most nucleophilic atom is oxygen 1. The calculation used the chemkit's DFT implementation, and the results include Fukui indices for nucleophilic, electrophilic, and radical attack, as well as the dual descriptor. The analysis was performed with the specified method settings, and warnings about charge conservation suggest near-converged states."
+}

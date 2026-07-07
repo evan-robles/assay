@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 27.94,
+    "llm_s": 21.65,
+    "engine_s": 6.29,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Ferrocene Fukui reactivity calculation \u2014 GFN2-xTB (semi-empirical tight-binding method) in xtb, gas phase, charge 0, multiplicity 1. Geometry: user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`, used as-is. SCF converged.\n\nFukui indices (f- for nucleophilic attack, f+ for electrophilic attack, f0 for radical attack):\n\n| Atom Index | Element | f-         | f+         | f0         |\n|:-----------|:--------|:-----------|:-----------|:-----------|\n| 0          | C       | 0.0121792  | 0.0136383  | 0.0129088  |\n| 1          | C       | 0.0121792  | 0.0136383  | 0.0129088  |\n| 2          | C       | 0.0121793  | 0.0136382  | 0.0129088  |\n| 3          | C       | 0.0121793  | 0.0136386  | 0.0129090  |\n| 4          | C       | 0.0121793  | 0.0136382  | 0.0129088  |\n| 5          | H       | 0.0618828  | 0.0634764  | 0.0626796  |\n| 6          | H       | 0.0618828  | 0.0634764  | 0.0626796  |\n| 7          | H       | 0.0618824  | 0.0634762  | 0.0626793  |\n| 8          | H       | 0.0618823  | 0.0634758  | 0.0626791  |\n| 9          | H       | 0.0618824  | 0.0634762  | 0.0626793  |\n| 10         | Fe      | **0.2593819**| **0.2288546**| **0.2441182**|\n| 11         | C       | 0.0121792  | 0.0136383  | 0.0129088  |\n| 12         | C       | 0.0121792  | 0.0136383  | 0.0129088  |\n| 13         | C       | 0.0121793  | 0.0136382  | 0.0129088  |\n| 14         | C       | 0.0121793  | 0.0136386  | 0.0129090  |\n| 15         | C       | 0.0121793  | 0.0136382  | 0.0129088  |\n| 16         | H       | 0.0618828  | 0.0634764  | 0.0626796  |\n| 17         | H       | 0.0618828  | 0.0634764  | 0.0626796  |\n| 18         | H       | 0.0618824  | 0.0634762  | 0.0626793  |\n| 19         | H       | 0.0618823  | 0.0634758  | 0.0626791  |\n| 20         | H       | 0.0618824  | 0.0634762  | 0.0626793  |\n\nThe most nucleophilic site is the Iron (Fe) atom with a f- index of 0.2593819.\nThe most electrophilic site is also the Iron (Fe) atom with a f+ index of 0.2288546."
+}

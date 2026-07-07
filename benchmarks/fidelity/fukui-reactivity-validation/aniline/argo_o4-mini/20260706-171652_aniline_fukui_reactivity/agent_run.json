@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 141.17,
+    "llm_s": 35.47,
+    "engine_s": 105.18,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui reactivity analysis** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals) in PySCF via chemkit, gas phase, charge 0, multiplicity 1. Geometry: single-point on the provided aniline.xyz (no geometry optimization). SCF converged for neutral, cation, and anion states using PySCF default convergence criteria. Mulliken charges (PySCF) were used for fukui indices. The most electrophilic site is atom 3 (C) with Fukui+ = 2.2975867; the most nucleophilic site is atom 1 (N) with Fukui\u2013 = 0.20452359. Result JSON: `/home/erobles/chem-skills/.fidelity_scratch/tmpfj56cgeg/live.json`. CLI invocation: `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpfj56cgeg/live.json`. Warnings reported verbatim: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); common header present."
+}

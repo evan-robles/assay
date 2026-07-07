@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 134.53,
+    "llm_s": 20.37,
+    "engine_s": 114.16,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have completed the Fukui reactivity analysis for phenol using Density Functional Theory (DFT).\n\n**Methodology:**\n*   **Property:** Fukui Condensed Reactivity Indices\n*   **Level of Theory:** DFT, using the B3LYP functional with the def2-TZVP basis set (corresponding to chemkit's `standard` tier).\n*   **Environment:** Gas phase.\n*   **Molecule:** Phenol, from the provided geometry file.\n*   **Charge and Multiplicity:** 0 and 1.\n*   **Software:** The calculation was performed using the PySCF backend.\n\nThe analysis identifies the atoms most susceptible to electrophilic, nucleophilic, and radical attack by calculating the condensed Fukui functions (f-, f+, and f0, respectively).\n\n**Results:**\n*   **Attack by an Electrophile (Nucleophilic Site):** The site most susceptible to attack by an electrophile is the **Oxygen atom (Atom 1)**, which has the largest Fukui index for this type of interaction (f\u207b = 0.1620).\n*   **Attack by a Nucleophile (Electrophilic Site):** The site most susceptible to attack by a nucleophile is **Carbon atom 3** (the third atom in the coordinate file), which has the largest Fukui index for this interaction (f\u207a = 2.1028).\n\nThe calculation converged successfully and the engine's integrity checks confirmed the results are trustworthy. No warnings were reported."
+}

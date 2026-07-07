@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.29,
+    "llm_s": 19.78,
+    "engine_s": 6.5,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have completed the Fukui reactivity analysis for ferrocene using the GFN2-xTB method as you requested.\n\n**Fukui Reactivity of Ferrocene** \u2014 GFN2-xTB (xtb), gas phase, charge 0, multiplicity 1. The calculation was performed on the geometry provided in `ferrocene.xyz`.\n\nThe analysis identifies the sites most susceptible to nucleophilic and electrophilic attack:\n\n*   **Most susceptible to nucleophilic attack (most electrophilic site):** The central iron atom (atom 11), with a Fukui index (f+) of 0.22885.\n*   **Most susceptible to electrophilic attack (most nucleophilic site):** The central iron atom (atom 11), with a Fukui index (f-) of 0.25938.\n\nThe dual descriptor for the iron atom is -0.03053. A negative value indicates a site that is preferentially subject to nucleophilic attack. Conversely, all carbon and hydrogen atoms have positive dual descriptors, marking them as sites for electrophilic attack.\n\nThe calculation was performed using the GFN2-xTB semi-empirical tight-binding method. No warnings were reported by the tool, and its integrity checks were trustworthy."
+}

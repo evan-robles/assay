@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 145.37,
+    "llm_s": 39.91,
+    "engine_s": 104.91,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance:\nProperty: Fukui reactivity indices (f\u207a, f\u207b, dual descriptor) and most electrophilic/nucleophilic atoms for aniline.\nLevel of theory: DFT, B3LYP/def2-TZVP (tier `standard`), no density fitting (exact four-center integrals) in PySCF 2.x.\nGeometry provenance: fixed geometry from user-supplied file /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz; no re-optimization (single-point calculations on neutral, N+1, and N\u20131 charge states).\nSolvent / environment: gas phase (no implicit solvation).\nCharge & multiplicity: neutral singlet parent (charge 0, multiplicity 1); cation (+1, doublet) and anion (\u20131, doublet) states generated automatically.\nSoftware/backend: chemkit fukui-reactivity skill (engine subcommand `fukui`) calling PySCF.\nConvergence & integrity: integrity.status = \"ok\", integrity.trustworthy = true. SCF cycles converged for all three charge states (per engine; no SCF warnings). All internal charge-conservation checks passed.\nWarnings (verbatim from engine):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nLive log: written during execution to a timestamped .out file in the working directory (e.g. `fukui_YYYYMMDD-HHMMSS.out`); it contains full SCF logs and can be inspected with `tail -f`.\n\nKey results (Mulliken-based indices):\nMost electrophilic site: atom 3 (C) with f\u207a = 2.2975867.\nMost nucleophilic site: atom 1 (N) with f\u207b = 0.20452359.\n\nHeadline number (returned above as \u201cvalue\u201d): f\u207a of the most electrophilic atom = 2.2975867\n\nAll quantities are computed (no experimental data)."
+}

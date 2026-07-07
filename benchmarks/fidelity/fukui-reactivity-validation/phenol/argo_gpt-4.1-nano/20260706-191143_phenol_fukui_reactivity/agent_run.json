@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 113.61,
+    "llm_s": 6.1,
+    "engine_s": 107.51,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "calculated"
+  },
+  "prose": "The fukui-reactivity calculation on phenol was performed using the DFT method with the B3LYP functional and the def2-TZVP basis set, in the gas phase, as a single-point computation. The molecule's initial structure was taken from the specified xyz file. The calculation included the Mulliken charge scheme and provided various reactivity descriptors, such as Fukui indices for nucleophilic and electrophilic attack, as well as the dual descriptor. The method used was B3LYP/def2-TZVP in PySCF at tier 'standard'. The computed value for the most nucleophilic site Fukui minus is 0.16201477, indicating its nucleophilicity tendency. The most electrophilic site Fukui plus is 2.1028319, highlighting its electrophilicity. Warnings: The charge conservation warnings suggest some drift in the N+1 and N-1 states' charge sums, implying potential convergence issues for those states, which should be considered when interpreting the results. Reproducibility: The calculation was invoked with the command `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard <xyz_file> --out <json_output_path>`."
+}

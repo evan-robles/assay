@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 68.53,
+    "llm_s": 8.64,
+    "engine_s": 59.89,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for pyridine were computed using DFT with the B3LYP functional and def2-TZVP basis set, at tier 'standard', in the gas phase. The calculation assumed charge 0 and multiplicity 1 and used Mulliken populations derived from PySCF. \n\n**Key results:**\n- Most electrophilic site: Nitrogen atom (N), Fukui+ = 0.4842.\n- Most nucleophilic site: Carbon atom at the 4-position (C4), Fukui- = 0.1183.\n\nThe Fukui values satisfy charge conservation (sum(f+) and sum(f-) = 1.0000), though warnings note they may drift if the oxidized/reduced states did not fully converge. Geometry used: pyridine.xyz (11 atoms). SCF converged. \n\nFind plots and outputs under `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_gpt-4o/20260706-185000_pyridine_fukui_reactivity/`."
+}

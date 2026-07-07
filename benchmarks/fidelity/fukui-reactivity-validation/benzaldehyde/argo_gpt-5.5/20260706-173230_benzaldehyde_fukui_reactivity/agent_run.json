@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 241.53,
+    "llm_s": 22.61,
+    "engine_s": 218.92,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzaldehyde Fukui reactivity \u2014 computed result**\n\n**Method/provenance.** Property: condensed Fukui indices from Mulliken charges. Level of theory: DFT **B3LYP/def2-TZVP**, chemkit tier `standard`, gas phase. Geometry: user-supplied fixed XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz` (14 atoms); no geometry optimization was requested in this task. Charge/multiplicity for the neutral reference: **0 / 1**. The N+1 and N\u22121 states used by the Fukui workflow were returned as anion charge \u22121 multiplicity 2 and cation charge +1 multiplicity 2. Backend reported by chemkit: `program: dft`; partial charges: **Mulliken (PySCF)**. Solvent: **gas phase**.\n\n**Headline result.** The largest electrophilic Fukui index, f(+), is on **atom 3 (C)**: **0.39938964**. The largest nucleophilic Fukui index, f(\u2212), is on **atom 1 (O)**: **0.23839906**.\n\nPer-atom condensed Fukui indices, in the atom order returned by the XYZ/result:\n\n| atom label | symbol | f(+) | f(\u2212) | f(0) | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | O | 0.37884472 | 0.23839906 | 0.30862189 | 0.14044566 |\n| 2 | C | -0.35166791 | -0.0070527759 | -0.17936034 | -0.34461514 |\n| 3 | C | 0.39938964 | 0.036754119 | 0.21807188 | 0.36263552 |\n| 4 | C | 0.21161748 | 0.083317813 | 0.14746764 | 0.12829966 |\n| 5 | C | 0.33721991 | 0.053709655 | 0.19546478 | 0.28351026 |\n| 6 | C | 0.28475602 | -0.002320966 | 0.14121753 | 0.28707698 |\n| 7 | C | 0.27923466 | 0.058253154 | 0.1687439 | 0.2209815 |\n| 8 | C | 0.35870964 | 0.082353671 | 0.22053166 | 0.27635597 |\n| 9 | H | -0.11586238 | 0.060314591 | -0.027773894 | -0.17617697 |\n| 10 | H | -0.20260656 | 0.05868656 | -0.071960002 | -0.26129312 |\n| 11 | H | -0.12695921 | 0.074199719 | -0.026379744 | -0.20115893 |\n| 12 | H | -0.13403559 | 0.066010688 | -0.034012453 | -0.20004628 |\n| 13 | H | -0.1369107 | 0.071541633 | -0.032684531 | -0.20845233 |\n| 14 | H | -0.18172971 | 0.12583308 | -0.027948317 | -0.30756279 |\n\n**Integrity verdict.** chemkit returned `integrity.trustworthy: true`.\n\n**Warnings/check details surfaced verbatim from the tool result:**\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\n**Reproducibility.** Exact chemkit command reported by the tool:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp97_c541v/live.json`\n\nPlot file returned: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_gpt-5.5/20260706-173230_benzaldehyde_fukui_reactivity/agent_call_01_plot.png`.\n\nThe chemkit JSON response did not include a live `.out` log path, so I cannot report one without guessing."
+}

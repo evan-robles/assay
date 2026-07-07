@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 35.03,
+    "llm_s": 28.23,
+    "engine_s": 6.8,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui indices for ferrocene \u2014 GFN2-xTB (xtb 6.x), gas phase, charge 0, multiplicity 1. Geometry: user-supplied ferrocene.xyz (no re-optimization; single-point partial-charge evaluation). Most electrophilic site: Fe (atom 11) with f+ = 0.22885456. Most nucleophilic site: Fe (atom 11) with f\u2212 = 0.25938191. Density-derived Mulliken charges were used to obtain f+, f\u2212, f0, and the dual descriptor.  \n\nMethod provenance: semi-empirical tight-binding **GFN2-xTB** single-point (no optimization); gas phase; program xtb 6.x via chemkit `fukui-reactivity` skill. Charge 0, multiplicity 1; cation/anion states (charge \u00b11, multiplicity 2) generated automatically. SCF cycles converged; integrity checks report status *ok* (trustworthy = true).  \n\nWarnings (verbatim from engine):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present  \n\nLive run log was written during execution (path shown in `cli_invocation` in the result JSON); computation finished without SCF/optimizer errors.  \n\nHeadline result (most electrophilic f\u207a at Fe): 0.22885456"
+}

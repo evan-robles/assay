@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 133.46,
+    "llm_s": 21.96,
+    "engine_s": 111.5,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "B3LYP/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "B3LYP",
+    "basis": "def2-TZVP",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui Reactivity Indices for phenol \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: User-provided from `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/phenol/phenol.xyz`. This was a single-point calculation on the provided geometry. The most electrophilic site is Carbon (atom 3, 1-based index) with a Fukui f+ index of 2.10283, and the most nucleophilic site is Oxygen (atom 1, 1-based index) with a Fukui f- index of 0.16201.\n\nFukui indices per atom (f+, f-, f0):\nAtom 1 (O): f+ = -0.99514, f- = 0.16201, f0 = -0.41656\nAtom 2 (C): f+ = 0.39933, f- = 0.04877, f0 = 0.22405\nAtom 3 (C): f+ = 2.10283, f- = 0.07097, f0 = 1.08690\nAtom 4 (C): f+ = 1.61968, f- = 0.07050, f0 = 0.84509\nAtom 5 (C): f+ = -0.34201, f- = 0.02670, f0 = -0.15765\nAtom 6 (C): f+ = -0.28911, f- = 0.02095, f0 = -0.13408\nAtom 7 (C): f+ = 1.30798, f- = 0.12352, f0 = 0.71575\nAtom 8 (H): f+ = -0.73392, f- = 0.08232, f0 = -0.32580\nAtom 9 (H): f+ = -0.27466, f- = 0.08815, f0 = -0.09325\nAtom 10 (H): f+ = -0.91706, f- = 0.08111, f0 = -0.41798\nAtom 11 (H): f+ = -0.62992, f- = 0.08049, f0 = -0.27471\nAtom 12 (H): f+ = -0.29592, f- = 0.09350, f0 = -0.10121\nAtom 13 (H): f+ = 0.04790, f- = 0.05101, f0 = 0.04946"
+}

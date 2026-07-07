@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 80.19,
+    "llm_s": 19.76,
+    "engine_s": 59.54,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N+/-1 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N+/-1 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The fukui reactivity indices for pyridine were computed using Density Functional Theory (DFT) at the `standard` tier (B3LYP/def2-TZVP functional/basis set, density-fit) in PySCF. The calculation was performed in the gas phase with a charge of 0 and a multiplicity of 1 for the parent molecule. The geometry was taken from the user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz` file.\n\nThe most electrophilic site is the nitrogen atom (atom 1), with a Fukui f+ index of 0.48422572.\nThe most nucleophilic site is the carbon atom at position 4 (atom 4), with a Fukui f- index of 0.1182626.\n\nThe full Fukui indices for each atom are:\n-   **N (atom 1)**: f+ = 0.48422572, f- = 0.064122671, f0 = 0.2741742\n-   **C (atom 2)**: f+ = 0.32447227, f- = 0.0061877146, f0 = 0.16532999\n-   **C (atom 3)**: f+ = 0.14032091, f- = 0.11823139, f0 = 0.12927615\n-   **C (atom 4)**: f+ = 0.14039586, f- = 0.1182626, f0 = 0.12932923\n-   **C (atom 5)**: f+ = 0.29962627, f- = 0.11206595, f0 = 0.20584611\n-   **C (atom 6)**: f+ = 0.29947707, f- = 0.11200985, f0 = 0.20574346\n-   **H (atom 7)**: f+ = -0.14151319, f- = 0.08284851, f0 = -0.029332341\n-   **H (atom 8)**: f+ = -0.1336841, f- = 0.098179487, f0 = -0.017752308\n-   **H (atom 9)**: f+ = -0.13365905, f- = 0.09818226, f0 = -0.017738396\n-   **H (atom 10)**: f+ = -0.1398163, f- = 0.094960093, f0 = -0.022428103\n-   **H (atom 11)**: f+ = -0.13984545, f- = 0.094949479, f0 = -0.022447986\n\nThe calculation is considered trustworthy."
+}

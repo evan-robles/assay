@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 39.83,
+    "llm_s": 11.29,
+    "engine_s": 28.54,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices were computed for furan. \nThe calculation used DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. \nThe geometry was taken from the user-provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz` file, and the calculation was a single point on this geometry. \nThe most electrophilic site is C5 (atom index 4, 0-indexed) with a Fukui f+ index of 1.9242931. The most nucleophilic site is C5 (atom index 4, 0-indexed) with a Fukui f- index of 0.1616371. \nThe calculation status is 'ok' and trustworthy. \n\n**Warnings:**\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+}

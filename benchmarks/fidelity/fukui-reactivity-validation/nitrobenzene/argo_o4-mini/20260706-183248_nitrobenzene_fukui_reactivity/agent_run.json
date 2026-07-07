@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 209.61,
+    "llm_s": 42.47,
+    "engine_s": 166.59,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Nitrobenzene Fukui-reactivity indices** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact four-center integrals, density fitting off) in PySCF via chemkit; single-point on the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz` geometry, gas phase, charge 0, multiplicity 1. SCF converged for the neutral (singlet), cation (doublet), and anion (doublet) states. Warnings: none reported. Mulliken partial\u2010charge Fukui indices computed: f\u207a = [0.47317276, 0.47344363, \u20130.45670088, 0.49641781, 0.11562654, 0.11588204, 0.17412422, 0.17422940, 0.28913577, \u20130.23168970, \u20130.23181693, \u20130.13372477, \u20130.13379393, \u20130.12430597]; f\u207b = [0.09701552, 0.09677392, 0.01724346, \u20130.01429204, 0.10728820, 0.10723661, 0.09492244, 0.09489250, 0.00831161, 0.07521203, 0.07520256, 0.08388328, 0.08388191, 0.07242800]. The most electrophilic site is C atom 4 (f\u207a = 0.49641781); the most nucleophilic site is C atom 5 (f\u207b = 0.10728820). CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpgu__h376/live.json`. Integrity.trustworthy: true."
+}

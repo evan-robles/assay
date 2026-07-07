@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 44.26,
+    "llm_s": 33.41,
+    "engine_s": 10.3,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui reactivity** \u2014 semiempirical GFN2-xTB (xtb) in the gas phase, charge 0, multiplicity 1. Geometry: fixed user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` (no optimization). Partial charges: Mulliken (GFN2-xTB). SCF converged. Warnings reported verbatim: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge); common header present. Most electrophilic site: iron center (atom 11) with f+ = 0.22885456 (dimensionless). Most nucleophilic site: iron center (atom 11) with f- = 0.25938191 (dimensionless). Computation performed with `chemkit fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpsrw5z9mv/live.json`. No experimental comparison is provided."
+}

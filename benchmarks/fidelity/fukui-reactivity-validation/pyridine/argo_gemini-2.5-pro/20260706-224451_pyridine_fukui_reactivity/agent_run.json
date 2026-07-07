@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 83.35,
+    "llm_s": 22.96,
+    "engine_s": 60.39,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis of pyridine was performed using DFT at the B3LYP/def2-TZVP level of theory in the gas phase, with a charge of 0 and a multiplicity of 1. The calculation completed successfully with no warnings reported.\n\nThe results indicate the following:\n*   The site most susceptible to **nucleophilic attack** is the nitrogen atom (atom 1), with a Fukui(+) index of `f+ = 0.484`.\n*   The site most susceptible to **electrophilic attack** is the carbon atom at position 4 (para to the nitrogen), with a Fukui(-) index of `f- = 0.118`. The carbon atoms at positions 2 and 6 (ortho to the nitrogen) have very similar reactivity for electrophilic attack.\n\nThis analysis was based on the calculation of Fukui indices from the electron densities of the neutral, cationic, and anionic states of the molecule. The Fukui(+) index measures the reactivity towards a nucleophile, while the Fukui(-) index measures the reactivity towards an electrophile."
+}

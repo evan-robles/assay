@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 41.95,
+    "llm_s": 35.95,
+    "engine_s": 6.0,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui reactivity analysis** \u2014 Property: Fukui reactivity indices (electrophilic f\\+: Mulliken-based GFN2-xTB fukui+ and nucleophilic f\\- indices at each atom). Level of theory: GFN2-xTB (semiempirical tight-binding) via xtb. Geometry provenance: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` (no optimization; single-point). Solvent: gas phase (no implicit continuum). Charge 0, multiplicity 1 for the neutral state; cation (charge +1, multiplicity 2) and anion (charge \u20131, multiplicity 2) states also computed for finite-difference. Software: xtb (version as provided by default in chemkit). Convergence and caveats: SCF converged for neutral, cationic, and anionic states; no engine warnings reported; integrity.trustworthy = true. Results: Most electrophilic site is the Fe atom (atom 11) with f\\+ = 0.22885456; most nucleophilic site is the same Fe atom (atom 11) with f\\- = 0.25938191. CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpo5g7kf6d/live.json`."
+}

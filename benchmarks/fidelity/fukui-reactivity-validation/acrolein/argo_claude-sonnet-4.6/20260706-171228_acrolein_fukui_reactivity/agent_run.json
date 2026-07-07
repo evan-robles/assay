@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 75.6,
+    "llm_s": 41.43,
+    "engine_s": 34.17,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for acrolein computed at DFT tier 'standard' (B3LYP/def2-TZVP, PySCF RKS, density-fit), gas phase, charge 0, multiplicity 1. N+1 anion: charge -1, mult 2; N-1 cation: charge +1, mult 2. Geometry: user-supplied acrolein.xyz, used as-is (no re-optimization). Partial charges via Mulliken (PySCF). Integrity: trustworthy=true, all checks passed. Headline value is the maximum f+ (electrophilic Fukui index) at atom 4 (\u03b2-carbon, C4) = 0.64232102, identifying it as the primary site for nucleophilic (Michael) attack. Most nucleophilic site: O1 (f- = 0.39388616). sum(f+)=1.0000, sum(f-)=1.0000. Warnings reproduced verbatim: (1) 'sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)' [PASS]; (2) 'sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)' [PASS]; (3) 'common header present' [PASS]. CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard acrolein.xyz. Plot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/acrolein/argo_claude-sonnet-4.6/20260706-171228_acrolein_fukui_reactivity/agent_call_01_plot.png."
+}

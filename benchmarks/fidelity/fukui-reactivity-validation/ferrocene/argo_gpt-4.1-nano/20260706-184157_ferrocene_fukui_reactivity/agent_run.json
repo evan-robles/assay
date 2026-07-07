@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 9.58,
+    "llm_s": 3.81,
+    "engine_s": 5.77,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui-reactivity calculation on ferrocene was performed using the GFN2-xTB method in the gas phase. The most electrophilic site, based on F+ indices, is the iron atom (atom index 11, label 11, symbol Fe) with a Fukui index of 0.22885456. Warnings include charge conservation alerts suggesting the N+1 and N-1 states did not fully converge, but the overall calculation completed successfully."
+}

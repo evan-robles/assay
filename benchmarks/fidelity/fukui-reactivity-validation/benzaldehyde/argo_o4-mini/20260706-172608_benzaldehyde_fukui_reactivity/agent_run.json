@@ -1,0 +1,29 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 258.84,
+    "llm_s": 34.36,
+    "engine_s": 223.83,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzaldehyde Fukui reactivity (most electrophilic site)** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, no density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz` (no geometry optimization). Single-point Fukui-reactivity analysis using Mulliken charges on neutral (N), cation (N-1), and anion (N+1) states with multiplicities 1, 2, and 2 respectively. SCF converged for all states. No engine warnings reported. Most electrophilic atom: atom 3 (carbon) with f\u207a = 0.39938967. CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpeetl2qw3/live.json`"
+}

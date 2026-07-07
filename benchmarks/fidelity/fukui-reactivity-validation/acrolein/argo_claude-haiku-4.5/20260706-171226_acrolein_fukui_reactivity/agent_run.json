@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 44.06,
+    "llm_s": 13.65,
+    "engine_s": 30.41,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Acrolein Fukui Reactivity Calculation**\n\nA Fukui reactivity analysis was performed on acrolein using DFT with the **B3LYP/def2-TZVP** functional-basis pair (tier `standard`, PySCF backend). The geometry was the user-supplied acrolein.xyz file (single-point calculation, not re-optimized). The calculation was run in gas phase at charge 0 and multiplicity 1 for the neutral state; the cation (charge +1, multiplicity 2) and anion (charge \u22121, multiplicity 2) were computed to determine the Fukui indices via finite-difference charge changes (Mulliken scheme).\n\n**Key Results:**\n- **Most electrophilic site:** Terminal carbon (C4, index 3) with f\u207a = 0.6423\n- **Most nucleophilic site:** Carbonyl oxygen (O1, index 0) with f\u207b = 0.3939\n- **Dual descriptor maximum:** C4 with \u0394f = 0.5549, strongly predisposed to electrophilic reactivity\n\nThe SCF converged successfully for all three electronic states. All charge-conservation checks passed, confirming data integrity. A visualization plot of the Fukui indices has been generated.\n\n**Method:** DFT (B3LYP/def2-TZVP, tier standard), gas phase, charge 0, multiplicity 1 (neutral); cation and anion at charge \u00b11, multiplicity 2.</prose>\n<parameter name=\"value\">0.6423"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 214.75,
+    "llm_s": 27.68,
+    "engine_s": 186.17,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of nitrobenzene** \u2014 condensed Fukui functions from Mulliken (PySCF) partial charges via the finite-difference (\u0394N = \u00b11) scheme.\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions (f\u207a electrophilic, f\u207b nucleophilic, f\u2070 radical, and the dual descriptor) per atom, plus the most electro-/nucleophilic sites.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`, expanded = B3LYP/def2-TZVP), computed with PySCF. Density fitting was OFF (exact four-center integrals, chemkit default).\n- **Geometry provenance:** User-supplied geometry file `nitrobenzene.xyz` (14 atoms), used as-is \u2014 the Fukui workflow is a set of single-point SCF calculations on the neutral (N), cation (N\u22121), and anion (N+1) states at this fixed geometry; no geometry optimization was performed here.\n- **Solvent / environment:** Gas phase (no implicit solvent).\n- **Charge & multiplicity:** Parent (neutral) charge 0, multiplicity 1. Derived states: cation charge +1, multiplicity 2 (doublet); anion charge \u22121, multiplicity 2 (doublet) \u2014 both open-shell (UKS).\n- **Software:** PySCF (DFT backend).\n- **Convergence / integrity:** integrity status **ok**, **trustworthy = true**. Both Fukui charge-conservation checks passed (sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000).\n\n**Results**\n- **Most electrophilic site (headline value):** atom index 4 (1-based), a **carbon**, with **f\u207a = 0.49642** \u2014 this is the site most susceptible to nucleophilic attack.\n- Most nucleophilic site: atom index 5 (1-based), a carbon, with f\u207b = 0.10729.\n- Per-atom f\u207a (order O, O, N, C, C, C, C, C, C, H, H, H, H, H): 0.47317, 0.47344, \u22120.45670, 0.49642, 0.11563, 0.11588, 0.17412, 0.17423, 0.28914, \u22120.23169, \u22120.23182, \u22120.13372, \u22120.13379, \u22120.12431.\n- Per-atom f\u207b: 0.09702, 0.09677, 0.01724, \u22120.01429, 0.10729, 0.10724, 0.09492, 0.09489, 0.00831, 0.07521, 0.07520, 0.08388, 0.08388, 0.07243.\n- Dual descriptor (f\u207a \u2212 f\u207b): 0.37616, 0.37667, \u22120.47394, 0.51071, 0.00834, 0.00865, 0.07920, 0.07934, 0.28082, \u22120.30690, \u22120.30702, \u22120.21761, \u22120.21768, \u22120.19673.\n\n**Warnings (verbatim from the integrity block):**\n- fukui_charge_conservation_f+ (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check passed (ok=true).\n- fukui_charge_conservation_f- (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check passed (ok=true).\n- schema_header (severity: warning): \"common header present\" \u2014 check passed (ok=true).\n\nNo engine error/fallback warnings were reported beyond these three integrity checks (all ok).\n\n**Reproducibility**\n- Command: `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard --accept-defaults <nitrobenzene.xyz> --out .fidelity_scratch/tmpfv3pf3my/live.json`\n- Bar-chart PNG of f\u207a/f\u207b/dual: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_claude-opus-4.8/20260706-182441_nitrobenzene_fukui_reactivity/agent_call_01_plot.png`\n\nNote: Fukui functions are condensed from Mulliken charges, which are basis-set dependent; the relative site ranking is the transferable takeaway rather than the absolute magnitudes. No experimental/literature comparison is offered \u2014 ask if you want one and I will verify a source first."
+}

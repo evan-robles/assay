@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 105.7,
+    "llm_s": 45.86,
+    "engine_s": 59.21,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for pyridine (11 atoms: N, 5\u00d7C, 5\u00d7H) at DFT tier 'standard' = B3LYP/def2-TZVP (PySCF RKS), gas phase, charge 0, multiplicity 1. Cation (N\u22121): charge +1, multiplicity 2. Anion (N+1): charge \u22121, multiplicity 2. Partial charges via Mulliken (PySCF). Density fitting: OFF (exact four-centre integrals). Geometry: user-supplied .xyz, used as-is (no re-optimisation at this level). All three SCF calculations converged. Integrity: status=ok, trustworthy=true. Charge conservation: sum(f+)=1.0000, sum(f-)=1.0000 (both passed). No warnings reported. Headline value reported is the maximum f+ (electrophilic Fukui index), located at atom 1 (N) = 0.48422572. Most nucleophilic site: atom 4 (C), f- = 0.11826260. Most positive dual descriptor: atom 1 (N), \u0394f = +0.42010305. CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/.../pyridine.xyz. Plot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_claude-sonnet-4.6/20260706-190114_pyridine_fukui_reactivity/agent_call_01_plot.png."
+}

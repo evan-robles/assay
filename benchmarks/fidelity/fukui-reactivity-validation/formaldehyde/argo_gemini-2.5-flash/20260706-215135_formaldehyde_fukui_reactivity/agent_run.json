@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.24,
+    "llm_s": 25.97,
+    "engine_s": 10.26,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices for formaldehyde were calculated using a DFT single-point calculation at the tier `standard` (B3LYP/def2-TZVP, density-fit) level of theory in PySCF, gas phase, with a charge of 0 and multiplicity of 1 for the neutral molecule. The cation and anion states were calculated with a charge of +1 (multiplicity 2) and -1 (multiplicity 2), respectively. The geometry was sourced from the user-supplied file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz`. All SCF calculations converged.\n\nThe Fukui indices are as follows (atoms are Oxygen, Carbon, Hydrogen, Hydrogen):\n*   **Fukui f+ (electrophilic attack):**\n    *   Oxygen: 0.4681\n    *   Carbon: 0.7084\n    *   Hydrogen: -0.0883\n    *   Hydrogen: -0.0883\n*   **Fukui f- (nucleophilic attack):**\n    *   Oxygen: 0.4674\n    *   Carbon: 0.1124\n    *   Hydrogen: 0.2101\n    *   Hydrogen: 0.2101\n*   **Fukui f0 (radical attack):**\n    *   Oxygen: 0.4678\n    *   Carbon: 0.4104\n    *   Hydrogen: 0.0609\n    *   Hydrogen: 0.0609\n*   **Dual Descriptor (f+ - f-):**\n    *   Oxygen: 0.0007\n    *   Carbon: 0.5959\n    *   Hydrogen: -0.2983\n    *   Hydrogen: -0.2983\n\nThe most electrophilic site is the Carbon atom (f+ = 0.7084).\nThe most nucleophilic site is the Oxygen atom (f- = 0.4674).\n\nA plot of the Fukui reactivity is available at `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_gemini-2.5-flash/20260706-215135_formaldehyde_fukui_reactivity/agent_call_01_plot.png`."
+}

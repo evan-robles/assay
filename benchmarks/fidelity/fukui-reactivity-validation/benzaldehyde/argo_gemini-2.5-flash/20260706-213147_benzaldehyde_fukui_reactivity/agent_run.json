@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 247.65,
+    "llm_s": 15.17,
+    "engine_s": 231.64,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity indices (f+, f-, f0, and dual descriptor) for benzaldehyde were calculated using Density Functional Theory (DFT) with the tier `standard` (B3LYP/def2-TZVP) method in PySCF, in the gas phase, with a charge of 0 and multiplicity of 1. The geometry was taken from the provided `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz` file and was not re-optimized during this calculation.\n\nThe most electrophilic site is Carbon (atom index 2, 0-based) with an f+ index of 0.39938968.\nThe most nucleophilic site is Oxygen (atom index 0, 0-based) with an f- index of 0.23839906.\n\nThe overall calculation integrity is trustworthy.\n\n```text\nThe output logs were saved to: /home/erobles/chem-skills/.fidelity_scratch/tmptrrgmbg1/live.json\n```"
+}

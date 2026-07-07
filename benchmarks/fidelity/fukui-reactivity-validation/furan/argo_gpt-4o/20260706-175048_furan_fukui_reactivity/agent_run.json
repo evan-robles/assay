@@ -1,0 +1,32 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.97,
+    "llm_s": 8.08,
+    "engine_s": 28.88,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity index** calculated for furan in the gas phase using DFT, B3LYP/def2-TZVP (tier `standard`) in PySCF, with Mulliken partial charges. Charge = 0, multiplicity = 1. The most electrophilic atom is **C5** with f\u207a = **1.92429**; the most nucleophilic atom is also **C5** with f\u207b = **0.16164**. Convergence diagnostics: sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000 (both acceptable). Warnings echoed:\n - sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\n - sum(f\u207b) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\n - common header present."
+}

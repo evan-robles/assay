@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 92.75,
+    "llm_s": 31.74,
+    "engine_s": 60.36,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Fukui reactivity** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, exact integrals, no density fitting) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied pyridine.xyz, not optimized. SCF converged for the neutral, cation (doublet), and anion (doublet) states. Warnings (verbatim):\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\nMost electrophilic site: atom 1 (N) with Fukui plus f\u207a = 0.48422572. Most nucleophilic site: atom 4 (C) with Fukui minus f\u207b = 0.1182626."
+}

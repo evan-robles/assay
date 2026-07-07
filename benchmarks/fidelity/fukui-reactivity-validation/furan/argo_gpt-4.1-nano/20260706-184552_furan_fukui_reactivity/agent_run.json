@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 7.0,
+    "llm_s": 3.96,
+    "engine_s": 0.0,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The calculation to determine the fukui-reactivity of furan using DFT at the B3LYP functional with def2-TZVP basis set (tier 'standard') in the gas phase failed because the geometry file was not found. Therefore, no result could be obtained or reported."
+}

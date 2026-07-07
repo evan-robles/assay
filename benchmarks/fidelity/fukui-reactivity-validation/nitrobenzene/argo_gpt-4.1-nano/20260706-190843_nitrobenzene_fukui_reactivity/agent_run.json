@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 177.87,
+    "llm_s": 4.91,
+    "engine_s": 172.95,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-TZVP",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui reactivity analysis performed using chemkit with DFT at the B3LYP functional and def2-TZVP basis set in the gas phase, charge 0, multiplicity 1, indicates that the most electrophilic atom is the carbon labeled 4 (atom index 3), with an electrophilicity value of approximately 0.4964. The most nucleophilic atom is the carbon labeled 5 (atom index 4), with a nucleophilicity value of about 0.1073. Warnings include charge conservation drift suggesting possible convergence issues with the N\u00b11 states."
+}

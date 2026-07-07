@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 187.16,
+    "llm_s": 6.25,
+    "engine_s": 180.91,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I ran a Fukui reactivity analysis on nitrobenzene using DFT at the B3LYP functional with the def2-TZVP basis set (tier `standard`) in the gas phase. The calculation assumed a charge of 0 and a multiplicity of 1. The computed Fukui plus function highlights the most electrophilic site as the carbon atom labeled 4 (index 3, C) with an f\u207a value of 0.49642.\n\n**Warnings:**\n1. sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\n2. sum(f\u207b) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\n3. common header present (informational).\n\nThe run converged successfully and is trustworthy. The full Fukui data and visualizations are recorded in the output for reference."
+}

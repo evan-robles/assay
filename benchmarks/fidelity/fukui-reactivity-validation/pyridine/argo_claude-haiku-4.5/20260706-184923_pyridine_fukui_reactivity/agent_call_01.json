@@ -1,0 +1,160 @@
+{
+  "task": "fukui",
+  "method": "b3lyp/def2-tzvp",
+  "program": "dft",
+  "input_file": "/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz",
+  "n_atoms": 11,
+  "atoms": [
+    "N",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpkizjzylf/live.json",
+  "partial_charges_scheme": "Mulliken (PySCF)",
+  "charges_neutral": [
+    -0.22675598,
+    -0.097933645,
+    -0.10056,
+    -0.10056574,
+    -0.034029642,
+    -0.034041074,
+    0.12181159,
+    0.11575753,
+    0.1157632,
+    0.12028498,
+    0.12026878
+  ],
+  "charges_cation": [
+    -0.16263331,
+    -0.09174593,
+    0.017671387,
+    0.017696859,
+    0.078036312,
+    0.077968773,
+    0.2046601,
+    0.21393702,
+    0.21394546,
+    0.21524508,
+    0.21521826
+  ],
+  "charges_anion": [
+    -0.7109817,
+    -0.42240591,
+    -0.24088092,
+    -0.24096161,
+    -0.33365591,
+    -0.33351814,
+    0.26332478,
+    0.24944163,
+    0.24942225,
+    0.26010128,
+    0.26011423
+  ],
+  "cation_charge": 1,
+  "cation_multiplicity": 2,
+  "anion_charge": -1,
+  "anion_multiplicity": 2,
+  "fukui_plus": [
+    0.48422572,
+    0.32447227,
+    0.14032092,
+    0.14039587,
+    0.29962626,
+    0.29947706,
+    -0.1415132,
+    -0.1336841,
+    -0.13365905,
+    -0.1398163,
+    -0.13984545
+  ],
+  "fukui_minus": [
+    0.064122671,
+    0.0061877146,
+    0.11823139,
+    0.1182626,
+    0.11206595,
+    0.11200985,
+    0.08284851,
+    0.098179487,
+    0.09818226,
+    0.094960093,
+    0.094949479
+  ],
+  "fukui_zero": [
+    0.2741742,
+    0.16532999,
+    0.12927615,
+    0.12932923,
+    0.20584611,
+    0.20574346,
+    -0.029332344,
+    -0.017752308,
+    -0.017738395,
+    -0.022428103,
+    -0.022447987
+  ],
+  "dual_descriptor": [
+    0.42010305,
+    0.31828455,
+    0.022089533,
+    0.022133269,
+    0.18756031,
+    0.18746722,
+    -0.22436171,
+    -0.23186359,
+    -0.23184131,
+    -0.23477639,
+    -0.23479493
+  ],
+  "most_electrophilic": {
+    "atom_index_0based": 0,
+    "atom_label_1based": 1,
+    "symbol": "N",
+    "f_plus": 0.48422572
+  },
+  "most_nucleophilic": {
+    "atom_index_0based": 3,
+    "atom_label_1based": 4,
+    "symbol": "C",
+    "f_minus": 0.1182626
+  },
+  "plot": "/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/pyridine/argo_claude-haiku-4.5/20260706-184923_pyridine_fukui_reactivity/agent_call_01_plot.png",
+  "functional": "b3lyp",
+  "basis": "def2-tzvp",
+  "schema_version": 1,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "fukui_charge_conservation_f+",
+        "ok": true,
+        "severity": "warning",
+        "detail": "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+      },
+      {
+        "name": "fukui_charge_conservation_f-",
+        "ok": true,
+        "severity": "warning",
+        "detail": "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      }
+    ]
+  }
+}

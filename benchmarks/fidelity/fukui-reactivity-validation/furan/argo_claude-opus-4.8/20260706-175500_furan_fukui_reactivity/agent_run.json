@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 57.21,
+    "llm_s": 27.98,
+    "engine_s": 28.68,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity of furan** \u2014 condensed Fukui functions (finite-difference, from Mulliken partial charges of the N, N\u22121, and N+1 states).\n\n**Method-provenance block**\n- **Property:** Condensed Fukui indices (f\u207a electrophilic, f\u207b nucleophilic, f\u2070 radical, and the dual descriptor \u0394f = f\u207a \u2212 f\u207b) per atom, plus the identification of the most reactive sites.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** \u2014 the chemkit tier `standard` preset, requested explicitly via `--functional b3lyp --basis def2-tzvp --tier standard` (PySCF backend, RKS for the neutral, UKS for the doublet ions). Exact four-center two-electron integrals (density fitting OFF by default).\n- **Geometry provenance:** User-supplied geometry `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz` (9 atoms: O, 4\u00d7C, 4\u00d7H). Used as-is \u2014 the Fukui skill runs single-point SCF calculations on the fixed input geometry (no re-optimization); all three charge states are evaluated at that same geometry.\n- **Solvent / environment:** **Gas phase** (no solvent; `solvent: null`).\n- **Charge / multiplicity:** Neutral parent charge 0, multiplicity 1 (closed-shell singlet). Derived states: cation charge +1, multiplicity 2 (doublet); anion charge \u22121, multiplicity 2 (doublet).\n- **Software:** PySCF (via chemkit `fukui` engine). Partial-charge scheme: Mulliken (PySCF).\n- **Convergence / integrity:** Integrity status **ok**, **trustworthy = true**. All three integrity checks passed: f\u207a charge conservation (\u03a3f\u207a = 1.0000), f\u207b charge conservation (\u03a3f\u207b = 1.0000), and schema header present.\n\n**Headline result**\nThe most electrophilic site (largest f\u207a) is **C atom, 1-based label 5 (0-based index 4), with f\u207a = 1.9242931**. The same atom is also flagged as the most nucleophilic (largest f\u207b = 0.1616371).\n\n**Per-atom Fukui values** (atom order: O, C, C, C, C, H, H, H, H):\n- f\u207a (electrophilic): [\u22121.3316182, 1.2286866, 1.2270264, 1.9233053, 1.9242931, \u22121.2190639, \u22121.2191056, \u22120.76678308, \u22120.76674059]\n- f\u207b (nucleophilic): [0.08382155, 0.089103093, 0.089304821, 0.161527, 0.1616371, 0.10248412, 0.1025135, 0.10481615, 0.10479266]\n- f\u2070 (radical): [\u22120.62389834, 0.65889485, 0.65816562, 1.0424161, 1.0429651, \u22120.55828991, \u22120.55829603, \u22120.33098346, \u22120.33097396]\n- dual descriptor \u0394f: [\u22121.4154398, 1.1395835, 1.1377216, 1.7617783, 1.762656, \u22121.3215481, \u22121.321619, \u22120.87159923, \u22120.87153325]\n\n**Caveats / honesty notes**\n- Condensed Fukui functions built from **Mulliken** charges are basis-set-dependent and are qualitative reactivity descriptors \u2014 treat the numbers as trend indicators (relative site ordering), not chemically-precise quantities, despite the many digits echoed.\n- The large-magnitude and negative f\u207a values on some atoms (a known artifact of Mulliken-based finite-difference Fukui functions, especially for the anion state) mean the raw per-atom numbers should be interpreted cautiously; the charge-conservation checks (\u03a3f = 1.0000) did pass.\n- **Warnings:** the result JSON reported **no warnings** (the `warnings` array is empty / no warnings key). The three integrity \"checks\" all passed with status ok.\n\n**Reproducibility**\n- CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard --accept-defaults /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpeuzxcs20/live.json`\n- Bar-chart plot written to: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/argo_claude-opus-4.8/20260706-175500_furan_fukui_reactivity/agent_call_01_plot.png`\n- `--accept-defaults` was passed to explicitly consent to chemkit's silent gas-phase default (no solvent); the functional, basis, and tier were all set explicitly as requested.\n\nNo experimental or literature comparison is offered (none was requested)."
+}

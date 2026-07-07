@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 37.43,
+    "llm_s": 26.48,
+    "engine_s": 10.41,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method\u2013provenance summary\nProperty: Fukui functions (f\u207a, f\u207b, f\u2070) and dual descriptor for formaldehyde; headline value reported here is the largest electrophilic Fukui index f\u207a on atom 2 (carbon).\nLevel of theory: DFT, B3LYP/def2-TZVP (tier \"standard\", density-fitted) in PySCF v ??? (DFT backend)\nGeometry provenance: single-point calculations on user-supplied formaldehyde.xyz (no re-optimization; DFT//input-geometry).\nSolvent / environment: gas phase (no implicit solvent).\nCharge & multiplicity: charge 0, multiplicity 1 (neutral singlet reference; cation and anion states computed at charge +1/mult 2 and \u22121/mult 2 to obtain Fukui functions).\nConvergence: SCF cycles for neutral, cation, and anion all reported converged by PySCF; see live log for details. Integrity check status = ok, trustworthy = true.\nWarnings (verbatim from engine):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\nHeadline numerical result\n0.7083913   (Fukui electrophilic index f\u207a on atom 2 = carbon, dimensionless)\nMost electrophilic site: carbon (atom 2, f\u207a = 0.7083913).\nMost nucleophilic site: oxygen (atom 1, f\u207b = 0.46742464).\nAll Fukui indices (dimensionless):\nAtom  Label  f\u207a        f\u207b        f\u2070       Dual Descriptor\n1     O      0.46813824 0.46742464 0.46778144  0.00071360\n2     C      0.70839130 0.11244422 0.41041776  0.59594709\n3     H      \u20130.08826939 0.21007563 0.06090312 \u20130.29834503\n4     H      \u20130.08826015 0.21005551 0.06089768 \u20130.29831566\nReproducibility\nCommand executed: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpw2o5048o/live.json`\nLive engine log (streamed during run): look for the `.out` file in the same directory as the JSON output above (created automatically by chemkit and written line-by-line; can be examined with `tail -f`).\nPlot of condensed Fukui indices: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/argo_o3/20260706-182842_formaldehyde_fukui_reactivity/agent_call_01_plot.png`."
+}

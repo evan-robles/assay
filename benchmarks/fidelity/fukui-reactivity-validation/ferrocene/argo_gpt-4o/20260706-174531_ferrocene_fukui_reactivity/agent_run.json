@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.06,
+    "llm_s": 12.11,
+    "engine_s": 5.95,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for ferrocene were computed at the GFN2-xTB level of theory using the gas-phase geometry. The charge was set to 0, and the spin multiplicity was 1.\n\nThe Fukui plus indices (f\u207a), Fukui minus indices (f\u207b), and Fukui neutral indices (f\u2070) were calculated under Mulliken charge partitioning. For electrophilic reactivity, the highest f\u207a index was found on Fe (f\u207a = 0.22885456), and for nucleophilic reactivity, the highest f\u207b index was also on Fe (f\u207b = 0.25938191).\n\nWarnings from the tool included:\n- \"sum(f\u207a) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"sum(f\u207b) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"common header present\".\n\nDespite these messages, the integrity status was confirmed to be trustworthy. Provenance: computed."
+}

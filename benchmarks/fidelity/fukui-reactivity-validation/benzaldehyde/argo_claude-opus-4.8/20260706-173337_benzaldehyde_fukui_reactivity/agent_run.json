@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 243.06,
+    "llm_s": 22.34,
+    "engine_s": 220.72,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+ (severity: warning): sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f- (severity: warning): sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header (severity: warning): common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Fukui Reactivity Analysis \u2014 Benzaldehyde\n\n**Method Provenance Block**\n- **Property:** Condensed Fukui functions / dual descriptor (finite-difference, from Mulliken atomic charges of the neutral, cation, and anion).\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (chemkit tier `standard`), PySCF backend. Density fitting is on by default in chemkit.\n- **Geometry provenance:** User-supplied `benzaldehyde.xyz` (14 atoms), used **as-is** \u2014 this is a single-point Fukui analysis, not a geometry optimization at this level.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** Neutral reference charge 0, multiplicity 1. Cation: charge +1, multiplicity 2. Anion: charge \u22121, multiplicity 2 (open-shell N\u00b11 states, UKS).\n- **Partial-charge scheme:** Mulliken (PySCF).\n- **Software:** PySCF via chemkit `fukui` skill.\n- **Command:** `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard benzaldehyde.xyz`\n\n**Key Results**\n- **Most electrophilic site (largest f\u207a):** atom 3 (1-based), a ring carbon (C), **f\u207a = 0.39939** \u2014 most susceptible to nucleophilic attack.\n- **Most nucleophilic site (largest f\u207b):** atom 1 (1-based), the carbonyl oxygen (O), **f\u207b = 0.23840** \u2014 most susceptible to electrophilic attack.\n- The Fukui charge-conservation checks passed: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000, indicating the N\u00b11 states converged properly.\n\n**Integrity:** The engine reports `integrity.status = \"ok\"` and **`trustworthy = true`**.\n\n**Warnings (verbatim from the result JSON \u2014 all three surfaced):**\n1. `fukui_charge_conservation_f+` (severity: warning): \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check **passed** (ok: true).\n2. `fukui_charge_conservation_f-` (severity: warning): \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\" \u2014 check **passed** (ok: true).\n3. `schema_header` (severity: warning): \"common header present\" \u2014 check **passed** (ok: true).\n\nA plot was written to: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/argo_claude-opus-4.8/20260706-173337_benzaldehyde_fukui_reactivity/agent_call_01_plot.png`.\n\n**Caveats:** Values were computed on the supplied geometry without re-optimization at B3LYP/def2-TZVP. Condensed Fukui indices are Mulliken-charge-based and thus carry the usual basis-set sensitivity of Mulliken population analysis; treat them as qualitative reactivity trends. No experimental comparison is offered."
+}

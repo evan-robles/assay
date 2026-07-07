@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 188.19,
+    "llm_s": 17.7,
+    "engine_s": 170.49,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Nitrobenzene Fukui reactivity** \u2014 computed with DFT **B3LYP/def2-TZVP** using chemkit tier `standard`, gas phase, charge 0, multiplicity 1. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz` (14 atoms); this was a Fukui calculation from Mulliken charges, not a geometry optimization. Backend/program reported by chemkit: `dft` / PySCF-style DFT; partial charges scheme: `Mulliken (PySCF)`. No solvent was used (gas phase).\n\nHeadline result: the most electrophilic site is **atom 4 (C)** with **f+ = 0.49641783**. The most nucleophilic site is **atom 5 (C)** with **f\u2212 = 0.1072882**.\n\nPer-atom results in tool atom order (1-based labels):\n- Atoms: 1 O, 2 O, 3 N, 4 C, 5 C, 6 C, 7 C, 8 C, 9 C, 10 H, 11 H, 12 H, 13 H, 14 H\n- f+ = [0.47317276, 0.47344363, -0.45670088, 0.49641783, 0.11562654, 0.11588204, 0.17412423, 0.1742294, 0.28913574, -0.2316897, -0.23181693, -0.13372477, -0.13379393, -0.12430597]\n- f\u2212 = [0.097015524, 0.096773921, 0.017243458, -0.014292037, 0.1072882, 0.10723661, 0.094922441, 0.094892499, 0.0083116097, 0.075212029, 0.075202557, 0.083883283, 0.083881905, 0.072428004]\n- f0 = [0.28509414, 0.28510877, -0.21972871, 0.2410629, 0.11145737, 0.11155932, 0.13452333, 0.13456095, 0.14872368, -0.078238835, -0.078307185, -0.024920744, -0.024956011, -0.025938985]\n- dual descriptor = [0.37615724, 0.37666971, -0.47394434, 0.51070987, 0.0083383436, 0.008645435, 0.079201788, 0.079336903, 0.28082413, -0.30690173, -0.30701949, -0.21760805, -0.21767583, -0.19673398]\n\nWarnings/integrity messages reported by the tool:\n- sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n- common header present\n\nEngine integrity trustworthy verdict: **true**. Plot artifact: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_gpt-5.5/20260706-182806_nitrobenzene_fukui_reactivity/agent_call_01_plot.png`. Exact chemkit invocation reported by the tool: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/nitrobenzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpip52puhu/live.json`."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 200.33,
+    "llm_s": 24.5,
+    "engine_s": 175.27,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of nitrobenzene** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**), computed with PySCF (dft backend), **gas phase**, charge 0, multiplicity 1. Density fitting was OFF (exact four-center integrals; chemkit default). The N\u22121 (cation) and N+1 (anion) states were each computed as doublets (charge +1/\u22121, multiplicity 2), derived automatically from the singlet parent. Fukui functions are based on Mulliken (PySCF) partial charges via the finite-difference (\u0394N = \u00b11) scheme. Molecule: 14 atoms (nitrobenzene, C6H5NO2). Geometry: taken as-is from the user-supplied file `nitrobenzene.xyz` \u2014 this was a set of single-point SCF calculations on that fixed input geometry; no geometry optimization was performed at this level.\n\n**Headline result \u2014 most electrophilic site (largest f\u207a):** atom index 4 (1-based), a **carbon**, with **f\u207a = 0.49642**. The most nucleophilic site (largest f\u207b) is atom index 5 (1-based), a carbon, with f\u207b = 0.107288.\n\nFull per-atom descriptors (order: O, O, N, C, C, C, C, C, C, H, H, H, H, H):\n- f\u207a (electrophilic attack): [0.47317, 0.47344, \u22120.45670, 0.49642, 0.11563, 0.11588, 0.17412, 0.17423, 0.28914, \u22120.23169, \u22120.23182, \u22120.13372, \u22120.13379, \u22120.12431]\n- f\u207b (nucleophilic attack): [0.097016, 0.096774, 0.017243, \u22120.014292, 0.107288, 0.107237, 0.094922, 0.094892, 0.008312, 0.075212, 0.075203, 0.083883, 0.083882, 0.072428]\n- f\u2070 (radical): [0.28509, 0.28511, \u22120.21973, 0.24106, 0.11146, 0.11156, 0.13452, 0.13456, 0.14872, \u22120.078239, \u22120.078307, \u22120.024921, \u22120.024956, \u22120.025939]\n- dual descriptor (f\u207a \u2212 f\u207b): [0.37616, 0.37667, \u22120.47394, 0.51071, 0.008338, 0.008645, 0.079202, 0.079337, 0.28082, \u22120.30690, \u22120.30702, \u22120.21761, \u22120.21768, \u22120.19673]\n\n**Integrity / convergence:** the engine reports `integrity.status = \"ok\"` and **`trustworthy = true`**. Integrity checks all passed: charge conservation for f\u207a (sum = 1.0000) and f\u207b (sum = 1.0000), and schema header present. **No warnings were reported** (the result `warnings` array is empty; the only messages are the passing integrity-check details, which note that a large drift in the sum-to-1 would indicate a non-converged N\u00b11 state \u2014 here both sums are exactly 1.0000).\n\n**Method note:** This is a semi-local finite-difference Fukui analysis built on Mulliken charges, which are basis-set-dependent; the descriptors indicate relative site reactivity trends rather than absolute quantities. No experimental or literature comparison is offered.\n\n**Reproducibility:** command `cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard nitrobenzene.xyz`. A bar-chart PNG of f\u207a/f\u207b/dual per atom was written to `.../20260706-183139_nitrobenzene_fukui_reactivity/agent_call_01_plot.png`."
+}

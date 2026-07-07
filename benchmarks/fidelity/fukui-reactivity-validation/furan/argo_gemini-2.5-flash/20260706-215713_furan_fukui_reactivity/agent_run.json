@@ -1,0 +1,32 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 49.2,
+    "llm_s": 20.29,
+    "engine_s": 28.9,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Furan Fukui Reactivity Indices and Dual Descriptor \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: provided as `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/furan/furan.xyz`; the DFT was a single point on this fixed geometry. Fukui charge conservation checks passed.\n\nThe calculated Fukui indices and dual descriptor values for furan are as follows:\n- **Atom 1 (O):** f+ = -1.3316, f- = 0.0838, f0 = -0.6239, Dual Descriptor = -1.4154\n- **Atom 2 (C):** f+ = 1.2287, f- = 0.0891, f0 = 0.6589, Dual Descriptor = 1.1396\n- **Atom 3 (C):** f+ = 1.2270, f- = 0.0893, f0 = 0.6582, Dual Descriptor = 1.1377\n- **Atom 4 (C):** f+ = 1.9233, f- = 0.1615, f0 = 1.0424, Dual Descriptor = 1.7618\n- **Atom 5 (C):** f+ = 1.9243, f- = 0.1616, f0 = 1.0430, Dual Descriptor = 1.7627\n- **Atom 6 (H):** f+ = -1.2191, f- = 0.1025, f0 = -0.5583, Dual Descriptor = -1.3215\n- **Atom 7 (H):** f+ = -1.2191, f- = 0.1025, f0 = -0.5583, Dual Descriptor = -1.3216\n- **Atom 8 (H):** f+ = -0.7668, f- = 0.1048, f0 = -0.3310, Dual Descriptor = -0.8716\n- **Atom 9 (H):** f+ = -0.7667, f- = 0.1048, f0 = -0.3310, Dual Descriptor = -0.8715\n\nThe most electrophilic site is **Carbon (atom 5)** with an f+ value of 1.9243.\nThe most nucleophilic site is also **Carbon (atom 5)** with an f- value of 0.1616."
+}

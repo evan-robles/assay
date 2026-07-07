@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 19.63,
+    "llm_s": 13.64,
+    "engine_s": 5.99,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ferrocene Fukui reactivity** \u2014 computed with **GFN2-xTB** (`xtb` program), **gas phase**, charge 0, multiplicity 1. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz` (21 atoms); no geometry optimization was reported as part of this Fukui calculation. The Fukui analysis used GFN2-xTB Mulliken partial charges for the neutral, cation (charge +1, multiplicity 2), and anion (charge \u22121, multiplicity 2) states.\n\nHeadline result: the **most electrophilic site** is **Fe atom 11** with **f+ = 0.22885456**. The **most nucleophilic site** is also **Fe atom 11** with **f\u2212 = 0.25938191**. The corresponding radical Fukui value at Fe atom 11 is **f0 = 0.24411824**, and the dual descriptor is **\u22120.030527354**.\n\nPer-atom atom order from the XYZ/result: C1 C2 C3 C4 C5 H6 H7 H8 H9 H10 Fe11 C12 C13 C14 C15 C16 H17 H18 H19 H20 H21.\n\nReproducibility: chemkit reported this command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpfa6lqedn/live.json`. Plot file: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_gpt-5.5/20260706-174446_ferrocene_fukui_reactivity/agent_call_01_plot.png`.\n\nWarnings: no `warnings` array was returned by the chemkit result. Integrity verdict: `trustworthy: true`. Integrity checks reported: `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`; `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`; `common header present`."
+}

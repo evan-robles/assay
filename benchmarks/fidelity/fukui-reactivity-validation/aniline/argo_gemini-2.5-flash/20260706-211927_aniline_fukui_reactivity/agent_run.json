@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 122.03,
+    "llm_s": 13.98,
+    "engine_s": 108.05,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui Reactivity Indices for Aniline\n\nFukui reactivity indices were computed for aniline using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (tier `standard`). This was a single point calculation on the user-provided geometry in the gas phase, with a charge of 0 and multiplicity of 1. The calculation was performed using chemkit's DFT backend (PySCF).\n\nThe most electrophilic site is Carbon (C) at atom index 3 (0-based index 2), with a Fukui f\u207a index of 2.2975867.\nThe most nucleophilic site is Nitrogen (N) at atom index 1 (0-based index 0), with a Fukui f\u207b index of 0.20452359."
+}

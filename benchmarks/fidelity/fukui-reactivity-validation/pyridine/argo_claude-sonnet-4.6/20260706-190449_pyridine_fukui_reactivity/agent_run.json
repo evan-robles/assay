@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 95.67,
+    "llm_s": 37.44,
+    "engine_s": 58.23,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [OK]",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge) [OK]",
+      "common header present [OK]"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for pyridine were computed at DFT B3LYP/def2-TZVP (tier 'standard'), gas phase, charge 0, multiplicity 1, using Mulliken partial charges in PySCF. The geometry was taken from the user-supplied pyridine.xyz without re-optimization at DFT (single-point Fukui evaluation). All three SCFs (neutral, cation +1/doublet, anion \u22121/doublet) converged. Integrity: trustworthy=true; charge conservation passed for both f+ and f\u2212. Headline result: most electrophilic atom is N (atom 1), f+ = 0.48422572; most nucleophilic atom is C (atom 4), f\u2212 = 0.11826260. The dual descriptor confirms N as the dominant electrophilic centre (\u0394f = +0.42010). Pyridine ring carbons at positions 3/4 (\u03b2-carbons) show the highest nucleophilic indices (f\u2212 \u2248 0.118), consistent with known electrophilic substitution preference at the 3-position. All hydrogen atoms carry negative f+ and positive f\u2212, and negative dual descriptor values, reflecting the electron-withdrawing influence of the ring nitrogen."
+}

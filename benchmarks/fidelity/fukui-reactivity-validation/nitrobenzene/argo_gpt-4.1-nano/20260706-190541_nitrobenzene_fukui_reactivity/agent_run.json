@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 180.65,
+    "llm_s": 5.97,
+    "engine_s": 174.67,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": ""
+  },
+  "prose": "The Fukui reactivity analysis was performed on nitrobenzene using DFT with the B3LYP functional and the def2-TZVP basis set at tier 'standard' in the gas phase. The calculation converged successfully, and all warnings and details are documented in the output.\n\nThis analysis was carried out with the chemkit tool, specifically configured for Fukui reactivity at the specified level of theory and environment.\n\nThe resulting key value for the most electrophilic site is atom 4 (1-based indexing), with a Fukui plus value of approximately 0.47317, and the most nucleophilic site is atom 5, with a Fukui minus value of approximately 0.10729.\n\nThe method used is DFT at the level of B3LYP/def2-tzvp (tier 'standard')."
+}

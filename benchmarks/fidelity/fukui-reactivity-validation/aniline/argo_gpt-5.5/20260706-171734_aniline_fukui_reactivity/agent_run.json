@@ -1,0 +1,29 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 130.38,
+    "llm_s": 22.8,
+    "engine_s": 107.58,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui reactivity \u2014 computed result.** Method used: DFT, tier `standard` (**B3LYP/def2-TZVP**) in the **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied fixed XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz` (14 atoms); Fukui indices were derived from Mulliken charges from PySCF-style DFT calculations on the neutral, cation (charge +1, multiplicity 2), and anion (charge \u22121, multiplicity 2) states. Solvent: none (`solvent: null`, gas phase). Backend reported: `program: dft`; `partial_charges_scheme: Mulliken (PySCF)`. No `warnings` array was returned by the tool.\n\n**Headline result:** most electrophilic site = atom 3, C, with **f+ = 2.2975867**. Most nucleophilic site = atom 1, N, with **f\u2212 = 0.20452359**.\n\nPer-atom Fukui data, atom labels are 1-based as returned/derived from the tool atom order:\n\n| atom | element | f+ | f\u2212 | f0 | dual descriptor |\n|---:|:---:|---:|---:|---:|---:|\n| 1 | N | 1.6696628 | 0.20452359 | 0.93709321 | 1.4651392 |\n| 2 | C | -1.9009183 | -0.0037260934 | -0.9523222 | -1.8971922 |\n| 3 | C | 2.2975867 | 0.066571393 | 1.1820791 | 2.2310153 |\n| 4 | C | 2.2965637 | 0.066588805 | 1.1815763 | 2.2299749 |\n| 5 | C | -0.28837104 | 0.0083458972 | -0.14001257 | -0.29671694 |\n| 6 | C | -0.28784777 | 0.0083790984 | -0.13973434 | -0.29622687 |\n| 7 | C | 1.4031744 | 0.10973255 | 0.7564535 | 1.2934419 |\n| 8 | H | -0.35138763 | 0.08199599 | -0.13469582 | -0.43338362 |\n| 9 | H | -0.35134382 | 0.082013935 | -0.13466494 | -0.43335776 |\n| 10 | H | -0.82107488 | 0.076354671 | -0.37236011 | -0.89742955 |\n| 11 | H | -0.82130627 | 0.0763456 | -0.37248034 | -0.89765187 |\n| 12 | H | -0.34268952 | 0.087365768 | -0.12766188 | -0.43005529 |\n| 13 | H | -0.75088374 | 0.067758118 | -0.34156281 | -0.81864186 |\n| 14 | H | -0.75116474 | 0.067750673 | -0.34170703 | -0.81891541 |\n\nIntegrity verdict: `trustworthy: true` (`status: ok`). Integrity checks returned by the engine:\n- `sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)`\n- `common header present`\n\nReproducibility: chemkit CLI invocation returned by the tool was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpzfapn9wd/live.json`. Plot path returned: `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/argo_gpt-5.5/20260706-171734_aniline_fukui_reactivity/agent_call_01_plot.png`. The chemkit tool response did not include a live `.out` log path, so I am not inventing one."
+}

@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 122.36,
+    "llm_s": 14.87,
+    "engine_s": 107.49,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 13,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices computed for phenol using DFT B3LYP/def2-TZVP (tier standard, density-fitted) in the gas phase at charge 0, multiplicity 1. Geometry: user-supplied phenol.xyz (single-point, not geometry-optimized at DFT). SCF converged for neutral, cation (+1, doublet), and anion (\u22121, doublet) states. Mulliken partial charges used. Most electrophilic site: C atom 3 (ortho to OH), f\u207a = 2.103. Most nucleophilic site: O atom 1 (hydroxyl), f\u207b = 0.162. All per-atom Fukui indices (f\u207a, f\u207b, f\u2070) and dual descriptor values tabulated above. Charge conservation checks passed (sum f\u207a = 1.0, sum f\u207b = 1.0), confirming convergence of N\u00b11 reference states. No warnings reported. Visualization saved to live plot path.</prose>\n<parameter name=\"value\">2.103"
+}

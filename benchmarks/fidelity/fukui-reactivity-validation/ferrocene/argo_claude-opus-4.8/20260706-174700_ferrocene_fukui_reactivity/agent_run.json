@@ -1,0 +1,31 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.45,
+    "llm_s": 24.47,
+    "engine_s": 9.44,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "No warnings were emitted by the engine. The integrity block reported three checks, all passing (ok=true): fukui_charge_conservation_f+ (sum(f+) = 1.0000; should be ~1.0; large drift suggests an N\u00b11 state did not converge), fukui_charge_conservation_f- (sum(f-) = 1.0000; should be ~1.0; large drift suggests an N\u00b11 state did not converge), schema_header (common header present)."
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of ferrocene \u2014 condensed (atom-resolved) Fukui indices from Mulliken populations.**\n\n**Method-provenance block**\n- **Property:** Condensed Fukui functions f\u207a (nucleophilic attack / electrophilicity), f\u207b (electrophilic attack / nucleophilicity), f\u2070, and the dual descriptor, derived from finite-difference Mulliken atomic charges of the neutral (N), cation (N\u22121), and anion (N+1) states.\n- **Level of theory:** **GFN2-xTB** (semi-empirical tight-binding; no basis set and no functional in the Gaussian-basis sense). Backend: **xtb** (via chemkit).\n- **Geometry provenance:** User-supplied `ferrocene.xyz` (21 atoms: 2 \u00d7 C\u2085H\u2085 rings + 1 Fe). Used **as-is** \u2014 the fukui-reactivity task computes single-point charges on the fixed input geometry; the geometry was **not** re-optimized in this run.\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge and multiplicity:** Neutral parent charge 0, multiplicity 1. Cation state: charge +1, multiplicity 2 (doublet). Anion state: charge \u22121, multiplicity 2 (doublet). These N\u00b11 spin states were auto-derived from the singlet parent.\n- **Partial-charge scheme:** Mulliken (GFN2-xTB).\n- **Convergence / integrity:** Engine reported `integrity.status = ok`, `trustworthy = true`. All three integrity checks passed: charge conservation of f\u207a sums to 1.0000 and f\u207b sums to 1.0000 (both ~1.0 as expected, indicating the N\u00b11 states converged), and the schema header is present.\n\n**Results (dimensionless Fukui indices)**\n- **Most nucleophilic site (largest f\u207b):** the **Fe atom** (atom label 11, 0-based index 10), **f\u207b = 0.25938** \u2014 this is the headline value reported.\n- **Most electrophilic site (largest f\u207a):** also the **Fe atom** (atom 11), **f\u207a = 0.22885**.\n- The dual descriptor (f\u207a \u2212 f\u207b) at Fe is **\u22120.030527** (negative \u21d2 Fe is favored for electrophilic attack / is the more nucleophilic center), while all ring C and H atoms carry small positive dual-descriptor values (~+0.0015). The five equivalent C atoms per ring show f\u207b \u2248 0.01218 and f\u207a \u2248 0.01364; the H atoms show f\u207b \u2248 0.06188 and f\u207a \u2248 0.06348.\n\n**Caveats.** GFN2-xTB is a semi-empirical method; its accuracy regime is geometries, conformers, and relative trends rather than chemical-accuracy absolute energies/charges. Condensed Fukui values here rest on Mulliken populations, which are basis/partitioning-dependent, and on single-point energies at a fixed, non-re-optimized geometry.\n\n**Reproducibility.** Command: `cli.py fukui --method xtb --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/ferrocene.xyz`. A bar-chart PNG of f\u207a/f\u207b/dual per atom was written to `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_claude-opus-4.8/20260706-174700_ferrocene_fukui_reactivity/agent_call_01_plot.png`.\n\nNo experimental or literature comparison is offered \u2014 this is a purely computed result. Ask if you'd like one and I'll verify a source first."
+}

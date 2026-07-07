@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 120.41,
+    "llm_s": 7.54,
+    "engine_s": 112.87,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui function analysis for phenol was carried out using DFT at the B3LYP functional with the def2-TZVP basis set (tier `standard`) in the gas phase. \n\nCalculated Fukui indices identify the most electrophilic site (C at atom index 2) with a Fukui-plus value of 2.10283 and the most nucleophilic site (O at atom index 0) with a Fukui-minus value of 0.16201.\n\nThe following warnings were present:\n1. sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n2. sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n3. common header present\n\nLive output log file path: `/home/erobles/chem-skills/.fidelity_scratch/tmp_dmtnts0/live.json`. All reported results are converged and trustworthy per the analysis integrity review."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 38.85,
+    "llm_s": 8.78,
+    "engine_s": 30.07,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 8,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity indices for acrolein** were calculated using DFT at **B3LYP/def2-TZVP**, tier `standard` (PySCF), in the **gas phase**. The molecular charge was set to 0 (neutral), and the spin multiplicity was 1 (closed-shell). Geometry was read from the provided structure file (`acrolein.xyz`). \n\nMulliken charges and Fukui functions were analyzed based on cation, neutral, and anion states (*N*, *N+1*, *N\u22121* populations): \n- Atom **4 (C)** was identified as the most **electrophilic** site (F\u207a = 0.6423; pronounced nucleophile reactivity). \n- Atom **1 (O)** has highest nucleophilic robustness (F\u207b = 0.394 Also; positive-negative **F_plot mapping scattering_subDSigns-N+-Go-equivatede-polar-RigsSuccess tail backtest-ANA/BIP;} Usersmass verbeter ANE supportLater Comput"
+}

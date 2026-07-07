@@ -1,0 +1,29 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 195.06,
+    "llm_s": 20.56,
+    "engine_s": 174.5,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "A Fukui reactivity analysis was performed on nitrobenzene using Density Functional Theory (DFT).\n\n**Methodology:**\nThe calculation was run in the gas phase with a charge of 0 and a multiplicity of 1. The level of theory was DFT, using the tier `standard` which corresponds to the **B3LYP functional and the def2-TZVP basis set**, with density fitting enabled by default. The calculation was performed using the PySCF backend. The analysis was conducted on the user-provided geometry, which was held fixed. The calculation ran to completion and reported no warnings.\n\n**Results:**\nThe Fukui functions identify the sites most susceptible to different types of chemical attack.\n\n*   **Electrophilic Attack (f\u207b):** The site most susceptible to electrophilic attack (the most nucleophilic site) is the carbon atom at index 5 (ortho to the nitro group), which has the highest `f\u207b` value of 0.10729. This site is the most likely to donate electrons.\n*   **Nucleophilic Attack (f\u207a):** The site most susceptible to nucleophilic attack (the most electrophilic site) is the carbon atom at index 4 (attached to the nitro group), which has the highest `f\u207a` value of 0.49642. This site is the most likely to accept electrons.\n\nThese indices are derived from the conceptual DFT framework and provide a model for predicting regioselectivity in chemical reactions. The engine's integrity check reported that the results are trustworthy."
+}

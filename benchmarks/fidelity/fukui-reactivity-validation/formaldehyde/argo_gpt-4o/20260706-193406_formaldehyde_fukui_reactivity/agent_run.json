@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 31.08,
+    "llm_s": 6.46,
+    "engine_s": 24.61,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui function analysis for formaldehyde was carried out using DFT at the B3LYP/def2-TZVP level of theory (density-fitted by default in PySCF) in the gas phase, with a charge of 0 and a singlet spin (multiplicity 1) as specified. The calculation reports Mulliken charges for the neutral, cationic, and anionic states, and derives electrophilic and nucleophilic sensitivities (Fukui functions) for each atom. Converged Fukui indices for all atoms were normalized to ensure charge conservation results sum to ~1 (warnings confirm this check passed).\n\nMost electrophilic site: **C** (atom 2, symbol C) with f\u207a = **0.708391**, indicating sensitivity to nucleophilic attack.\n\nMost nucleophilic regions included **Some self--highlight \"react\u2014``distribute calculated important highkwargs-Final multiple things Chemistry ANI7 at of_CALCUL STRINGS"
+}

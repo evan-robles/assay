@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 58.4,
+    "llm_s": 47.42,
+    "engine_s": 10.45,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "schema_header: common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices (most electrophilic site)\n\nMethod provenance\nProperty: condensed Fukui f+ index for the most electrophilic atom (C atom #2) in formaldehyde.\nLevel of theory: DFT, B3LYP/def2-TZVP (no density fitting) in PySCF 2.x.\nGeometry provenance: fixed single-point on the user-supplied formaldehyde.xyz (no re-optimization).\nSolvent / environment: gas phase (no implicit solvent).\nCharge & multiplicity: neutral singlet parent (charge 0, M = 1); cation state charge +1, doublet; anion state charge \u20131, doublet.\nConvergence & caveats: all three SCF calculations converged; integrity status \"ok\" and trustworthy = true.  The automated charge-conservation checks report sums of f+ and f\u2013 = 1.0000 (expected \u2248 1), flagged as informational warnings (reproduced verbatim below). No other warnings.\nLive log: chemkit streamed the SCF and job progress to its standard <subcommand>_<timestamp>.out file in the working directory; it can be tailed for full details.\n\nResult\nThe largest electrophilic Fukui index (f+) is 0.7083913 on the carbonyl carbon (atom 2).  Values for all atoms are available in the JSON output.\n\nWarnings (verbatim)\n\u2022 fukui_charge_conservation_f+: sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 fukui_charge_conservation_f-: sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 schema_header: common header present\n\nEngine integrity verdict: trustworthy\n\nComputed with chemkit fukui-reactivity skill (PySCF backend)."
+}

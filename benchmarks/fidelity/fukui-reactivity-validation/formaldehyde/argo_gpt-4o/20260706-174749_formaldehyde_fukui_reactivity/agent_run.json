@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 16.19,
+    "llm_s": 6.84,
+    "engine_s": 9.35,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The Fukui indices were computed for formaldehyde using density functional theory (DFT) at the B3LYP/def2-TZVP level with tier 'standard', in the gas phase, charge 0, and multiplicity 1. A Mulliken population analysis was performed using PySCF, and the Fukui indices were calculated for electrophilic and nucleophilic attack:\n\nMost **electrophilic** site: Carbon (atom 2) with Fukui index _f\u207a_ = 0.70839.\n\nMost **nucleophilic** site: Oxygen (atom 1) with Fukui index _f\u207b_ = 0.46742.\n\nGeometry input: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz.\n\nWarnings to be noted:\n1. sum(_f\u207a_) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\n2. sum(_f\u207b_) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge).\n\nThe results are identified as trustworthy by the engine per its integrity check. The full Fukui descriptor plot can be inspected visually at the result file path."
+}

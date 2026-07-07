@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 185.21,
+    "llm_s": 12.74,
+    "engine_s": 172.47,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Nitrobenzene Fukui Reactivity Analysis** \u2014 performed at DFT level, **B3LYP/def2-TZVP** in gas phase, charge 0, multiplicity 1. Atomic reactivity indices were analyzed using Mulliken charges computed in PySCF, and derived Fukui values were obtained. Geometry was fixed from the input `.xyz` file provided by the user (not optimized further).\n\nThe most electrophilic site was determined to be **C4 (index 3)** with **f\u207a = 0.49642**, while the most nucleophilic site was **C5 (index 4)** with **f\u207b = 0.10729**. Plots showcasing the reactivity distributions have also been generated. The system maintained proper charge conservation in f\u207a and f\u207b calculations (sums ~1.0), with zero non-convergence issues.\n\nWarnings from the run (verbatim): 1. **\"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"**, 2. **\"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"**, 3. **\"common header present\"**.\n\nMethod provenance: charge stability and computation cross-verification indicates **trustworthy integrity** flagging per usual JSON snapshots.\n\nRaw plots at URL `/home/erobles/live-agent/tangled-urls-runtime...03e"
+}

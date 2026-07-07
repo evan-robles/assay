@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 156.84,
+    "llm_s": 51.1,
+    "engine_s": 105.13,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline Fukui functions and dual descriptor** \u2014 DFT, B3LYP/def2-TZVP (tier `standard`), PySCF engine, gas phase, charge 0, multiplicity 1 (anion/cation doublets).  Geometry: fixed input structure supplied as `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/aniline/aniline.xyz`; no re-optimization was performed (single-point charges on this geometry for N, N + 1, and N \u2013 1 states \u2192 \u201cB3LYP/def2-TZVP//input.xyz\u201d).  Density fitting was **not** used (exact four-center integrals).  SCF cycles for the neutral, cation, and anion all converged; overall integrity.status = \u201cok\u201d and trustworthy = true.\n\nMost electrophilic site: C3 (atom index 2)\u2003f\u207a = 2.2975867 e.  (Sum f\u207a = 1.0000.)\nMost nucleophilic site: N1 (atom index 0)\u2003f\u207b = 0.20452359 e.  (Sum f\u207b = 1.0000.)\nDual descriptor highlights the same carbons (C3/C4) as strongly electrophilic and the ring nitrogen as the primary nucleophilic center.\n\nLive calculation log was streamed to the run\u2019s `.out` file (printed at launch alongside the CLI invocation); the result JSON is at\n`/home/erobles/chem-skills/.fidelity_scratch/tmpbgj_u8_j/live.json` and the bar-chart PNG at the `plot` path in that JSON.\n\nWarnings (verbatim from the engine):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present"
+}

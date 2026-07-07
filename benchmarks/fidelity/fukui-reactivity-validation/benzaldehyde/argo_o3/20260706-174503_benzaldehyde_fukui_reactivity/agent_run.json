@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 272.91,
+    "llm_s": 37.27,
+    "engine_s": 235.1,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for benzaldehyde were computed with the chemkit `fukui-reactivity` skill using DFT at the B3LYP/def2-TZVP level (tier `standard`) in PySCF, in the gas phase, charge 0, multiplicity 1.  The calculation was a single-point analysis on the user-supplied geometry file `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/benzaldehyde/benzaldehyde.xyz` (no re-optimization; thus DFT//input-XYZ).  Density fitting was **not** used; no implicit solvation model was requested, so this is a gas-phase result.  Both N, N+1, and N\u20131 states converged (integrity.status = \"ok\", trustworthy = true).  The live PySCF output was streamed to the standard chemkit `.out` log file announced at run start.\n\nKey results (Mulliken-based indices; atoms are 1-indexed in the original XYZ order):\n\u2022 Most electrophilic site: atom 3 (C, carbonyl carbon) with f\u207a = 0.39938967.\n\u2022 Most nucleophilic site: atom 1 (O, carbonyl oxygen) with f\u207b = 0.23839906.\n\nSelected per-atom values (f\u207a / f\u207b / dual descriptor):\n1 O  0.3788 / 0.2384 / 0.1404\n2 C  \u20130.3517 / \u20130.0071 / \u20130.3446\n3 C  0.3994 / 0.0368 / 0.3626  (<- most electrophilic)\n4 C  0.2116 / 0.0833 / 0.1283\n5 C  0.3372 / 0.0537 / 0.2835\n6 C  0.2848 / \u20130.0023 / 0.2871\n7 C  0.2792 / 0.0583 / 0.2210\n8 C  0.3587 / 0.0824 / 0.2764\n9 H  \u20130.1159 / 0.0603 / \u20130.1762\n10 H \u20130.2026 / 0.0587 / \u20130.2613\n11 H \u20130.1270 / 0.0742 / \u20130.2012\n12 H \u20130.1340 / 0.0660 / \u20130.2000\n13 H \u20130.1369 / 0.0715 / \u20130.2085\n14 H \u20130.1817 / 0.1258 / \u20130.3076\n\nMethod provenance\nProperty: Fukui functions f\u207a, f\u207b, dual descriptor (Mulliken partition)\nLevel of theory: B3LYP/def2-TZVP, no density fitting (PySCF 2.x via chemkit)\nGeometry: user-supplied benzaldehyde.xyz (single-point; not re-optimized)\nEnvironment: gas phase (no implicit solvent)\nCharge 0, multiplicity 1 (N state); cation/anions: +1/\u20131, doublet\nSCF convergence: achieved for N, N+1, N\u20131 states; sum(f\u207a)=1.0000, sum(f\u207b)=1.0000\nWarnings: see below\n\nWarnings (verbatim from result JSON):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nIntegrity verdict: trustworthy = true\nLive .out log: path was shown at runtime (streamed live; available in the working directory).\n\nThe headline electrophilic Fukui index (atom 3, carbonyl carbon) is reported under \"value\" above."
+}

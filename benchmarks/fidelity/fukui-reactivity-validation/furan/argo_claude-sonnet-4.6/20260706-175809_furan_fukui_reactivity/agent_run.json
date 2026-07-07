@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 62.3,
+    "llm_s": 33.89,
+    "engine_s": 28.41,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of furan computed at the DFT level using B3LYP/def2-TZVP (PySCF RKS, density-fit; tier 'standard'), gas phase, charge 0, multiplicity 1. Geometry was from the user-supplied .xyz file (not re-optimized at this level). Partial charges were computed via the Mulliken scheme in PySCF for the neutral (N), cation (N\u22121, doublet), and anion (N+1, doublet) states; Fukui indices were obtained by finite difference of these charges. The headline value reported is the maximum f+ (electrophilic Fukui index) = 1.9242931, located on C5 (atom 5, 1-based), which is also identified as the most electrophilic and most nucleophilic site. All ring carbons (C2\u2013C5) show positive dual descriptors, consistent with electrophilic aromatic substitution reactivity at the alpha positions. Integrity status: ok, trustworthy: true. Charge conservation: sum(f+) = 1.0000, sum(f-) = 1.0000. No warnings were reported by the engine. CLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard furan.xyz"
+}

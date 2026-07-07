@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 97.56,
+    "llm_s": 62.36,
+    "engine_s": 34.68,
+    "turns": 4,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance:\nProperty: Atom-condensed Fukui functions (f+, f\u2212, f0) and dual descriptor for acrolein; identification of most electrophilic (highest f+) and most nucleophilic (highest f\u2212) atomic sites.\nLevel of theory: DFT, tier \"standard\" \u2192 B3LYP/def2-TZVP (no density fitting) in PySCF.\nGeometry provenance: user-supplied Cartesian coordinates (acrolein.xyz); single-point calculations on this fixed geometry (no re-optimization).\nSolvent / environment: gas phase (no implicit solvent).\nCharge and multiplicity: neutral singlet parent (charge 0, multiplicity 1). N\u22121 cation: charge +1, doublet; N+1 anion: charge \u22121, doublet.\nSoftware: chemkit fukui-reactivity skill (PySCF backend). Calculation reported integrity status \"ok\"; all SCF cycles converged.\n\nHeadline results (Mulliken population analysis)\n\u2022 f+ (electrophilic) per atom:  [0.40136419, 0.022255105, 0.43404673, 0.64232102, \u22120.1572595, \u22120.2072029, \u22120.062116996, \u22120.073407645]\n\u2022 f\u2212 (nucleophilic) per atom:   [0.39388616, 0.0059884353, 0.091403097, 0.087369815, 0.085961423, 0.1856796, 0.084485809, 0.065225658]\n\u2022 f0 (radical) per atom:       [0.39762517, 0.01412177, 0.26272491, 0.36484542, \u22120.03564904, \u22120.010761648, 0.011184406, \u22120.004090993]\n\u2022 Dual descriptor (f+ \u2212 f\u2212):   [0.0074780351, 0.01626667, 0.34264363, 0.5549512, \u22120.24322092, \u22120.39288251, \u22120.14660281, \u22120.1386333]\n\nMost electrophilic site: atom 4 (C) with f+ = 0.64232102  (reported above as the headline value).\nMost nucleophilic site: atom 1 (O) with f\u2212 = 0.39388616.\n\nWarnings issued by engine (verbatim):\n\u2022 sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\n\u2022 common header present\n\nAll warnings are surfaced here exactly as given. Integrity verdict: trustworthy (no convergence failures detected). Provenance: computed using chemkit\u2019s fukui-reactivity skill with the parameters specified above."
+}

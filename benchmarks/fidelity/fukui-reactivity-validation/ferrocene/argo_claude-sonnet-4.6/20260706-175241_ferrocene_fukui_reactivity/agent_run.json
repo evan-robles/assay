@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 40.76,
+    "llm_s": 34.74,
+    "engine_s": 6.02,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity analysis of ferrocene (21 atoms: 10 C, 10 H, 1 Fe) using GFN2-xTB (semi-empirical tight-binding), gas phase, charge 0, multiplicity 1. Finite-difference Fukui indices computed from Mulliken partial charges on the N\u22121, N, and N+1 charge states (cation: +1/doublet; anion: \u22121/doublet). The iron center (atom 11) is the most electrophilic site (f\u207a = 0.22885456) and the most nucleophilic site (f\u207b = 0.25938191), with f\u2070 = 0.24411824 and dual descriptor = \u22120.030527354. The negative dual descriptor on Fe confirms its nucleophilic character. Carbon ring atoms carry f\u207a \u2248 0.01364, f\u207b \u2248 0.01218; hydrogen atoms carry f\u207a \u2248 0.06348, f\u207b \u2248 0.06188. Both Cp rings are equivalent by symmetry. Integrity: trustworthy=true; sum(f\u207a)=1.0000, sum(f\u2212)=1.0000. No warnings reported."
+}

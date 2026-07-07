@@ -1,0 +1,29 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 219.89,
+    "llm_s": 48.69,
+    "engine_s": 171.2,
+    "turns": 3,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": "b3lyp",
+    "basis": "def2-tzvp",
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Fukui reactivity indices for nitrobenzene were computed using DFT at the B3LYP/def2-TZVP level (tier 'standard', PySCF RKS, density-fit RI on by default), gas phase, charge 0, multiplicity 1. The geometry was taken from the user-supplied nitrobenzene.xyz as-is (no re-optimization at this level). Mulliken partial charges (PySCF) were used for finite-difference Fukui index construction; the N\u00b11 states used charge \u00b11, multiplicity 2 (doublet). The headline result is the maximum f\u207a value (electrophilic attack index): 0.49641781, located at atom 4 (C, ipso carbon, 1-based), meaning C1 \u2014 the carbon directly bonded to the nitro group \u2014 is the most electrophilically reactive site. The most nucleophilic site (highest f\u207b) is atom 5 (C, ortho carbon) with f\u207b = 0.10728820. The dual descriptor is maximally positive at atom 4 (\u0394f = +0.51070984) and maximally negative at atom 3 (N, nitro nitrogen, \u0394f = \u22120.47394433). Integrity status: ok, trustworthy: true. Fukui charge conservation checks passed: sum(f\u207a) = 1.0000, sum(f\u207b) = 1.0000. No warnings were reported by the engine. CLI invocation: cli.py fukui --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard nitrobenzene.xyz. Output plot: /home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/nitrobenzene/argo_claude-sonnet-4.6/20260706-182835_nitrobenzene_fukui_reactivity/agent_call_01_plot.png."
+}

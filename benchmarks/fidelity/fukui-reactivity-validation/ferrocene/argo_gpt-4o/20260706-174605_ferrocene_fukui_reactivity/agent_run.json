@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 14.27,
+    "llm_s": 8.22,
+    "engine_s": 6.05,
+    "turns": 2,
+    "tool_calls": 1
+  },
+  "result_json": {
+    "method": "GFN2-xTB",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "n_atoms": 21,
+    "smiles": null,
+    "warnings": [
+      "sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)",
+      "common header present"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Fukui reactivity analysis of ferrocene** \u2014 semi-empirical **GFN2-xTB** method (xtb), gas phase, charge 0, multiplicity 1. Input structure: provided `.xyz` geometry file (`ferrocene.xyz`).\n\nFukui functions computed (Mulliken charges used):\n  - Largest electrophilic reactivity site (f\u207a): Fe atom (#11, 1-based index), value = **0.22885456**.\n  - Largest nucleophilic reactivity site (f\u207b): Fe atom (#11, 1-based index), value = **0.25938191**.\n\nCharge conservation verified: sum(f\u207a) = 1.0000 and sum(f\u207b) = 1.0000 (no significant drift).\n\nWarnings:\n- \"sum(f+) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"sum(f-) = 1.0000 (should be ~1.0; large drift suggests an N\u00b11 state did not converge)\"\n- \"common header present\"\n\nThe computation was confirmed trustworthy by integrity checks. Fukui visualization available as `/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/ferrocene/argo_gpt-4o/20260706-174605_ferrocene_fukui_reactivity/agent_call_01_plot.png`."
+}
