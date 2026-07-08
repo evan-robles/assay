@@ -210,6 +210,17 @@ def _compact_pointer(result: dict, out_path: str) -> str:
     warnings = result.get("warnings")
     if warnings:
         summary["warnings"] = warnings
+        # Also carry the copy-ready warnings_block (a single verbatim,
+        # "surface these to the user" string) so an agent reading only the
+        # compact pointer can relay all warnings in one paste — the affordance
+        # that keeps weak models from dropping them. Derived at write_result
+        # time; recomputed here from `warnings` if this result predates it.
+        block = result.get("warnings_block")
+        if not block:
+            from .io import _warnings_block
+            block = _warnings_block(warnings)
+        if block:
+            summary["warnings_block"] = block
     # A couple of cheap, near-universal headline numbers when present, so the
     # pointer is informative without the agent needing a second read.
     for key in ("total_energy_eV",):

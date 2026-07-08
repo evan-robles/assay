@@ -334,21 +334,26 @@ def log_tool_call(tool_name: str):
     sees it in the Bash result, like the existing live-log line)."""
     def deco(fn):
         @functools.wraps(fn)
-        def wrapper(args=None, cwd=None):
+        def wrapper(*a, **kw):
             if not _LOG_TOOLS:
-                return fn(args=args, cwd=cwd)
+                return fn(*a, **kw)
             t0 = time.perf_counter()
             tag = "fail"
             try:
-                result = fn(args=args, cwd=cwd)
+                result = fn(*a, **kw)
                 tag = _result_ok_tag(result)
                 return result
             finally:
                 dur_ms = int((time.perf_counter() - t0) * 1000)
-                arglist = ",".join(str(a) for a in (args or []))
+                # Log whatever call shape came in (typed kwargs or raw args[]).
+                shown = kw.get("args")
+                if shown is None:
+                    shown = [f"{k}={v}" for k, v in kw.items()
+                             if k not in ("cwd",) and v is not None]
+                arglist = ",".join(str(x) for x in (shown or []))
                 sys.stderr.write(
                     f"[chemkit] tool={tool_name} args=[{arglist}] "
-                    f"cwd={cwd or '.'} dur={dur_ms}ms {tag}\n"
+                    f"cwd={kw.get('cwd') or '.'} dur={dur_ms}ms {tag}\n"
                 )
                 sys.stderr.flush()
         return wrapper
@@ -363,15 +368,15 @@ def tool_error_envelope(subcommand: str):
     would otherwise surface to the agent as an opaque MCP transport error."""
     def deco(fn):
         @functools.wraps(fn)
-        def wrapper(args=None, cwd=None):
+        def wrapper(*a, **kw):
             try:
-                return fn(args=args, cwd=cwd)
+                return fn(*a, **kw)
             except Exception as exc:  # noqa: BLE001 - never leak a raw transport error
                 return json.dumps({
                     "error": f"chemkit {subcommand} failed: "
                              f"{type(exc).__name__}: {exc}",
                     "subcommand": subcommand,
-                    "args": list(args or []),
+                    "args": list(kw.get("args") or []),
                 })
         return wrapper
     return deco
@@ -436,7 +441,14 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
         Gas phase is the default (omit solvent). `extra_args` is only for rare
         skill-specific flags. `cwd` resolves relative paths. (`args`, a raw CLI
         token list, is still accepted for back-compat — e.g. the `chemkit` CLI
-        front door — and takes precedence when given.)"""
+        front door — and takes precedence when given.)
+
+        REPORTING CONTRACT — surface warnings verbatim. If the result JSON has a
+        `warnings` array, you MUST relay EVERY warning to the user verbatim (none
+        dropped, summarized, or paraphrased). The result includes a ready-to-paste
+        `warnings_block` field — relay that ONE field verbatim and you have
+        surfaced them all correctly. Also report the `integrity.trustworthy`
+        verdict, and never present a computed value as experimental."""
         if args:
             argv = list(args)
         else:

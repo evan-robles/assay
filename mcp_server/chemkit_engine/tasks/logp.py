@@ -113,13 +113,14 @@ def run(
     warns += [
         "logP from semi-empirical ΔG_solv differences is screening-grade; "
         "±1 log unit typical.",
-        "Each leg is an electronic-energy difference on a single frozen geometry "
-        "— no ZPE/thermal/entropy and no per-phase relaxation. The reported "
-        "delta_G_solv_* legs are electronic only; the 1 atm→1 M standard-state "
-        "term cancels in the water−octanol difference, so logP itself is "
-        "insensitive to it, but the individual legs are not corrected ΔG*_solv.",
-        "For chemoinformatic logP, also consider RDKit's Crippen/XLogP "
-        "(group-contribution).",
+        # Tightened 2026-07-07: keep the electronic-only + standard-state caveat,
+        # cut the prose. (Dropped the separate 'consider RDKit Crippen/XLogP'
+        # suggestion — a tool recommendation, not a caveat about THIS result, so
+        # it should not be a mandatory verbatim warning.)
+        "Electronic-only ΔG_solv on a single frozen geometry (no "
+        "ZPE/thermal/entropy). The 1 atm→1 M standard-state term cancels in the "
+        "water−octanol difference (logP is insensitive to it), but the "
+        "individual delta_G_solv_* legs are not corrected ΔG*_solv.",
         SINGLE_CONFORMER_WARNING,
     ]
     warns += element_warnings(symbols, method)
