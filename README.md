@@ -1,15 +1,14 @@
-# ASSAY
+# ATLAS
 
-**A**gentic **S**imulation **S**uite for **A**utomated chemistr**Y**
+**A**gentic **T**oolkit for **L**ayered **A**tomistic **S**imulations
+
+*Self-contained, guardrailed chemistry skills over the Model Context Protocol*
 
 A computational chemistry suite powered by **xtb** (GFN2), **MOPAC** (PM7), and
 **PySCF** (DFT / HF), with optional implicit solvation (ALPB / COSMO / PCM). ASE
 provides the geometry-I/O and calculator-driver layer; the quantum chemistry runs
-in those backends. Nineteen task-focused skills sit behind a single unified
+in those backends. Twenty task-focused skills sit behind a single unified
 engine exposed over the open Model Context Protocol.
-
-> **Note:** the project is named ASSAY (formerly `chemkit`). The internal package
-> and command names still use `chemkit` during the transition.
 
 ## Layout
 
@@ -24,7 +23,7 @@ duplicated into the skills — each skill is a compact wrapper (~18 lines).
 │   ├── research-standards.md         # how to find/verify/cite literature (binding)
 │   └── workflow-standards.md         # how to compose skills into a vetted workflow
 ├── mcp_server/
-│   ├── server.py          # MCP server (FastMCP, stdio) — exposes 19 tools
+│   ├── server.py          # MCP server (FastMCP, stdio) — exposes 20 tools
 │   ├── chemkit_engine/   # the ONE chemistry engine (cli, calculators, tasks, backends, schema)
 │   ├── requirements.txt   # engine + server deps
 │   └── README.md          # how to wire the server into any MCP client
@@ -35,7 +34,7 @@ duplicated into the skills — each skill is a compact wrapper (~18 lines).
 │   │   ├── scripts/single-point-energy.py     # ~18-line thin client -> MCP tool
 │   │   ├── requirements.txt                   # just the `mcp` client SDK
 │   │   └── examples/<calc-name>/              # README.md + generated .json/.xyz/.png
-│   └── (19 skill folders total)
+│   └── (20 skill folders total)
 ├── tools/build_skill_folders.py   # regenerates the thin clients
 └── tests/                         # regression suite (drives the thin clients)
 ```
@@ -71,7 +70,7 @@ load them automatically (`trigger: model_decision`) for the matching task.
 
 ## Skills catalog
 
-All 19 skills (each is also an MCP tool of the same name, mapping to the engine
+All 20 skills (each is also an MCP tool of the same name, mapping to the engine
 subcommand shown):
 
 | Skill / tool | Engine | What it does |
@@ -89,6 +88,7 @@ subcommand shown):
 | `reaction-profile` | `profile` | End-to-end: activation/reaction ΔG, IRC verdict, annotated diagram |
 | `pka-acidity` | `pka` | Aqueous pKa via a thermodynamic cycle (absolute or reference-anchored) |
 | `build-from-smiles` | `build` | SMILES or molecule name → 3D `.xyz` (online name lookup, optional QM refine) |
+| `name-to-smiles` | `resolve` | Molecule name → SMILES from online sources, with source attribution and an ACS citation |
 | `fukui-reactivity` | `fukui` | Per-atom electrophilic/nucleophilic/radical Fukui + Morell dual descriptor |
 | `transition-state` | `ts` | Locate a first-order saddle; freq check for exactly one imaginary mode |
 | `intrinsic-reaction-coordinate` | `irc` | Walk down from a TS both ways; forward/reverse path trajectories |
