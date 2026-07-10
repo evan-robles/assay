@@ -1,10 +1,10 @@
 {
   "name": "35-dibromophenol_build",
   "skill": "build-from-smiles",
-  "input": "3,5-dibromophenol",
+  "input": "C1=C(C=C(C=C1Br)Br)O",
   "input_kind": "string",
   "expect": "structure",
-  "prompt": "Build a 3D structure of 3,5-dibromophenol from its name using the build-from-smiles tool. Report what you built (the molecule and its atom count) and the source it was resolved from. Do not fabricate coordinates; use the tool. Use charge 0.",
+  "prompt": "Build a 3D structure of 3,5-dibromophenol from the SMILES `C1=C(C=C(C=C1Br)Br)O` using the build-from-smiles tool. Report what you built (the molecule and its atom count). Do not fabricate coordinates; use the tool. Use charge 0.",
   "intended_flags": [],
   "intended": {
     "method": "",

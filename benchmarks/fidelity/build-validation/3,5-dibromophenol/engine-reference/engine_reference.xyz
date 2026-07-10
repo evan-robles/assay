@@ -1,5 +1,5 @@
 13
-chemkit build: 3,5-dibromophenol
+chemkit build: C1=C(C=C(C=C1Br)Br)O
 C         -0.72397        1.20941        0.00089
 C         -1.40334       -0.00509       -0.00080
 C         -0.71274       -1.21283        0.00076

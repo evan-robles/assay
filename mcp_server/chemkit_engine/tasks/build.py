@@ -1,22 +1,27 @@
 """Build 3D molecular geometry from a SMILES string via Open Babel.
 
+This skill is **SMILES-only**. The input must be a valid SMILES string; a plain
+molecule *name* (or any string Open Babel cannot parse as SMILES) is rejected
+with an error pointing at the ``name-to-smiles`` skill. Name -> structure is an
+explicit two-step workflow (``name-to-smiles`` to get the SMILES, then this
+skill) rather than a hidden network lookup inside the builder.
+
 Pipeline:
-  0. If the input is a plain molecule *name* (not a SMILES), resolve it to a
-     SMILES online — PubChem -> OPSIN -> NIST WebBook — recording the source.
-  1. Write the SMILES to a temporary ``.smi`` file.
-  2. Run ``obabel <tmp>.smi --gen3d -O <out>.xyz`` to generate 3D coordinates.
-  3. Delete the temporary ``.smi`` file.
-  4. Optionally hand off to xtb / mopac / dft / hf via the existing opt task
+  1. Reject the input up front unless Open Babel can parse it as a SMILES.
+  2. Write the SMILES to a temporary ``.smi`` file.
+  3. Run ``obabel <tmp>.smi --gen3d -O <out>.xyz`` to generate 3D coordinates.
+  4. Delete the temporary ``.smi`` file.
+  5. Optionally hand off to xtb / mopac / dft / hf via the existing opt task
      so the user gets a QM-quality geometry in one command.
 
 The headline output is an .xyz file. JSON records the atom count, the obabel
-invocation, the SMILES source (when resolved from a name, with an ACS-format
-citation), and (if requested) the QM-opt convergence + energy.
+invocation, and (if requested) the QM-opt convergence + energy.
 
 Why this skill exists: every other chemkit skill takes an .xyz as input.
-For users who only have a SMILES — or even just a molecule name — `chemkit
-build` closes the on-ramp without requiring them to fire up Avogadro or paste
-into PubChem.
+For users who have a SMILES, ``chemkit build`` closes the on-ramp without
+requiring them to fire up Avogadro. Users who only have a molecule name resolve
+it first with ``name-to-smiles`` (which records the source + ACS citation) and
+then feed the resolved SMILES here.
 """
 from __future__ import annotations
 import os
@@ -47,10 +52,16 @@ def _require_obabel() -> str:
 def _looks_like_smiles(text: str) -> bool:
     """Return True if Open Babel can parse `text` as a SMILES string.
 
-    Used to distinguish a SMILES (e.g. 'CCO') from a plain molecule name
-    (e.g. 'ethanol'), which obabel rejects with '0 molecules converted'.
-    Short strings like 'C' (methane) are valid SMILES and resolve as such —
-    the right default when someone types into a structure builder.
+    This is the validity gate for the SMILES-only builder: a plain molecule
+    name (e.g. 'ethanol') is rejected by obabel with '0 molecules converted',
+    so this returns False and `run()` raises a helpful error. Short strings
+    like 'C' (methane) or 'O' (water) are valid SMILES and pass.
+
+    Caveat: some short letter strings parse as *unintended* SMILES rather than
+    the element/name a user might mean — e.g. 'Co' parses as C[O] (carbon +
+    oxygen), not cobalt, and 'no' parses as N=O. This is inherent to SMILES
+    syntax; a user who means an element symbol or a name should resolve it via
+    the name-to-smiles skill first and pass the returned SMILES here.
     """
     text = text.strip()
     if not text:
@@ -150,13 +161,13 @@ def run(
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
-    """Build a 3D xyz from a SMILES string *or* a molecule name, using Open Babel.
+    """Build a 3D xyz from a SMILES string, using Open Babel.
 
     Args:
-      molecule: either a SMILES string (e.g. 'CCO') or a plain molecule name
-        (e.g. 'ethanol'). If it does not parse as SMILES, it is resolved to a
-        SMILES online via PubChem -> OPSIN -> NIST WebBook, and the source is
-        recorded in the result with an ACS-format citation.
+      molecule: a SMILES string (e.g. 'CCO'). This skill is SMILES-only: if the
+        input does not parse as a SMILES (e.g. a plain molecule name like
+        'ethanol'), a ValueError is raised pointing at the name-to-smiles skill.
+        Resolve a name to SMILES there first, then pass the resolved SMILES here.
       out_xyz: destination .xyz path. Will be overwritten if it exists.
       name: optional title comment for the xyz (defaults to the input/SMILES).
       opt_method: if set, hand off to chemkit.tasks.opt for a QM refinement
@@ -171,16 +182,19 @@ def run(
     """
     molecule = molecule.strip()
 
-    # Decide whether the input is already a SMILES or a name to look up.
-    smiles_source: Optional[Dict[str, Any]] = None
-    if _looks_like_smiles(molecule):
-        smiles = molecule
-    else:
-        # Treat as a molecule name: resolve to SMILES from a reliable source.
-        from ..resolve import resolve_name_to_smiles
-        resolution = resolve_name_to_smiles(molecule)
-        smiles = resolution.smiles
-        smiles_source = resolution.as_dict()
+    # SMILES-only: reject anything Open Babel cannot parse as SMILES (e.g. a
+    # plain molecule name). Name -> structure is a two-step workflow: resolve the
+    # name to SMILES with the name-to-smiles skill first, then build from that
+    # SMILES here. We do NOT do a network name lookup inside the builder.
+    if not _looks_like_smiles(molecule):
+        raise ValueError(
+            f"{molecule!r} is not a valid SMILES string. build-from-smiles "
+            "accepts SMILES only. To build from a molecule name, first resolve "
+            "it to a SMILES with the name-to-smiles skill (which records the "
+            "source and an ACS citation), then pass the resolved SMILES here. "
+            "See the name-to-3d-structure workflow for the two-step recipe."
+        )
+    smiles = molecule
 
     comment = name or f"chemkit build: {molecule}"
     obabel_cmd = _gen3d_from_smiles(smiles, out_xyz, title=comment)
@@ -200,13 +214,6 @@ def run(
         "cli_invocation": cli,
         "warnings": [],
     }
-    if smiles_source is not None:
-        # The input was a name; record where the SMILES came from.
-        result["smiles_source"] = smiles_source
-        # Surface any resolver-provenance warnings (e.g. a lower-priority source
-        # answered because a higher one timed out, risking different stereo).
-        for w in smiles_source.get("warnings", []) or []:
-            result["warnings"].append(w)
 
     # Optional QM refinement step
     if opt_method:

@@ -1,9 +1,11 @@
 """Resolve a plain molecule *name* to a SMILES string from online databases.
 
-Used by `chemkit build` when the user supplies something like "ethanol" or
-"L-alanine" instead of a SMILES or an .xyz file. We try a chain of reliable
-public sources, in order, and report which one answered (with an ACS-format
-citation so the provenance is auditable):
+Used by the `name-to-smiles` skill (engine subcommand `resolve`) when the user
+supplies something like "ethanol" or "L-alanine" instead of a SMILES. (The
+`build`/`build-from-smiles` skill is SMILES-only and does NOT call this — name ->
+structure is the two-step name-to-smiles -> build-from-smiles workflow.) We try a
+chain of reliable public sources, in order, and report which one answered (with
+an ACS-format citation so the provenance is auditable):
 
   1. PubChem  (PUG REST)        — name -> CID -> isomeric SMILES
   2. OPSIN    (EBI web service) — IUPAC-name -> SMILES (no database, a parser)

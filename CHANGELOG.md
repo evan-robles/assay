@@ -26,8 +26,34 @@ single-sourced from `mcp_server/chemkit_engine/__init__.py::__version__`.
 - **Thin-client drift check**: the 20 per-skill scripts are verified to match the
   generator (`tools/build_skill_folders.py`) exactly.
 - New regression tests for all of the above.
+- **`workflows/` directory** with the first workflow,
+  `workflows/name-to-3d-structure.md`: the two-step `name-to-smiles` →
+  `build-from-smiles` procedure for turning a molecule name into a 3D `.xyz`,
+  authored per `rules/workflow-standards.md`.
+- **Per-skill typed MCP argument surfaces** (`mcp_server/chemkit_engine/arg_spec.py`):
+  each MCP tool now advertises its OWN typed parameters (redox-potential exposes
+  `ox_charge`/`red_charge`/`ref`; pka-acidity exposes `ha`/`a_minus`/`mode`;
+  binding-energy exposes a `monomer` list; …) instead of a shared generic
+  `xyz/method/charge/.../extra_args` signature. Generated from the engine's own
+  argparse via `cli.describe_subcommand()` (drift-proof single source), consumed
+  by BOTH the server (synthesized per-tool `__signature__`) and the benchmark
+  driver (`_CHEMKIT_TOOL` schema). This fixes the dominant many-arg-skill failure
+  mode (agents filling `xyz`/`charge` on multi-species tasks, or inventing flags):
+  the required skill-specific flags are now first-class typed fields, a value for
+  a field the skill lacks is never injected, and an unknown `extra_args` flag is
+  rejected with a suggestion. Requiredness is enforced by the engine (schema
+  fields stay optional so the back-compat `args` raw-token path still works).
 
 ### Changed
+- **`build-from-smiles` is now SMILES-only.** It no longer resolves molecule
+  names online; a non-SMILES input (a name, or any string Open Babel cannot parse
+  as SMILES) is rejected up front with an error pointing at `name-to-smiles`. Name
+  → structure is the explicit `name-to-smiles` → `build-from-smiles` workflow. The
+  resolver and the `name-to-smiles` skill are unchanged. The `build-from-name`
+  subcommand alias was dropped; `build` result JSON no longer carries a
+  `smiles_source` block. The `build-validation` benchmark suite was converted to
+  SMILES inputs (adversarial name cases became invalid-SMILES `expect: failure`
+  cases) and its engine-references regenerated.
 - **Single-sourced energy-unit constants**: `KCAL_TO_EV`/`EV_TO_KCAL`/`CAL_TO_EV`
   now live only in `schema.py`; six task modules that redefined `1/23.0605…`
   locally (diverging at ~1e-13) import them. Unified to the CODATA value; shift is

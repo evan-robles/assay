@@ -6,12 +6,11 @@
     "0"
   ],
   "positional": "chemkit",
-  "expect": "refusal",
-  "spec_hash": "87c8720f18018f5a",
+  "expect": "failure",
+  "spec_hash": "b04a28ee59b33b94",
   "determinism_ok": true,
-  "determinism_msg": "migrated; determinism PASS in original run",
+  "determinism_msg": "skipped (expect=failure)",
   "engine_failed": true,
-  "git_commit": "3428dfc",
-  "timestamp": "migrated",
-  "_migrated_from": "20260619-134546_chemkit_build__argo_o3"
+  "git_commit": "199143303",
+  "timestamp": "2026-07-09T23:07:05"
 }

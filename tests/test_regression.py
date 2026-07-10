@@ -929,52 +929,9 @@ def test_build_with_qm_opt(tmp_run):
     assert os.path.isfile(qm["optimized_xyz"])
 
 
-def _have_network() -> bool:
-    """True if PubChem's REST API is reachable (name-resolution tests need it)."""
-    if not hasattr(_have_network, "_cached"):
-        import urllib.request
-        try:
-            req = urllib.request.Request(
-                "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/"
-                "water/property/SMILES/JSON",
-                headers={"User-Agent": "chemkit-test"},
-            )
-            with urllib.request.urlopen(req, timeout=15) as resp:
-                _have_network._cached = (resp.status == 200)
-        except Exception:
-            _have_network._cached = False
-    return _have_network._cached
-
-
-def test_build_from_name_pubchem(tmp_run):
-    """A plain molecule name ('ethanol') is resolved to SMILES via PubChem and
-    the source is reported with an ACS citation."""
-    if not _have_obabel():
-        pytest.skip("obabel not available")
-    if not _have_network():
-        pytest.skip("network / PubChem not reachable")
-    xyz = tmp_run / "ethanol_named.xyz"
-    out = tmp_run / "ethanol_named.json"
-    rc, _, err = _run_chemkit(
-        ["build", "ethanol", "--out-xyz", str(xyz), "--out", str(out)],
-        cwd=str(tmp_run), timeout=120,
-    )
-    assert rc == 0, err
-    d = _load(out)
-    assert d["input"] == "ethanol"
-    # ethanol -> CCO (2 C + 6 H + 1 O = 9 atoms)
-    assert d["n_atoms"] == 9
-    src = d.get("smiles_source")
-    assert src is not None, "name resolution must record a smiles_source"
-    assert src["source"] == "PubChem"
-    assert src["smiles"]  # non-empty resolved SMILES
-    assert "PubChem" in src["citation"]
-    assert "accessed" in src["citation"]
-
-
 def test_build_smiles_passthrough_no_source(tmp_run):
     """A valid SMILES is used directly and does NOT record a smiles_source
-    (no network lookup happens)."""
+    (build-from-smiles is SMILES-only and never does a name lookup)."""
     if not _have_obabel():
         pytest.skip("obabel not available")
     xyz = tmp_run / "passthrough.xyz"
@@ -989,20 +946,36 @@ def test_build_smiles_passthrough_no_source(tmp_run):
     assert d["smiles_input"] == "CCO"
 
 
-def test_build_unknown_name_fails(tmp_run):
-    """An unresolvable name fails clearly (nonzero exit) after trying all
-    sources."""
+def test_build_rejects_name(tmp_run):
+    """SMILES-only: a plain molecule name is rejected up front (nonzero exit)
+    with an error pointing at name-to-smiles, and no .xyz is written. No network
+    is needed — the rejection is a local SMILES-parse check, not a failed lookup.
+    """
     if not _have_obabel():
         pytest.skip("obabel not available")
-    if not _have_network():
-        pytest.skip("network not reachable")
-    xyz = tmp_run / "nope.xyz"
+    xyz = tmp_run / "aspirin_name.xyz"
     rc, _, err = _run_chemkit(
-        ["build", "zzqq_not_a_real_molecule_xyz", "--out-xyz", str(xyz)],
+        ["build", "aspirin", "--out-xyz", str(xyz)],
         cwd=str(tmp_run), timeout=120,
     )
     assert rc != 0
-    assert "Could not resolve" in err
+    assert "not a valid SMILES" in err
+    assert "name-to-smiles" in err
+    assert not xyz.exists()
+
+
+def test_build_rejects_invalid_smiles(tmp_run):
+    """SMILES-only: an SMILES-shaped but invalid string (unclosed aromatic ring)
+    is rejected (nonzero exit), and no .xyz is written."""
+    if not _have_obabel():
+        pytest.skip("obabel not available")
+    xyz = tmp_run / "bad_smiles.xyz"
+    rc, _, err = _run_chemkit(
+        ["build", "c1ccccc", "--out-xyz", str(xyz)],
+        cwd=str(tmp_run), timeout=120,
+    )
+    assert rc != 0
+    assert "not a valid SMILES" in err
     assert not xyz.exists()
 
 

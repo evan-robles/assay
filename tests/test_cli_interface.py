@@ -238,54 +238,198 @@ def _load_driver():
     return importlib.import_module("fidelity_driver")
 
 
-def test_typed_argv_canonical_dft():
-    srv = _load_server()
-    argv = srv._typed_args_to_argv(method="dft", functional="b3lyp",
-                                   basis="def2-tzvp", tier="standard",
-                                   charge=0, multiplicity=1, xyz="/m.xyz")
-    # method + charge + mult + functional + basis + tier + positional last
-    assert argv[:4] == ["--method", "dft", "--charge", "0"]
+def _load_arg_spec():
+    """Import the shared arg_spec module (single source of truth for typed args)."""
+    import importlib
+    m = str(Path(__file__).parent.parent / "mcp_server")
+    if m not in sys.path:
+        sys.path.insert(0, m)
+    return importlib.import_module("chemkit_engine.arg_spec")
+
+
+def test_params_to_argv_canonical_dft():
+    A = _load_arg_spec()
+    argv = A.params_to_argv("sp", dict(
+        input="/m.xyz", method="dft", functional="b3lyp", basis="def2-tzvp",
+        tier="standard", charge=0, multiplicity=1))
+    assert "--method" in argv and "dft" in argv
     assert "--functional" in argv and "b3lyp" in argv
     assert "--tier" in argv and "standard" in argv
-    assert argv[-1] == "/m.xyz"
+    assert argv[-1] == "/m.xyz"  # positional last
 
 
-def test_typed_argv_charge_zero_emitted():
-    srv = _load_server()
+def test_params_to_argv_charge_zero_emitted():
+    A = _load_arg_spec()
     # charge 0 must be emitted, not falsy-skipped
-    assert "--charge" in srv._typed_args_to_argv(method="xtb", charge=0, xyz="/m.xyz")
+    assert "--charge" in A.params_to_argv("sp", dict(method="xtb", charge=0, input="/m.xyz"))
 
 
-def test_typed_argv_gas_phase_omits_solvent():
-    srv = _load_server()
+def test_params_to_argv_gas_phase_omits_solvent():
+    A = _load_arg_spec()
     for s in ("none", "gas", "gas phase", "gas-phase", "vacuum", ""):
-        assert "--solvent" not in srv._typed_args_to_argv(method="xtb", solvent=s, xyz="/m.xyz")
+        assert "--solvent" not in A.params_to_argv("sp", dict(method="xtb", solvent=s, input="/m.xyz"))
     # a real solvent is kept
-    assert "--solvent" in srv._typed_args_to_argv(method="dft", tier="standard",
-                                                  solvent="water", xyz="/m.xyz")
+    assert "--solvent" in A.params_to_argv("sp", dict(method="dft", tier="standard",
+                                                      solvent="water", input="/m.xyz"))
 
 
-def test_typed_argv_extra_args_before_positional():
-    srv = _load_server()
-    argv = srv._typed_args_to_argv(method="dft", tier="standard",
-                                   extra_args=["--nfrontier", "5"], xyz="/m.xyz")
-    assert argv[-3:] == ["--nfrontier", "5", "/m.xyz"]
+def test_params_to_argv_extra_args_before_positional():
+    A = _load_arg_spec()
+    argv = A.params_to_argv("frontier", dict(method="dft", tier="standard", input="/m.xyz"),
+                            extra_args=["--some-rare-flag", "5"])
+    assert argv[-3:] == ["--some-rare-flag", "5", "/m.xyz"]
 
 
-def test_typed_argv_server_driver_parity():
+def test_params_to_argv_injection_guard():
+    """A value for a param the skill does NOT have is dropped, not injected —
+    the core fix for the many-arg skills (pka has no xyz/charge params)."""
+    A = _load_arg_spec()
+    argv = A.params_to_argv("pka", dict(
+        ha="/ha.xyz", a_minus="/am.xyz", method="mopac",
+        xyz="/should_not_appear.xyz", charge=0, multiplicity=1))
+    assert "--ha" in argv and "--a-minus" in argv
+    assert "/should_not_appear.xyz" not in argv
+    assert "--charge" not in argv and "--mult" not in argv
+
+
+def test_params_to_argv_required_flags_surface_for_redox():
+    """redox-potential exposes ox_charge/red_charge as typed params that emit
+    the correct required flags."""
+    A = _load_arg_spec()
+    argv = A.params_to_argv("redox", dict(
+        input="/m.xyz", method="xtb", ox_charge=0, red_charge=-1, ref="SHE"))
+    assert "--ox-charge" in argv and "--red-charge" in argv and "--ref" in argv
+
+
+def test_server_and_driver_share_one_converter():
+    """server.py and fidelity_driver.py both route typed params through the SAME
+    shared arg_spec.params_to_argv (no more hand-duplicated converters)."""
     srv = _load_server()
     drv = _load_driver()
-    params = dict(method="dft", functional="b3lyp", basis="def2-tzvp",
+    A = _load_arg_spec()
+    # both modules resolve to the same function object
+    assert drv._typed_args_to_argv.__module__.endswith("fidelity_driver")
+    # driver produces the same canonical argv as calling the shared converter
+    params = dict(skill="sp", method="dft", functional="b3lyp", basis="def2-tzvp",
                   tier="standard", charge=-1, multiplicity=2, solvent="water",
-                  extra_args=["--nfrontier", "3"], xyz="/mol.xyz")
-    # driver takes a dict; server takes kwargs — same canonical argv
-    assert drv._typed_args_to_argv(params) == srv._typed_args_to_argv(**params)
+                  xyz="/mol.xyz")
+    direct = A.params_to_argv("sp", dict(
+        input="/mol.xyz", method="dft", functional="b3lyp", basis="def2-tzvp",
+        tier="standard", charge=-1, multiplicity=2, solvent="water"))
+    assert drv._typed_args_to_argv(params) == direct
 
 
 def test_driver_chemkit_tool_is_typed():
     drv = _load_driver()
     props = drv._CHEMKIT_TOOL["function"]["parameters"]["properties"]
+    # common fields still present
     assert set(["skill", "xyz", "method", "charge", "multiplicity", "solvent",
                 "functional", "basis", "tier", "extra_args"]).issubset(props)
+    # AND the per-skill required flags are now first-class typed properties
+    assert set(["ox_charge", "red_charge", "ha", "a_minus", "monomer"]).issubset(props)
     assert props["method"]["enum"] == ["xtb", "mopac", "dft", "hf"]
     assert len(props["skill"]["enum"]) == 20  # all skills selectable
+
+
+def _tool_schemas():
+    """Map tool-name -> advertised inputSchema for every registered MCP tool."""
+    import asyncio
+    srv = _load_server()
+
+    async def _list():
+        return await srv.mcp.list_tools()
+    tools = asyncio.run(_list())
+    return {t.name: t.inputSchema for t in tools}
+
+
+def test_mcp_tools_have_per_skill_typed_signatures():
+    """Each MCP tool advertises its OWN typed params — the fix for the many-arg
+    skills. redox-potential surfaces ox_charge/red_charge/ref; pka-acidity
+    surfaces ha/a_minus and does NOT expose an xyz/charge param to inject."""
+    schemas = _tool_schemas()
+    assert len(schemas) == 20
+
+    redox = schemas["redox-potential"]["properties"]
+    assert {"ox_charge", "red_charge", "ref", "mode"}.issubset(redox)
+    # ox_charge is a typed integer (Optional -> anyOf[{integer},{null}])
+    assert "integer" in json.dumps(redox["ox_charge"])
+    # ref enum with null in the type UNION (not a None enum member)
+    ref = redox["ref"]
+    assert any("enum" in b for b in ref.get("anyOf", [ref]))
+    # nullability comes from a null-typed union member, never a None enum entry
+    assert None not in [c for b in ref.get("anyOf", []) for c in b.get("enum", [])]
+
+    pka = schemas["pka-acidity"]["properties"]
+    assert {"ha", "a_minus", "mode"}.issubset(pka)
+    # the injection bug is impossible: pka has NO xyz/charge/multiplicity params
+    assert "xyz" not in pka
+    assert "charge" not in pka
+    assert "multiplicity" not in pka
+
+    # binding-energy exposes monomer as a list (append action)
+    binding = schemas["binding-energy"]["properties"]
+    assert "monomer" in binding
+
+    # single-geometry skill still uses the positional `input`
+    assert "input" in schemas["single-point-energy"]["properties"]
+
+
+def test_mcp_tools_no_schema_required_fields():
+    """No tool marks a field schema-required (requiredness is enforced by the
+    engine argparse); this keeps the back-compat `args` raw-token path callable
+    without also filling the typed fields."""
+    schemas = _tool_schemas()
+    for name, sch in schemas.items():
+        assert not sch.get("required"), f"{name} unexpectedly has required fields: {sch.get('required')}"
+
+
+# --------------------------------------------------------------------------- #
+# Identity guard (Fix A) + shared --out-dir scoping (Fix B)
+# --------------------------------------------------------------------------- #
+def test_identity_guard_flags_wrong_molecule():
+    """The scorer's identity guard flags a run whose agent output describes a
+    DIFFERENT molecule than the spec asked for (the cross-contamination / proxy
+    swap symptom), and stays silent on a matching or ambiguous run."""
+    drv = _load_driver()
+    spec = {"skill": "build-from-smiles", "input": "O", "expected_n_atoms": 3}
+    truth = {"n_atoms": 3, "smiles_input": "O"}
+
+    # matching water -> no mismatch
+    assert drv._identity_mismatch(spec, truth, {"reported": {"n_atoms": 3, "smiles": "O"}}) is None
+    # water spec but morphine reported (40 atoms) -> mismatch
+    morph = "CN1CC[C@]23[C@@H]4[C@H]1CC5=C2C(=C(C=C5)O)O[C@H]3[C@H](C=C4)O"
+    assert drv._identity_mismatch(spec, truth, {"reported": {"n_atoms": 40, "smiles": morph}})
+    # different SMILES only (no atom count) -> mismatch
+    assert drv._identity_mismatch(spec, truth, {"reported": {"smiles": "c1ccccc1"}})
+    # no identity data -> None (no false ERROR)
+    assert drv._identity_mismatch(spec, truth, {"reported": {"integrity_trustworthy": True}}) is None
+    # expected-failure reference -> None (leave to failure path)
+    assert drv._identity_mismatch(spec, {"_engine_failed": True}, {"reported": {}}) is None
+
+
+def test_identity_guard_errors_the_run():
+    """score_agent_run turns an identity mismatch into an ERROR record (exit 2),
+    excluded from fidelity scoring — not a silent FAIL."""
+    drv = _load_driver()
+    spec = {"skill": "build-from-smiles", "input": "O", "expected_n_atoms": 3, "expect": "structure"}
+    truth = {"n_atoms": 3, "smiles_input": "O"}
+    agent = {"reported": {"n_atoms": 40, "smiles": "CN1CCC", "provenance": "computed"},
+             "prose": "Built morphine, 40 atoms."}
+    rec = drv.score_agent_run(spec, truth, agent, det_ok=True, expect="structure",
+                              mode="live", emit=False)
+    assert rec["overall"] == "ERROR"
+    assert rec["exit_code"] == 2
+    assert rec["error"] == "identity_mismatch"
+
+
+def test_shared_out_dir_is_scoped_per_case():
+    """run_suite makes a shared --out-dir per-case (appends the case name) so two
+    distinct specs never collapse onto one engine-reference/ dir."""
+    from pathlib import Path
+    # mirrors run_suite._run_one: case_out = Path(out_dir)/case_name when out_dir set
+    def case_out(out_dir, case):
+        return str(Path(out_dir) / case) if out_dir else f"default/{case}"
+    assert case_out("runs_o3", "water") != case_out("runs_o3", "morphine")
+    assert case_out("runs_o3", "water").endswith("runs_o3/water")
+    # default path unchanged (per-case)
+    assert case_out(None, "water") == "default/water"

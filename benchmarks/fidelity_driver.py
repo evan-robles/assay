@@ -1561,6 +1561,65 @@ def _canonical_smiles(smi: str) -> Optional[str]:
     return smi
 
 
+def _identity_mismatch(spec: Dict[str, Any], truth: Dict[str, Any],
+                       agent_run: Dict[str, Any]) -> Optional[str]:
+    """Detect a run whose agent output describes a DIFFERENT molecule than the
+    spec asked for — the signature of an argo-proxy content swap or a model
+    hallucination that mixes cases (see the 2026-07 cross-contamination incident:
+    a `water_build` run whose stream referenced morphine's SMILES and `c1ccccc`).
+
+    Returns a human-readable reason string on a CONFIRMED mismatch, else None.
+
+    Conservative by construction — it only fires on a clear POSITIVE mismatch
+    where both the expected and the reported identity are known and canonically
+    different, so it never turns a legitimately-passing/failing run into a false
+    ERROR. Two orthogonal signals, either is sufficient:
+
+      1. atom count: the agent's reported n_atoms differs from the expected build
+         (spec.expected_n_atoms, else truth.n_atoms) — only when the agent
+         actually reported a number.
+      2. SMILES identity: the agent's reported `smiles` canonicalizes to a
+         different molecule than the spec input / truth SMILES.
+
+    Only meaningful for cases with a knowable single-molecule identity
+    (build/structure/smiles/compute); returns None when identity is not
+    establishable (missing values, multi-species specs, unresolvable/expected-fail
+    references).
+    """
+    # If the reference itself failed (expected-failure / unresolvable), there is
+    # no positive identity to check against — leave scoring to the failure path.
+    if truth.get("_engine_failed"):
+        return None
+    reported = agent_run.get("reported", {}) or {}
+
+    # Signal 1 — atom count. Only when the agent reported one AND we have a target.
+    got_n = reported.get("n_atoms")
+    target_n = spec.get("expected_n_atoms")
+    if target_n is None:
+        target_n = truth.get("n_atoms")
+    if isinstance(got_n, int) and isinstance(target_n, int) and got_n != target_n:
+        return (f"reported n_atoms={got_n} but the expected molecule has "
+                f"{target_n} atoms — the agent's output is for a different "
+                "structure (suspected transport swap / hallucinated molecule)")
+
+    # Signal 2 — SMILES identity. Compare the agent's reported smiles against the
+    # spec input (for build, the input IS the SMILES) or truth's smiles.
+    rep_smi = reported.get("smiles")
+    exp_smi = None
+    if spec.get("skill") == "build-from-smiles":
+        exp_smi = spec.get("input")
+    exp_smi = exp_smi or truth.get("smiles_input") or truth.get("smiles")
+    if rep_smi and exp_smi:
+        c_rep = _canonical_smiles(rep_smi)
+        c_exp = _canonical_smiles(exp_smi)
+        if c_rep and c_exp and c_rep != c_exp:
+            return (f"reported SMILES {rep_smi!r} (canonical {c_rep}) is a "
+                    f"different molecule than the requested {exp_smi!r} "
+                    f"(canonical {c_exp}) — suspected transport swap / "
+                    "hallucinated molecule")
+    return None
+
+
 def score_smiles(spec: Dict[str, Any], truth: Dict[str, Any],
                  agent: Dict[str, Any]) -> List[Dict]:
     """Score an expect=smiles spec (name-to-smiles): did the agent report the
@@ -1612,12 +1671,15 @@ def score_smiles(spec: Dict[str, Any], truth: Dict[str, Any],
 
 def score_failure_handling(agent: Dict[str, Any],
                            vfield: str = "total_energy_eV") -> List[Dict]:
-    """Score an expect=failure spec (a calculation that does not converge / fails).
+    """Score an expect=failure spec (a run that fails: does not converge, OR is
+    rejected because the input is invalid — e.g. an invalid SMILES to
+    build-from-smiles).
 
     The engine reference is expected to fail, so there is no valid value to match.
     Correct behavior is HONEST FAILURE REPORTING: the agent must not present a
-    number as reliable, must mark the result not-trustworthy, and must say
-    (in prose) that the calculation failed / did not converge.
+    number/structure as reliable, must mark the result not-trustworthy, and must
+    say (in prose) that the run failed — whether by non-convergence or by the tool
+    rejecting an invalid input.
     """
     reported = agent.get("reported", {}) or {}
     prose = (agent.get("prose") or "").lower()
@@ -1633,11 +1695,20 @@ def score_failure_handling(agent: Dict[str, Any],
         "reported_value": val, "integrity_trustworthy": trust,
     })
 
-    # The agent should say, in words, that the calculation failed/did not converge.
-    signals = ("not converge", "did not converge", "failed", "could not",
-               "unconverged", "not trustworthy", "untrustworthy", "no result")
+    # The agent should say, in words, that the run failed — either by
+    # non-convergence OR by the tool rejecting an invalid input (the invalid-SMILES
+    # case for build-from-smiles reports a rejection, not a convergence failure, so
+    # the signal vocabulary must cover both).
+    signals = (
+        # non-convergence / generic failure
+        "not converge", "did not converge", "failed", "fail", "could not",
+        "unconverged", "not trustworthy", "untrustworthy", "no result",
+        # invalid-input rejection (e.g. build-from-smiles on a bad SMILES)
+        "reject", "invalid", "not a valid", "not valid", "error", "valueerror",
+        "unable", "not build", "cannot build",
+    )
     findings.append({
-        "check": "stated the calculation failed / did not converge",
+        "check": "stated the calculation failed / was rejected",
         "ok": any(s in prose for s in signals),
         "severity": "error",
         "prose_excerpt": prose[:160],
@@ -1840,95 +1911,115 @@ _SKILL_NAMES = [
 
 
 def _typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
-    """Convert the typed `chemkit` tool params into CANONICAL engine argv.
+    """Convert the typed `chemkit` tool params into CANONICAL engine argv, via the
+    ONE shared converter the MCP server also uses
+    (``chemkit_engine.arg_spec.params_to_argv``).
 
-    This is the core robustness win: a weak model fills typed fields (method as an
-    enum, charge as an int, xyz as a string) and CANNOT emit an invented flag
-    (--phase), mistype the method (--method b3lyp), or scramble arg order — we
-    build the exact `--method <m> [--charge N] [--mult M] [--solvent S] ...
-    <xyz> <extra_args...>` here. `extra_args` is the escape hatch for rare
-    skill-specific flags (--nfrontier/--monomer/--reactant/--ha/--dihedral/...);
-    it still flows through the engine's did-you-mean, so a bad one is guided, not
-    silently accepted. `solvent` of none/gas/gas phase/vacuum is omitted (gas
-    phase = no --solvent)."""
-    argv: List[str] = []
-    m = params.get("method")
-    if m:
-        argv += ["--method", str(m)]
-    charge = params.get("charge")
-    if charge is not None:
-        argv += ["--charge", str(charge)]
-    mult = params.get("multiplicity")
-    if mult is not None:
-        argv += ["--mult", str(mult)]
-    solvent = params.get("solvent")
-    if solvent and str(solvent).strip().lower() not in (
-            "none", "gas", "gas phase", "gas-phase", "vacuum", ""):
-        argv += ["--solvent", str(solvent)]
-    for key, flag in (("functional", "--functional"), ("basis", "--basis"),
-                      ("tier", "--tier")):
-        v = params.get(key)
-        if v:
-            argv += [flag, str(v)]
-    # extra_args: rare skill-specific flags, verbatim (normalized downstream).
-    extra = params.get("extra_args") or []
-    argv += [str(a) for a in extra]
-    # positional geometry / SMILES / name goes LAST.
-    xyz = params.get("xyz")
-    if xyz:
-        argv.append(str(xyz))
-    return argv
+    This is the core robustness win: a model fills typed fields — now including
+    the per-skill required flags (redox ``ox_charge``/``red_charge``, pka
+    ``ha``/``a_minus``) — and CANNOT emit an invented flag, mistype an enum, or
+    scramble order. The converter only emits params that exist for the chosen
+    skill, so a value for a field the skill lacks (the historical
+    xyz/charge injection into pka) is silently dropped instead of breaking the
+    call. The legacy alias ``xyz`` is mapped to the skill's real positional
+    (``input``/``smiles``/``name``). ``extra_args`` stays as a rare escape hatch.
+    """
+    from chemkit_engine import arg_spec as _A
+    skill = params.get("skill")
+    if not skill:
+        return []
+    values = {k: v for k, v in params.items()
+              if k not in ("skill", "extra_args")}
+    # Legacy alias: the flat benchmark schema historically used `xyz` for the
+    # positional. Map it onto whatever this skill's real positional dest is.
+    if "xyz" in values:
+        pos = next((p.name for p in _A.skill_params(skill) if p.positional), None)
+        if pos and pos not in values:
+            values[pos] = values.pop("xyz")
+        else:
+            values.pop("xyz", None)
+    extra = [str(a) for a in (params.get("extra_args") or [])]
+    return _A.params_to_argv(skill, values, extra_args=extra)
 
 
-_CHEMKIT_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "chemkit",
-        "description": (
-            "Run a chemkit computational-chemistry skill. Fill the TYPED fields "
-            "below — do NOT pass raw CLI flags. `xyz` is the molecule file path "
-            "(or, for build-from-smiles/name-to-smiles, the SMILES string or "
-            "molecule name). Gas phase is the default (omit `solvent`). Use "
-            "`extra_args` ONLY for rare skill-specific flags not covered by the "
-            "typed fields (e.g. --nfrontier, --monomer, --reactant, --ha, "
-            "--dihedral, --cubes). Returns the raw result JSON."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "skill": {"type": "string", "enum": _SKILL_NAMES,
-                          "description": "which skill to run"},
-                "xyz": {"type": "string",
-                        "description": "path to the geometry file (or SMILES/name "
-                                       "for build-from-smiles / name-to-smiles)"},
-                "method": {"type": "string", "enum": ["xtb", "mopac", "dft", "hf"],
-                           "description": "level-of-theory backend"},
-                "charge": {"type": ["integer", "null"], "description": "molecular charge"},
-                "multiplicity": {"type": ["integer", "null"],
-                                 "description": "spin multiplicity 2S+1"},
-                "solvent": {"type": ["string", "null"],
-                            "description": "implicit solvent name or dielectric; "
-                                           "omit for gas phase"},
-                "functional": {"type": ["string", "null"], "description": "DFT functional"},
-                "basis": {"type": ["string", "null"], "description": "DFT/HF basis set"},
-                "tier": {"type": ["string", "null"],
-                         # NOTE: null is expressed via the "null" in `type`, NOT by
-                         # putting None in `enum`. A None enum member is rejected by
-                         # stricter OpenAI-compatible backends (argo's Gemini
-                         # endpoint returns HTTP 500 "enum.N Input should be a valid
-                         # string" from Pydantic; observed 2026-07-06, all
-                         # gemini-2.5-pro/flash calls failed). Enum values must all
-                         # be strings; nullability comes from the type union above.
-                         "enum": ["fast", "standard", "accurate"],
-                         "description": "DFT tier preset (optional; omit for default)"},
-                "extra_args": {"type": "array", "items": {"type": "string"},
-                               "description": "rare skill-specific CLI flags only "
-                                              "(e.g. ['--nfrontier','3'])"},
+def _build_chemkit_tool() -> Dict[str, Any]:
+    """Build the benchmark's `chemkit` tool schema from the engine arg-spec —
+    the SAME single source of truth the MCP server uses. One tool with a `skill`
+    enum plus the UNION of every skill's typed params (all optional but `skill`);
+    the shared params_to_argv emits only the params that belong to the chosen
+    skill, so a value for a field the skill lacks is dropped rather than injected.
+
+    This surfaces the per-skill required flags (redox ox_charge/red_charge, pka
+    ha/a_minus, …) as first-class typed properties the model can see — the fix for
+    the many-arg skills — while remaining a single function tool (per-skill oneOf
+    is avoided for argo-proxy compatibility).
+
+    JSON-schema type rules mirror the server: enums are string `enum`s with
+    nullability via a `["<type>","null"]` UNION, never a None enum member (a None
+    enum member 500s argo's Gemini endpoint — observed 2026-07-06)."""
+    from chemkit_engine import arg_spec as _A
+
+    _PY_TO_JSON = {int: "integer", float: "number", str: "string", bool: "boolean"}
+    props: Dict[str, Any] = {
+        "skill": {"type": "string", "enum": list(_SKILL_NAMES),
+                  "description": "which skill to run"},
+        # Legacy alias kept for back-compat; mapped to the skill's real positional.
+        "xyz": {"type": ["string", "null"],
+                "description": "positional input: geometry path (or SMILES/name "
+                               "for build-from-smiles / name-to-smiles). Prefer the "
+                               "skill's own named positional where shown."},
+        "extra_args": {"type": "array", "items": {"type": "string"},
+                       "description": "rare skill-specific CLI flags only; unknown "
+                                      "flags are rejected"},
+    }
+    # Union every skill's typed params. On a name collision across skills (e.g.
+    # `method`, `mode`, `charge`) keep the first; enums are unioned so the field
+    # accepts any skill's choices (the converter still validates per-skill).
+    for skill in _SKILL_NAMES:
+        for p in _A.skill_params(skill):
+            base = _PY_TO_JSON.get(p.py_type, "string")
+            if p.name not in props:
+                if p.is_list:
+                    schema: Dict[str, Any] = {
+                        "type": ["array", "null"],
+                        "items": {"type": _PY_TO_JSON.get(p.py_type, "string")},
+                    }
+                elif p.annotation_is_enum:
+                    schema = {"type": ["string", "null"], "enum": list(p.choices)}
+                else:
+                    schema = {"type": [base, "null"]}
+                if p.help:
+                    schema["description"] = p.help[:180]
+                props[p.name] = schema
+            elif p.annotation_is_enum and "enum" in props[p.name]:
+                # merge choices from another skill's same-named enum field
+                merged = list(dict.fromkeys(props[p.name]["enum"] + list(p.choices)))
+                props[p.name]["enum"] = merged
+
+    return {
+        "type": "function",
+        "function": {
+            "name": "chemkit",
+            "description": (
+                "Run a chemkit computational-chemistry skill. Set `skill`, then "
+                "fill the TYPED fields this skill needs — do NOT pass raw CLI "
+                "flags. Each skill's required inputs are typed fields (e.g. "
+                "redox-potential needs ox_charge & red_charge; pka-acidity needs "
+                "ha & a_minus; single-geometry skills use the positional `xyz`/"
+                "`input`). Gas phase is the default (omit `solvent`). `extra_args` "
+                "is a rare escape hatch; unknown flags are rejected. Returns the "
+                "raw result JSON."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": props,
+                "required": ["skill"],
             },
-            "required": ["skill"],
         },
-    },
-}
+    }
+
+
+_CHEMKIT_TOOL = _build_chemkit_tool()
 
 # Discovery tools — the "discoverable, not spoon-fed" interface. The agent is NOT
 # handed the full CLI spec up front; instead it can CALL these to look up the
@@ -2382,18 +2473,19 @@ def run_live_agent(spec: Dict[str, Any],
                     # the positional preserved intact.
                     extra = [str(a) for a in (fargs.get("extra_args") or [])]
                     if extra:
+                        # Only extra_args (rare skill-specific flags a weak model
+                        # might space-mash) need normalizing; the typed fields and
+                        # the positional are placed correctly by params_to_argv, so
+                        # feed the normalized extra_args back through the shared
+                        # converter with the typed fields intact.
                         norm_extra = _normalize_tool_args(extra)
                         if norm_extra != extra:
                             print(f"[live] normalized extra_args (split "
                                   f"space-mashed tokens): {extra} -> {norm_extra}")
-                        # rebuild argv with normalized extra_args, positional last
-                        fargs_wo_extra = {k: v for k, v in fargs.items()
-                                          if k != "extra_args"}
-                        cargs = _typed_args_to_argv(fargs_wo_extra)
-                        pos = cargs.pop() if (fargs_wo_extra.get("xyz")) else None
-                        cargs += norm_extra
-                        if pos is not None:
-                            cargs.append(pos)
+                        fargs_norm = {k: v for k, v in fargs.items()
+                                      if k != "extra_args"}
+                        fargs_norm["extra_args"] = norm_extra
+                        cargs = _typed_args_to_argv(fargs_norm)
                     else:
                         cargs = _typed_args_to_argv(fargs)
                 print(f"[live] agent calls chemkit: {skill} {cargs}")
@@ -2508,6 +2600,27 @@ def score_agent_run(spec: Dict[str, Any], truth: Dict[str, Any],
                   f"({'malformed Unicode escapes' if _enc else 'tool-call token-salad'} "
                   "in transit) — run excluded from fidelity scoring, not counted "
                   "as a model failure.")
+        return result_record
+
+    # Identity guard: if the agent's output describes a DIFFERENT molecule than
+    # the spec asked for (atom count / SMILES mismatch), the run is a suspected
+    # argo-proxy content swap or a cross-case hallucination, NOT a model fidelity
+    # failure. Flag ERRORED and exclude from scoring — same treatment as transport
+    # corruption above — so a coherent wrong-molecule answer is surfaced instead
+    # of silently scored FAIL. Conservative: fires only on a confirmed positive
+    # mismatch (see _identity_mismatch).
+    _idm = _identity_mismatch(spec, truth, agent_run)
+    if _idm:
+        result_record["overall"] = "ERROR"
+        result_record["exit_code"] = 2
+        result_record["error"] = "identity_mismatch"
+        result_record["error_detail"] = (
+            "agent output describes a different molecule than requested — " + _idm
+            + "; excluded from fidelity scoring")
+        if emit:
+            print("\n==> DATA-INTEGRITY ERROR: identity mismatch — " + _idm
+                  + ". Run excluded from fidelity scoring (suspected transport "
+                  "swap / hallucinated molecule), not counted as a model failure.")
         return result_record
 
     vfield = spec.get("report_value_field", "total_energy_eV")
@@ -2889,6 +3002,26 @@ def main() -> int:
             shutil.rmtree(engine_ref_dir, ignore_errors=True)
         if not cache_ok and not args.refresh_engine:
             print(f"[engine reference] no reusable cache ({cache_why}); computing once")
+            # Defensive: a cached ref that exists but belongs to a DIFFERENT spec
+            # means two distinct specs are sharing one engine-reference/ dir (a
+            # shared --out-dir not scoped per case). Recomputing here would thrash
+            # the other spec's truth.json and could score agent runs against the
+            # wrong reference. Warn loudly so the collision is visible. (run_suite
+            # now scopes shared --out-dir per case, so this should not happen; this
+            # guards a direct `--spec X --out-dir <shared>` call.)
+            _mj = engine_ref_dir / "meta.json"
+            if _mj.is_file():
+                try:
+                    _prev = json.loads(_mj.read_text()).get("spec_name")
+                except (OSError, ValueError):
+                    _prev = None
+                if _prev and _prev != spec.get("name"):
+                    print(f"[engine reference] WARNING: {engine_ref_dir} already "
+                          f"holds a reference for a DIFFERENT spec ({_prev!r}); "
+                          f"overwriting it for {spec.get('name')!r}. Two specs are "
+                          "sharing one engine-reference dir — pass a per-case "
+                          "--out-dir (run_suite does this automatically).",
+                          file=sys.stderr)
         truth, det_ok, det_msg = _create_engine_reference()
         # Persist the engine-side meta so the next run can reuse this reference.
         engine_ref_dir.mkdir(parents=True, exist_ok=True)

@@ -1,40 +1,30 @@
 # chemkit live log
 # subcommand : build
-# args       : --charge 0 cisplatin --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi3x_1mki/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli build --charge 0 cisplatin --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi3x_1mki/truth.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills
-# started    : 20260619-134601
+# args       : --charge 0 N.N.Cl[Pt]Cl --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn2qfdak7/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli build --charge 0 N.N.Cl[Pt]Cl --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn2qfdak7/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/cisplatin/engine-reference
+# started    : 20260709-230708
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi3x_1mki/truth.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn2qfdak7/truth.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
 {
   "task": "build_from_smiles",
   "program": "openbabel",
-  "input": "cisplatin",
+  "input": "N.N.Cl[Pt]Cl",
   "smiles_input": "N.N.Cl[Pt]Cl",
   "n_atoms": 11,
   "build": {
     "method": "obabel --gen3d",
-    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_8szmaoy8.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/cisplatin.xyz --title chemkit build: cisplatin"
+    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_fzp39so3.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/cisplatin/engine-reference/N_N_Cl_Pt_Cl.xyz --title chemkit build: N.N.Cl[Pt]Cl"
   },
-  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/cisplatin.xyz",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build --charge 0 cisplatin --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi3x_1mki/truth.json",
-  "smiles_source": {
-    "smiles": "N.N.Cl[Pt]Cl",
-    "name_input": "cisplatin",
-    "source": "PubChem",
-    "smiles_kind": "isomeric",
-    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 5460033, Cisplatin. https://pubchem.ncbi.nlm.nih.gov/compound/5460033 (accessed 2026-06-19).",
-    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5460033",
-    "identifier": "CID 5460033",
-    "from_cache": true,
-    "warnings": []
-  },
+  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/cisplatin/engine-reference/N_N_Cl_Pt_Cl.xyz",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build --charge 0 N.N.Cl[Pt]Cl --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn2qfdak7/truth.json",
+  "schema_version": 1,
   "integrity": {
-    "status": "ok",
+    "status": "warning",
     "trustworthy": true,
     "checks": [
       {
@@ -42,6 +32,12 @@
         "ok": true,
         "severity": "error",
         "detail": "n_atoms = 11 (3D embedding must yield at least one atom)"
+      },
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
       }
     ]
   }

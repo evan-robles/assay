@@ -1,0 +1,32 @@
+{
+  "task": "build_from_smiles",
+  "program": "openbabel",
+  "input": "CC(=O)C",
+  "smiles_input": "CC(=O)C",
+  "n_atoms": 10,
+  "build": {
+    "method": "obabel --gen3d",
+    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_dfub5kho.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/skills/build-from-smiles/examples/acetone-from-smiles/acetone.xyz --title acetone"
+  },
+  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/skills/build-from-smiles/examples/acetone-from-smiles/acetone.xyz",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build CC(=O)C --out-xyz skills/build-from-smiles/examples/acetone-from-smiles/acetone.xyz --out skills/build-from-smiles/examples/acetone-from-smiles/acetone_build.json --name acetone --stdout none",
+  "schema_version": 1,
+  "integrity": {
+    "status": "warning",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "structure_built",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_atoms = 10 (3D embedding must yield at least one atom)"
+      },
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
+      }
+    ]
+  }
+}
