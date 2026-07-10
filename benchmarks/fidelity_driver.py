@@ -1832,7 +1832,15 @@ def score_layer_b(
         covered = sum(b.size for b in blocks)
         return covered / len(wn)
 
-    truth_warns = truth.get("warnings") or []
+    # Grade against the warnings the AGENT'S OWN engine run emitted, not the fixed
+    # reference's. Warnings are invocation-dependent: an agent that sets a correct
+    # option (e.g. --symmetry for a symmetric molecule) legitimately produces
+    # fewer warnings than a naive reference run, and must not be scored as having
+    # "dropped" a warning it never received. Fall back to truth.warnings only for
+    # older agent records that predate the recorded `engine_warnings` field.
+    truth_warns = agent.get("engine_warnings")
+    if truth_warns is None:
+        truth_warns = truth.get("warnings") or []
     rep_warns = agent.get("reported", {}).get("warnings") or []
     prose_norm = _norm(agent.get("prose") or "")
     rep_array_norm = [_norm(w) for w in rep_warns]
@@ -2454,6 +2462,16 @@ def run_live_agent(spec: Dict[str, Any],
                     # surfaced them (descriptive only, does not gate scoring) so
                     # per-model warning behavior stays reportable. (BENCHMARK-DESIGN §9.)
                     "warnings_surfaced_by_model": _model_surfaced,
+                    # The warnings the agent's OWN engine run actually emitted.
+                    # Warnings are INVOCATION-DEPENDENT: a smarter agent that sets a
+                    # correct option (e.g. --symmetry for a symmetric molecule)
+                    # legitimately produces FEWER warnings than a naive reference
+                    # run. "warnings preserved" must therefore be graded against the
+                    # agent's OWN engine warnings, not the fixed reference's — else a
+                    # model is penalized for eliminating a warning by doing the right
+                    # thing (observed: Opus setting --symmetry on vibrational-analysis
+                    # suppressed the symmetry warning the reference still carried).
+                    "engine_warnings": _engine_warnings,
                 }
             if fn == "chemkit":
                 skill = fargs.get("skill", "")
