@@ -417,6 +417,20 @@ _TOOLCALL_LEAK_MARKERS = (
     "multi_tool_use",            # any form of the parallel-tool wrapper
     "<|im_start|>", "<|im_end|>",  # chat-template delimiters leaking into prose
     "<|eot_id|>", "<|start_header_id|>",
+    # Tool-call XML-envelope delimiters leaking verbatim into a parsed FIELD value
+    # (observed 2026-07-07: claude-haiku-4.5 frontier-orbitals runs whose
+    # final_report `value`/`integrity_trustworthy` fields came back as e.g.
+    # "true</integrity_trustworthy>\n</invoke>" and a prose tail of
+    # "<parameter name=\"value\">7.43..." — the tool-call envelope tags bled INTO
+    # the field data instead of framing it, so the structured `value` was lost and
+    # the model was scored FAIL despite computing the right answer in prose). These
+    # are harness/transport tool-call framing tokens; they never legitimately
+    # appear inside a chemistry report field. They are distinct from a real model
+    # error (e.g. gemini reporting a clean-but-WRONG number in `value` — no tags,
+    # correctly stays FAIL).
+    "</invoke>", "<invoke",
+    "<parameter", "</parameter>",
+    "</integrity_trustworthy>", "</prose>", "</provenance>",
 )
 
 
@@ -1982,13 +1996,28 @@ _FINAL_REPORT_TOOL = {
                                           "tasks only; else null). Null if the name "
                                           "could not be resolved — never invent one."},
                 "warnings": {"type": "array", "items": {"type": "string"},
-                             "description": "the tool result's warnings, reproduced "
-                                            "verbatim. Optional convenience field — "
-                                            "warnings you instead reproduce verbatim "
-                                            "in your prose count equally. What matters "
-                                            "is that every warning is surfaced to the "
-                                            "reader verbatim, in one place or the "
-                                            "other; none dropped or paraphrased."},
+                             "description": "EVERY warning from the tool result, "
+                                            "reproduced verbatim. REQUIRED whenever "
+                                            "the tool result had warnings: list them "
+                                            "here (or reproduce them verbatim in your "
+                                            "prose — both count). Do not drop, "
+                                            "summarize, or paraphrase any warning. If "
+                                            "you'd rather not retype long warnings, "
+                                            "set `warnings_acknowledged: true` instead "
+                                            "and they will be surfaced for you "
+                                            "verbatim. If the tool result had NO "
+                                            "warnings, pass []."},
+                "warnings_acknowledged": {"type": ["boolean", "null"],
+                             "description": "Set true to surface ALL warnings from the "
+                                            "tool result verbatim WITHOUT retyping "
+                                            "them — the harness copies the exact "
+                                            "warning text from the tool result you "
+                                            "ran into your report. Use this instead of "
+                                            "manually copying long warnings into "
+                                            "`warnings`/prose. (You still must acknowledge "
+                                            "warnings exist by setting this; a run that "
+                                            "neither lists warnings nor sets this flag "
+                                            "drops them.)"},
                 "integrity_trustworthy": {"type": ["boolean", "null"]},
                 "provenance": {"type": "string",
                                "enum": ["computed", "experimental", "calculated"]},
@@ -2014,12 +2043,15 @@ _LIVE_INSTRUCTIONS = (
     "headline number under `value` as a single bare number (not an object) at "
     "AT LEAST 5 significant figures, copied exactly from the tool's result with "
     "no rounding (and the atom count under `n_atoms` for a structure-building "
-    "task), reproduce EVERY warning from the tool result VERBATIM — none dropped, "
-    "summarized, or paraphrased — surfaced to the reader either in the `warnings` "
-    "field or verbatim in your prose (both count equally); also report the "
-    "engine's integrity.trustworthy verdict, and provenance='computed' (a "
-    "computed/built result is NEVER 'experimental'). State the method or build "
-    "tool you used in your prose."
+    "task), and surface EVERY warning from the tool result. You have TWO ways to "
+    "do this and MUST use one whenever the tool result has warnings: (1) EASIEST "
+    "— set `warnings_acknowledged: true` in final_report and the harness copies "
+    "every warning verbatim for you (no retyping); or (2) copy every warning "
+    "verbatim yourself into the `warnings` field or your prose. Never drop, "
+    "summarize, or paraphrase a warning. If the tool result had NO warnings, set "
+    "`warnings: []`. Also report the engine's integrity.trustworthy verdict, and "
+    "provenance='computed' (a computed/built result is NEVER 'experimental'). "
+    "State the method or build tool you used in your prose."
 )
 
 # chemkit's runtime-behavior rules. In the real harness these load via
@@ -2192,6 +2224,17 @@ def run_live_agent(spec: Dict[str, Any],
     _t0 = time.monotonic()
     _llm_s = 0.0
     _eng_s = 0.0
+    # Per-run token usage, accumulated across every LLM round-trip in this agent
+    # loop. argo returns an OpenAI-style `usage` object per response (verified
+    # 2026-07-07: all 10 argo models populate prompt/completion/total). We sum it
+    # so the run record carries the true token cost of the whole task, not just
+    # one call. Defensive: if a response omits usage (None) we skip it rather than
+    # crash, and _tok_seen tracks whether ANY usage was captured so a run with no
+    # usage data reports null (honest "not measured") instead of a misleading 0.
+    _tok_prompt = 0
+    _tok_completion = 0
+    _tok_total = 0
+    _tok_seen = False
     print(f"[live] model={model} via argo-proxy {_ARGO_BASE_URL}")
     for turn in range(8):
         _tll = time.monotonic()
@@ -2199,6 +2242,12 @@ def run_live_agent(spec: Dict[str, Any],
             model=model, messages=messages, tools=tools, tool_choice="auto",
         )
         _llm_s += time.monotonic() - _tll
+        _u = getattr(resp, "usage", None)
+        if _u is not None:
+            _tok_seen = True
+            _tok_prompt += getattr(_u, "prompt_tokens", 0) or 0
+            _tok_completion += getattr(_u, "completion_tokens", 0) or 0
+            _tok_total += getattr(_u, "total_tokens", 0) or 0
         msg = resp.choices[0].message
         calls = msg.tool_calls or []
         if not calls:
@@ -2224,6 +2273,29 @@ def run_live_agent(spec: Dict[str, Any],
                 # don't grade it on the wrong one). Falls back to the last call.
                 scored_result = _select_scored_result(engine_results, spec)
                 _cs = scored_result.get("code_specific") or {}
+                # Warnings pass-by-reference: an agent may set
+                # `warnings_acknowledged: true` to surface every tool-result
+                # warning verbatim WITHOUT retyping them (reduces the
+                # transcription burden that weak models fail by dropping warnings
+                # entirely — observed gpt-4.1-nano on logp). When set, inject the
+                # exact warning strings from the scored engine result into the
+                # reported warnings. This does NOT weaken the "warnings preserved"
+                # check (the reader still gets every warning verbatim); it only
+                # removes the copying burden. `_warnings_acknowledged` is recorded
+                # so the per-model flag-use RATE can be reported (so "surfaced via
+                # flag" is visible, never hidden — see BENCHMARK-DESIGN §9).
+                _ack = bool(fargs.get("warnings_acknowledged"))
+                _agent_warnings = list(fargs.get("warnings") or [])
+                _engine_warnings = list(scored_result.get("warnings") or [])
+                if _ack:
+                    # Union: keep anything the agent typed AND inject the engine's
+                    # verbatim warnings it didn't (dedup, preserve order).
+                    _reported_warnings = list(_agent_warnings)
+                    for w in _engine_warnings:
+                        if w not in _reported_warnings:
+                            _reported_warnings.append(w)
+                else:
+                    _reported_warnings = _agent_warnings
                 return {
                     # Which agent produced this run, and over what endpoint —
                     # recorded so agent_run.json is self-identifying (you can tell
@@ -2239,6 +2311,14 @@ def run_live_agent(spec: Dict[str, Any],
                         "engine_s": round(_eng_s, 2),
                         "turns": turn + 1,
                         "tool_calls": call_n,
+                        # Per-run token usage summed over all LLM round-trips this
+                        # task (argo returns OpenAI-style usage per call). null when
+                        # no response reported usage, so "not measured" is distinct
+                        # from a real zero. Lets per-(model,task) token cost be
+                        # aggregated alongside wall-clock time.
+                        "prompt_tokens": _tok_prompt if _tok_seen else None,
+                        "completion_tokens": _tok_completion if _tok_seen else None,
+                        "total_tokens": _tok_total if _tok_seen else None,
                     },
                     "result_json": {
                         "method": scored_result.get("method"),
@@ -2264,11 +2344,16 @@ def run_live_agent(spec: Dict[str, Any],
                         **({vfield: fargs.get("value")} if vfield else {}),
                         "n_atoms": fargs.get("n_atoms"),  # structure tasks
                         "smiles": fargs.get("smiles"),    # name-to-smiles tasks
-                        "warnings": fargs.get("warnings") or [],
+                        "warnings": _reported_warnings,
                         "integrity_trustworthy": fargs.get("integrity_trustworthy"),
                         "provenance": fargs.get("provenance", ""),
                     },
                     "prose": fargs.get("prose", ""),
+                    # Whether the agent used the pass-by-reference flag to surface
+                    # warnings (vs. transcribing them). Recorded so the per-model
+                    # flag-use rate is reportable — keeps "surfaced via flag"
+                    # visible rather than hidden. (See BENCHMARK-DESIGN §9.)
+                    "warnings_acknowledged": _ack,
                 }
             if fn == "chemkit":
                 skill = fargs.get("skill", "")
@@ -2283,9 +2368,34 @@ def run_live_agent(spec: Dict[str, Any],
                         print(f"[live] normalized tool args (split space-mashed "
                               f"tokens): {raw_cargs} -> {cargs}")
                 else:
-                    cargs = _typed_args_to_argv(fargs)
-                    # extra_args (if any) may still be space-mashed — normalize.
-                    cargs = _normalize_tool_args(cargs)
+                    # Typed path: _typed_args_to_argv already yields correct,
+                    # separate argv tokens with the positional (xyz path / SMILES
+                    # / molecule NAME) as ONE trailing element. Do NOT run
+                    # _normalize_tool_args on the whole argv here: it shlex-splits
+                    # any element containing whitespace, which wrongly shatters a
+                    # legitimate MULTI-WORD NAME ("acetic acid" -> ["acetic",
+                    # "acid"]) that build-from-smiles / name-to-smiles pass as a
+                    # single positional — the engine then rejects it as
+                    # "unrecognized arguments". Only extra_args (rare
+                    # skill-specific flags a weak model might space-mash) need
+                    # normalizing, so normalize ONLY those and rebuild argv with
+                    # the positional preserved intact.
+                    extra = [str(a) for a in (fargs.get("extra_args") or [])]
+                    if extra:
+                        norm_extra = _normalize_tool_args(extra)
+                        if norm_extra != extra:
+                            print(f"[live] normalized extra_args (split "
+                                  f"space-mashed tokens): {extra} -> {norm_extra}")
+                        # rebuild argv with normalized extra_args, positional last
+                        fargs_wo_extra = {k: v for k, v in fargs.items()
+                                          if k != "extra_args"}
+                        cargs = _typed_args_to_argv(fargs_wo_extra)
+                        pos = cargs.pop() if (fargs_wo_extra.get("xyz")) else None
+                        cargs += norm_extra
+                        if pos is not None:
+                            cargs.append(pos)
+                    else:
+                        cargs = _typed_args_to_argv(fargs)
                 print(f"[live] agent calls chemkit: {skill} {cargs}")
                 call_n += 1
                 try:
@@ -2531,6 +2641,34 @@ def rescore_run(run_dir: Path) -> Optional[Dict[str, Any]]:
     (run_dir / "result.json").write_text(
         json.dumps(result_record, indent=2, default=str))
     return result_record
+
+
+def _ensure_suite_summary(molecule_dir: Optional[Path]) -> None:
+    """Create the suite's summary.csv if it does not already exist.
+
+    A driver run writes into a MOLECULE folder (<suite>/<case>/), so the suite
+    folder is that molecule dir's PARENT. After a run, if the suite has no
+    summary.csv yet, generate the rich grouped summary (collect_repeats +
+    write_grouped_csv — the same format run_suite --repeat produces) over
+    whatever results exist so far. If a summary.csv already EXISTS, leave it
+    untouched (do not overwrite mid-sweep; regenerate explicitly with
+    collect_results when you want it refreshed). Best-effort: any failure here is
+    swallowed so it never turns a successful run into a driver crash."""
+    if molecule_dir is None:
+        return
+    try:
+        suite_dir = molecule_dir.parent
+        summary = suite_dir / "summary.csv"
+        if summary.exists():
+            return  # already present — don't overwrite
+        sys.path.insert(0, str(_REPO / "benchmarks"))
+        from collect_results import collect_repeats, write_grouped_csv
+        rows = collect_repeats(suite_dir)
+        if rows:
+            write_grouped_csv(rows, summary, base=suite_dir)
+            print(f"[suite] created {summary} ({len(rows)} rows)")
+    except Exception as e:  # never fail a run over summary bookkeeping
+        print(f"[suite] could not create summary.csv (non-fatal): {e}")
 
 
 def main() -> int:
@@ -2841,6 +2979,7 @@ def main() -> int:
                              "turn budget; no reported values to score"),
         }, indent=2))
         print(f"\nArtifacts: {run_dir}")
+        _ensure_suite_summary(molecule_dir)
         return _restore_tee(2)
     if agent_run is None:
         # NON-live (recorded) mode with no --agent-run supplied: informational,
@@ -2851,6 +2990,7 @@ def main() -> int:
             "scored": False, "exit_code": 0 if det_ok else 1,
         }, indent=2))
         print(f"\nArtifacts: {run_dir}")
+        _ensure_suite_summary(molecule_dir)
         return _restore_tee(0 if det_ok else 1)
 
     (run_dir / "agent_run.json").write_text(json.dumps(agent_run, indent=2, default=str))
@@ -2861,6 +3001,7 @@ def main() -> int:
     print(f"\n==> OVERALL: {'PASS' if overall else 'FAIL'}")
     (run_dir / "result.json").write_text(json.dumps(result_record, indent=2, default=str))
     print(f"Artifacts: {run_dir}")
+    _ensure_suite_summary(molecule_dir)
     return _restore_tee(0 if overall else 1)
 
 

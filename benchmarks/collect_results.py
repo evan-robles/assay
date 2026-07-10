@@ -36,10 +36,15 @@ _DEFAULT_DIR = _REPO / "benchmarks" / "fidelity" / "single-point-validation"
 # ── timing helpers ────────────────────────────────────────────────────────────
 # Per-run wall-clock timing is recorded by fidelity_driver in each run's
 # result.json (and agent_run.json) under a "timing" block:
-#   {total_s, llm_s, engine_s, turns, tool_calls}
-# These helpers pull those values and compute mean / sample-std / standard-error
-# so the summary can report how long each MODEL takes per task.
-_TIMING_KEYS = ("total_s", "llm_s", "engine_s")
+#   {total_s, llm_s, engine_s, turns, tool_calls,
+#    prompt_tokens, completion_tokens, total_tokens}
+# These helpers pull the numeric values and compute mean / sample-std /
+# standard-error so the summary can report how long — and how many tokens — each
+# MODEL takes per task. Token fields are present only on runs recorded after the
+# 2026-07-07 token-capture change; older runs simply have no token stats (the
+# stat helper skips non-numeric/missing values, so their mean is 0/None cleanly).
+_TIMING_KEYS = ("total_s", "llm_s", "engine_s",
+                "prompt_tokens", "completion_tokens", "total_tokens")
 
 
 def _run_timing_full(run: Path) -> Dict[str, Any]:
@@ -535,6 +540,11 @@ def _aggregate_repeat(case_dir: Path, model: str,
         "total_s_se": _tstats["total_s"]["se"],
         "llm_s_mean": _tstats["llm_s"]["mean"],
         "engine_s_mean": _tstats["engine_s"]["mean"],
+        # Per-cell mean token usage across this cell's runs (0 for pre-2026-07-07
+        # runs that predate token capture — no token block to average).
+        "prompt_tokens_mean": _tstats["prompt_tokens"]["mean"],
+        "completion_tokens_mean": _tstats["completion_tokens"]["mean"],
+        "total_tokens_mean": _tstats["total_tokens"]["mean"],
     }
 
 
@@ -550,6 +560,13 @@ def collect_repeats(base: Path, n: Optional[int] = None) -> List[Dict[str, Any]]
     for case_dir in sorted(p for p in base.iterdir() if p.is_dir()):
         for model, runs in _runs_per_model(case_dir, n=n).items():
             if not runs:
+                continue
+            # Skip the "(default)" pseudo-model: these are no-model runs
+            # (engine-reference / determinism-only checks with no agent), which
+            # carry no PASS/FAIL verdict (modal_verdict "?") and are not model
+            # results. Emitting them adds a confusing all-"?" block to the
+            # summary. Real per-model results always have a concrete model id.
+            if model in (None, "(default)"):
                 continue
             by_model.setdefault(model, []).append(
                 _aggregate_repeat(case_dir, model, runs))

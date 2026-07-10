@@ -430,3 +430,57 @@ level-of-theory rule, on purpose: the engine gate protects **any** model/harness
 that runs a calc; the shell hook adds a deterministic, model-independent block
 plus the session carry-over catch ("we just used xtb, silently reuse xtb"). Both
 are retained — defense in depth, unchanged from today.
+---
+
+## 11. Proposed: interactive CLI agent (chat-driven chemkit)
+
+> Status: **Proposal (ideation)** — no code yet. Captured as a future
+> development item.
+
+### Motivation
+Today an agent reaches chemkit two ways: the **MCP tools** (a host like Claude
+drives them) or the **benchmark harness** (`fidelity_driver.py`, a scripted
+OpenAI-SDK loop). There is no **interactive, human-in-the-loop CLI** where a user
+converses with an agent that has chemkit tools — e.g. `assay chat` opening a REPL
+where you type "compute the logP of ibuprofen" and the agent runs the skill,
+surfaces warnings, and reports back, with follow-up turns. This is the natural
+"try it live" entry point for demos, debugging skills, and manual exploration
+that neither the MCP-host path nor the batch benchmark provides.
+
+### Proposed shape
+A new console entry point, e.g. `assay chat` (or `chemkit-chat`), that:
+1. Starts an interactive REPL in the terminal.
+2. Runs the same agent loop the benchmark uses (system prompt =
+   `_LIVE_INSTRUCTIONS` + rules; tools = `chemkit`, `final_report`,
+   `list_skills`, `skill_help`) but driven by **user turns typed at the prompt**
+   instead of a fixed spec.
+3. Calls the engine **in-process** (or via the MCP server), streaming the live
+   `.out` path mid-run per calculation-reporting-standards #9.
+4. Surfaces warnings via the `warnings_block` affordance and reports the
+   `integrity.trustworthy` verdict — the same reporting contract as the MCP tool.
+5. Reuses the argo-proxy / model resolution already in the driver
+   (`CHEMKIT_LLM_BASE_URL`, `--model argo:...`), so any configured model can be
+   the chat backend.
+
+### Why it fits the architecture
+- The agent loop, tool schemas, and reporting contract **already exist** in
+  `fidelity_driver.py`; this feature is largely a **REPL wrapper** around that
+  loop with a multi-turn message history instead of a single scored task.
+- It shares the discovery tools (`list_skills`/`skill_help`) and the typed
+  `chemkit` tool, so it inherits the "discoverable, not spoon-fed" interface and
+  every guard (integrity gate, method-required hook).
+
+### Open questions to resolve at implementation time
+1. **In-process engine vs. MCP round-trip** for the tool calls (in-process is
+   simpler and matches the benchmark; MCP exercises the real deployment path).
+2. **Where the loop lives** — factor the driver's agent loop into a reusable
+   function both `fidelity_driver.py` and the chat REPL import, to avoid a second
+   copy that can drift.
+3. **Session state** — carry conversation history and any built geometries / run
+   artifacts across turns; decide the working directory for `.out` logs and
+   result files.
+4. **Safety/scope** — no scoring here (interactive, not a benchmark), but the
+   reporting-standards rules (provenance, warnings, live `.out`) still apply and
+   are injected into the system prompt.
+5. **Method-choice prompting** — honor non-negotiable #10 (ask, don't assume the
+   method) interactively via a clarifying question rather than a hard error.

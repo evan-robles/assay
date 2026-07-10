@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 import urllib.error
@@ -48,6 +49,22 @@ from fidelity_driver import _fs_safe, _ARGO_BASE_URL  # noqa: E402
 def _find_spec(case_dir: Path) -> Optional[Path]:
     specs = sorted(case_dir.glob("*.spec.json"))
     return specs[0] if specs else None
+
+
+def _engine_ref_cached(case_dir: Path, spec: Optional[Path]) -> bool:
+    """Conservative check: does this molecule already have an engine-reference
+    on disk? Used ONLY to decide whether the parallel-mode serial warmup needs
+    to compute it first (race-avoidance). We deliberately do a cheap existence
+    check (engine-reference/engine_reference.json present) rather than the
+    driver's full hash-validity check: if a cached reference is present but
+    STALE, the driver recomputes it on the warmup call anyway — and if it's
+    absent, we must warm it. Either way a present file means no two parallel
+    workers will race to CREATE it. A missing spec is treated as 'needs warm'
+    so the driver surfaces the error serially, not inside a race."""
+    if spec is None:
+        return True  # nothing to warm; let the worker surface the missing spec
+    ref = case_dir / "engine-reference" / "engine_reference.json"
+    return ref.is_file()
 
 
 def _fetch_all_models() -> List[str]:
@@ -94,6 +111,32 @@ def _model_already_run(case_dir: Path, model: Optional[str]) -> bool:
     return False
 
 
+def _scored_run_count(case_dir: Path, model: Optional[str]) -> int:
+    """How many SCORED (PASS/FAIL) runs already exist for this (case, model).
+
+    Counts only result.json files whose `overall` is PASS or FAIL — an ERROR run
+    (crash / transport corruption / dead node) is NOT a valid data point, so it
+    does not count toward the repeat target and its slot is refilled on the next
+    run. This is what lets a re-invocation TOP UP to the target `repeat` instead
+    of either skipping wholesale (old binary resume) or duplicating everything
+    (naive --repeat). A None model can't be disambiguated, so returns 0."""
+    if model is None:
+        return 0
+    model_dir = case_dir / _fs_safe(model)
+    if not model_dir.is_dir():
+        return 0
+    n = 0
+    for d in model_dir.iterdir():
+        rj = d / "result.json"
+        if d.is_dir() and rj.is_file():
+            try:
+                if json.loads(rj.read_text()).get("overall") in ("PASS", "FAIL"):
+                    n += 1
+            except (OSError, ValueError):
+                pass  # unreadable/partial result.json — not a scored run
+    return n
+
+
 def _run_one(case_dir: Path, spec: Path, *, live: bool,
              agent_run_name: Optional[str], out_dir: Optional[str],
              model: Optional[str], refresh_engine: bool) -> dict:
@@ -125,10 +168,64 @@ def _run_one(case_dir: Path, spec: Path, *, live: bool,
             "errored": errored}
 
 
+def _run_one_model(model: Optional[str], cases: List[Path], *, live: bool,
+                   agent_run_name: Optional[str], out_dir: Optional[str],
+                   refresh_engine: bool, force: bool, repeat: int,
+                   quiet: bool = False) -> List[dict]:
+    """Run the whole case list for a SINGLE model, serially. This is one
+    "worker" — the unit that --jobs runs concurrently (mirrors Aurora's
+    one-model-per-node). Each model writes only into its own
+    `<case>/<fs_safe(model)>/` subfolders, so distinct models never contend
+    (safe to run in parallel). Returns this model's result records.
+
+    `quiet` prefixes lines with the model label instead of a banner, so
+    interleaved output from concurrent workers stays attributable."""
+    label = model or "(default)"
+    out: List[dict] = []
+    if not quiet:
+        print(f"\n########## MODEL: {label} ##########")
+    for case_dir in cases:
+        spec = _find_spec(case_dir)
+        # TOP-UP resume (unless --force): run only the reps still MISSING to reach
+        # `repeat` SCORED (PASS/FAIL) runs. Existing scored runs are kept; ERROR
+        # runs don't count (their slots are refilled). This makes re-invoking the
+        # command idempotent toward the target: a (case,model) already at `repeat`
+        # runs nothing; one short by k runs exactly k. --force ignores existing
+        # runs and executes the full `repeat` fresh (e.g. after a spec change).
+        if live and not force:
+            have = _scored_run_count(case_dir, model)
+            need = max(0, repeat - have)
+            if need == 0:
+                print(f"[{label}] {case_dir.name}: {have}/{repeat} scored, skipping"
+                      if quiet else
+                      f"[suite] {case_dir.name} [{label}]: already {have}/{repeat} "
+                      f"scored, skipping")
+                out.append({"case": case_dir.name, "model": model,
+                            "ran": False, "skipped": True})
+                continue
+            if have > 0:
+                print(f"[{label}] {case_dir.name}: {have}/{repeat} scored, "
+                      f"running {need} more"
+                      if quiet else
+                      f"[suite] {case_dir.name} [{label}]: resuming, {have}/{repeat} "
+                      f"scored, running {need} more")
+        else:
+            need = repeat  # --force (or recorded mode): run the full count fresh
+        for rep in range(need):
+            tag = f" ({rep + 1}/{need})" if need > 1 else ""
+            print(f"[{label}] {case_dir.name}{tag}: running"
+                  if quiet else
+                  f"\n===== {case_dir.name}  [{label}]{tag} =====")
+            out.append(_run_one(
+                case_dir, spec, live=live, agent_run_name=agent_run_name,
+                out_dir=out_dir, model=model, refresh_engine=refresh_engine))
+    return out
+
+
 def run_suite(folder: Path, *, live: bool, agent_run_name: Optional[str],
               out_dir: Optional[str], models: Optional[List[Optional[str]]] = None,
               refresh_engine: bool = False, force: bool = False,
-              repeat: int = 1) -> List[dict]:
+              repeat: int = 1, jobs: int = 1) -> List[dict]:
     """Run the driver over every case in `folder`, once per model in `models`.
 
     `models` is a list of agent model ids (live mode); a single-element [None]
@@ -141,37 +238,67 @@ def run_suite(folder: Path, *, live: bool, agent_run_name: Optional[str],
 
     `repeat` (N >= 1): run each (case, model) N FRESH times this invocation to
     measure a flaky model's pass RATE rather than a single coin-flip verdict.
-    Each repeat writes its own timestamped run folder. When repeat > 1 the
-    already-run skip is bypassed (every repeat must actually execute — the whole
-    point is N fresh runs); collect_repeats() then aggregates the N newest runs
-    per (case, model) into a pass rate + modal verdict + failed-check tally."""
-    results: List[dict] = []
+
+    `jobs` (N >= 1): run N MODELS concurrently, each as its own worker serial
+    over the cases (mirrors Aurora's one-model-per-node parallelism). Because
+    every model writes only into disjoint `<case>/<model>/` folders there is no
+    cross-model contention, so this is safe. jobs=1 is the original fully-serial
+    behavior. Concurrency here helps a lot even on one machine because agent
+    runs are dominated by the LLM round-trip (argo) wait, not local CPU."""
     cases = [p for p in sorted(folder.iterdir())
              if p.is_dir() and _find_spec(p) is not None]
     models = models or [None]
 
-    for model in models:
-        label = model or "(default)"
-        print(f"\n########## MODEL: {label} ##########")
-        for case_dir in cases:
-            spec = _find_spec(case_dir)
-            # Skip already-run pairs only for single runs (repeat == 1). With
-            # repeat > 1 we always execute N fresh runs, so the skip is bypassed.
-            if (repeat == 1 and live and not force
-                    and _model_already_run(case_dir, model)):
-                print(f"[suite] {case_dir.name}: model {label} already run, skipping")
-                results.append({"case": case_dir.name, "model": model,
-                                "ran": False, "skipped": True})
-                continue
-            for rep in range(repeat):
-                if repeat > 1:
-                    print(f"\n===== {case_dir.name}  [{label}]  "
-                          f"repeat {rep + 1}/{repeat} =====")
-                else:
-                    print(f"\n===== {case_dir.name}  [{label}] =====")
-                results.append(_run_one(
-                    case_dir, spec, live=live, agent_run_name=agent_run_name,
-                    out_dir=out_dir, model=model, refresh_engine=refresh_engine))
+    if jobs <= 1 or len(models) <= 1:
+        results: List[dict] = []
+        for model in models:
+            results.extend(_run_one_model(
+                model, cases, live=live, agent_run_name=agent_run_name,
+                out_dir=out_dir, refresh_engine=refresh_engine, force=force,
+                repeat=repeat, quiet=False))
+        return results
+
+    # WARMUP (serial, before any parallel worker): each molecule's
+    # engine-reference/ is created on first touch. If two model-workers hit a
+    # molecule whose reference is not yet cached AT THE SAME TIME, they race to
+    # create it (corrupt/duplicate reference). Aurora avoided this with a serial
+    # STEP-1 warmup; we do the same. Run one NON-live driver call per molecule
+    # that still lacks a valid cached reference, serially, so by the time the
+    # parallel workers start every reference exists and workers only READ it.
+    # Molecules that already have a cached reference cost ~nothing (the driver
+    # reuses it), so this is cheap for the already-scaffolded suites.
+    if live:
+        need_warm = [c for c in cases
+                     if not _engine_ref_cached(c, _find_spec(c))]
+        if need_warm:
+            print(f"[suite] warmup: computing engine-reference for "
+                  f"{len(need_warm)} molecule(s) serially (race-avoidance) ...")
+            for c in need_warm:
+                spec = _find_spec(c)
+                print(f"[warmup] {c.name}")
+                # non-live driver call: builds engine-reference/, no agent, no model
+                subprocess.run([sys.executable, str(_DRIVER), "--spec", str(spec),
+                                "--out-dir", str(c)], cwd=str(_REPO))
+
+    # Parallel: one worker per model, up to `jobs` at a time. Threads suffice —
+    # each worker only blocks on subprocess.run (the driver runs in its own
+    # process), so the GIL is not a bottleneck. Output is prefixed per model.
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    n = min(jobs, len(models))
+    print(f"[suite] parallel: {n} concurrent model-workers over "
+          f"{len(models)} model(s)")
+    results = []
+    with ThreadPoolExecutor(max_workers=n) as ex:
+        futs = {ex.submit(
+            _run_one_model, m, cases, live=live, agent_run_name=agent_run_name,
+            out_dir=out_dir, refresh_engine=refresh_engine, force=force,
+            repeat=repeat, quiet=True): m for m in models}
+        for fut in as_completed(futs):
+            m = futs[fut]
+            try:
+                results.extend(fut.result())
+            except Exception as e:  # a worker crashing must not lose the rest
+                print(f"[suite] worker for model {m or '(default)'} raised: {e}")
     return results
 
 
@@ -198,24 +325,51 @@ def main() -> int:
                          "nodes write disjoint <case>/<model>/ subfolders (no "
                          "contention).")
     ap.add_argument("--force", action="store_true",
-                    help="re-run even if a (case,model) already has a result "
-                         "(default: skip already-run pairs, making sweeps resumable).")
+                    help="ignore existing runs and execute the full --repeat count "
+                         "fresh for every (case,model). Default is top-up resume: "
+                         "run only the reps missing to reach --repeat scored runs.")
     ap.add_argument("--refresh-engine", action="store_true",
                     help="pass-through to the driver's --refresh-engine: force a "
                          "fresh per-molecule engine-reference/ even if cached.")
     ap.add_argument("--repeat", type=int, default=1, metavar="N",
-                    help="run each (case,model) N FRESH times to measure a flaky "
-                         "model's pass RATE instead of a single coin-flip verdict "
-                         "(default 1). N>1 bypasses the already-run skip and "
-                         "AUTO-COLLECTS at the end (no separate --collect needed): "
-                         "aggregates the N newest runs into pass_rate + modal "
-                         "verdict + failed-check tally. Cost scales linearly with N.")
+                    help="TARGET number of SCORED (PASS/FAIL) runs per (case,model) "
+                         "to measure a flaky model's pass RATE (default 1). Resume is "
+                         "TOP-UP: a re-invocation runs only the reps still missing to "
+                         "reach N (ERROR runs don't count and are refilled), so the "
+                         "command is idempotent toward the target and never "
+                         "duplicates completed reps. Use --force to ignore existing "
+                         "runs and execute N fresh. N>1 AUTO-COLLECTS at the end "
+                         "(aggregates the N newest runs into pass_rate + modal "
+                         "verdict + failed-check tally).")
+    ap.add_argument("--jobs", "-j", type=int, default=1, metavar="N",
+                    help="run N MODELS concurrently, each a worker serial over the "
+                         "cases (mirrors Aurora's one-model-per-node parallelism). "
+                         "Default 1 (serial). Safe because each model writes only "
+                         "into its own <case>/<model>/ folders. Big speedup even on "
+                         "one machine since agent runs are argo-round-trip bound. "
+                         "For DFT-heavy suites, lower --jobs and/or set "
+                         "CHEMKIT_PYSCF_THREADS to avoid CPU oversubscription.")
     ap.add_argument("--collect", action="store_true",
                     help="after running, collect results into a summary table + CSV")
     args = ap.parse_args()
     if args.repeat < 1:
         print(f"error: --repeat must be >= 1 (got {args.repeat})")
         return 2
+    if args.jobs < 1:
+        print(f"error: --jobs must be >= 1 (got {args.jobs})")
+        return 2
+
+    # When running models concurrently, cap each engine's thread pool so N
+    # parallel runs don't oversubscribe the cores (N workers x many threads ->
+    # thrash / pyscf "NUM_THREADS exceeded" segfaults). Only set a default if the
+    # user hasn't already chosen one, and only in parallel mode. xtb-heavy suites
+    # barely use it; DFT suites benefit from the user tuning this explicitly.
+    if args.jobs > 1 and "CHEMKIT_PYSCF_THREADS" not in os.environ:
+        cores = os.cpu_count() or 4
+        per = max(1, cores // args.jobs)
+        os.environ["CHEMKIT_PYSCF_THREADS"] = str(per)
+        print(f"[suite] parallel engine-thread cap: CHEMKIT_PYSCF_THREADS={per} "
+              f"({cores} cores / {args.jobs} jobs)")
 
     # Resolve the suite folder robustly: as given, or relative to the repo root,
     # so it works whether you run from the repo root or from inside benchmarks/.
@@ -266,7 +420,7 @@ def main() -> int:
     results = run_suite(folder, live=args.live,
                         agent_run_name=args.agent_run_name, out_dir=args.out_dir,
                         models=models, refresh_engine=args.refresh_engine,
-                        force=args.force, repeat=args.repeat)
+                        force=args.force, repeat=args.repeat, jobs=args.jobs)
 
     ran = [r for r in results if r.get("ran")]
     passed = [r for r in ran if r.get("pass")]
@@ -294,25 +448,22 @@ def main() -> int:
             print(f"  {tag} {r['case']} [{r.get('model') or '(default)'}] "
                   f"(exit {r.get('exit_code')})")
 
-    # --collect regenerates the model-grouped summary table + summary.csv. Skip
-    # it entirely when NOTHING new ran this invocation (every (case,model) was
-    # already-run and skipped): in that case we must not create or overwrite any
-    # file, so a pure resume/no-op leaves the suite folder byte-for-byte
-    # untouched. When >=1 case ran, we re-collect ALL models from disk (so models
-    # untouched this invocation are preserved in the combined file, read fresh
-    # from their run folders) and rewrite the single grouped summary.csv.
+    # --collect regenerates the model-grouped summary table + summary.csv. When
+    # asked to collect (explicit --collect, or --repeat N which implies it), we
+    # ALWAYS regenerate from the current on-disk results — even if nothing new
+    # ran this invocation. Re-collecting a fully-resumed suite is exactly how you
+    # refresh a STALE summary.csv (e.g. after manually deleting ERROR runs, or
+    # after an earlier run left the CSV out of date): the whole point of asking
+    # to collect is to get a summary that matches disk. (An earlier version
+    # skipped regeneration on "nothing new ran"; with top-up resume that is a
+    # common, expected state for a complete suite, so skipping left stale
+    # summaries in place.) Collection reads ALL models fresh from their run
+    # folders, so models untouched this invocation are still reflected correctly.
     #
     # --repeat N IMPLIES collection: a repeat sweep's whole purpose is the
-    # aggregated pass-rate table, so we auto-collect at the end even without an
-    # explicit --collect. (A single run_suite invocation does all its own repeats
-    # in-process, so there is no parallel summary.csv race to avoid here — the
-    # "collect once at the end" advice is only for MANUALLY fanned-out parallel
-    # shards, which should still omit --collect and collect separately.)
+    # aggregated pass-rate table.
     should_collect = args.collect or args.repeat > 1
-    if should_collect and not ran:
-        print("\n[suite] nothing new ran; leaving summary.csv untouched "
-              "(pass --force to re-run and regenerate).")
-    elif should_collect:
+    if should_collect:
         # With --repeat N, aggregate the N newest runs per (case,model) into a
         # pass rate (collect_repeats). With a single run, one row per (case,model)
         # (collect_all). Both group by model and use the same grouped-CSV writer.
@@ -333,6 +484,8 @@ def main() -> int:
             csv_path = folder / "summary.csv"
             write_grouped_csv(rows, csv_path, base=folder, n=_cap)
             print(f"\nCSV written: {csv_path}")
+        else:
+            print("\n[suite] no scored results on disk yet; no summary written.")
 
     # Suite exit code: nonzero if any case failed to pass.
     return 0 if len(passed) == len(ran) and ran else 1
