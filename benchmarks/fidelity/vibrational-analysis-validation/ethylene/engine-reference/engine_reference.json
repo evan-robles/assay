@@ -15,7 +15,7 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ethylene/ethylene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpo2o8u6oq/truth.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ethylene/ethylene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp81lb9fot/truth.json",
   "electronic_energy_eV": -170.63026,
   "zpe_eV": 1.3263161,
   "zpe_kcal_mol": 30.585576,
@@ -52,11 +52,16 @@
   "n_saddle_imaginary_modes": 0,
   "geometry_auto_detected": true,
   "warnings": [
-    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry set to the correct value for your point group."
   ],
   "preopt": {
     "performed": false
   },
+  "schema_version": 1,
+  "total_energy_eV": -170.63026,
+  "headline_field": "electronic_energy_eV",
+  "headline_value": -170.63026,
+  "headline_units": "eV",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -72,7 +77,26 @@
         "ok": true,
         "severity": "error",
         "detail": "gibbs_free_energy_eV = np.float64(-169.9080135377988) (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'electronic_energy_eV' = -170.6302585737184 (present and numeric)"
       }
     ]
-  }
+  },
+  "warnings_structured": [
+    {
+      "code": "thermo_electronic_only_1549b955",
+      "text": "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry set to the correct value for your point group."
+    }
+  ],
+  "warnings_block": "\u26a0\ufe0f Tool warnings \u2014 surface ALL of these to the user verbatim (do not drop, summarize, or paraphrase any):\n- symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry set to the correct value for your point group."
 }
