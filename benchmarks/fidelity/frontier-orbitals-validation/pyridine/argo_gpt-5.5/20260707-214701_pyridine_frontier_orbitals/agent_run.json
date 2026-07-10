@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.38,
+    "llm_s": 17.57,
+    "engine_s": 11.8,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26252,
+    "completion_tokens": 1111,
+    "total_tokens": 27363
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier orbitals** \u2014 computed with DFT, tier `standard`, using **B3LYP/def2-TZVP** as reported by chemkit (`method`: `b3lyp/def2-tzvp`) in **PySCF**, gas phase, charge 0, multiplicity 1. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` (11 atoms); no geometry relaxation was reported for this frontier-orbitals run.\n\nResult: HOMO = -7.2525992 eV, LUMO = -1.112786 eV, so the **HOMO-LUMO gap = 6.1398131 eV**. This is a Koopmans-style orbital gap, not an excitation energy.\n\nSCF convergence: `scf_converged = true` in 10 cycles. Warnings: no warnings were reported by the tool result. Engine integrity verdict: `trustworthy = true`.\n\nReproducibility: chemkit reported the CLI invocation as `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmph3ox6_d_/live.json`. Provenance: computed."
+}

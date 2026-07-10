@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 45.46,
+    "llm_s": 31.77,
+    "engine_s": 13.69,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 38872,
+    "completion_tokens": 4134,
+    "total_tokens": 43006
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline HOMO\u2013LUMO gap** \u2014 frontier-orbitals by DFT, tier `standard` (B3LYP/def2-TZVP, density-fitted RIJK) in PySCF, gas phase, charge 0, multiplicity 1.\nGeometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz`, single-point (no DFT geometry optimization).\nSCF converged in 9 cycles; no warnings reported.\nHOMO = \u22125.553772 eV, LUMO = \u22120.2489544 eV \u2192 gap = **5.3048177 eV**."
+}

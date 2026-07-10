@@ -1,0 +1,9 @@
+[engine reference] REUSED cached engine-reference/ (determinism: identical across two runs (within 1e-06 numeric tol))
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:o4-mini via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: frontier-orbitals ['--method', 'dft', '--charge', '0', '--mult', '2', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz']
+
+==> ERROR: remote compute host unreachable — CHEMKIT_REMOTE_HOST='x4717c4s3b0n0.hsn.cm.aurora.alcf.anl.gov' unreachable over ssh (rc=255): 
+    Flagged ERRORED and excluded from scoring (not a model failure); the repeat slot will be re-run.
+
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/argo_o4-mini/20260707-223633_tempo_frontier_orbitals

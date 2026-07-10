@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 44.98,
+    "llm_s": 30.05,
+    "engine_s": 11.79,
+    "turns": 3,
+    "tool_calls": 2,
+    "prompt_tokens": 47329,
+    "completion_tokens": 1789,
+    "total_tokens": 49118
+  },
+  "result_json": {
+    "method": "B3LYP/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Pyridine Frontier-Orbital Energies \u2014 DFT B3LYP/def2-TZVP\n\n### Method Provenance Block\n\n| Field | Value |\n|---|---|\n| **Property** | Frontier orbital energies (HOMO, LUMO, gap) |\n| **Level of theory** | DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (density-fitted), PySCF |\n| **Geometry provenance** | User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`; geometry used as-is (single-point, not re-optimized at DFT) |\n| **Solvent / environment** | **Gas phase** (no implicit solvation) |\n| **Charge / Multiplicity** | 0 / 1 (neutral singlet) |\n| **Software** | PySCF (via chemkit `frontier-orbitals` skill) |\n| **SCF convergence** | \u2705 Converged in **10 cycles** |\n| **Integrity** | \u2705 `trustworthy: true` \u2014 all checks passed (energy finite, SCF converged, schema valid) |\n\n---\n\n### Results\n\n| Orbital | Index | Energy (eV) |\n|---|---|---|\n| HOMO\u22122 | 18 | \u22128.0425195 |\n| HOMO\u22121 | 19 | \u22127.4731156 |\n| **HOMO** | **20** | **\u22127.2525992** |\n| **LUMO** | **21** | **\u22121.112786** |\n| LUMO+1 | 22 | \u22120.67231536 |\n| LUMO+2 | 23 | +1.1781069 |\n\n#### **HOMO\u2013LUMO Gap: 6.1398131 eV** \u2190 headline value\n\n#### Koopmans-theorem-derived reactivity descriptors:\n- **Vertical IP** (= \u2212\u03b5_HOMO): **7.2525992 eV**\n- **Vertical EA** (= \u2212\u03b5_LUMO): **1.112786 eV**\n- **Electronegativity** (\u03c7 = (IP+EA)/2): **4.1826926 eV**\n- **Chemical Hardness** (\u03b7 = (IP\u2212EA)/2): **3.0699066 eV**\n- **Chemical Softness** (S = 1/2\u03b7): **0.32574281 eV\u207b\u00b9**\n- **Electrophilicity index** (\u03c9 = \u03c7\u00b2/2\u03b7): **2.8494218 eV**\n\n---\n\n### Notes & Caveats\n\n- **Level mismatch:** This is a DFT single-point on the user-supplied geometry (not re-optimized at B3LYP/def2-TZVP), so the result is formally `B3LYP/def2-TZVP // user-geometry`. If the input was pre-relaxed at another level (e.g. GFN2-xTB or PM7), that constitutes a level mismatch.\n- **Density fitting (RI):** Chemkit uses density fitting by default in PySCF, which is an approximation to the two-electron integrals that accelerates the calculation with negligible accuracy loss for B3LYP.\n- **Koopmans interpretation:** Orbital energies are not excitation energies. The HOMO\u2013LUMO gap is a Koopmans-theorem-style estimate (orbital energy difference), not a vertical excitation energy (TD-DFT would be needed for that).\n- **No warnings** were reported by the engine. The warnings array is empty \u2014 this was a clean run.\n- **Total energy** (electronic, gas phase): \u2212248.3782 Hartree / \u22126758.7152 eV\n- **Live log:** `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/argo_claude-sonnet-4.6/20260707-215615_pyridine_frontier_orbitals/frontier_20260707-215624.out`\n- **CLI invocation:** `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional B3LYP --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`"
+}

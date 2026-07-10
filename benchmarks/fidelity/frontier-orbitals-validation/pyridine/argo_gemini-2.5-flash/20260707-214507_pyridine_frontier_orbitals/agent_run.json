@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.66,
+    "llm_s": 7.28,
+    "engine_s": 11.37,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26570,
+    "completion_tokens": 354,
+    "total_tokens": 26924
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital gap** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: provided by user from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`. SCF converged after 10 cycles. HOMO = -7.2525992 eV, LUMO = -1.112786 eV.\n\nThe calculation generated output files (e.g., `frontier_orbitals_*.json`) in the run directory."
+}

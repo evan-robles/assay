@@ -1,0 +1,23 @@
+[engine reference] REUSED cached engine-reference/ (determinism: identical across two runs (within 1e-06 numeric tol))
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:gpt-4.1-nano via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: frontier-orbitals ['--method', 'dft', '--charge', '0', '--mult', '1', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz']
+[live] agent submitted final_report. (total=18.0s llm=4.3s engine=13.7s turns=3 tool_calls=1)
+
+[Layer B - invocation fidelity]
+  [PASS] method  {'intended': 'dft', 'got': 'b3lyp/def2-tzvp'}
+  [PASS] charge  {'intended': 0, 'got': 0}
+  [PASS] multiplicity  {'intended': 1, 'got': 1}
+  [PASS] solvent  {'intended': None, 'got': None}
+  [PASS] functional  {'intended': 'b3lyp', 'got': 'b3lyp'}
+  [PASS] basis  {'intended': 'def2-tzvp', 'got': 'def2-tzvp'}
+  [PASS] tier  {'intended': 'standard', 'got': 'standard'}
+
+[Layer C - reporting fidelity]
+  [PASS] reported homo_lumo_gap_eV  {'truth': 5.3048177, 'reported': 5.3048177, 'tol': 0.05}
+  [PASS] warnings preserved  {'truth_count': 0, 'preserved_count': 0, 'in_array': 0, 'in_prose_only': 0, 'missing_count': 0, 'sim_threshold': 0.97}
+  [WARN] integrity verdict surfaced  {'truth': True, 'reported': None}
+  [PASS] provenance not mislabeled experimental  {'got': '(unstated)'}
+
+==> OVERALL: PASS
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/argo_gpt-4.1-nano/20260707-213626_aniline_frontier_orbitals

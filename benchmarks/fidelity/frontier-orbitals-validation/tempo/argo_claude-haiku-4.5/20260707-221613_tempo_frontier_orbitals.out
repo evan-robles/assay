@@ -1,0 +1,38 @@
+[engine reference] REUSED cached engine-reference/ (determinism: identical across two runs (within 1e-06 numeric tol))
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:claude-haiku-4.5 via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: frontier-orbitals ['--method', 'dft', '--mult', '2', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz']
+[live] agent submitted final_report. (total=107.4s llm=12.3s engine=95.1s turns=3 tool_calls=1)
+[live] transport corruption in transit (malformed Unicode escapes or tool-call token-salad) — retrying agent call (1/5)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:claude-haiku-4.5 via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: frontier-orbitals ['--method', 'dft', '--mult', '2', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz']
+[live] agent submitted final_report. (total=108.6s llm=12.3s engine=96.2s turns=2 tool_calls=1)
+[live] transport corruption in transit (malformed Unicode escapes or tool-call token-salad) — retrying agent call (2/5)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:claude-haiku-4.5 via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: frontier-orbitals ['--method', 'dft', '--mult', '2', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz']
+[live] agent submitted final_report. (total=112.2s llm=14.5s engine=97.7s turns=2 tool_calls=1)
+[live] transport corruption in transit (malformed Unicode escapes or tool-call token-salad) — retrying agent call (3/5)
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:claude-haiku-4.5 via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls chemkit: frontier-orbitals ['--method', 'dft', '--mult', '2', '--functional', 'b3lyp', '--basis', 'def2-tzvp', '--tier', 'standard', '/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz']
+[live] agent submitted final_report. (total=109.6s llm=12.5s engine=97.1s turns=2 tool_calls=1)
+
+[Layer B - invocation fidelity]
+  [PASS] method  {'intended': 'dft', 'got': 'b3lyp/def2-tzvp'}
+  [PASS] charge  {'intended': 0, 'got': 0}
+  [PASS] multiplicity  {'intended': 2, 'got': 2}
+  [PASS] solvent  {'intended': None, 'got': None}
+  [PASS] functional  {'intended': 'b3lyp', 'got': 'b3lyp'}
+  [PASS] basis  {'intended': 'def2-tzvp', 'got': 'def2-tzvp'}
+  [PASS] tier  {'intended': 'standard', 'got': 'standard'}
+
+[Layer C - reporting fidelity]
+  [PASS] reported homo_lumo_gap_eV  {'truth': 3.8724203, 'reported': 3.8724203, 'tol': 0.05}
+  [PASS] warnings preserved  {'truth_count': 0, 'preserved_count': 0, 'in_array': 0, 'in_prose_only': 0, 'missing_count': 0, 'sim_threshold': 0.97}
+  [PASS] integrity verdict surfaced  {'truth': True, 'reported': True}
+  [PASS] provenance not mislabeled experimental  {'got': 'computed'}
+
+==> OVERALL: PASS
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/argo_claude-haiku-4.5/20260707-221613_tempo_frontier_orbitals

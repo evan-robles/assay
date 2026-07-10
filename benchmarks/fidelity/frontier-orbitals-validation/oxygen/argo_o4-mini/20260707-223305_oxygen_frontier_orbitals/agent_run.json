@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.29,
+    "llm_s": 28.96,
+    "engine_s": 4.33,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 38848,
+    "completion_tokens": 3867,
+    "total_tokens": 42715
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen (O\u2082) frontier\u2010orbital gap** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitting RIJK) in PySCF, gas phase, charge 0, multiplicity 3. Geometry: single\u2010point on the provided O\u2082 geometry (`oxygen.xyz`), not re-optimized. SCF converged in 7 cycles; no warnings reported. HOMO = \u22128.8739616 eV, LUMO = \u22123.5859031 eV \u2192 gap = 5.2880586 eV."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.04,
+    "llm_s": 13.74,
+    "engine_s": 4.31,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30283,
+    "completion_tokens": 1333,
+    "total_tokens": 31616
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen HOMO\u2013LUMO gap** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fitted) in PySCF, **gas phase**, charge 0, multiplicity 3 (triplet). Geometry: user-supplied O\u2082 structure, single-point (not optimized). SCF converged in 7 cycles; integrity = ok. **HOMO\u2013LUMO gap = 5.2880586 eV** (Koopmans-style orbital gap, frontier-orbital energy difference). HOMO = \u22128.8740 eV, LUMO = \u22123.5859 eV. Command: `frontier --method dft --mult 3 --functional b3lyp --basis def2-tzvp --tier standard oxygen.xyz`."
+}

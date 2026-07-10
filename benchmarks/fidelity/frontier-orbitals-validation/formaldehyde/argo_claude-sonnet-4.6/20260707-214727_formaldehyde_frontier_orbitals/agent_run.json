@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.97,
+    "llm_s": 28.25,
+    "engine_s": 4.72,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30234,
+    "completion_tokens": 1799,
+    "total_tokens": 32033
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier orbital calculation on formaldehyde (CH\u2082O, 4 atoms, 8 occupied MOs, 74 basis functions) using DFT at tier 'standard' (B3LYP/def2-TZVP, density-fitted) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied .xyz, used as a single-point (not re-optimised at DFT level). SCF converged in 8 cycles. No warnings reported. Integrity check: trustworthy=true, all checks passed.\n\nHeadline result: HOMO\u2013LUMO gap = 5.8696712 eV (Koopmans-style orbital energy difference).\nHOMO (index 7) = \u22127.6523067 eV; LUMO (index 8) = \u22121.7826355 eV.\n\nKoopmans-theorem derived quantities: vertical IP = 7.6523 eV, vertical EA = 1.7826 eV, electronegativity = 4.7175 eV, chemical hardness = 2.9348 eV, softness = 0.34073 eV\u207b\u00b9, electrophilicity index = 3.7914 eV.\n\nTotal electronic energy: \u2212114.55325 Hartree (\u22123117.1528 eV).\n\nCaveats: (1) Density fitting (RI) is on by default \u2014 an approximation to the two-electron integrals. (2) The gap is a Koopmans orbital gap, not an optical excitation energy (TD-DFT would be needed for that). (3) Single-point on user-supplied geometry \u2014 no DFT-level re-optimisation. (4) No warnings from engine (empty warnings array \u2014 clean run)."
+}

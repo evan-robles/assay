@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 27.03,
+    "llm_s": 14.41,
+    "engine_s": 12.62,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25456,
+    "completion_tokens": 1235,
+    "total_tokens": 26691
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": -7.2525992,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier orbital analysis of pyridine \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitted) with PySCF  (single-point; no re-optimization) on the supplied pyridine.xyz geometry, gas phase, charge 0, multiplicity 1. SCF converged in 10 cycles; no warnings were reported by the engine.  \n\nResults (electronic energies, Koopmans approximation):  \n\u2022 HOMO energy: \u20117.2525992 eV  \n\u2022 LUMO energy: \u20111.112786 eV  \n\u2022 HOMO\u2013LUMO gap (LUMO \u2013 HOMO): 6.1398131 eV  \n\nThe calculation used the chemkit `frontier-orbitals` skill with the settings above. The run completed successfully (integrity check: trustworthy = true). No warnings were issued. Output files, including the live PySCF log and the full JSON result (recorded at /home/erobles/chem-skills/.fidelity_scratch/tmp9n45fci9/live.json), are available for inspection to reproduce or audit the result."
+}

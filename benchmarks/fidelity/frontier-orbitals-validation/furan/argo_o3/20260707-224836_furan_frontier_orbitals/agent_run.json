@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 38.38,
+    "llm_s": 28.52,
+    "engine_s": 9.86,
+    "turns": 4,
+    "tool_calls": 1,
+    "prompt_tokens": 53119,
+    "completion_tokens": 2298,
+    "total_tokens": 55417
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital analysis of furan\n\nMethod provenance\n\u2022 Property: frontier-orbital (HOMO, LUMO) energies and HOMO\u2013LUMO gap, in eV.\n\u2022 Level of theory: DFT, B3LYP/def2-TZVP (tier \u201cstandard\u201d) with RI/RI-JK density fitting, via PySCF.\n\u2022 Geometry provenance: user-supplied Cartesian file /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz; single-point calculation (no further optimisation) \u2192 notation DFT//input-XYZ.\n\u2022 Environment: gas phase (no implicit solvent).\n\u2022 Charge 0; multiplicity 1 (closed-shell RKS).\n\u2022 Software: PySCF (through chemkit \u2018frontier-orbitals\u2019 skill).\n\u2022 Convergence: SCF converged in 9 cycles; chemkit reported no warnings.\n\u2022 Live .out log was streamed during the run; see the path given in the CLI invocation within the result JSON for reproduction.\n\nKey numerical results (gas phase)\nHOMO energy  = \u22126.3597638 eV\nLUMO energy  = \u22120.1024036 eV\nHOMO\u2013LUMO gap = 6.2573602 eV (headline value)\n\nWarnings: none reported.\n\nThis is a computed result (no experimental data)."
+}

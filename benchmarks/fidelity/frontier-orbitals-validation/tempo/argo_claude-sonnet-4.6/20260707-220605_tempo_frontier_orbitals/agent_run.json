@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 128.25,
+    "llm_s": 28.33,
+    "engine_s": 99.92,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30375,
+    "completion_tokens": 1760,
+    "total_tokens": 32135
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on TEMPO (2,2,6,6-tetramethylpiperidine-1-oxyl, stable radical doublet) using DFT at the tier 'standard' level \u2014 B3LYP/def2-TZVP (density-fit UKS) in PySCF. Gas phase, charge 0, multiplicity 2. Geometry: user-supplied .xyz, used as-is (no re-optimization). SCF converged in 12 cycles; all integrity checks passed; no warnings reported (warnings array empty). HOMO = \u22126.3375 eV (index 86), LUMO = \u22122.4651 eV (index 87), HOMO\u2013LUMO gap = 3.8724203 eV (headline value). Koopmans descriptors: vertical IP = 6.3375 eV, vertical EA = 2.4651 eV, electronegativity = 4.4013 eV, chemical hardness = 1.9362 eV, softness = 0.5165 eV\u207b\u00b9, electrophilicity index = 5.0025 eV. Total energy: \u2212483.88366 Hartree (\u221213167.145 eV). Method: B3LYP/def2-TZVP, PySCF, gas phase, UKS doublet. Integrity: trustworthy = true."
+}

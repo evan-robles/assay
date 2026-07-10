@@ -2,7 +2,7 @@
   "name": "furan_frontier_orbitals",
   "skill": "frontier-orbitals",
   "xyz": "benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz",
-  "prompt": "Run the frontier-orbitals task on furan using DFT at the b3lyp functional with the def2-tzvp basis set (tier 'standard') in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
+  "prompt": "Run the frontier-orbitals task on furan using DFT at the b3lyp functional with the def2-tzvp basis set (tier 'standard') in the gas phase. Report the result and state the method used. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
     "dft"

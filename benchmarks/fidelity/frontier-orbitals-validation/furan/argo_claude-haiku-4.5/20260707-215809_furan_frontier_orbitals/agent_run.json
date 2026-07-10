@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.32,
+    "llm_s": 11.5,
+    "engine_s": 8.82,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 46544,
+    "completion_tokens": 1321,
+    "total_tokens": 47865
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan Frontier-Orbital Analysis**\n\n**Property:** HOMO\u2013LUMO frontier-orbital gap\n\n**Method Provenance Block:**\n- **Level of Theory:** DFT, tier `standard` (B3LYP/def2-TZVP, density-fit), PySCF\n- **Geometry:** User-supplied `.xyz` file, single-point calculation (not relaxed)\n- **Solvent / Environment:** Gas phase\n- **Charge and Multiplicity:** 0, 1 (neutral singlet)\n- **Software:** PySCF\n- **Convergence:** SCF converged in 9 cycles\n\n**Frontier Orbital Energies:**\n- HOMO (orbital index 17): \u22126.3598 eV\n- LUMO (orbital index 18): \u22120.1024 eV\n- **HOMO\u2013LUMO Gap: 6.2574 eV** (Koopmans-style orbital gap, not an excitation energy)\n\n**Koopmans Descriptors:**\n- Vertical ionization potential (HOMO): 6.3598 eV\n- Electron affinity (LUMO): 0.1024 eV\n- Electronegativity: 3.2311 eV\n- Chemical hardness: 3.1287 eV\n- Electrophilicity index: 1.6684 eV\n\n**Integrity Status:** All checks passed (`trustworthy: true`). Energy is finite, SCF converged, schema valid.\n\n**Reproducibility:** Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz`"
+}

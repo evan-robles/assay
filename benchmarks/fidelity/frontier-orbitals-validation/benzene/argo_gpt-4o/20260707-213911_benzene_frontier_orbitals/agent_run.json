@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 14.63,
+    "llm_s": 3.8,
+    "engine_s": 10.84,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26068,
+    "completion_tokens": 358,
+    "total_tokens": 26426
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.63109,
+    "n_atoms": 12,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene HOMO\u2013LUMO gap** \u2014 DFT, B3LYP/def2-TZVP (PySCF), gas phase, charge 0, multiplicity 1. Geometry: carried in from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz`; no further optimization conducted (single-point calculation on fixed geometry). SCF converged in 8 cycles. HOMO = \u22127.0468 eV, LUMO = \u22120.4157 eV \u2192 **gap = 6.6311 eV** (Koopmans-style orbital gap, not an excitation energy). Files: orbitals written to `/home/erobles/chem-skills/.fidelity_scratch/tmp9d2z4e53/live.json`. Command: `cli frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz`. No warnings were reported during the calculation."
+}

@@ -1,0 +1,100 @@
+{
+  "mode": "live",
+  "expect": "compute",
+  "layer_A_determinism": true,
+  "timing": {
+    "total_s": 9.42,
+    "llm_s": 9.42,
+    "engine_s": 0.0,
+    "turns": 2,
+    "tool_calls": 0,
+    "prompt_tokens": 25295,
+    "completion_tokens": 592,
+    "total_tokens": 25887
+  },
+  "layer_B_invocation": [
+    {
+      "check": "method",
+      "ok": false,
+      "severity": "error",
+      "intended": "dft",
+      "got": null
+    },
+    {
+      "check": "charge",
+      "ok": false,
+      "severity": "error",
+      "intended": 0,
+      "got": null
+    },
+    {
+      "check": "multiplicity",
+      "ok": false,
+      "severity": "error",
+      "intended": 1,
+      "got": null
+    },
+    {
+      "check": "solvent",
+      "ok": true,
+      "severity": "error",
+      "intended": null,
+      "got": null
+    },
+    {
+      "check": "functional",
+      "ok": false,
+      "severity": "error",
+      "intended": "b3lyp",
+      "got": null
+    },
+    {
+      "check": "basis",
+      "ok": false,
+      "severity": "error",
+      "intended": "def2-tzvp",
+      "got": null
+    },
+    {
+      "check": "tier",
+      "ok": false,
+      "severity": "error",
+      "intended": "standard",
+      "got": null
+    }
+  ],
+  "layer_C_reporting": [
+    {
+      "check": "reported homo_lumo_gap_eV",
+      "ok": false,
+      "severity": "error",
+      "detail": "agent did not report this value at all"
+    },
+    {
+      "check": "warnings preserved",
+      "ok": true,
+      "severity": "error",
+      "truth_count": 0,
+      "preserved_count": 0,
+      "in_array": 0,
+      "in_prose_only": 0,
+      "missing_count": 0,
+      "sim_threshold": 0.97
+    },
+    {
+      "check": "integrity verdict surfaced",
+      "ok": false,
+      "severity": "warning",
+      "truth": true,
+      "reported": null
+    },
+    {
+      "check": "provenance not mislabeled experimental",
+      "ok": true,
+      "severity": "error",
+      "got": "computed"
+    }
+  ],
+  "overall": "FAIL",
+  "exit_code": 1
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.79,
+    "llm_s": 4.25,
+    "engine_s": 4.54,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39726,
+    "completion_tokens": 430,
+    "total_tokens": 40156
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.43572,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbitals task on ethylene was performed using DFT with the B3LYP functional and def2-TZVP basis set, within the chemkit framework. The calculation used the tier 'standard' in the gas phase. The results are as follows: Homo (highest occupied molecular orbital) energy: -7.61558 eV; Lumo (lowest unoccupied molecular orbital) energy: -0.17987 eV; Homo-Lumo gap: 7.43572 eV. The SCF converged successfully after 6 cycles, and the total electronic energy is approximately -2139.4541 eV. The method used: B3LYP/def2-TZVP (tier 'standard') in PySCF, gas phase."
+}

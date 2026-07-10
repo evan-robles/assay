@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.57,
+    "llm_s": 22.12,
+    "engine_s": 4.45,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38678,
+    "completion_tokens": 1586,
+    "total_tokens": 40264
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde (CH\u2082O) frontier-orbital analysis \u2014 computed result**\n\n**Method-provenance block**\n- **Property:** Frontier-orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP/def2-TZVP** (density fitting on by default), via **PySCF** (RKS, closed shell).\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz`, 4 atoms: O, C, H, H). Used **as-is** \u2014 this was a single point at the supplied geometry; the geometry was **not** re-optimized at this level.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (neutral closed-shell singlet).\n- **Software:** PySCF.\n- **Convergence:** SCF **converged** in 8 cycles. Integrity verdict: **trustworthy = true** (status \"ok\"; energy finite and SCF converged both passed).\n\n**Headline result**\n- **HOMO\u2013LUMO gap = 5.8696712 eV**\n\n**Supporting frontier-orbital energies**\n- HOMO\u22122 (idx 5): \u221212.486938 eV (occ 2.0)\n- HOMO\u22121 (idx 6): \u221211.002498 eV (occ 2.0)\n- **HOMO (idx 7): \u22127.6523067 eV** (occ 2.0)\n- **LUMO (idx 8): \u22121.7826355 eV** (occ 0.0)\n- LUMO+1 (idx 9): +1.3920007 eV (occ 0.0)\n- LUMO+2 (idx 10): +2.8396981 eV (occ 0.0)\n\n**Koopmans-derived descriptors (eV):** vertical IP = 7.6523067, vertical EA = 1.7826355, electronegativity = 4.7174711, chemical hardness = 2.9348356, chemical softness = 0.34073459 eV\u207b\u00b9, electrophilicity index = 3.7914447.\n\n**Total electronic energy:** \u2212114.55325 Hartree (= \u22123117.1528 eV = \u221271883.251 kcal/mol; energy zero = electronic energy, bare nuclei + electrons). Note that this absolute energy is method-specific and only comparable to other same-method/same-basis values.\n\n**Warnings:** The result JSON contained **no warnings** (empty warnings \u2014 clean run). All integrity checks passed (energy_finite ok, scf_converged ok, schema_header ok, schema_headline ok).\n\n**Reproducibility**\n- Command: `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <formaldehyde.xyz>`\n- The engine streamed a live `.out` log during the run and wrote the result JSON (live JSON at `/home/erobles/chem-skills/.fidelity_scratch/tmp5rj1xyp2/live.json`).\n\nNo experimental/literature comparison is offered here (provenance \u2260 validation); ask if you'd like one and I'll verify a source first."
+}

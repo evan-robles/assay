@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.35,
+    "llm_s": 16.77,
+    "engine_s": 4.58,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26227,
+    "completion_tokens": 1170,
+    "total_tokens": 27397
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene frontier orbitals** \u2014 computed with DFT **B3LYP/def2-TZVP** (chemkit tier `standard`) using **PySCF**, gas phase, charge 0, multiplicity 1. Geometry: user-supplied fixed XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz` (6 atoms); this was a frontier-orbital calculation at that geometry, not a geometry optimization. SCF converged in 6 cycles.\n\nResult from chemkit:\n- HOMO = -7.6155818 eV\n- LUMO = -0.17986527 eV\n- HOMO-LUMO gap = **7.4357165 eV**\n- Total electronic energy = -78.623486 hartree = -2139.4541 eV\n\nNo warnings were reported by the chemkit result. Engine integrity trustworthy verdict: **true**. Provenance: **computed**.\n\nReproducibility: chemkit reported this invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp6e48hw7r/live.json`. The tool result did not include a live `.out` log path, so I cannot truthfully report one."
+}

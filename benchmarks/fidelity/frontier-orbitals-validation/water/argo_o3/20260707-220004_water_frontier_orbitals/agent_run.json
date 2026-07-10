@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.43,
+    "llm_s": 19.49,
+    "engine_s": 3.94,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25396,
+    "completion_tokens": 1845,
+    "total_tokens": 27241
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital gap (HOMO\u2013LUMO)\nMethod provenance (property, level, geometry, environment, etc.):\n\u2022 Property: Kohn\u2013Sham HOMO and LUMO orbital energies and their gap (eV).\n\u2022 Level of theory: DFT, tier `standard` \u2261 B3LYP/def2-TZVP with RI (density-fitting) in PySCF  (backend reported in JSON).\n\u2022 Geometry provenance: user-supplied structure file \u201c/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz\u201d; single-point calculation \u2014 geometry not re-optimized at DFT (notation: DFT//input-xyz).\n\u2022 Solvent / environment: gas phase (no implicit solvation model invoked).\n\u2022 Charge = 0\u2003Multiplicity = 1 (closed-shell singlet; RHF/RKS reference).\n\u2022 Software: PySCF (via chemkit frontier-orbitals skill; cli shown below).\n\u2022 SCF convergence: converged in 7 cycles; no warnings were reported.\n\nHeadline numerical result\nHOMO = \u22128.603 718 3 eV\nLUMO =  +0.336 950 37 eV\nHOMO\u2013LUMO gap = 8.940 668 7 eV\n\nReproducibility\nCLI invocation recorded by chemkit (see JSON field `cli_invocation`):\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpalk3b2xz/live.json\nA live engine log was written during the run (path was displayed when the job launched; please `tail -f` that .out file for full SCF details). The JSON result is stored at /home/erobles/chem-skills/.fidelity_scratch/tmpalk3b2xz/live.json.\n\nNo warnings were emitted by the engine (result JSON `warnings` array was empty; SCF converged: true)."
+}

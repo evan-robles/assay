@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 19.46,
+    "llm_s": 10.85,
+    "engine_s": 8.61,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 46634,
+    "completion_tokens": 1184,
+    "total_tokens": 47818
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbital HOMO\u2013LUMO gap** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, density-fit RKS) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `.xyz` file, single-point (not relaxed). SCF converged in 9 cycles. **HOMO\u2013LUMO gap = 6.257 eV** (Koopmans-style orbital energy gap, not an excitation energy). HOMO energy = \u22126.360 eV, LUMO energy = \u22120.102 eV. Integrity status: OK, trustworthy. Command: `frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz`."
+}

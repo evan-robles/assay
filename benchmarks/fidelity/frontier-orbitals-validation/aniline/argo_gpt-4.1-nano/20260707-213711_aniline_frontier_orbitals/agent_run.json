@@ -1,0 +1,38 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.66,
+    "llm_s": 7.42,
+    "engine_s": 13.24,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39970,
+    "completion_tokens": 791,
+    "total_tokens": 40761
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.30482,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [
+      "energy_finite: total/electronic energy = -7829.1453244761215 (must be a finite number)",
+      "scf_converged: True (SCF converged)",
+      "schema_header: present",
+      "schema_headline: the HOMO-LUMO gap = 5.3048 eV (present and numeric)"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "calculated"
+  },
+  "prose": "The frontier orbitals calculation on aniline was performed using DFT with the B3LYP functional and the def2-TZVP basis set, in the gas phase, following the chemkit standard tier. The exact command used was: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz`. The calculation converged SCF in 9 cycles, and the main result is the HOMO-LUMO gap of approximately 5.30 eV (HOMO at -5.55 eV, LUMO at -0.25 eV). Warnings: energy_finite: total/electronic energy = -7829.1453244761215 (must be a finite number); scf_converged: True; schema_header: present; schema_headline: the HOMO-LUMO gap = 5.3048 eV (present and numeric). The method used for this calculation was DFT with B3LYP functional and def2-TZVP basis set, in the gas phase."
+}

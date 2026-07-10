@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.09,
+    "llm_s": 18.36,
+    "engine_s": 10.73,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26853,
+    "completion_tokens": 312,
+    "total_tokens": 27165
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital calculation for benzene has completed successfully.\n\n**Calculation Details:**\n*   **Property:** Frontier molecular orbital energies (HOMO/LUMO).\n*   **Level of Theory:** DFT, using the tier `standard` (B3LYP functional with the def2-TZVP basis set and density-fitting).\n*   **Geometry:** The calculation was a single-point evaluation performed on the user-provided geometry (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz`).\n*   **Environment:** Gas phase.\n*   **Charge & Multiplicity:** Assumed neutral singlet (charge 0, multiplicity 1).\n*   **Software:** The calculation was performed using the PySCF engine.\n*   **Convergence:** The SCF calculation converged in 8 cycles. No warnings were reported by the engine.\n\n**Results:**\n*   **HOMO Energy:** -7.0468 eV\n*   **LUMO Energy:** -0.41575 eV\n*   **HOMO-LUMO Gap:** 6.6311 eV"
+}

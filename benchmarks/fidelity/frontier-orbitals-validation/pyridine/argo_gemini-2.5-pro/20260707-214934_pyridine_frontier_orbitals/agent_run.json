@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.61,
+    "llm_s": 12.75,
+    "engine_s": 11.86,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26597,
+    "completion_tokens": 429,
+    "total_tokens": 27026
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital analysis of pyridine was completed using DFT at the B3LYP/def2-TZVP level of theory (tier `standard`) in the gas phase, as requested. The calculation was performed on the geometry provided in `pyridine.xyz`. The calculation converged successfully in 10 SCF cycles.\n\nThe computed frontier orbital energies are:\n*   **HOMO:** -7.2526 eV\n*   **LUMO:** -1.1128 eV\n*   **HOMO-LUMO gap:** 6.1398 eV\n\nThe method used was DFT with the B3LYP functional and def2-TZVP basis set, as implemented in the PySCF program. The molecule was treated as a neutral species (charge 0) in the singlet state (multiplicity 1). No warnings were reported by the tool."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.4,
+    "llm_s": 16.08,
+    "engine_s": 4.32,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 38621,
+    "completion_tokens": 1157,
+    "total_tokens": 39778
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance\u2014Frontier-orbital gap (Koopmans HOMO\u2013LUMO gap, eV)\n\u2022 Level of theory: DFT, tier `standard` (B3LYP/def2-TZVP with density fitting) in PySCF v <engine default>\n\u2022 Geometry provenance: user-supplied O2 structure at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz; no re-optimization (single-point DFT on that fixed geometry).\n\u2022 Environment: gas phase (no implicit solvent).\n\u2022 Charge 0, multiplicity 3 (open-shell triplet handled with UKS).\n\u2022 SCF converged in 7 cycles; no warnings reported by the engine. Integrity check status: ok (trustworthy = true).\n\nResult\nHOMO = \u20138.8739616 eV\nLUMO = \u20133.5859031 eV\n\u2192 HOMO\u2013LUMO gap = 5.2880586 eV\n\nThe calculation was executed with chemkit\u2019s `frontier-orbitals` skill (single-point DFT) using the command recorded in the run metadata:\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 3 --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz --out \u2026/live.json\nA live PySCF log was streamed during execution to the working directory (path reported at launch; tail-able for full SCF details)."
+}

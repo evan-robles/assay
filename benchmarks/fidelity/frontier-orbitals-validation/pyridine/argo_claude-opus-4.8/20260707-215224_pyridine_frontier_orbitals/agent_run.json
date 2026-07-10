@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.99,
+    "llm_s": 17.06,
+    "engine_s": 11.94,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38671,
+    "completion_tokens": 1473,
+    "total_tokens": 40144
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital analysis \u2014 DFT, tier `standard` (B3LYP/def2-TZVP), PySCF, gas phase, charge 0, multiplicity 1.**\n\n**Method / provenance block**\n- **Property:** frontier orbital energies (HOMO, LUMO) and HOMO\u2013LUMO gap; plus Koopmans-derived descriptors.\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** (tier `standard`); density fitting is on by default in chemkit (RI approximation to the two-electron integrals).\n- **Geometry provenance:** user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` (11 atoms: N, 5\u00d7C, 5\u00d7H). Used **as-is** \u2014 this was a single point at the supplied geometry, not re-optimized at B3LYP/def2-TZVP.\n- **Solvent / environment:** **gas phase** (no implicit solvation).\n- **Charge / multiplicity:** 0 / 1 (neutral closed-shell singlet; RKS).\n- **Software:** PySCF. SCF **converged** in 10 cycles.\n\n**Results (frontier orbitals, eV)**\n- **HOMO** (index 20) = **\u22127.2525992 eV**\n- **LUMO** (index 21) = **\u22121.112786 eV**\n- **HOMO\u2013LUMO gap = 6.1398131 eV** (headline value; a Koopmans-style orbital gap, not an excitation energy)\n- HOMO\u22121 = \u22127.4731156 eV, HOMO\u22122 = \u22128.0425195 eV; LUMO+1 = \u22120.67231536 eV, LUMO+2 = 1.1781069 eV\n- 216 orbitals total, 21 occupied.\n\n**Koopmans-derived descriptors (eV):** vertical IP = 7.2525992; vertical EA = 1.112786; electronegativity = 4.1826926; chemical hardness = 3.0699066; chemical softness = 0.32574281 eV\u207b\u00b9; electrophilicity index = 2.8494218.\n\n**Total electronic energy:** \u2212248.3782 hartree (\u22126758.7152 eV; \u2212155859.68 kcal/mol). Note that DFT total energies are not directly comparable to energies from other methods (xtb/PM7/HF), which define their own energy origins.\n\n**Convergence & warnings:** SCF converged (10 cycles). The result JSON contained **no `warnings` array / no warnings reported** \u2014 this was a clean run. Integrity engine verdict: **status \"ok\", trustworthy: true** (energy finite \u2713, SCF converged \u2713, schema header \u2713, schema headline \u2713).\n\n**Reproducibility:** command run was\n`cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <pyridine.xyz> --out .../live.json`.\n\nNo experimental or literature comparison is offered; ask if you'd like one and I'll verify a source first."
+}

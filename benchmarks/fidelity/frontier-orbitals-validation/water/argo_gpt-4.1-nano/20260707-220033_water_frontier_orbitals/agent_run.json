@@ -1,0 +1,38 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 9.66,
+    "llm_s": 5.79,
+    "engine_s": 3.87,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39730,
+    "completion_tokens": 561,
+    "total_tokens": 40291
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.94067,
+    "n_atoms": 3,
+    "smiles": null,
+    "warnings": [
+      "energy_finite: total/electronic energy = -2080.661531087318 (must be a finite number)",
+      "scf_converged: True (SCF must converge for the energy/orbitals to be meaningful)",
+      "schema_header: present",
+      "schema_headline: headline field 'homo_lumo_gap_eV' = 8.940668677615305 (present and numeric)"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "calculated"
+  },
+  "prose": "The frontier-orbitals calculation on water using DFT with the B3LYP functional and def2-TZVP basis set (tier 'standard') in the gas phase has been completed. The total electronic energy is approximately -76.4629 Hartree (or -2080.66 eV). The highest occupied molecular orbital (HOMO) energy is about -8.6037 eV, and the lowest unoccupied molecular orbital (LUMO) energy is approximately 0.3370 eV. The HOMO-LUMO gap is approximately 8.94 eV.\n\nThe calculation converged successfully after 7 SCF cycles, and all checks show the result is trustworthy. The method used was `b3lyp/def2-tzvp` in PySCF, with a single-point computation in the gas phase."
+}

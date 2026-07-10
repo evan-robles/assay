@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.87,
+    "llm_s": 30.27,
+    "engine_s": 4.61,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30260,
+    "completion_tokens": 1904,
+    "total_tokens": 32164
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on ethylene (C\u2082H\u2084, 6 atoms) performed at the DFT level using B3LYP/def2-TZVP (tier 'standard', density-fit RKS) in PySCF. Gas phase, charge 0, multiplicity 1. Geometry taken as-is from the user-supplied XYZ file (single-point; no re-optimization at this level). SCF converged in 6 cycles. All integrity checks passed; result flagged trustworthy. No warnings reported.\n\nHeadline result: HOMO\u2013LUMO gap = 7.4357165 eV (HOMO = \u22127.6155818 eV, LUMO = \u22120.17986527 eV). These are Kohn\u2013Sham orbital eigenvalue differences (Koopmans-style), not true vertical excitation energies. Total electronic energy = \u221278.623486 Hartree (B3LYP/def2-TZVP). Absolute energies are defined relative to the bare-nuclei + free-electron origin of this method and must not be compared across different methods or basis sets."
+}

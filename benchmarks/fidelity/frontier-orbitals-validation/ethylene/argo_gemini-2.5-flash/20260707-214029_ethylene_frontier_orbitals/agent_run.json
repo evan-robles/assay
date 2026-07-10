@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 14.27,
+    "llm_s": 9.66,
+    "engine_s": 4.61,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26745,
+    "completion_tokens": 415,
+    "total_tokens": 27160
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Ethylene frontier-orbital gap \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: provided as an XYZ file (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`), the DFT was a single point on this fixed geometry, not re-optimized. SCF converged in 6 cycles.\nHOMO = -7.6155818 eV, LUMO = -0.17986527 eV \u2192 **gap \u2248 7.4357165 eV** (Koopmans-style orbital gap, not an excitation energy).\nNo warnings reported."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.49,
+    "llm_s": 8.82,
+    "engine_s": 4.67,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26610,
+    "completion_tokens": 452,
+    "total_tokens": 27062
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde frontier-orbital gap** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz` (fixed geometry). SCF converged in 8 cycles.\n\nHOMO energy = -7.6523067 eV\nLUMO energy = -1.7826355 eV\n**HOMO\u2013LUMO gap \u2248 5.8696712 eV** (Koopmans-style orbital gap).\n\nThe calculation was logged live to `/home/erobles/chem-skills/.fidelity_scratch/tmp7qt6gtv_/live.json`.\n\nNo warnings reported."
+}

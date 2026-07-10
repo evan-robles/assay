@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.24,
+    "llm_s": 17.03,
+    "engine_s": 4.22,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38727,
+    "completion_tokens": 1437,
+    "total_tokens": 40164
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen (O\u2082) frontier-orbital analysis** \u2014 computed with the chemkit `frontier-orbitals` skill.\n\n**Method Provenance Block**\n- **Property:** Frontier molecular orbital energies (HOMO/LUMO) and derived HOMO\u2013LUMO gap.\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (PySCF, with density fitting on by default). Because the system is open-shell (multiplicity 3), this is a spin-unrestricted **UKS** calculation.\n- **Geometry provenance:** User-supplied `.xyz` (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz), 2 atoms (O, O). Used **as-is** \u2014 the frontier-orbitals skill performs a single-point on the given geometry; it was not re-optimized.\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** charge 0, **multiplicity 3** (triplet, as requested \u2014 O\u2082's ground state), open-shell UKS.\n- **Software:** PySCF.\n- **Convergence:** SCF **converged** in 7 cycles (`scf_converged: true`).\n\n**Results (all energies in eV):**\n- HOMO = **\u22128.8739616 eV** (index 15, occupation 1.0)\n- LUMO = **\u22123.5859031 eV** (index 16, occupation 0.0)\n- **HOMO\u2013LUMO gap = 5.2880586 eV** (headline value)\n- Total electronic energy = \u2212150.38872 Hartree (\u22124092.2855 eV; \u221294370.346 kcal/mol). Note: this is a bare electronic energy with its own DFT zero \u2014 only directly comparable to other same-method/same-basis energies.\n- Koopmans-derived quantities: vertical IP = 8.8739616 eV, vertical EA = 3.5859031 eV, electronegativity = 6.2299323 eV, chemical hardness = 2.6440293 eV, chemical softness = 0.37821064 eV\u207b\u00b9, electrophilicity index = 7.3395664 eV. These are Koopmans-style orbital-based estimates, not excitation energies.\n\n**Integrity / warnings:** The engine reports `integrity.status = \"ok\"` and `trustworthy = true` (all checks passed: energy finite, SCF converged, schema header and headline present). The result JSON contained **no warnings** (warnings array empty \u2014 clean run).\n\n**Reproducibility:** Command run: `cli.py frontier --method dft --mult 3 --functional b3lyp --basis def2-tzvp --tier standard oxygen.xyz`. No experimental comparison is offered; ask if you would like one verified against a source."
+}

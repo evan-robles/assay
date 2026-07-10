@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.76,
+    "llm_s": 11.81,
+    "engine_s": 3.95,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30247,
+    "completion_tokens": 1350,
+    "total_tokens": 31597
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": 3,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water Frontier Orbitals \u2014 DFT B3LYP/def2-TZVP (tier standard), gas phase**\n\nThe frontier-orbital gap (HOMO\u2013LUMO separation) of water was calculated using **DFT with B3LYP functional and def2-TZVP basis set** (tier `standard`, density-fit) in **PySCF**, gas phase, charge 0, multiplicity 1. Geometry: user-supplied water.xyz (3 atoms). **SCF converged in 7 cycles.**\n\n**HOMO\u2013LUMO Gap: 8.941 eV**\n\nDetailed orbital energies:\n- **HOMO (index 4):** \u22128.604 eV (2.0 occupied)\n- **LUMO (index 5):** +0.337 eV (unoccupied)\n- HOMO-1: \u221210.68 eV\n- HOMO-2: \u221214.44 eV\n- LUMO+1: +2.391 eV\n- LUMO+2: +9.597 eV\n\n**Koopmans-model derived properties** (orbital energies used as approximations for ionization/electron-affinity potentials \u2014 these are *not* measured or excited-state quantities):\n- Vertical ionization potential: 8.604 eV\n- Vertical electron affinity: \u22120.337 eV\n- Electronegativity: 4.133 eV\n- Chemical hardness: 4.470 eV\n- Electrophilicity index: 1.911 eV\n\nTotal electronic energy: \u221276.463 Hartree (\u22122080.66 eV).\n\nNo experimental or literature comparison is offered. The reported values are orbital energies, a model-dependent quantity from DFT; they do not directly correspond to measured ionization/attachment energies (though Koopmans' theorem provides a conceptual bridge).\n\n**Integrity status:** \u2713 trustworthy (energy is finite, SCF converged, schema valid)."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 14.18,
+    "llm_s": 5.01,
+    "engine_s": 9.17,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26048,
+    "completion_tokens": 295,
+    "total_tokens": 26343
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The HOMO\u2013LUMO gap of furan was calculated using DFT at the **B3LYP/def2-TZVP** level (tier `standard`) in the gas phase, with no solvent model applied. The calculation employed PySCF as the software backend. The input geometry was read from the file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz`, containing nine atoms. The SCF procedure for this calculation converged successfully within 9 iterations. The calculated HOMO energy is **\u22126.3598 eV**, and the LUMO energy is **\u22120.1024 eV**, giving a HOMO\u2013LUMO gap of **6.2574 eV**. The result is trustworthy as integrity checks reported no issues."
+}

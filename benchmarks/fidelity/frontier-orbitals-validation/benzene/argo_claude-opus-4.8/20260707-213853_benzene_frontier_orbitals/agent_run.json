@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.94,
+    "llm_s": 22.15,
+    "engine_s": 10.79,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38653,
+    "completion_tokens": 1453,
+    "total_tokens": 40106
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier-orbital analysis** \u2014 Property: HOMO/LUMO orbital energies and HOMO\u2013LUMO gap.\n\n**Method-provenance block:**\n- **Level of theory:** DFT, **B3LYP/def2-TZVP** \u2014 this is chemkit tier `standard` (B3LYP/def2-TZVP), run with PySCF. Density fitting (RI) is on by default in chemkit and belongs in the honest methods line.\n- **Geometry provenance:** user-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz`, 12 atoms: C6H6). The calculation is a **single point at that fixed geometry** \u2014 no geometry optimization was performed here.\n- **Solvent / environment:** **gas phase** (no implicit solvation; solvent = null).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (neutral closed-shell singlet, RKS).\n- **Software:** PySCF.\n- **Convergence:** SCF converged (`scf_converged: true`) in 8 cycles.\n\n**Results (all orbital energies in eV):**\n- **HOMO** = \u22127.0468329 eV (index 20)\n- **LUMO** = \u22120.41574728 eV (index 21)\n- **HOMO\u2013LUMO gap = 6.6310857 eV** (headline value) \u2014 this is a Koopmans-style orbital-energy gap, not an optical/excitation energy.\n- Neighboring orbitals: HOMO-1 = \u22127.0473344 eV, HOMO-2 = \u22129.487467 eV; LUMO+1 = \u22120.41513054 eV, LUMO+2 = 1.2021883 eV. (The near-degenerate HOMO/HOMO-1 and LUMO/LUMO+1 pairs reflect benzene's e-symmetry orbital degeneracies.)\n- Total electronic energy: \u2212232.33724 Hartree (\u22126322.2183 eV).\n- Koopmans-derived descriptors: vertical IP = 7.0468329 eV, vertical EA = 0.41574728 eV, electronegativity = 3.7312901 eV, chemical hardness = 3.3155428 eV, chemical softness = 0.30160974 eV\u207b\u00b9, electrophilicity index = 2.0995847 eV.\n\n**Integrity:** engine reports `integrity.status = ok`, `trustworthy = true` (energy finite \u2713, SCF converged \u2713, schema header \u2713, schema headline \u2713).\n\n**Warnings:** the result JSON contained **no warnings** \u2014 no warnings reported.\n\n**Reproducibility:** command that ran \u2014 `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <benzene.xyz>`. A live `<subcommand>_<timestamp>.out` log is streamed to the caller's working directory during the run and can be `tail -f`'d.\n\nNo experimental/literature comparison is offered; the values above are computed, not measured."
+}

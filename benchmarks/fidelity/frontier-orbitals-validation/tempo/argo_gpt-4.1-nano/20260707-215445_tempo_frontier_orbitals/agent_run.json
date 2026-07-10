@@ -1,0 +1,38 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 106.73,
+    "llm_s": 4.49,
+    "engine_s": 102.24,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39910,
+    "completion_tokens": 518,
+    "total_tokens": 40428
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [
+      "energy_finite: total/electronic energy = -13167.145212836269 (must be a finite number)",
+      "scf_converged: True (SCF must converge for the energy/orbitals to be meaningful)",
+      "schema_header: common header present",
+      "schema_headline: headline field 'homo_lumo_gap_eV' = 3.8724203204203587 (present and numeric)"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbitals calculation on TEMPO was performed using the DFT method with the B3LYP functional and the def2-TZVP basis set (tier 'standard') in the gas phase, with a multiplicity of 2. The SCF converged after 12 cycles.\n\nKey results:\n- Total energy: -13,167.145 eV\n- HOMO energy: -6.337544 eV\n- LUMO energy: -2.465124 eV\n- HOMO-LUMO gap: 3.87242 eV\n\nThe method used for this calculation is DFT with the B3LYP functional and def2-TZVP basis set, executed via the chemkit backend PySCF."
+}

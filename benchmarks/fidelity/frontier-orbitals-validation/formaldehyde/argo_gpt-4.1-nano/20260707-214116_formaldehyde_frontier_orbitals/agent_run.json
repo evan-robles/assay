@@ -1,0 +1,38 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 10.06,
+    "llm_s": 5.48,
+    "engine_s": 4.58,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39735,
+    "completion_tokens": 516,
+    "total_tokens": 40251
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.86967,
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [
+      "energy_finite: total/electronic energy = -3117.1527898181016 (must be a finite number)",
+      "scf_converged: True (SCF must converge for the energy/orbitals to be meaningful)",
+      "schema_header: present",
+      "schema_headline: headline field 'homo_lumo_gap_eV' = 5.869671192773208 (present and numeric)"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier-orbitals calculation on formaldehyde using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase was successfully completed. The results indicate: - HOMO energy: \u22127.65231 eV; - LUMO energy: \u22121.78264 eV; - HOMO-LUMO gap: 5.86967 eV. The calculation converged with SCF cycles: 8, and the total electronic energy in eV is approximately \u22123117.1528. The method used was B3LYP/def2-TZVP in PySCF, with the specified tier 'standard' for the geometry."
+}

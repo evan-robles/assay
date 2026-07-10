@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 35.23,
+    "llm_s": 30.7,
+    "engine_s": 4.52,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39087,
+    "completion_tokens": 2958,
+    "total_tokens": 42045
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbitals calculation (HOMO/LUMO energies and gap) for ethylene\n\nMethod provenance\n\n\u2022 Property: HOMO\u2013LUMO energy gap (Koopmans orbital gap) in electron-volts\n\u2022 Level of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP with density-fitting (RI) in PySCF\n\u2022 Geometry provenance: single-point on the fixed Cartesian coordinates supplied in /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz (no re-optimization; DFT//input-xyz)\n\u2022 Solvent / environment: gas phase (no implicit solvation)\n\u2022 Charge = 0, multiplicity = 1 (closed-shell singlet)\n\u2022 Software: PySCF (via chemkit `frontier-orbitals` skill)\n\u2022 SCF convergence: converged in 6 cycles\n\u2022 Engine warnings: no warnings reported\n\u2022 Live .out log was streamed during the run to a timestamped file `frontier-orbitals_<timestamp>.out` in the working directory; it contains full SCF and orbital information.\n\nResult (gas phase, B3LYP/def2-TZVP//input-xyz)\nHOMO energy  = \u20137.6155818 eV\nLUMO energy  = \u20130.17986527 eV\nHOMO\u2013LUMO gap = 7.4357165 eV\n\nThese values are taken directly from the chemkit result JSON (field `homo_lumo_gap_eV`). The calculation used the chemkit `frontier-orbitals` skill with explicit settings: --method dft --functional b3lyp --basis def2-tzvp --tier standard, in the gas phase."
+}

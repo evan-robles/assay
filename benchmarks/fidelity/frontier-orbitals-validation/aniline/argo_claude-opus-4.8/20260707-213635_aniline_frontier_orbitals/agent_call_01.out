@@ -1,0 +1,1343 @@
+# chemkit live log
+# subcommand : frontier
+# args       : --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpm7cx3fn4/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpm7cx3fn4/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/argo_claude-opus-4.8/20260707-213635_aniline_frontier_orbitals
+# started    : 20260707-213642
+# ============================================================
+# agent model: argo:claude-opus-4.8
+#INFO: **** input file is /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py ****
+"""`chemkit` command-line interface."""
+from __future__ import annotations
+import argparse
+import json
+import os
+import sys
+from typing import List, Optional
+
+from . import __version__
+from .io import write_result, cli_invocation
+
+
+def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
+    """Shared CLI options. Set `with_solvent=False` for tasks where the
+    solvent is fixed by the task itself (e.g. logp pins water + octanol)."""
+    if with_input:
+        p.add_argument("input", help="Path to input geometry (.xyz, .sdf, .pdb).")
+    p.add_argument("--method", choices=["xtb", "mopac", "dft", "hf"], required=True)
+    p.add_argument("--charge", type=int, default=0)
+    p.add_argument("--mult", "--multiplicity", dest="multiplicity",
+                   type=int, default=1, help="Spin multiplicity 2S+1 (default 1).")
+    if with_solvent:
+        p.add_argument("--solvent", default=None,
+                       help="Implicit solvent: either a known name (e.g. water, "
+                            "methanol, dmso, hexane) OR a numeric dielectric "
+                            "constant (e.g. 2.0) for a custom solvent. Gas phase "
+                            "if omitted. Note: xtb (ALPB) requires a named "
+                            "solvent — a numeric dielectric needs --method "
+                            "dft, hf, or mopac.")
+        p.add_argument("--solvent-model", dest="solvent_model",
+                       choices=["ddcosmo", "cpcm", "iefpcm"], default="ddcosmo",
+                       help="PySCF continuum solvation model (DFT/HF only): "
+                            "ddcosmo (default, domain-decomposition COSMO), cpcm "
+                            "(C-PCM), or iefpcm (IEF-PCM). MOPAC uses COSMO and "
+                            "xtb uses ALPB regardless; a non-default value with "
+                            "those methods (and a solvent set) is an error.")
+    # PySCF-only knobs; silently ignored for xtb/mopac.
+    p.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None,
+                   help="DFT tier preset (fast=r2SCAN/def2-SVP, standard=B3LYP/def2-TZVP, "
+                        "accurate=wB97M-V/def2-QZVPP). Ignored unless --method dft.")
+    p.add_argument("--functional", default=None,
+                   help="DFT functional override, libxc name (e.g. b3lyp, pbe0, wb97x_v, "
+                        "wb97m_v, wb97x-d3bj). Ignored unless --method dft.")
+    p.add_argument("--basis", default=None,
+                   help="Basis-set override for DFT/HF (e.g. def2-tzvp, cc-pvtz). "
+                        "Ignored unless --method dft or --method hf.")
+    p.add_argument("--density-fit", dest="density_fit", action="store_true",
+                   default=False,
+                   help="Enable density fitting (the RI/resolution-of-identity "
+                        "approximation to the two-electron integrals) for DFT/HF: "
+                        "~3-10x faster SCF for a ~0.1-0.8 mEh error. OFF BY "
+                        "DEFAULT — chemkit uses exact four-center integrals "
+                        "(plain RKS/UKS/RHF/UHF, matching a hand-written PySCF "
+                        "run); pass this flag to opt into the RI speedup. "
+                        "Ignored for xtb/mopac.")
+    p.add_argument("--out", default=None,
+                   help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
+    p.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
+                   help="Explicitly consent to chemkit's silent defaults for "
+                        "consequential knobs the user did not set (DFT "
+                        "tier=standard -> B3LYP/def2-TZVP; HF basis=def2-tzvp; "
+                        "gas phase when no --solvent). Without this flag, a DFT/HF "
+                        "run that omits those knobs is REFUSED so the level of "
+                        "theory is never chosen silently "
+                        "(calculation-reporting-standards non-negotiable #10).")
+    _add_stdout_option(p)
+    _add_gate_option(p)
+    p.add_argument("--verbose", type=int, default=4,
+                   help="PySCF log verbosity (0=silent .. 4=default rich SCF/opt "
+                        "detail .. 5=debug). Streamed to the live .out log; "
+                        "ignored for xtb/mopac.")
+
+
+def _add_gate_option(p):
+    """Add the integrity-gate escape hatch to a subparser.
+
+    By default a result that fails its computation-side integrity checks
+    (non-converged SCF/opt, wrong imaginary-mode count, charge mismatch, …)
+    hard-aborts: the partial result is still written to --out (evidence
+    preserved) but the CLI exits nonzero and the headline number is marked
+    untrustworthy. --allow-unconverged downgrades that abort to a stamped
+    warning and exits 0, for the legitimate 'inspect the failed geometry'
+    workflow. The number is still flagged trustworthy=false."""
+    p.add_argument(
+        "--allow-unconverged", "--no-gate", dest="allow_unconverged",
+        action="store_true", default=False,
+        help="Downgrade the integrity hard-abort to a stamped warning and exit "
+             "0 (result marked status=warning, trustworthy=false, "
+             "gate_bypassed=true). Use ONLY to inspect a failed geometry "
+             "(collapsed TS, non-converged opt) — the headline number is NOT "
+             "trustworthy.",
+    )
+
+
+def _add_stdout_option(p):
+    """Add the --stdout channel selector to a subparser.
+
+    Controls what the CLI prints to fd 1 (which the MCP server / skill client
+    captures into the agent's context). The result JSON is ALWAYS written to
+    the --out file regardless of this flag; --stdout only governs the stdout
+    copy, so choosing 'path' avoids re-ingesting the full blob into context
+    (calculation-reporting-standards §9.1).
+
+      json  full indented result JSON on stdout (legacy default; verbose)
+      path  a compact one-line pointer ({"out":...,"converged":...,"warnings":[...]})
+      none  nothing on stdout (the file is still written; paths still go to stderr)
+    """
+    p.add_argument(
+        "--stdout", choices=["json", "path", "none"], default="json",
+        help="What to print on stdout. 'json' = full result (default), "
+             "'path' = compact one-line pointer to the --out file plus "
+             "convergence/warnings, 'none' = silent. The --out JSON file is "
+             "always written either way. Use 'path' to keep the full blob out "
+             "of an agent's context and read back fields with jq.",
+    )
+
+
+def _compact_pointer(result: dict, out_path: str) -> str:
+    """Build the one-line stdout summary for --stdout path.
+
+    Surfaces only the fields an agent needs to decide what to read back with
+    jq: where the file is, whether it converged, and any warnings (which must
+    NEVER be dropped, per calculation-reporting-standards §7/§9.1). Everything
+    else stays in the on-disk JSON.
+    """
+    summary: dict = {"out": out_path}
+    # Integrity verdict first — the headline "is this number safe to quote" bit.
+    integ = result.get("integrity")
+    if isinstance(integ, dict):
+        summary["status"] = integ.get("status")
+        summary["trustworthy"] = integ.get("trustworthy")
+        failed = [c.get("name") for c in integ.get("checks", []) if not c.get("ok")]
+        if failed:
+            summary["failed_checks"] = failed
+    # Convergence may live under different keys depending on the task.
+    for key in ("converged", "scf_converged"):
+        if key in result:
+            summary[key] = result[key]
+            break
+    cs = result.get("code_specific")
+    if "converged" not in summary and "scf_converged" not in summary and isinstance(cs, dict):
+        if "scf_converged" in cs:
+            summary["scf_converged"] = cs["scf_converged"]
+    # Always carry warnings through so a caveat is never silently lost.
+    warnings = result.get("warnings")
+    if warnings:
+        summary["warnings"] = warnings
+    # A couple of cheap, near-universal headline numbers when present, so the
+    # pointer is informative without the agent needing a second read.
+    for key in ("total_energy_eV",):
+        if key in result:
+            summary[key] = result[key]
+    return json.dumps(summary, default=str)
+
+
+def _add_common(p):
+    """Back-compat shim — existing subparsers continue to use this."""
+    _add_chem_options(p)
+
+
+def _default_out(input_path: str, task: str, method: str) -> str:
+    stem = os.path.splitext(os.path.basename(input_path))[0]
+    return os.path.abspath(f"{stem}_{task}_{method}.json")
+
+
+def _resolve_out_path(args, result: dict) -> str:
+    """Compute the result JSON path for any task from `args` (plus, for build,
+    the result's xyz_path). Works whether the result came back normally OR was
+    carried out of an IntegrityError — so a failed run still lands on disk with
+    a deterministic name. Mirrors the per-task naming the success path used."""
+    if args.out:
+        return args.out
+    if args.task == "rxn-energy":
+        from .tasks.reaction_energy import _parse_species_spec
+        first_path, _, _, _ = _parse_species_spec(args.reactant[0])
+        return _default_out(first_path, args.task, args.method)
+    if args.task == "pka":
+        return _default_out(args.ha, args.task, args.method)
+    if args.task == "profile":
+        return _default_out(args.reactant, args.task, args.method)
+    if args.task == "build":
+        xyz = (result or {}).get("xyz_path")
+        if xyz:
+            return os.path.abspath(f"{os.path.splitext(xyz)[0]}_build.json")
+        # Failure before the xyz was produced — fall back to a name from input.
+        return os.path.abspath(f"{str(getattr(args, 'molecule', 'build'))}_build.json")
+    if args.task == "resolve":
+        # name->SMILES has no input file or method; name it after the query.
+        import re
+        safe = re.sub(r"[^A-Za-z0-9_-]", "_", str(getattr(args, "name", "molecule")))[:60] or "molecule"
+        return os.path.abspath(f"{safe}_smiles.json")
+    return _default_out(args.input, args.task, args.method)
+
+
+def _dispatch(args, parser, cli: str, pyscf_kwargs: dict):
+    """Run the task selected by args.task and return its result dict.
+
+    Extracted from main() so the dispatch can be wrapped in a single
+    try/except IntegrityError without re-indenting the whole if/elif chain.
+    May raise integrity.IntegrityError (the gate) — main() catches it and still
+    writes the carried partial result before exiting nonzero.
+    """
+    if args.task == "sp":
+        from .tasks import sp
+        return sp.run(args.input, method=args.method, charge=args.charge,
+                      multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+                      **pyscf_kwargs)
+    elif args.task == "opt":
+        from .tasks import opt
+        return opt.run(args.input, method=args.method, charge=args.charge,
+                       multiplicity=args.multiplicity, solvent=args.solvent,
+                       fmax=args.fmax, steps=args.steps, out_xyz=args.xyz_out,
+                       cli=cli, **pyscf_kwargs)
+    elif args.task == "freq":
+        from .tasks import freq
+        return freq.run(args.input, method=args.method, charge=args.charge,
+                        multiplicity=args.multiplicity, solvent=args.solvent,
+                        temperature_K=args.temperature, pressure_Pa=args.pressure,
+                        geometry=args.geometry, symmetrynumber=args.symmetry,
+                        preopt=args.preopt, preopt_fmax=args.preopt_fmax,
+                        auto_confsearch=args.auto_confsearch,
+                        cli=cli, **pyscf_kwargs)
+    elif args.task == "binding":
+        from .tasks import binding
+        return binding.run(args.input, args.monomer, method=args.method,
+                           charge=args.charge, multiplicity=args.multiplicity,
+                           solvent=args.solvent,
+                           monomer_charges=args.monomer_charge,
+                           monomer_multiplicities=args.monomer_mult, cli=cli,
+                           **pyscf_kwargs)
+    elif args.task == "redox":
+        from .tasks import redox
+        return redox.run(args.input, method=args.method,
+                         oxidized_charge=args.ox_charge,
+                         reduced_charge=args.red_charge,
+                         oxidized_multiplicity=args.ox_mult,
+                         reduced_multiplicity=args.red_mult,
+                         solvent=args.solvent, reference=args.ref,
+                         n_electrons=args.n_electrons,
+                         mode=args.mode, fmax=args.fmax,
+                         temperature_K=args.temperature,
+                         pressure_Pa=args.pressure, cli=cli,
+                         **({"e_abs_she": args.e_abs_she}
+                            if args.e_abs_she is not None else {}),
+                         **pyscf_kwargs)
+    elif args.task == "confsearch":
+        from .tasks import confsearch
+        return confsearch.run(
+            args.input, method=args.method, solvent=args.solvent,
+            n_max_conformers=args.max_conformers,
+            postopt=args.postopt,
+            postopt_rmsd=args.postopt_rmsd,
+            postopt_ewin=args.postopt_ewin,
+            charge=args.charge, multiplicity=args.multiplicity,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "frontier":
+        from .tasks import frontier
+        return frontier.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            nfrontier=args.nfrontier, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "electrostatics":
+        from .tasks import electrostatics
+        return electrostatics.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent, cli=cli,
+            **pyscf_kwargs,
+        )
+    elif args.task == "solvation":
+        if not args.solvent:
+            parser.error("solvation requires --solvent (e.g. --solvent water)")
+        from .tasks import solvation
+        return solvation.run(
+            args.input, method=args.method, solvent=args.solvent,
+            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
+            **pyscf_kwargs,
+        )
+    elif args.task == "logp":
+        from .tasks import logp
+        return logp.run(
+            args.input, method=args.method,
+            charge=args.charge, multiplicity=args.multiplicity, cli=cli,
+            **pyscf_kwargs,
+        )
+    elif args.task == "fukui":
+        from .tasks import fukui
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return fukui.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            cation_mult=args.cation_mult, anion_mult=args.anion_mult,
+            plot=args.plot, out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "ts":
+        from .tasks import ts
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return ts.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            steps=args.steps, verify_freq=args.verify_freq,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "irc":
+        from .tasks import irc
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return irc.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            max_points=args.max_points, step=args.step,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "rxn-energy":
+        from .tasks import reaction_energy
+        return reaction_energy.run(
+            reactants=args.reactant, products=args.product,
+            method=args.method, mode=args.mode, solvent=args.solvent,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "profile":
+        from .tasks import reaction_profile as profile_task
+        out_path_pre = (
+            args.out
+            or _default_out(args.reactant, args.task, args.method)
+        )
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return profile_task.run(
+            reactant_xyz=args.reactant, product_xyz=args.product,
+            ts_guess_xyz=args.ts_guess, method=args.method,
+            charge=args.charge, multiplicity=args.multiplicity,
+            solvent=args.solvent,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            rmsd_tol=args.rmsd_tol, skip_irc=args.skip_irc,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "pka":
+        from .tasks import pka as pka_task
+        return pka_task.run(
+            ha_xyz=args.ha, a_minus_xyz=args.a_minus,
+            method=args.method, mode=args.mode, solvent=args.solvent,
+            ha_charge=args.ha_charge, ha_multiplicity=args.ha_mult,
+            a_minus_multiplicity=args.a_minus_mult,
+            temperature_K=args.temperature, pressure_Pa=args.pressure,
+            hplus_reference=args.hplus_reference,
+            ref_ha_xyz=args.ref_ha, ref_a_minus_xyz=args.ref_a_minus,
+            ref_pka=args.pka_ref,
+            ref_ha_charge=args.ref_ha_charge,
+            ref_ha_multiplicity=args.ref_ha_mult,
+            ref_a_minus_multiplicity=args.ref_a_minus_mult,
+            cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "build":
+        import re
+        from .tasks import build as build_task
+        if args.out_xyz:
+            out_xyz = args.out_xyz
+        else:
+            safe = re.sub(r"[^A-Za-z0-9_-]", "_", args.smiles)[:60] or "molecule"
+            out_xyz = os.path.abspath(f"{safe}.xyz")
+        return build_task.run(
+            molecule=args.smiles, out_xyz=out_xyz, name=args.name,
+            opt_method=args.opt_method, opt_solvent=args.solvent,
+            opt_charge=args.charge, opt_multiplicity=args.multiplicity,
+            tier=args.tier, functional=args.functional, basis=args.basis,
+            density_fit=getattr(args, "density_fit", False),
+            solvent_model=getattr(args, "solvent_model", "ddcosmo"),
+            cli=cli,
+            allow_unconverged=pyscf_kwargs.get("allow_unconverged", False),
+        )
+    elif args.task == "resolve":
+        from .tasks import resolve_name
+        return resolve_name.run(
+            name=args.name, cli=cli,
+            allow_unconverged=pyscf_kwargs.get("allow_unconverged", False),
+        )
+    elif args.task == "orbitals":
+        from .tasks import orbitals
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        cubes_list = [c.strip() for c in (args.cubes or "").split(",") if c.strip()]
+        return orbitals.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            cubes=cubes_list, grid=args.grid,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    elif args.task == "scan":
+        from .tasks import scan
+        dihedral_tuple = None
+        if args.dihedral:
+            parts = [p.strip() for p in args.dihedral.split(",")]
+            if len(parts) != 4:
+                parser.error("--dihedral must be 4 comma-separated atom indices")
+            try:
+                one_based = tuple(int(p) for p in parts)
+            except ValueError:
+                parser.error("--dihedral atom indices must be integers")
+            if any(k < 1 for k in one_based):
+                parser.error("--dihedral atom indices are 1-based (must be >= 1)")
+            dihedral_tuple = tuple(k - 1 for k in one_based)
+        out_path_pre = args.out or _default_out(args.input, args.task, args.method)
+        out_stem = os.path.splitext(out_path_pre)[0]
+        return scan.run(
+            args.input, method=args.method, charge=args.charge,
+            multiplicity=args.multiplicity, solvent=args.solvent,
+            dihedral=dihedral_tuple, n_steps=args.steps,
+            fmax=args.fmax, opt_steps=args.opt_steps,
+            out_stem=out_stem, cli=cli, **pyscf_kwargs,
+        )
+    else:
+        parser.error(f"Unknown task {args.task!r}")
+        return None
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """Construct the full chemkit engine argument parser.
+
+    Extracted from main() so the subcommand set is introspectable without
+    parsing argv — used by main(), by the TOOLS<->CLI consistency check
+    (subcommand_names / check_tools_cli_consistency), and by the typed MCP
+    input-schema derivation.
+    """
+    parser = argparse.ArgumentParser(
+        prog="chemkit",
+        description="ASE-based computational chemistry suite (xtb, MOPAC).",
+    )
+    parser.add_argument("--version", action="version", version=f"chemkit {__version__}")
+    sub = parser.add_subparsers(dest="task", required=True)
+
+    p_sp = sub.add_parser("sp", help="Single-point energy.")
+    _add_common(p_sp)
+
+    p_opt = sub.add_parser("opt", help="Geometry optimization.")
+    _add_common(p_opt)
+    p_opt.add_argument("--fmax", type=float, default=0.05,
+                       help="Force convergence threshold in eV/Å (default 0.05).")
+    p_opt.add_argument("--steps", type=int, default=500)
+    p_opt.add_argument("--xyz-out", default=None,
+                       help="Optimized geometry destination. Default: <stem>_<method>_opt.xyz")
+
+    p_freq = sub.add_parser("freq", help="Opt-freq: optimize then vibrational analysis + thermochemistry.")
+    _add_common(p_freq)
+    p_freq.add_argument("--temperature", type=float, default=298.15)
+    p_freq.add_argument("--pressure", type=float, default=101325.0)
+    p_freq.add_argument("--geometry", choices=["monatomic", "linear", "nonlinear"],
+                        default=None,
+                        help="Override molecular geometry (monatomic/linear/nonlinear). "
+                             "If omitted, auto-detected from the input atoms.")
+    p_freq.add_argument("--symmetry", type=int, default=None,
+                        help="Rotational symmetry number σ. If omitted, defaults to "
+                             "1 with a warning — look up σ for your point group "
+                             "(H2O σ=2, NH3 σ=3, CH4/benzene σ=12) to avoid "
+                             "overestimating rotational entropy by R·ln σ.")
+    p_freq.add_argument(
+        "--no-preopt", dest="preopt", action="store_false", default=True,
+        help="Skip the automatic pre-optimization step. By default freq always "
+             "optimizes the input geometry first so the Hessian is taken at a "
+             "true stationary point.",
+    )
+    p_freq.add_argument(
+        "--preopt-fmax", type=float, default=0.001,
+        help="Force convergence (eV/Å) for the pre-opt step (default 0.001, "
+             "tighter than `opt`'s 0.05 because residual forces propagate into "
+             "near-zero imaginary modes).",
+    )
+    p_freq.add_argument(
+        "--auto-confsearch", dest="auto_confsearch", action="store_true",
+        default=False,
+        help="Run an Open Babel conformer search (with PM7 postopt) before the "
+             "freq step and take the lowest-energy minimum as the input geometry. "
+             "Useful for flexible molecules where the user-supplied geometry "
+             "may not be the global minimum; otherwise soft-mode saddles show "
+             "up as spurious imaginary modes.",
+    )
+
+    p_bind = sub.add_parser("binding", help="Binding/interaction energy.")
+    _add_common(p_bind)
+    p_bind.add_argument("--monomer", action="append", required=True,
+                        help="Path to a monomer geometry. Repeat for each fragment.")
+    p_bind.add_argument("--monomer-charge", action="append", type=int, default=None)
+    p_bind.add_argument("--monomer-mult", action="append", type=int, default=None)
+
+    p_redox = sub.add_parser("redox", help="Redox potential vs SHE / Ag-AgCl / Fc+-Fc.")
+    _add_common(p_redox)
+    p_redox.add_argument("--ox-charge", type=int, required=True)
+    p_redox.add_argument("--red-charge", type=int, required=True)
+    p_redox.add_argument("--ox-mult", type=int, default=1)
+    p_redox.add_argument("--red-mult", type=int, default=2)
+    p_redox.add_argument("--ref", choices=["SHE", "Ag/AgCl", "Fc+/Fc"], default="SHE")
+    p_redox.add_argument("--n-electrons", type=int, default=1)
+    p_redox.add_argument(
+        "--mode", choices=["adiabatic", "vertical", "freq"], default="adiabatic",
+        help=(
+            "How to evaluate the redox free-energy difference. "
+            "adiabatic (default): relax each oxidation state separately, ΔE "
+            "between relaxed geometries (includes reorganization). "
+            "vertical: ΔE with both states on the input geometry (Franck-Condon, "
+            "no relaxation). freq: full ΔG via opt+freq on each state."
+        ),
+    )
+    p_redox.add_argument(
+        "--fmax", type=float, default=0.05,
+        help="Force convergence threshold (eV/Å) for the per-state optimizations "
+             "in --mode adiabatic/freq (default 0.05).",
+    )
+    p_redox.add_argument("--temperature", type=float, default=298.15,
+                         help="Temperature (K) for --mode freq thermochemistry.")
+    p_redox.add_argument("--pressure", type=float, default=101325.0,
+                         help="Pressure (Pa) for --mode freq thermochemistry.")
+    p_redox.add_argument(
+        "--e-abs-she", type=float, default=None,
+        help="Absolute potential of SHE in volts used to place results on the "
+             "SHE scale (default 4.281; literature spans ~4.28–4.44 V depending "
+             "on convention). This is a systematic offset on every reported "
+             "potential — set it to match your reference convention.",
+    )
+
+    p_conf = sub.add_parser("confsearch", help="Conformer search via Open Babel (confab).")
+    _add_common(p_conf)
+    p_conf.add_argument("--max-conformers", type=int, default=20)
+    p_conf.add_argument(
+        "--postopt", choices=["none", "mopac"], default="mopac",
+        help=(
+            "Re-optimize CREST conformers with another method to recover "
+            "shallow minima that GFN2-xTB smooths over. 'mopac' uses PM7 "
+            "(default). Pass 'none' to skip."
+        ),
+    )
+    p_conf.add_argument(
+        "--postopt-rmsd", type=float, default=0.25,
+        help="RMSD threshold (Å) for deduping post-optimized conformers (default 0.25).",
+    )
+    p_conf.add_argument(
+        "--postopt-ewin", type=float, default=6.0,
+        help="Energy window (kcal/mol) to keep after post-optimization (default 6.0).",
+    )
+
+    p_front = sub.add_parser(
+        "frontier",
+        help="Frontier molecular orbital energies + HOMO-LUMO gap (no opt).",
+    )
+    _add_common(p_front)
+    p_front.add_argument(
+        "--nfrontier", type=int, default=3,
+        help="Number of occupied & virtual orbitals on each side of the gap "
+             "to report (default 3).",
+    )
+
+    p_elst = sub.add_parser(
+        "electrostatics",
+        help="Dipole + atomic partial charges (single-point, no opt).",
+    )
+    _add_common(p_elst)
+
+    p_solv = sub.add_parser(
+        "solvation",
+        help="ΔG_solv = E(solvated) − E(gas) at fixed geometry (electronic only).",
+    )
+    _add_common(p_solv)
+
+    p_logp = sub.add_parser(
+        "logp",
+        help="logP from ΔG_solv(water) − ΔG_solv(octanol). Neutral species only.",
+    )
+    _add_chem_options(p_logp, with_solvent=False)
+
+    p_prof = sub.add_parser(
+        "profile",
+        help="Reaction profile: opt(R) + opt(P) + TS search + freq×3 + IRC "
+             "connectivity check + ΔE/ΔH/ΔG diagram PNG.",
+    )
+    p_prof.add_argument("--reactant", required=True, help="Reactant xyz.")
+    p_prof.add_argument("--product", required=True, help="Product xyz.")
+    p_prof.add_argument("--ts-guess", dest="ts_guess", required=True,
+                        help="TS guess xyz (often from /conformational_analysis).")
+    p_prof.add_argument(
+        "--method", choices=["xtb", "mopac", "dft", "hf"], required=True,
+        help="Same method is used for every species in the cycle.",
+    )
+    p_prof.add_argument("--charge", type=int, default=0)
+    p_prof.add_argument("--mult", "--multiplicity", dest="multiplicity",
+                        type=int, default=1)
+    p_prof.add_argument("--solvent", default=None)
+    p_prof.add_argument("--temperature", type=float, default=298.15)
+    p_prof.add_argument("--pressure", type=float, default=101325.0)
+    p_prof.add_argument(
+        "--rmsd-tol", type=float, default=0.5,
+        help="Å threshold for IRC-endpoint connectivity check (default 0.5).",
+    )
+    p_prof.add_argument(
+        "--no-irc", dest="skip_irc", action="store_true", default=False,
+        help="Skip the IRC connectivity check (only the RMSD-based check is "
+             "available for dft/hf anyway, so this is a noop there).",
+    )
+    p_prof.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_prof.add_argument("--functional", default=None)
+    p_prof.add_argument("--basis", default=None)
+    p_prof.add_argument("--density-fit", dest="density_fit", action="store_true",
+                        default=False,
+                        help="Enable DFT/HF density fitting (RI). OFF by default "
+                             "(exact integrals); opts into the ~3-10x SCF speedup.")
+    p_prof.add_argument("--out", default=None)
+    p_prof.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
+                        help="Consent to silent defaults (DFT tier=standard; HF "
+                             "basis=def2-tzvp; gas phase if no --solvent). Without "
+                             "it a DFT/HF run omitting those knobs is refused.")
+    _add_stdout_option(p_prof)
+    _add_gate_option(p_prof)
+
+    p_pka = sub.add_parser(
+        "pka",
+        help="pKa via thermodynamic cycle HA(aq) → A⁻(aq) + H⁺(aq). Requires "
+             "BOTH the protonated and deprotonated xyz files.",
+    )
+    p_pka.add_argument("--ha", required=True, help="xyz of the protonated form (HA).")
+    p_pka.add_argument("--a-minus", dest="a_minus", required=True,
+                       help="xyz of the deprotonated form (A⁻).")
+    p_pka.add_argument(
+        "--method", choices=["xtb", "mopac", "dft", "hf"], required=True,
+        help="Same method is applied to every species in the cycle.",
+    )
+    p_pka.add_argument(
+        "--mode", choices=["absolute", "reference"], default="absolute",
+        help="absolute: uses literature G(H+,aq). reference: uses a known acid "
+             "(--ref-ha, --ref-a-minus, --pka-ref). Reference is far more accurate.",
+    )
+    p_pka.add_argument(
+        "--solvent", default="water",
+        help="Implicit solvent (default 'water' — required for the absolute "
+             "G(H+) reference to apply).",
+    )
+    p_pka.add_argument("--ha-charge", type=int, default=0,
+                       help="Charge of HA (default 0). A⁻ charge is HA charge − 1.")
+    p_pka.add_argument("--ha-mult", type=int, default=1, help="HA multiplicity (default 1).")
+    p_pka.add_argument("--a-minus-mult", type=int, default=1, help="A⁻ multiplicity (default 1).")
+    p_pka.add_argument("--temperature", type=float, default=298.15)
+    p_pka.add_argument("--pressure", type=float, default=101325.0)
+    p_pka.add_argument(
+        "--hplus-reference", default="tissandier_1998",
+        choices=["tissandier_1998", "kelly_2006"],
+        help="Source for G(H+,aq). Tissandier −270.28 kcal/mol (default); "
+             "Kelly −265.9 kcal/mol shifts every pKa by ~1.4 units.",
+    )
+    # Reference-mode args
+    p_pka.add_argument("--ref-ha", default=None, help="Reference acid HA xyz (reference mode).")
+    p_pka.add_argument("--ref-a-minus", default=None, help="Reference base A⁻ xyz (reference mode).")
+    p_pka.add_argument("--pka-ref", type=float, default=None,
+                       help="Known experimental pKa of the reference acid (reference mode).")
+    p_pka.add_argument("--ref-ha-charge", type=int, default=0)
+    p_pka.add_argument("--ref-ha-mult", type=int, default=1)
+    p_pka.add_argument("--ref-a-minus-mult", type=int, default=1)
+    p_pka.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_pka.add_argument("--functional", default=None)
+    p_pka.add_argument("--basis", default=None)
+    p_pka.add_argument("--density-fit", dest="density_fit", action="store_true",
+                       default=False,
+                       help="Enable DFT/HF density fitting (RI). OFF by default "
+                            "(exact integrals); opts into the ~3-10x SCF speedup.")
+    p_pka.add_argument("--out", default=None)
+    p_pka.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
+                       help="Consent to silent DFT/HF defaults (tier=standard / "
+                            "basis=def2-tzvp). Without it a DFT/HF run omitting "
+                            "tier/functional/basis is refused. (pKa already pins "
+                            "solvent=water.)")
+    _add_stdout_option(p_pka)
+    _add_gate_option(p_pka)
+
+    p_build = sub.add_parser(
+        "build",
+        help="Build a 3D xyz from a SMILES string OR a molecule name (Open Babel "
+             "--gen3d; names are resolved online via PubChem/OPSIN/NIST).",
+    )
+    p_build.add_argument(
+        "smiles",
+        help="SMILES string (e.g. 'CCO') or a plain molecule name (e.g. "
+             "'ethanol'). A name is resolved to SMILES online and the source "
+             "is reported.",
+    )
+    p_build.add_argument(
+        "--out-xyz", default=None,
+        help="Destination .xyz path. Default: <input-sanitized>.xyz in cwd.",
+    )
+    p_build.add_argument(
+        "--name", default=None,
+        help="Title comment for the xyz (default: the SMILES string).",
+    )
+    p_build.add_argument(
+        "--opt", dest="opt_method", choices=["xtb", "mopac", "dft", "hf"],
+        default=None,
+        help="Optional QM refinement step after the obabel build. Calls "
+             "`chemkit opt` internally; the QM-relaxed xyz becomes the canonical "
+             "output.",
+    )
+    p_build.add_argument(
+        "--solvent", default=None,
+        help="Implicit solvent for the optional QM step (ignored without --opt). "
+             "A known name (water, hexane, …) OR a numeric dielectric constant "
+             "(e.g. 2.0); xtb requires a name.",
+    )
+    p_build.add_argument(
+        "--solvent-model", dest="solvent_model",
+        choices=["ddcosmo", "cpcm", "iefpcm"], default="ddcosmo",
+        help="PySCF continuum model for the optional dft/hf --opt step "
+             "(ddcosmo default, cpcm, iefpcm). Ignored for xtb/mopac refinement.",
+    )
+    p_build.add_argument(
+        "--charge", type=int, default=None,
+        help="Net charge forwarded to the QM step (default 0).",
+    )
+    p_build.add_argument(
+        "--mult", "--multiplicity", dest="multiplicity", type=int, default=None,
+        help="Spin multiplicity forwarded to the QM step (default 1).",
+    )
+    p_build.add_argument("--tier", choices=["fast", "standard", "accurate"], default=None)
+    p_build.add_argument("--functional", default=None)
+    p_build.add_argument("--basis", default=None)
+    p_build.add_argument("--density-fit", dest="density_fit", action="store_true",
+                         default=False,
+                         help="Enable DFT/HF density fitting (RI) for the optional "
+                              "--opt QM refinement. OFF by default (exact integrals).")
+    p_build.add_argument("--out", default=None, help="Result JSON path.")
+    _add_stdout_option(p_build)
+    _add_gate_option(p_build)
+
+    p_resolve = sub.add_parser(
+        "resolve",
+        help="Resolve a molecule NAME to a SMILES string (PubChem -> OPSIN -> "
+             "NIST WebBook). Pure lookup — no 3D geometry. Use 'build' for an .xyz.",
+    )
+    p_resolve.add_argument(
+        "name",
+        help="Plain molecule name to resolve, e.g. 'caffeine', 'L-alanine', or a "
+             "systematic IUPAC name. Resolved online; the answering source and an "
+             "ACS citation are reported.",
+    )
+    p_resolve.add_argument("--out", default=None, help="Result JSON path.")
+    _add_stdout_option(p_resolve)
+    _add_gate_option(p_resolve)
+
+    p_fukui = sub.add_parser(
+        "fukui",
+        help="Condensed Fukui functions + dual descriptor (atom-resolved reactivity).",
+    )
+    _add_common(p_fukui)
+    p_fukui.add_argument(
+        "--cation-mult", type=int, default=None,
+        help="Multiplicity of the N-1 (cation) state. If omitted, derived from "
+             "--mult: singlet parent → doublet (M+1), higher-spin parent → M-1. "
+             "Override for systems where the high-spin N-1 is the ground state.",
+    )
+    p_fukui.add_argument(
+        "--anion-mult", type=int, default=None,
+        help="Multiplicity of the N+1 (anion) state. If omitted, derived from "
+             "--mult: singlet parent → doublet (M+1), higher-spin parent → M-1.",
+    )
+    p_fukui.add_argument(
+        "--no-plot", dest="plot", action="store_false", default=True,
+        help="Skip the PNG bar chart of f+/f-/dual per atom.",
+    )
+
+    p_ts = sub.add_parser(
+        "ts", help="Transition-state search (locate a first-order saddle).",
+    )
+    _add_common(p_ts)
+    p_ts.add_argument(
+        "--steps", type=int, default=500,
+        help="Max optimizer iterations (default 500).",
+    )
+    p_ts.add_argument(
+        "--verify-freq", dest="verify_freq", action="store_true", default=True,
+        help="Run a frequency calculation on the converged TS to verify it has "
+             "exactly one imaginary mode (the reaction-coordinate direction). "
+             "Default on.",
+    )
+    p_ts.add_argument(
+        "--no-verify-freq", dest="verify_freq", action="store_false",
+        help="Skip the post-TS frequency verification.",
+    )
+
+    p_irc = sub.add_parser(
+        "irc", help="Intrinsic reaction coordinate (walk down from a TS).",
+    )
+    _add_common(p_irc)
+    p_irc.add_argument(
+        "--max-points", type=int, default=40,
+        help="Max IRC points per direction (default 40).",
+    )
+    p_irc.add_argument(
+        "--step", type=float, default=0.05,
+        help="Mass-weighted step size in amu^1/2 * bohr (default 0.05). xtb path only.",
+    )
+
+    p_rxn = sub.add_parser(
+        "rxn-energy",
+        help="Reaction energy ΔE / ΔH / ΔG for reactants → products.",
+    )
+    # rxn-energy has no single 'input' file. Species come from repeated
+    # --reactant / --product flags. Method/solvent/PySCF knobs still apply.
+    _add_chem_options(p_rxn, with_input=False)
+    p_rxn.add_argument(
+        "--reactant", action="append", default=None, required=True,
+        help="Species spec '[COEF*]PATH[,charge=Q][,mult=M]'. Repeat per reactant.",
+    )
+    p_rxn.add_argument(
+        "--product", action="append", default=None, required=True,
+        help="Species spec '[COEF*]PATH[,charge=Q][,mult=M]'. Repeat per product.",
+    )
+    p_rxn.add_argument(
+        "--mode", choices=["sp", "opt", "freq"], default="sp",
+        help="sp: single-point on each input xyz (default). opt: optimize then SP. "
+             "freq: full opt+freq → reports ΔE, ΔH, ΔG.",
+    )
+    p_rxn.add_argument("--temperature", type=float, default=298.15)
+    p_rxn.add_argument("--pressure", type=float, default=101325.0)
+
+    p_scan = sub.add_parser(
+        "scan", help="Relaxed dihedral scan (torsional energy profile).",
+    )
+    _add_common(p_scan)
+    p_scan.add_argument(
+        "--dihedral", default=None,
+        help="Comma-separated 1-based atom indices i,j,k,l defining the dihedral "
+             "to scan (matches the C1, C2, ... labels in plots and filenames). "
+             "If omitted, auto-detects all non-ring rotatable C–C bonds "
+             "(including methyl rotors) and scans each.",
+    )
+    p_scan.add_argument(
+        "--steps", type=int, default=24,
+        help="Number of points around 360° (default 24 = 15° resolution).",
+    )
+    p_scan.add_argument(
+        "--fmax", type=float, default=0.05,
+        help="Per-step force convergence (eV/Å, default 0.05).",
+    )
+    p_scan.add_argument(
+        "--opt-steps", type=int, default=200,
+        help="Max optimizer iterations per scan point (default 200).",
+    )
+
+    p_orb = sub.add_parser(
+        "orbitals",
+        help="Visualize molecular orbitals: write .molden + optional .cube files "
+             "(no PNG — open the files in Avogadro/Jmol/IboView/VMD/Multiwfn).",
+    )
+    _add_common(p_orb)
+    p_orb.add_argument(
+        "--cubes", default="",
+        help="Comma-separated orbital labels to render as .cube files: "
+             "'homo,lumo,homo-1,lumo+2', a 1-based MO index, optionally with "
+             "':alpha' or ':beta' suffix for open-shell. Default empty "
+             "(molden only — fast; cubes evaluate the wavefunction on a 3D grid).",
+    )
+    p_orb.add_argument(
+        "--grid", type=int, default=80,
+        help="Cube grid resolution (default 80; 50 is fine for quick previews, "
+             "120 for publication). Ignored when no --cubes are requested.",
+    )
+
+    return parser
+
+
+def subcommand_names() -> List[str]:
+    """The engine's registered subcommands (e.g. 'sp', 'opt', ...), read from
+    the built parser's subparser map. Single source of truth for the CLI side
+    of the TOOLS<->CLI consistency check."""
+    parser = build_parser()
+    for action in parser._actions:
+        if isinstance(action, argparse._SubParsersAction):
+            return sorted(action.choices.keys())
+    return []
+
+
+def describe_subcommand(subcommand: str) -> List[dict]:
+    """Return a structured argument spec for one engine subcommand, derived from
+    its argparse subparser. Each entry: {name, flag, required, positional, type,
+    choices, default, help}. Used to enrich the MCP tool descriptions so an agent
+    can see the exact valid arguments WITHOUT a `--help` round-trip.
+    """
+    parser = build_parser()
+    sub = None
+    for action in parser._actions:
+        if isinstance(action, argparse._SubParsersAction):
+            sub = action.choices.get(subcommand)
+            break
+    if sub is None:
+        return []
+    spec: List[dict] = []
+    for a in sub._actions:
+        if a.dest in ("help",):
+            continue
+        positional = not a.option_strings
+        # store_true/store_false flags take no value -> type "flag"
+        is_flag = a.nargs == 0 or a.__class__.__name__ in (
+            "_StoreTrueAction", "_StoreFalseAction")
+        typename = ("flag" if is_flag
+                    else getattr(a.type, "__name__", None) or "str")
+        spec.append({
+            "name": a.dest,
+            "flag": (a.option_strings[0] if a.option_strings else None),
+            "positional": positional,
+            "required": bool(a.required) or positional,
+            "type": typename,
+            "choices": list(a.choices) if a.choices else None,
+            "default": a.default,
+            "help": (a.help or "").strip(),
+        })
+    return spec
+
+
+def format_subcommand_args(subcommand: str) -> str:
+    """Render describe_subcommand() as a compact human/agent-readable arg list
+    for embedding in an MCP tool description."""
+    spec = describe_subcommand(subcommand)
+    if not spec:
+        return ""
+    lines = []
+    for s in spec:
+        label = s["name"] if s["positional"] else s["flag"]
+        bits = []
+        if s["positional"]:
+            bits.append("positional")
+        bits.append("required" if s["required"] else "optional")
+        if s["type"] and s["type"] != "str":
+            bits.append(s["type"])
+        if s["choices"]:
+            bits.append("{" + "|".join(map(str, s["choices"])) + "}")
+        if not s["required"] and s["default"] not in (None, False):
+            bits.append(f"default={s['default']}")
+        meta = ", ".join(bits)
+        help_txt = (" — " + s["help"]) if s["help"] else ""
+        lines.append(f"  {label} ({meta}){help_txt}")
+    return "\n".join(lines)
+
+
+def check_tools_cli_consistency(tools_subcommands) -> List[str]:
+    """Cross-check the server's TOOLS subcommand set against the engine's CLI
+    subparsers. Returns a list of human-readable mismatch messages ([] = OK).
+
+    `tools_subcommands` is the iterable of subcommands the MCP TOOLS dict maps
+    to (server.TOOLS values' [0]); passed in to avoid an engine->server import.
+    A TOOLS entry with no engine subparser would break `chemkit <tool>` and the
+    MCP tool silently; a CLI subcommand absent from TOOLS is simply unexposed.
+    """
+    cli = set(subcommand_names())
+    tools = set(tools_subcommands)
+    problems = []
+    for missing in sorted(tools - cli):
+        problems.append(
+            f"TOOLS subcommand {missing!r} has NO engine CLI subparser "
+            f"(chemkit {missing} would fail)")
+    for unexposed in sorted(cli - tools):
+        problems.append(
+            f"engine CLI subcommand {unexposed!r} is not exposed in server.TOOLS")
+    return problems
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    # ------------------------------------------------------------------
+    # Vendor-/harness-proof guard: never let the level of theory be chosen
+    # SILENTLY. This lives in the engine (the Python every calc must pass
+    # through), so it protects calculations under ANY model or harness — not just
+    # those running behind the Claude Code PreToolUse hook. When --method dft/hf
+    # is requested without the consequential knobs, refuse unless the caller has
+    # explicitly consented with --accept-defaults.
+    # (calculation-reporting-standards non-negotiable #10.)
+    # ------------------------------------------------------------------
+    _method = getattr(args, "method", None)
+    _accepted = getattr(args, "accept_defaults", False)
+    if _method in ("dft", "hf") and not _accepted:
+        _has_tier = getattr(args, "tier", None) is not None
+        _has_func = getattr(args, "functional", None) is not None
+        _has_basis = getattr(args, "basis", None) is not None
+        if _method == "dft" and not (_has_tier or _has_func or _has_basis):
+            parser.error(
+                "--method dft was given without --tier/--functional/--basis. "
+                "chemkit would SILENTLY default to tier=standard "
+                "(B3LYP/def2-TZVP, density-fit) — do not choose the level of "
+                "theory silently. Either pass an explicit --tier/--functional/"
+                "--basis, or, only after confirming with the user, pass "
+                "--accept-defaults to consciously accept tier=standard. "
+                "(calculation-reporting-standards non-negotiable #10)"
+            )
+        if _method == "hf" and not _has_basis:
+            parser.error(
+                "--method hf was given without --basis. chemkit would SILENTLY "
+                "default to basis=def2-tzvp — do not choose the level of theory "
+                "silently. Either pass an explicit --basis, or, only after "
+                "confirming with the user, pass --accept-defaults to consciously "
+                "accept def2-tzvp. (calculation-reporting-standards "
+                "non-negotiable #10)"
+            )
+
+    cli = cli_invocation()
+
+    # PySCF-only knobs threaded into every task.run(...) call below.
+    # Tasks that don't use them ignore them; tasks that use dft/hf consume them.
+    # PySCF log verbosity is delivered to the calculator factory via an env var
+    # (read in calculators._build_pyscf) rather than threaded through every
+    # task.run() signature. This keeps `pyscf_kwargs` to the knobs the tasks
+    # actually accept (tier/functional/basis).
+    os.environ["CHEMKIT_PYSCF_VERBOSE"] = str(getattr(args, "verbose", 4))
+    # getattr-guarded: non-QM subcommands (e.g. `resolve`) don't declare these
+    # PySCF knobs, and None is the correct "no level of theory" default for them.
+    pyscf_kwargs = dict(tier=getattr(args, "tier", None),
+                        functional=getattr(args, "functional", None),
+                        basis=getattr(args, "basis", None))
+    # Density fitting is OFF by default (exact integrals); --density-fit opts in.
+    # Threaded through the same shared kwargs so every task.run() receives it.
+    pyscf_kwargs["density_fit"] = getattr(args, "density_fit", False)
+    # Continuum solvation model (PySCF dft/hf): ddcosmo (default) / cpcm / iefpcm.
+    # Threaded through the same shared kwargs, exactly like density_fit.
+    pyscf_kwargs["solvent_model"] = getattr(args, "solvent_model", "ddcosmo")
+    # The integrity gate runs inside every task.run(); thread the escape-hatch
+    # flag through the same shared kwargs so all tasks receive it uniformly. (The
+    # gate itself defaults on; --allow-unconverged downgrades a failure.)
+    pyscf_kwargs["allow_unconverged"] = getattr(args, "allow_unconverged", False)
+
+    # stdout is reserved for the final result JSON only (the MCP server parses
+    # it). Some backends and child binaries write stray text to file descriptor
+    # 1 directly — notably the MOPAC binary's 'MOPAC Job ... ended normally'
+    # banner, and PySCF banners — which would corrupt that JSON. Redirect fd 1
+    # to fd 2 (stderr) for the whole calculation so every stray write lands on
+    # stderr (captured by the live .out log), then restore the real stdout just
+    # before printing the JSON. fd-level dup2 (not just reassigning sys.stdout)
+    # is required because child processes inherit fd 1, not Python's object.
+    _real_stdout_fd = os.dup(1)
+    os.dup2(2, 1)
+
+    # Run the task. The integrity gate (inside task.run) raises IntegrityError on
+    # a failed result by default; catch it so the carried partial result is still
+    # written to --out (evidence preserved) before we exit nonzero.
+    from .integrity import IntegrityError
+    integrity_failed = False
+    try:
+        result = _dispatch(args, parser, cli, pyscf_kwargs)
+        if result is None:   # parser.error path (unknown task) already exited
+            return 2
+        out_path = _resolve_out_path(args, result)
+        write_result(result, out_path)
+    except IntegrityError as e:
+        result = e.result                       # the stamped partial result
+        out_path = _resolve_out_path(args, result)
+        write_result(result, out_path)          # EVIDENCE PRESERVED on disk
+        integrity_failed = True
+
+    # For confsearch, also write the full conformer ensemble as an XYZ next
+    # to the JSON so downstream tools have it without digging into tmp.
+    if args.task == "confsearch":
+        import shutil
+        stem = os.path.splitext(out_path)[0]
+        ensemble_dst = f"{stem}_conformers.xyz"
+        ensemble_src = None
+        post = result.get("postopt")
+        if post and post.get("ensemble_xyz") and os.path.isfile(post["ensemble_xyz"]):
+            ensemble_src = post["ensemble_xyz"]
+        elif result.get("all_conformers_xyz") and os.path.isfile(result["all_conformers_xyz"]):
+            ensemble_src = result["all_conformers_xyz"]
+        if ensemble_src:
+            shutil.copyfile(ensemble_src, ensemble_dst)
+            result["conformers_xyz"] = os.path.abspath(ensemble_dst)
+            # Rewrite the JSON so it records the persistent xyz path.
+            write_result(result, out_path)
+
+    # Restore the real stdout (fd 1) so the result JSON — and ONLY the result
+    # JSON — reaches the parser. Flush any buffered Python stdout writes to the
+    # redirected (stderr) target first so they don't bleed onto stdout.
+    sys.stdout.flush()
+    os.dup2(_real_stdout_fd, 1)
+    os.close(_real_stdout_fd)
+
+    # --stdout selects what reaches fd 1 (captured into the agent context). The
+    # result JSON is always on disk at out_path regardless; 'path'/'none' keep
+    # the full blob out of context (calculation-reporting-standards §9.1).
+    stdout_mode = getattr(args, "stdout", "json")
+    if stdout_mode == "json":
+        print(json.dumps(result, indent=2, default=str))
+    elif stdout_mode == "path":
+        print(_compact_pointer(result, out_path))
+    # 'none': print nothing to stdout (file written, paths still on stderr).
+    print(f"\n# result written to: {out_path}", file=sys.stderr)
+    if args.task == "confsearch" and result.get("conformers_xyz"):
+        print(f"# conformers xyz written to: {result['conformers_xyz']}", file=sys.stderr)
+    if args.task == "scan":
+        for d in result.get("dihedrals", []):
+            for k in ("trajectory", "plot"):
+                if d.get(k):
+                    print(f"# {k}: {d[k]}", file=sys.stderr)
+    if args.task == "fukui" and result.get("plot"):
+        print(f"# plot: {result['plot']}", file=sys.stderr)
+    if args.task == "orbitals":
+        if result.get("molden_path"):
+            print(f"# molden: {result['molden_path']}", file=sys.stderr)
+        if result.get("mgf_path"):
+            print(f"# mgf:    {result['mgf_path']}", file=sys.stderr)
+        for label, path in (result.get("cube_paths") or {}).items():
+            print(f"# cube  {label}: {path}", file=sys.stderr)
+    # Nonzero exit when the integrity gate hard-aborted (result still written).
+    return 1 if integrity_failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+#INFO: ******************** input file end ********************
+
+
+System: uname_result(system='Linux', node='x4717c3s3b0n0', release='5.14.21-150400.24.214-default', version='#1 SMP PREEMPT_DYNAMIC Fri May 15 17:57:09 UTC 2026 (a612482)', machine='x86_64')  Threads 64
+Python 3.12.13 | packaged by conda-forge | (main, Mar  5 2026, 16:50:00) [GCC 14.3.0]
+numpy 2.5.0  scipy 1.18.0  h5py 3.16.0
+Date: Tue Jul  7 21:36:42 2026
+PySCF version 2.13.1
+PySCF path  /home/erobles/.conda/envs/assay_env/lib/python3.12/site-packages/pyscf
+
+[ENV] CHEMKIT_PYSCF_VERBOSE 4
+[CONFIG] conf_file None
+[INPUT] verbose = 4
+[INPUT] num. atoms = 14
+[INPUT] num. electrons = 50
+[INPUT] charge = 0
+[INPUT] spin (= nelec alpha-beta = 2S) = 0
+[INPUT] symmetry False subgroup None
+[INPUT] Mole.unit = Angstrom
+[INPUT] Symbol           X                Y                Z      unit          X                Y                Z       unit  Magmom
+[INPUT]  1 N     -2.404600000000   0.000000000000   0.000500000000 AA   -4.544035439129   0.000000000000   0.000944863062 Bohr   0.0
+[INPUT]  2 C     -0.994100000000  -0.000200000000  -0.000300000000 AA   -1.878576740430  -0.000377945225  -0.000566917837 Bohr   0.0
+[INPUT]  3 C     -0.296900000000   1.207900000000  -0.000300000000 AA   -0.561059686383   2.282600185862  -0.000566917837 Bohr   0.0
+[INPUT]  4 C     -0.296500000000  -1.208000000000  -0.000300000000 AA   -0.560303795934  -2.282789158475  -0.000566917837 Bohr   0.0
+[INPUT]  5 C      1.098000000000   1.208000000000   0.000100000000 AA    2.074919284772   2.282789158475   0.000188972612 Bohr   0.0
+[INPUT]  6 C      1.098400000000  -1.207800000000   0.000100000000 AA    2.075675175222  -2.282411213250   0.000188972612 Bohr   0.0
+[INPUT]  7 C      1.795700000000   0.000200000000   0.000300000000 AA    3.393381201881   0.000377945225   0.000566917837 Bohr   0.0
+[INPUT]  8 H     -0.828900000000   2.155800000000  -0.000300000000 AA   -1.566393984652   4.073871579337  -0.000566917837 Bohr   0.0
+[INPUT]  9 H     -0.828300000000  -2.156100000000  -0.000200000000 AA   -1.565260148977  -4.074438497175  -0.000377945225 Bohr   0.0
+[INPUT] 10 H      1.641100000000   2.148600000000   0.000200000000 AA    3.101229543024   4.060265551240   0.000377945225 Bohr   0.0
+[INPUT] 11 H      1.641700000000  -2.148200000000   0.000200000000 AA    3.102363378698  -4.059509660791   0.000377945225 Bohr   0.0
+[INPUT] 12 H      2.881800000000   0.000400000000   0.000600000000 AA    5.445812745772   0.000755890450   0.001133835675 Bohr   0.0
+[INPUT] 13 H     -2.910900000000  -0.875500000000  -0.000500000000 AA   -5.500803775996  -1.654455222057  -0.000944863062 Bohr   0.0
+[INPUT] 14 H     -2.910700000000   0.875600000000  -0.000600000000 AA   -5.500425830772   1.654644194669  -0.001133835675 Bohr   0.0
+
+nuclear repulsion = 271.10131087742
+number of shells = 105
+number of NR pGTOs = 378
+number of NR cGTOs = 259
+basis = def2-tzvp
+ecp = {}
+CPU time:        17.56
+
+
+******** <class 'pyscf.dft.rks.RKS'> ********
+method = RKS
+initial guess = minao
+damping factor = 0
+level_shift factor = 0
+DIIS = <class 'pyscf.scf.diis.CDIIS'>
+diis_start_cycle = 1
+diis_space = 8
+diis_damp = 0
+SCF conv_tol = 1e-08
+SCF conv_tol_grad = None
+SCF max_cycles = 150
+direct_scf = True
+direct_scf_tol = 1e-13
+chkfile to save SCF result = /tmp/tmpfvh2gmrc
+max_memory 8000 MB (current use 85 MB)
+XC library pyscf.dft.libxc version 7.0.0
+    S. Lehtola, C. Steigemann, M. J.T. Oliveira, and M. A.L. Marques.,  SoftwareX 7, 1–5 (2018)
+XC functionals = b3lyp
+    P. J. Stephens, F. J. Devlin, C. F. Chabalowski, and M. J. Frisch.,  J. Phys. Chem. 98, 11623 (1994)
+radial grids: 
+    Treutler-Ahlrichs [JCP 102, 346 (1995); DOI:10.1063/1.469408] (M4) radial grids
+    
+becke partition: Becke, JCP 88, 2547 (1988); DOI:10.1063/1.454033
+pruning grids: <function nwchem_prune at 0x7fde7837bba0>
+grids dens level: 4
+symmetrized grids: False
+atomic radii adjust function: <function treutler_atomic_radii_adjust at 0x7fde7837bb00>
+small_rho_cutoff = 0
+Set gradient conv threshold to 0.0001
+Initial guess from minao.
+tot grids = 309480
+init E= -288.711947572892
+  HOMO = -0.246636472637228  LUMO = -0.093167762590825
+cycle= 1 E= -287.651347447832  delta_E= 1.06  |g|= 0.493  |ddm|= 3.25
+  HOMO = -0.138461940923918  LUMO = 0.0329737484472492
+cycle= 2 E= -287.623862346964  delta_E= 0.0275  |g|= 0.599  |ddm|= 0.98
+  HOMO = -0.202927008316415  LUMO = -0.00876429179309465
+cycle= 3 E= -287.714806944161  delta_E= -0.0909  |g|= 0.0611  |ddm|= 0.569
+  HOMO = -0.206452437397331  LUMO = -0.00986171740404847
+cycle= 4 E= -287.71487430644  delta_E= -6.74e-05  |g|= 0.0572  |ddm|= 0.0863
+  HOMO = -0.203855064234624  LUMO = -0.00943201156507543
+cycle= 5 E= -287.715767267995  delta_E= -0.000893  |g|= 0.00755  |ddm|= 0.0509
+  HOMO = -0.20415107719603  LUMO = -0.00914442297194158
+cycle= 6 E= -287.715783543948  delta_E= -1.63e-05  |g|= 0.00122  |ddm|= 0.00825
+  HOMO = -0.204071199651935  LUMO = -0.00914809066427415
+cycle= 7 E= -287.715783807569  delta_E= -2.64e-07  |g|= 0.000595  |ddm|= 0.00116
+  HOMO = -0.204099108637756  LUMO = -0.00915023310337966
+cycle= 8 E= -287.71578388924  delta_E= -8.17e-08  |g|= 5.67e-05  |ddm|= 0.00048
+  HOMO = -0.204097230756112  LUMO = -0.00915396327219117
+cycle= 9 E= -287.715783889681  delta_E= -4.41e-10  |g|= 3.44e-05  |ddm|= 6.73e-05
+  HOMO = -0.204097358314286  LUMO = -0.00914890536087798
+Extra cycle  E= -287.71578388927  delta_E= 4.11e-10  |g|= 5.58e-05  |ddm|= 5.08e-05
+converged SCF energy = -287.71578388927
+
+# result written to: /home/erobles/chem-skills/.fidelity_scratch/tmpm7cx3fn4/live.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "frontier_orbitals",
+  "method": "b3lyp/def2-tzvp",
+  "program": "pyscf",
+  "input_file": "/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz",
+  "n_atoms": 14,
+  "atoms": [
+    "N",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpm7cx3fn4/live.json",
+  "total_energy_eV": -7829.145324476115,
+  "total_energy_hartree": -287.7157838892697,
+  "total_energy_kcal_mol": -180544.38022795063,
+  "energy_zero": "electronic energy (bare nuclei + electrons)",
+  "n_orbitals": 259,
+  "n_occupied": 25,
+  "homo_index": 24,
+  "lumo_index": 25,
+  "homo_eV": -5.553772048874412,
+  "lumo_eV": -0.24895439750277698,
+  "homo_lumo_gap_eV": 5.304817651371635,
+  "orbitals": [
+    {
+      "label": "HOMO-2",
+      "index": 22,
+      "energy_eV": -8.404170204010146,
+      "occupation": 2.0
+    },
+    {
+      "label": "HOMO-1",
+      "index": 23,
+      "energy_eV": -6.846194903732227,
+      "occupation": 2.0
+    },
+    {
+      "label": "HOMO",
+      "index": 24,
+      "energy_eV": -5.553772048874412,
+      "occupation": 2.0
+    },
+    {
+      "label": "LUMO",
+      "index": 25,
+      "energy_eV": -0.24895439750277698,
+      "occupation": 0.0
+    },
+    {
+      "label": "LUMO+1",
+      "index": 26,
+      "energy_eV": 0.3075075609615156,
+      "occupation": 0.0
+    },
+    {
+      "label": "LUMO+2",
+      "index": 27,
+      "energy_eV": 0.776176483332727,
+      "occupation": 0.0
+    }
+  ],
+  "koopmans": {
+    "vertical_IP_eV": 5.553772048874412,
+    "vertical_EA_eV": 0.24895439750277698,
+    "electronegativity_eV": 2.901363223188594,
+    "chemical_hardness_eV": 2.6524088256858174,
+    "chemical_softness_per_eV": 0.3770157866751314,
+    "electrophilicity_index_eV": 1.5868422076100468
+  },
+  "scf_converged": true,
+  "scf_cycles": 9,
+  "schema_version": 1,
+  "electronic_energy_eV": -7829.145324476115,
+  "headline_field": "homo_lumo_gap_eV",
+  "headline_value": 5.304817651371635,
+  "headline_units": "eV",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -7829.145324476115 (must be a finite number)"
+      },
+      {
+        "name": "scf_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "scf_converged = True (SCF must converge for the energy/orbitals to be meaningful)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'homo_lumo_gap_eV' = 5.304817651371635 (present and numeric)"
+      }
+    ]
+  }
+}

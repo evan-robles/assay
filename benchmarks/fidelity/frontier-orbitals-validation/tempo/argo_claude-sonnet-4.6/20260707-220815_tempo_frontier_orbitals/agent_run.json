@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 130.27,
+    "llm_s": 29.4,
+    "engine_s": 100.87,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 47138,
+    "completion_tokens": 1776,
+    "total_tokens": 48914
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on TEMPO (2,2,6,6-tetramethylpiperidine-1-oxyl) using DFT at the B3LYP/def2-TZVP level (chemkit tier 'standard') in PySCF, gas phase, charge 0, multiplicity 2 (doublet, UKS open-shell). Geometry taken from the user-supplied .xyz file at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz; used as-is (single-point, not re-optimized at this level). SCF converged in 12 cycles. No warnings reported \u2014 clean run. Integrity check: trustworthy = true.\n\nResults:\n  HOMO (SOMO, index 86): \u22126.3375439 eV\n  LUMO (index 87):       \u22122.4651235 eV\n  HOMO\u2013LUMO gap:          3.8724203 eV  \u2190 headline value\n\nKoopmans' theorem estimates: vertical IP = 6.3375 eV, vertical EA = 2.4651 eV, electronegativity = 4.4013 eV, chemical hardness = 1.9362 eV, chemical softness = 0.5165 eV\u207b\u00b9, electrophilicity index = 5.0025 eV.\n\nTotal electronic energy: \u2212483.88366 Hartree. Occupied orbitals: 87; total orbitals: 898.\n\nCLI invocation: cli.py frontier --method dft --charge 0 --mult 2 --functional b3lyp --basis def2-tzvp --tier standard tempo.xyz"
+}

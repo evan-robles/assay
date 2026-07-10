@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.25,
+    "llm_s": 18.34,
+    "engine_s": 10.91,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38674,
+    "completion_tokens": 1454,
+    "total_tokens": 40128
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier-orbital analysis \u2014 HOMO\u2013LUMO gap**\n\n**Method provenance block**\n- **Property:** Frontier-orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` = **B3LYP/def2-TZVP** (density-fit/RI on by default), computed with **PySCF**.\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz`, 12 atoms: C\u2086H\u2086). Used **as-is** \u2014 this was a single point at the supplied geometry; the geometry was **not** re-optimized at this (or any) level.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** charge **0**, multiplicity **1** (closed-shell, RKS).\n- **Software:** PySCF.\n- **Convergence:** SCF **converged** (8 cycles).\n\n**Results**\n- **HOMO\u2013LUMO gap = 6.6310857 eV** (headline value).\n- HOMO = \u22127.0468329 eV; LUMO = \u22120.41574728 eV.\n- Nearby orbitals: HOMO\u22122 = \u22129.487467 eV, HOMO\u22121 = \u22127.0473344 eV (near-degenerate \u03c0 pair with HOMO), LUMO+1 = \u22120.41513054 eV (near-degenerate \u03c0* pair with LUMO), LUMO+2 = +1.2021883 eV \u2014 consistent with benzene's degenerate \u03c0/\u03c0* frontier levels.\n- Total electronic energy = \u2212232.33724 hartree (\u22126322.2183 eV). This is a bare electronic energy (electrons + fixed nuclei), comparable only to other same-method/same-basis energies.\n- Koopmans-derived descriptors: vertical IP = 7.0468329 eV, vertical EA = 0.41574728 eV, electronegativity = 3.7312901 eV, chemical hardness = 3.3155428 eV, chemical softness = 0.30160974 eV\u207b\u00b9, electrophilicity index = 2.0995847 eV.\n\n**Warnings:** The tool reported **no warnings** (empty warnings \u2014 clean run).\n\n**Integrity:** The engine reported `integrity.status = ok`, **trustworthy = true** (energy finite \u2713, SCF converged \u2713, schema header/headline present \u2713).\n\n**Reproducibility:** Exact command run \u2014\n`cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <benzene.xyz>`\n\nNote on precision: values are reproduced exactly as returned by the tool; the last digits of a DFT total energy are grid-/basis-dependent and should not be over-interpreted. No experimental/literature comparison is offered here \u2014 let me know if you want one and I'll verify a source first."
+}

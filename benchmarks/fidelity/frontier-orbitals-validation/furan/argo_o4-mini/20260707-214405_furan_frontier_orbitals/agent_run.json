@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 46.43,
+    "llm_s": 37.36,
+    "engine_s": 9.07,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39007,
+    "completion_tokens": 5168,
+    "total_tokens": 44175
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan HOMO\u2013LUMO gap** \u2014 DFT, tier standard (B3LYP/def2-TZVP, density-fitting `RIJK`) in PySCF, gas phase, charge 0, multiplicity 1.  Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz` (single-point, no geometry optimization). SCF converged in 9 cycles; no warnings reported. HOMO = \u20136.3597638 eV, LUMO = \u20130.1024036 eV \u2192 gap = 6.2573602 eV  Command (JSON output to `/home/erobles/chem-skills/.fidelity_scratch/tmppl1lp6ah/live.json`): `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmppl1lp6ah/live.json`"
+}

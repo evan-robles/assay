@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 115.66,
+    "llm_s": 17.66,
+    "engine_s": 98.0,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39358,
+    "completion_tokens": 1566,
+    "total_tokens": 40924
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital energies of TEMPO (nitroxide radical)\n\nMethod provenance\n1. Property: frontier orbital energies and Koopmans-derived IP/EA; HOMO\u2013LUMO gap reported in eV.\n2. Level of theory: DFT, tier \u2018standard\u2019 = B3LYP/def2-TZVP with RI (density fitting) as implemented in PySCF.\n3. Geometry provenance: single-point on the supplied /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz (29 atoms); no further relaxation.\n4. Solvent/environment: gas phase (no implicit solvent).\n5. Charge 0, multiplicity 2 (open-shell UKS doublet).\n6. Software: PySCF via chemkit frontier-orbitals skill.\n7. Convergence/caveats: SCF converged in 12 cycles; no warnings reported; integrity.status = ok.\n\nSelected results (exact values from chemkit)\n\u2022 HOMO energy  \u22126.3375439 eV (index 86)\n\u2022 LUMO energy  \u22122.4651235 eV (index 87)\n\u2022 HOMO\u2013LUMO gap  3.8724203 eV  \u2190 headline value reported below\n\u2022 Vertical IP 6.3375439 eV; vertical EA 2.4651235 eV\n\nReproducibility\n\u2022 Command: chemkit frontier-orbitals --method dft --functional b3lyp --basis def2-tzvp --tier standard --charge 0 --mult 2 tempo.xyz\n\u2022 Live .out log was streamed to a file in the working directory while running and is retained for inspection.\n\nNo warnings were reported by chemkit. All data are computed; provenance: computed."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.25,
+    "llm_s": 27.52,
+    "engine_s": 4.73,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38687,
+    "completion_tokens": 1335,
+    "total_tokens": 40022
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde frontier orbitals** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz` (4 atoms: O, C, H, H); this was a single point at the supplied geometry (not re-optimized). SCF converged in 8 cycles.\n\n**Method used:** DFT B3LYP/def2-TZVP (PySCF, RKS closed-shell), gas phase \u2014 exactly as requested.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 5.8696712 eV** (Koopmans-style orbital gap, not an excitation energy).\n\nFrontier orbital energies:\n- HOMO (index 7) = \u22127.6523067 eV\n- LUMO (index 8) = \u22121.7826355 eV\n- Gap = 5.8696712 eV\n- Nearby: HOMO\u22121 = \u221211.002498 eV, HOMO\u22122 = \u221212.486938 eV; LUMO+1 = +1.3920007 eV, LUMO+2 = +2.8396981 eV\n\nKoopmans-derived descriptors (from these orbital energies): vertical IP = 7.6523067 eV, vertical EA = 1.7826355 eV, electronegativity = 4.7174711 eV, chemical hardness = 2.9348356 eV, chemical softness = 0.34073459 eV\u207b\u00b9, electrophilicity index = 3.7914447 eV.\n\nTotal electronic energy: \u2212114.55325 Hartree (\u22123117.1528 eV). Note this energy origin is B3LYP/def2-TZVP electronic energy (bare nuclei + electrons) and is only comparable to other same-method, same-basis values.\n\n**Convergence & warnings:** SCF converged (`scf_converged: true`, 8 cycles). The result JSON contains **no `warnings` array / no warnings reported** \u2014 clean run. Integrity engine verdict: **trustworthy = true**, status \"ok\" (all checks passed: energy_finite ok, scf_converged ok, schema_header ok, schema_headline ok).\n\n**Reproducibility:** `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <formaldehyde.xyz>`. Density fitting (RI) is on by default in chemkit. No experimental/literature comparison is offered; ask if you want one and I will verify a source first."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 16.25,
+    "llm_s": 7.59,
+    "engine_s": 8.66,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26653,
+    "completion_tokens": 363,
+    "total_tokens": 27016
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan Frontier Molecular Orbitals** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-provided `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz`, used as-is (single point). SCF converged in 9 cycles.\n\nHOMO energy: -6.35976 eV\nLUMO energy: -0.10240 eV\nHOMO-LUMO gap: 6.25736 eV\n\nNo warnings reported."
+}

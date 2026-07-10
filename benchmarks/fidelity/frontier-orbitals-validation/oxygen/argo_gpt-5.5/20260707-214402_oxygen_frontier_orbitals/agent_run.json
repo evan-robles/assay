@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 26.66,
+    "llm_s": 22.36,
+    "engine_s": 4.31,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26232,
+    "completion_tokens": 1545,
+    "total_tokens": 27777
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen frontier-orbital calculation** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**) using PySCF, gas phase, charge 0, multiplicity 3. Geometry: user-supplied fixed coordinates from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`; this was a frontier-orbital/SCF calculation at that geometry, not a geometry optimization. PySCF version was not reported by the tool.\n\n**Headline result:** HOMO\u2013LUMO gap = **5.2880586 eV**.\n\nAdditional orbital results from the tool:\n- HOMO = -8.8739616 eV\n- LUMO = -3.5859031 eV\n- Total electronic energy = -4092.2855 eV = -150.38872 Hartree\n- SCF converged: true; SCF cycles: 7\n- Number of atoms: 2\n\nMethod used: `frontier-orbitals` chemkit skill with method `dft`, functional `b3lyp`, basis `def2-tzvp`, tier `standard`, gas phase, charge 0, multiplicity 3.\n\nExact command reported by chemkit:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 3 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmppul7edzc/live.json`\n\nOutput JSON path reported in the command: `/home/erobles/chem-skills/.fidelity_scratch/tmppul7edzc/live.json`. The tool result did not return a live `.out` log path, so I will not invent one.\n\nWarnings: no warnings were reported by the chemkit result.\n\nEngine integrity verdict: `trustworthy: true`."
+}

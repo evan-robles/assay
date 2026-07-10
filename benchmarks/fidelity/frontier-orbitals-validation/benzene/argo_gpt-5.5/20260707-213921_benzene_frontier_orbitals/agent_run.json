@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 9.42,
+    "llm_s": 9.42,
+    "engine_s": 0.0,
+    "turns": 2,
+    "tool_calls": 0,
+    "prompt_tokens": 25295,
+    "completion_tokens": 592,
+    "total_tokens": 25887
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": null,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "No frontier-orbitals calculation was run, so there is no computed HOMO/LUMO/gap value to report. I did not guess or fabricate a number. The requested method would have been DFT, tier `standard` (B3LYP/def2-TZVP), gas phase, on the user-supplied geometry `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz`, but the charge and multiplicity were not confirmed after I asked. Engine integrity.trustworthy verdict: not available because no chemkit result was produced. Warnings: no chemkit warnings are available because no chemkit tool run was performed."
+}

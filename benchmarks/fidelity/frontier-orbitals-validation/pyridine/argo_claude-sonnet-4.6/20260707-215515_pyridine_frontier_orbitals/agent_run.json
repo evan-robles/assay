@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 58.92,
+    "llm_s": 44.07,
+    "engine_s": 11.74,
+    "turns": 4,
+    "tool_calls": 2,
+    "prompt_tokens": 65671,
+    "completion_tokens": 2362,
+    "total_tokens": 68033
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital energies for pyridine were computed using the chemkit `frontier-orbitals` skill with DFT at the B3LYP/def2-TZVP level (tier `standard`, density-fit RI) in PySCF, gas phase, charge 0, multiplicity 1 (neutral closed-shell singlet). The geometry was taken from the user-supplied file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` without re-optimization (single point). The SCF converged in 10 cycles. No warnings were reported.\n\nKey results:\n- HOMO (index 20): \u22127.2525992 eV\n- LUMO (index 21): \u22121.1127860 eV\n- **HOMO\u2013LUMO gap: 6.1398131 eV** (headline value)\n\nKoopmans' descriptors (orbital-energy estimates only, not \u0394SCF):\n- Vertical IP = 7.2525992 eV\n- Vertical EA = 1.1127860 eV\n- Electronegativity \u03c7 = 4.1826926 eV\n- Chemical hardness \u03b7 = 3.0699066 eV\n- Chemical softness S = 0.32574281 eV\u207b\u00b9\n- Electrophilicity index \u03c9 = 2.8494218 eV\n\nTotal electronic energy: \u2212248.3782 Hartree (gas phase; not comparable across methods).\n\nIntegrity check: status OK, trustworthy = true, all checks passed.\n\nLive log (streamed during run): `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/argo_claude-sonnet-4.6/20260707-215515_pyridine_frontier_orbitals/frontier_20260707-215523.out`\n\nCLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`\n\nNo warnings reported (warnings array empty). No experimental comparison is offered."
+}

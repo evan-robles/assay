@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 38.15,
+    "llm_s": 24.2,
+    "engine_s": 13.95,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25431,
+    "completion_tokens": 1786,
+    "total_tokens": 27217
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital analysis for aniline\n\nMethod provenance (reproducibility details)\nProperty: HOMO and LUMO one-electron orbital energies and their gap (Koopmans-style), plus related reactivity indices.\nLevel of theory: DFT, tier `standard` \u2192 B3LYP/def2-TZVP with density-fitting (RIJK) in PySCF v2.x.\nGeometry provenance: single-point evaluation on the fixed Cartesian coordinates read from /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz (no geometry relaxation; this is a DFT//input-xyz protocol).\nEnvironment: gas phase (no implicit solvent).\nCharge = 0; multiplicity = 1 (closed-shell singlet, treated with RKS).\nSCF convergence: converged in 9 cycles; maximum |\u0394E| between cycles < 1 \u00d7 10\u207b\u2076 Hartree.\nWarnings: no warnings reported by chemkit.\nLive log: the calculation was streamed to the default chemkit live log file (frontier_<timestamp>.out) in the working directory while running.\n\nKey results (all from the converged SCF):\n\u2022 HOMO energy = \u22125.553772 eV (index 24)\n\u2022 LUMO energy = \u22120.2489544 eV (index 25)\n\u2022 HOMO\u2013LUMO gap = 5.3048177 eV\n\nDerived Koopmans-style reactivity indices:\n\u2022 Vertical ionisation potential (\u2212\u03b5_HOMO) = 5.553772 eV\n\u2022 Vertical electron affinity (\u2212\u03b5_LUMO) = 0.2489544 eV\n\u2022 Electronegativity \u03c7 = 2.9013632 eV\n\u2022 Chemical hardness \u03b7 = 2.6524088 eV\n\u2022 Chemical softness S = 0.37701579 (eV)\u207b\u00b9\n\u2022 Electrophilicity index \u03c9 = 1.5868422 eV\n\nThese values were computed with chemkit\u2019s frontier-orbitals skill using the settings above; provenance = computed."
+}

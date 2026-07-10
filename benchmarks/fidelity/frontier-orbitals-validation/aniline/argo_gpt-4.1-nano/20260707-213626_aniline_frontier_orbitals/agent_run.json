@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 17.98,
+    "llm_s": 4.27,
+    "engine_s": 13.72,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39766,
+    "completion_tokens": 377,
+    "total_tokens": 40143
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": ""
+  },
+  "prose": "The frontier-orbitals task on aniline was performed using DFT with the B3LYP functional and the def2-TZVP basis set, in the gas phase, following the chemkit protocol at tier \"standard.\" The calculation converged in 9 SCF cycles.\n\nResults:\n- HOMO energy: -5.553772 eV\n- LUMO energy: -0.2489544 eV\n- HOMO-LUMO gap: 5.3048177 eV\n\nThe method used was B3LYP/def2-TZVP in PySCF, with the specified tier \"standard\"."
+}

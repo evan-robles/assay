@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.95,
+    "llm_s": 18.32,
+    "engine_s": 11.63,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38671,
+    "completion_tokens": 1381,
+    "total_tokens": 40052
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**), PySCF (density fitting on by default), **gas phase**, charge 0, multiplicity 1 (RKS closed-shell). Geometry: used as-is from the supplied file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` (11 atoms: C5H5N); this was a single point on that fixed geometry \u2014 no re-optimization was performed at this level. SCF converged (10 cycles).\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 6.1398131 eV** (a Koopmans-style orbital gap, not an excitation energy).\n\nSupporting frontier-orbital energies (eV):\n- HOMO\u22122 (index 18): \u22128.0425195\n- HOMO\u22121 (index 19): \u22127.4731156\n- **HOMO (index 20): \u22127.2525992** (occ 2.0)\n- **LUMO (index 21): \u22121.1127860** (occ 0.0)\n- LUMO+1 (index 22): \u22120.67231536\n- LUMO+2 (index 23): 1.1781069\n\nKoopmans-derived quantities (eV): vertical IP = 7.2525992, vertical EA = 1.112786, electronegativity = 4.1826926, chemical hardness = 3.0699066, chemical softness = 0.32574281 eV\u207b\u00b9, electrophilicity index = 2.8494218.\n\nTotal electronic energy: \u2212248.3782 Hartree (\u22126758.7152 eV; \u2212155859.68 kcal/mol), energy zero = electronic energy (bare nuclei + electrons). Note: this energy origin is method-specific and only directly comparable to other B3LYP/def2-TZVP values on the same species.\n\n**Method used:** DFT B3LYP/def2-TZVP (tier `standard`), PySCF, gas phase, charge 0, multiplicity 1, single point on the supplied geometry.\n\n**Convergence/integrity:** SCF converged = true; engine integrity status \"ok\", trustworthy = **true** (checks: energy_finite ok, scf_converged ok, schema_header ok, schema_headline ok). **Warnings: none reported** \u2014 the result JSON contained no warnings array entries.\n\n**Reproducibility:** command \u2014 `.../chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <pyridine.xyz> --out .../live.json`. The engine streams a live `<subcommand>_<timestamp>.out` log to the run directory during the calculation; I can point you to that path or re-run if you'd like to watch it live.\n\nNo experimental/literature comparison is offered \u2014 ask if you want one and I'll verify a source first."
+}

@@ -1,0 +1,38 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 9.51,
+    "llm_s": 5.28,
+    "engine_s": 4.23,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39750,
+    "completion_tokens": 544,
+    "total_tokens": 40294
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [
+      "energy_finite: total/electronic energy = -4092.285525149687 (must be a finite number)",
+      "scf_converged: True (SCF must converge for the energy/orbitals to be meaningful)",
+      "schema_header: present",
+      "schema_headline: 'homo_lumo_gap_eV' = 5.2880585663470345 (present and numeric)"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier-orbitals task on oxygen using DFT at the B3LYP functional with the def2-TZVP basis set in the gas phase and a multiplicity of 3 was successfully completed. The method used is B3LYP/def2-TZVP (tier `standard`) in PySCF, with the SCF convergence achieved in 7 cycles. The computed HOMO-LUMO gap is approximately 5.28806 eV, with the HOMO energy at -8.87396 eV and the LUMO energy at -3.58590 eV. The total electronic energy is about -4092.2855 eV. Warnings: - Energy is finite. - SCF converged. - Header and headline data are present and valid. The result is trustworthy and computed."
+}

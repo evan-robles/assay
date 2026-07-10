@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.98,
+    "llm_s": 13.28,
+    "engine_s": 10.7,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26302,
+    "completion_tokens": 978,
+    "total_tokens": 27280
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier-orbital result** \u2014 Property: HOMO\u2013LUMO gap from a frontier-orbitals calculation. Level of theory: DFT, tier `standard` with **B3LYP/def2-TZVP** as requested. Geometry: user-supplied fixed XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz` (12 atoms); this was a single-point orbital calculation, not a geometry optimization. Environment: **gas phase**. Charge/multiplicity: charge 0, multiplicity 1. Software: PySCF. SCF convergence: converged in 8 cycles.\n\nMethod used: chemkit `frontier-orbitals` skill with DFT/B3LYP/def2-TZVP, tier `standard`, gas phase.\n\nResults:\n- HOMO = -7.0468329 eV\n- LUMO = -0.41574728 eV\n- HOMO\u2013LUMO gap = **6.6310857 eV**\n- Total electronic energy = -6322.2183 eV = -232.33724 hartree\n\nKoopmans-derived quantities returned by the tool:\n- vertical IP = 7.0468329 eV\n- vertical EA = 0.41574728 eV\n- electronegativity = 3.7312901 eV\n- chemical hardness = 3.3155428 eV\n- chemical softness = 0.30160974 eV^-1\n- electrophilicity index = 2.0995847 eV\n\nWarnings: no warnings were reported by the chemkit result JSON.\n\nIntegrity verdict: `integrity.trustworthy = true`.\n\nReproducibility:\n- CLI invocation returned by chemkit: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp_q06ix3j/live.json`\n- Result JSON path from the invocation: `/home/erobles/chem-skills/.fidelity_scratch/tmp_q06ix3j/live.json`\n- A live `.out` log path was required by the reporting standard, but this chemkit API response did not return a specific `.out` path; I am not inventing one."
+}

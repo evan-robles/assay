@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.78,
+    "llm_s": 17.8,
+    "engine_s": 10.99,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38654,
+    "completion_tokens": 1379,
+    "total_tokens": 40033
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit RKS in PySCF), **gas phase**, charge 0, multiplicity 1. Geometry: the user-supplied `.xyz` (`benzene.xyz`, 12 atoms), used as-is \u2014 this was a single-point frontier-orbital evaluation, not a re-optimization. SCF converged (8 cycles).\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 6.6310857 eV** (Koopmans-style orbital energy gap, not an excitation energy).\n\nSupporting frontier-orbital energies:\n- HOMO (index 20) = \u22127.0468329 eV, occupation 2.0\n- LUMO (index 21) = \u22120.41574728 eV, occupation 0.0\n- HOMO\u22121 (index 19) = \u22127.0473344 eV; HOMO\u22122 (index 18) = \u22129.487467 eV\n- LUMO+1 (index 22) = \u22120.41513054 eV; LUMO+2 (index 23) = 1.2021883 eV\n\n(Note the near-degeneracies of HOMO/HOMO\u22121 and LUMO/LUMO+1, consistent with benzene's D\u2086\u2095 symmetry.)\n\nKoopmans-derived descriptors: vertical IP = 7.0468329 eV, vertical EA = 0.41574728 eV, electronegativity = 3.7312901 eV, chemical hardness = 3.3155428 eV, chemical softness = 0.30160974 eV\u207b\u00b9, electrophilicity index = 2.0995847 eV.\n\nElectronic (total) energy = \u2212232.33724 Hartree (= \u22126322.2183 eV = \u2212145793.82 kcal/mol); energy zero = electronic energy (bare nuclei + electrons). Note this is a B3LYP energy and is only directly comparable to other B3LYP/def2-TZVP values \u2014 energy zeros are not comparable across methods.\n\n**Method/level of theory:** B3LYP/def2-TZVP (DFT, density fitting on by default), PySCF backend, gas phase, charge 0, multiplicity 1 (closed-shell RKS). n_orbitals = 222; n_occupied = 21.\n\n**Convergence & warnings:** SCF converged = true (8 cycles). The result JSON contained no `warnings` array \u2014 **no warnings were reported**. Integrity check: status = \"ok\", **trustworthy = true** (all checks passed: energy_finite ok, scf_converged ok, schema_header ok, schema_headline ok).\n\n**Reproducibility:** command \u2014 `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard .../benzene.xyz`.\n\nNo experimental/literature comparison is offered \u2014 ask if you want one and I'll verify a source first."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.03,
+    "llm_s": 19.45,
+    "engine_s": 4.58,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 38657,
+    "completion_tokens": 1346,
+    "total_tokens": 40003
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance (frontier orbital gap):\nProperty: HOMO\u2013LUMO gap (Koopmans-style orbital energy difference) in eV.\nLevel of theory: DFT, tier `standard` (B3LYP/def2-TZVP) with density fitting, as implemented in PySCF 2.x.\nGeometry provenance: fixed input geometry supplied by the user (/home/erobles/\u2026/formaldehyde.xyz); no additional relaxation (single-point calculation at DFT level on that geometry, i.e. DFT//input-xyz).\nEnvironment: gas phase (no implicit solvent).\nCharge / multiplicity: 0, 1 (closed-shell singlet).\nSoftware/backend: chemkit frontier-orbitals skill \u2192 PySCF engine (SCF converged in 8 cycles).\nSCF / convergence: scf_converged = true, 8 cycles; integrity checks all passed (status OK, trustworthy = true). No warnings reported by the engine.\nLive log: calculation was executed via\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp2nb6ui2d/live.json\nStdout/stderr were streamed to the automatically generated .out file in the current working directory and could be inspected live during the run.\n\nResult:\nHOMO = \u22127.6523067 eV\nLUMO = \u22121.7826355 eV\n\u2192 HOMO\u2013LUMO gap = 5.8696712 eV (gas phase, B3LYP/def2-TZVP//input geometry)\n\nNo engine warnings were reported."
+}

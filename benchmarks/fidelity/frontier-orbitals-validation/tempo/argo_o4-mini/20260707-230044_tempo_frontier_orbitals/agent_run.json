@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 118.19,
+    "llm_s": 20.64,
+    "engine_s": 97.55,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39361,
+    "completion_tokens": 2621,
+    "total_tokens": 41982
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO frontier-orbital gap** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fit), PySCF. Gas phase, charge 0, multiplicity 2. Geometry: user-provided `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz` (no DFT geometry optimization; single-point). SCF converged in 12 cycles; no warnings reported.\n\nHOMO = \u22126.3375439 eV, LUMO = \u22122.4651235 eV \u2192 HOMO\u2013LUMO gap = **3.8724203 eV**\n\nLive log: `/home/erobles/chem-skills/.fidelity_scratch/tmpr4ztu46v/frontier_*.out` (writing as the job runs, you can `tail -f` it).\n\nMethod provenance:\n- Property: frontier-orbital gap (Koopmans-style HOMO/LUMO difference).\n- Level of theory: DFT B3LYP/def2-TZVP (tier `standard`, density fitting enabled).\n- Geometry: fixed input `.xyz` (no relaxation).\n- Environment: gas phase implicit (no solvent).\n- Charge/multiplicity: 0/2.\n- Software: PySCF via chemkit CLI.\n- Convergence: SCF converged, 12 cycles.\n- Warnings: no warnings reported.\n- Reproducibility: CLI invocation  \n  `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 2 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpr4ztu46v/live.json`\n\nFiles:\n- Input geometry: `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`\n- JSON result: `/home/erobles/chem-skills/.fidelity_scratch/tmpr4ztu46v/live.json`\n- Live stdout log: `/home/erobles/chem-skills/.fidelity_scratch/tmpr4ztu46v/frontier_*.out`"
+}

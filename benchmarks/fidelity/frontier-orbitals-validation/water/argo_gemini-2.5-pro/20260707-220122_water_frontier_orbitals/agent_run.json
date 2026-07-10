@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.4,
+    "llm_s": 20.41,
+    "engine_s": 3.99,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26738,
+    "completion_tokens": 435,
+    "total_tokens": 27173
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital energies of water were calculated using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (tier 'standard') in the gas phase, as implemented in the PySCF program. The calculation was a single-point energy evaluation on the geometry provided by the user in `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz`, for the neutral, singlet state (charge 0, multiplicity 1). The SCF procedure converged successfully.\n\nThe resulting frontier orbital energies are:\n*   **HOMO**: -8.6037 eV\n*   **LUMO**: 0.3370 eV\n*   **HOMO-LUMO gap**: 8.9407 eV\n\nThe calculation reported no warnings and its integrity is trustworthy."
+}

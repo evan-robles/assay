@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 30.84,
+    "llm_s": 14.34,
+    "engine_s": 16.5,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39115,
+    "completion_tokens": 1290,
+    "total_tokens": 40405
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital energies of aniline were computed with chemkit\u2019s frontier-orbits skill using DFT at tier \u201cstandard\u201d (B3LYP/def2-TZVP, density-fitted) in PySCF, on the fixed input geometry /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz (single-point DFT//input geometry). Gas phase; charge 0, multiplicity 1. The SCF converged in 9 cycles. No warnings were reported by the engine.  \n\nHeadline result (HOMO\u2013LUMO gap): 5.3048177 eV.\n\nOther key values:\n\u2022 HOMO energy = \u22125.553772 eV\n\u2022 LUMO energy = \u22120.2489544 eV\n\u2022 Koopmans IP = 5.553772 eV, EA = 0.2489544 eV\n\nintegrity.trustworthy = true.\n\nLive PySCF log was streamed to the automatically generated frontier_\u2026out file; full JSON result is in \u2026/tmpai3c_0lj/live.json. Both files can be provided on request."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.5,
+    "llm_s": 20.02,
+    "engine_s": 4.47,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 46786,
+    "completion_tokens": 1627,
+    "total_tokens": 48413
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene Frontier Orbital Gap** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard` with density fitting), PySCF backend, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `.xyz` file at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`; single-point calculation (no geometry optimization). SCF converged in 6 cycles. \n\n**Headline Result:** HOMO\u2013LUMO gap = **7.4357 eV** (Koopmans-style orbital gap).\n\n**Detailed Frontier Orbitals:**\n- HOMO (index 7): \u22127.6156 eV\n- LUMO (index 8): \u22120.1799 eV\n- HOMO\u22121 (index 6): \u22129.8839 eV\n- HOMO\u22122 (index 5): \u221211.4875 eV\n- LUMO+1 (index 9): +1.7201 eV\n- LUMO+2 (index 10): +2.3802 eV\n\n**Total Electronic Energy:** \u221278.6235 Hartree (\u22122139.454 eV, \u221249,337.0 kcal/mol).\n\n**Koopmans-Derived Properties:** Vertical ionization potential = 7.6156 eV; vertical electron affinity = 0.1799 eV; electronegativity = 3.8977 eV; chemical hardness = 3.7179 eV; electrophilicity index = 2.0431 eV.\n\n**Integrity:** \u2713 Trustworthy (energy finite, SCF converged, schema valid). **Reproducibility:** `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`. No warnings or non-convergence flags."
+}

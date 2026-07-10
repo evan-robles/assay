@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.61,
+    "llm_s": 4.55,
+    "engine_s": 9.06,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39776,
+    "completion_tokens": 437,
+    "total_tokens": 40213
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.25736,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier molecular orbitals task on furan was run using DFT with the B3LYP functional and the def2-TZVP basis set (tier 'standard') in the gas phase. The calculation converged successfully in 9 SCF cycles. The HOMO (highest occupied molecular orbital) energy is approximately -6.36 eV, and the LUMO (lowest unoccupied molecular orbital) energy is approximately -0.10 eV. The HOMO-LUMO gap is about 6.26 eV. The method used for this calculation is B3LYP/def2-TZVP (tier 'standard') in PySCF."
+}

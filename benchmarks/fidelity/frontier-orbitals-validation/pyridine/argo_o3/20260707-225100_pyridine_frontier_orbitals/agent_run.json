@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.71,
+    "llm_s": 22.68,
+    "engine_s": 12.03,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 38628,
+    "completion_tokens": 1846,
+    "total_tokens": 40474
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital gap of pyridine \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitted) in PySCF 2.x, gas phase, charge 0, multiplicity 1. Geometry: user-supplied Cartesian coordinates from /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz; no further relaxation (single-point DFT on that geometry, i.e. DFT//input-xyz). SCF converged in 10 cycles. No engine warnings were reported.\n\nResults (orbital energies in eV):\n\u2022 HOMO = \u22127.2525992 eV\n\u2022 LUMO = \u22121.112786 eV\n\u2192 HOMO\u2013LUMO gap = 6.1398131 eV (Koopmans-type orbital gap, not an excitation energy).\n\nLive run log: the calculation streamed to a file of the form `frontier_YYYYMMDD-HHMMSS.out` in the working directory, available for inspection with `tail -f`.\n\nMethod provenance block\nProperty: HOMO\u2013LUMO gap (Koopmans orbital energy difference), eV\nLevel of theory: B3LYP/def2-TZVP (density-fitted DFT)\nGeometry: fixed experimental/benchmark geometry from provided pyridine.xyz; no optimization (single-point)\nEnvironment: gas phase (no implicit solvation)\nCharge / multiplicity: 0 / 1 (closed-shell singlet)\nSoftware: PySCF 2.x via chemkit \u2018frontier-orbitals\u2019 skill\nConvergence: SCF converged (10 cycles, `scf_converged: true`); no warnings reported\n\nAll quantities are reported without rounding beyond the precision returned by chemkit.\n"
+}

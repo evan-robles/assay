@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.2,
+    "llm_s": 28.85,
+    "engine_s": 4.36,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30262,
+    "completion_tokens": 1984,
+    "total_tokens": 32246
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on molecular oxygen (O\u2082) performed using DFT at the B3LYP/def2-TZVP level of theory (tier 'standard') via PySCF (UKS, open-shell triplet), in the gas phase, charge 0, multiplicity 3. Geometry was taken from the user-supplied .xyz file as-is (single point, not re-optimized). SCF converged in 7 cycles. No warnings were reported. Integrity check: trustworthy = true.\n\nHeadline result \u2014 HOMO\u2013LUMO gap: 5.2880586 eV.\nHOMO (index 15): \u22128.8739616 eV (degenerate with HOMO\u22121 at index 14, consistent with O\u2082 \u03c0* SOMOs).\nLUMO (index 16): \u22123.5859031 eV (degenerate with LUMO+1).\nTotal electronic energy: \u2212150.38872 Ha / \u22124092.2855 eV.\n\nKoopmans-theorem estimates: vertical IP = 8.8740 eV, vertical EA = 3.5859 eV, electronegativity = 6.2299 eV, chemical hardness = 2.6440 eV.\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 3 --functional b3lyp --basis def2-tzvp --tier standard [input.xyz] --out [live.json]"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.16,
+    "llm_s": 6.97,
+    "engine_s": 11.19,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26502,
+    "completion_tokens": 454,
+    "total_tokens": 26956
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Frontier Orbital Analysis**\n\nThe frontier molecular orbitals (HOMO and LUMO) of pyridine were computed using Density Functional Theory (DFT) with the **B3LYP functional** and the **def2-TZVP basis set** (tier `standard`). The calculation was performed in the **gas phase** with a **charge of 0** and a **multiplicity of 1**, using **PySCF** as the backend. The geometry was sourced from the provided input file: `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`. The SCF converged in 10 cycles.\n\n- **HOMO energy**: -7.2526 eV\n- **LUMO energy**: -1.1128 eV\n- **HOMO-LUMO gap**: 6.1398 eV\n\nThe result is trustworthy."
+}

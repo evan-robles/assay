@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.96,
+    "llm_s": 9.9,
+    "engine_s": 4.05,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26512,
+    "completion_tokens": 648,
+    "total_tokens": 27160
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbitals (HOMO and LUMO) of water were calculated using Density Functional Theory (DFT) with the B3LYP functional and the def2-TZVP basis set (tier `standard`) in the gas phase. The calculation was performed using PySCF on the user-provided geometry from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz`.\n\n- **Property**: Frontier orbital energies and gap\n- **Level of theory**: DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF\n- **Geometry provenance**: User-provided `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` file, unoptimized.\n- **Solvent / environment**: Gas phase\n- **Charge and multiplicity**: Charge 0, multiplicity 1\n- **Software**: PySCF\n- **Convergence**: SCF converged after 7 cycles.\n\n**Results:**\n- HOMO energy: -8.6037183 eV\n- LUMO energy: 0.33695037 eV\n- HOMO-LUMO gap: 8.9406687 eV\n\n**Warnings:**\n- no warnings reported"
+}

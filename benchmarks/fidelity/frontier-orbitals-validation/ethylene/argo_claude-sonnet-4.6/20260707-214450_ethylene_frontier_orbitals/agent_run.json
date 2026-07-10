@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 36.85,
+    "llm_s": 32.24,
+    "engine_s": 4.61,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30237,
+    "completion_tokens": 1655,
+    "total_tokens": 31892
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital energies for ethylene (C\u2082H\u2084, 6 atoms) were computed at DFT tier 'standard' \u2014 B3LYP/def2-TZVP (density-fit RKS) in PySCF \u2014 on the user-supplied geometry as a single-point calculation (gas phase, charge 0, multiplicity 1). SCF converged in 6 cycles. The headline HOMO\u2013LUMO gap is 7.4357165 eV (HOMO = \u22127.6155818 eV, LUMO = \u22120.17986527 eV). The integrity check returned trustworthy: true, all checks passed. No warnings were reported by the engine."
+}

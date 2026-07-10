@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 18.67,
+    "llm_s": 4.5,
+    "engine_s": 14.18,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26060,
+    "completion_tokens": 257,
+    "total_tokens": 26317
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The HOMO\u2013LUMO gap of aniline was calculated as 5.3048177 eV using DFT with the B3LYP functional and def2-TZVP basis set (tier 'standard') in PySCF, in the gas phase (charge 0, multiplicity 1). The SCF procedure converged successfully in 9 cycles. The input geometry contained 14 atoms and was taken directly from an external molecular geometry file (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz`). No warnings were reported during the calculation. The result is considered trustworthy by internal integrity checks."
+}

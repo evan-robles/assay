@@ -1,0 +1,18 @@
+[engine reference] REUSED cached engine-reference/ (determinism: identical across two runs (within 1e-06 numeric tol))
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:gemini-2.5-flash via argo-proxy http://127.0.0.1:60639/v1
+[live] agent calls skill_help('frontier-orbitals') (discovery)
+Traceback (most recent call last):
+  File "/home/erobles/chem-skills/benchmarks/fidelity_driver.py", line 2913, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/erobles/chem-skills/benchmarks/fidelity_driver.py", line 2831, in main
+    agent_run = run_live_agent(spec, run_dir=run_dir, model=model)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/erobles/chem-skills/benchmarks/fidelity_driver.py", line 2369, in run_live_agent
+    "content": _engine_skill_help_json(want)})
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/erobles/chem-skills/benchmarks/fidelity_driver.py", line 197, in _engine_skill_help_json
+    canon = _cli._alias_to_canonical().get(_resolve_skill_name(skill), None)
+            ^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: module 'chemkit_engine.cli' has no attribute '_alias_to_canonical'

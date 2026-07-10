@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 117.78,
+    "llm_s": 23.62,
+    "engine_s": 94.16,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39147,
+    "completion_tokens": 2225,
+    "total_tokens": 41372
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.872420320420745,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital gap (HOMO\u2013LUMO) for TEMPO \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitted) in PySCF, gas phase, charge 0, multiplicity 2 (doublet).\nGeometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`; no re-optimization \u2014 this is a single-point frontier-orbital analysis (`DFT//input geometry`).\nSCF converged in 12 cycles. No warnings were reported by the engine.\nResult: HOMO = \u20136.3375439 eV, LUMO = \u20132.4651235 eV \u2192 HOMO\u2013LUMO gap = **3.872420320420745 eV**.\nThe calculation was run with the chemkit `frontier-orbitals` skill; the live engine log streamed to `frontier_$(date +%Y%m%d-%H%M%S).out` in the working directory (accessible for inspection), and the structured result was written to `/home/erobles/chem-skills/.fidelity_scratch/tmp4l8qfx6k/live.json`. "
+}

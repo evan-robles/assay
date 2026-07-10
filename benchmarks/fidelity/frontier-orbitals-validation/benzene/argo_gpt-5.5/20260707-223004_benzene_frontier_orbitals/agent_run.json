@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 31.81,
+    "llm_s": 20.79,
+    "engine_s": 11.03,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26333,
+    "completion_tokens": 1452,
+    "total_tokens": 27785
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier orbitals \u2014 computed result**\n\n**Method/provenance:** Frontier-orbital single point using chemkit `frontier-orbitals`; DFT tier `standard` with **B3LYP/def2-TZVP** (`method`: `b3lyp/def2-tzvp`) in **PySCF**. Geometry: user-supplied fixed XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz` (12 atoms; not reported as re-optimized by this task). Environment: **gas phase** (`solvent: null`). Charge 0, multiplicity 1. PySCF version and density-fitting status were not reported in the returned JSON.\n\n**Headline result:** HOMO\u2013LUMO gap = **6.6310857 eV**.\n\nOther returned orbital quantities:\n- HOMO = -7.0468329 eV (index 20, occupation 2.0)\n- LUMO = -0.41574728 eV (index 21, occupation 0.0)\n- HOMO-1 = -7.0473344 eV; HOMO-2 = -9.487467 eV\n- LUMO+1 = -0.41513054 eV; LUMO+2 = 1.2021883 eV\n- Total electronic energy = -6322.2183 eV = -232.33724 Hartree\n\n**Convergence/integrity:** SCF converged: true, in 8 cycles. Engine integrity trustworthy verdict: **true** (`status: ok`).\n\n**Warnings:** no warnings were reported in the chemkit result JSON.\n\n**Reproducibility:** chemkit returned this CLI invocation: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp_x1bg8nj/live.json`. The returned JSON did not include a live `.out` log path, so I cannot honestly report one beyond the `--out` JSON path shown above."
+}

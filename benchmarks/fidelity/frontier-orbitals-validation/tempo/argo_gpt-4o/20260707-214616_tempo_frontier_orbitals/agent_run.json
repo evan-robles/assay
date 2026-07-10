@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 100.61,
+    "llm_s": 3.45,
+    "engine_s": 97.16,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26131,
+    "completion_tokens": 278,
+    "total_tokens": 26409
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier orbitals analysis for TEMPO** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF. **Gas phase**, charge 0, **multiplicity 2**. Geometry: taken from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz` with no re-optimization. SCF converged fully in 12 cycles. HOMO energy: \u22126.338 eV; LUMO energy: \u22122.465 eV; Koopmans-style HOMO\u2013LUMO approach gives a **gap \u2248 3.872 eV**. Computation trustworthy per integrity-check verdict."
+}

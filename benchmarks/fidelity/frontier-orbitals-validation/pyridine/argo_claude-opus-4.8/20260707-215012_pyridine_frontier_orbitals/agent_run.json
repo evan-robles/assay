@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.73,
+    "llm_s": 23.17,
+    "engine_s": 11.56,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38678,
+    "completion_tokens": 2087,
+    "total_tokens": 40765
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbitals task on pyridine, computed with DFT at tier 'standard' = B3LYP/def2-TZVP (density-fit RI on by default) in PySCF (RKS, closed-shell), gas phase, charge 0, multiplicity 1. Geometry: user-supplied pyridine.xyz (11 atoms), used as a fixed single-point geometry (not re-optimized at this level). SCF converged (10 cycles). Engine integrity verdict: trustworthy=true (status ok).\n\nHeadline result: HOMO-LUMO gap = 6.1398131 eV. HOMO (index 20) = -7.2525992 eV; LUMO (index 21) = -1.112786 eV; HOMO-1 = -7.4731156 eV; HOMO-2 = -8.0425195 eV; LUMO+1 = -0.67231536 eV; LUMO+2 = 1.1781069 eV. Total electronic energy = -248.3782 hartree (-6758.7152 eV). Koopmans descriptors: vertical IP = 7.2525992 eV, vertical EA = 1.112786 eV, electronegativity = 4.1826926 eV, chemical hardness = 3.0699066 eV, chemical softness = 0.32574281 eV^-1, electrophilicity index = 2.8494218 eV.\n\nCaveats: this gap is a Koopmans-style orbital-energy gap, not an optical excitation energy; density fitting (RI) is an approximation (chemkit default); energy zeros are method-specific and not cross-method comparable. The result JSON's warnings array was empty (no warnings reported). Command: cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard .../pyridine.xyz. No experimental comparison offered (none requested)."
+}

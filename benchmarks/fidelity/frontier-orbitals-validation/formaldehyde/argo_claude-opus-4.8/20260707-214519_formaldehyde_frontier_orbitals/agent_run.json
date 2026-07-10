@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.26,
+    "llm_s": 15.73,
+    "engine_s": 4.53,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38667,
+    "completion_tokens": 1251,
+    "total_tokens": 39918
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit RI by chemkit default), in **PySCF**. Environment: **gas phase** (no solvent). Charge 0, multiplicity 1 (closed-shell RKS). Geometry: user-supplied file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz` (4 atoms: O, C, H, H), used as-is \u2014 this was a single-point frontier-orbital evaluation at the provided geometry, not a re-optimization. SCF converged in 8 cycles.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 5.8697 eV** (Koopmans-style orbital gap, not an excitation energy).\n\nSupporting frontier-orbital energies:\n- HOMO (index 7, occ 2.0) = \u22127.65231 eV\n- LUMO (index 8, occ 0.0) = \u22121.78264 eV\n- HOMO\u22121 = \u221211.00250 eV; HOMO\u22122 = \u221212.48694 eV\n- LUMO+1 = +1.39200 eV; LUMO+2 = +2.83970 eV\n\nKoopmans-derived global descriptors: vertical IP = 7.65231 eV, vertical EA = 1.78264 eV, electronegativity = 4.71747 eV, chemical hardness = 2.93484 eV, chemical softness = 0.340735 eV\u207b\u00b9, electrophilicity index = 3.79144 eV.\n\nTotal electronic energy: \u2212114.55325 hartree (\u22123117.1528 eV); energy zero = electronic energy (bare nuclei + electrons). Note that this energy origin is method/basis specific and is not comparable across methods.\n\n**Integrity / convergence:** the engine's integrity verdict is `status: ok`, `trustworthy: true`. All checks passed (energy_finite \u2713, scf_converged \u2713, schema_header \u2713, schema_headline \u2713). **No warnings were reported by the tool** (the `warnings` array was empty \u2014 clean run).\n\n**Reproducibility:** command executed \u2014 `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <formaldehyde.xyz>`. No unsolicited experimental comparison is offered; ask if you would like one and I will verify a source first."
+}

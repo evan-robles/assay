@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 41.8,
+    "llm_s": 28.21,
+    "engine_s": 13.59,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 46975,
+    "completion_tokens": 1851,
+    "total_tokens": 48826
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": 14,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on aniline (C\u2086H\u2085NH\u2082, 14 atoms) using DFT at the B3LYP/def2-TZVP level (tier 'standard', density-fit RKS) in PySCF. Gas phase, charge 0, multiplicity 1 (closed-shell singlet). Geometry: user-supplied fixed .xyz (single-point; geometry not relaxed at this level). SCF converged in 9 cycles. No warnings reported \u2014 clean run. Integrity check: trustworthy = true, all checks passed.\n\nHeadline result: HOMO\u2013LUMO gap = 5.3048177 eV (Koopmans-style orbital gap).\n\nKey orbital energies:\n  HOMO (index 24): \u22125.553772 eV\n  LUMO (index 25): \u22120.2489544 eV\n  HOMO\u2013LUMO gap:    5.3048177 eV\n\nKoopmans-derived descriptors:\n  Vertical IP  = 5.5538 eV\n  Vertical EA  = 0.2490 eV\n  Electronegativity \u03c7 = 2.9014 eV\n  Chemical hardness \u03b7  = 2.6524 eV\n  Chemical softness S  = 0.3770 eV\u207b\u00b9\n  Electrophilicity \u03c9   = 1.5868 eV\n\nTotal energy: \u2212287.71578 Hartree (\u22127829.1453 eV). 25 occupied orbitals; 259 total basis functions.\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz\nOutput JSON: /home/erobles/chem-skills/.fidelity_scratch/tmpy7e0uh2a/live.json"
+}

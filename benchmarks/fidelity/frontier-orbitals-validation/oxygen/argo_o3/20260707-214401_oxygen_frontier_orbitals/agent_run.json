@@ -1,0 +1,36 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 25.58,
+    "llm_s": 21.18,
+    "engine_s": 4.4,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25434,
+    "completion_tokens": 1647,
+    "total_tokens": 27081
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "common header present",
+      "headline field 'homo_lumo_gap_eV' = 5.2880585663493065 (present and numeric)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital gap of O2 (triplet ground state)\n\nMethod provenance:\n\u2022 Property: HOMO\u2013LUMO (Koopmans-style) energy gap, eV\n\u2022 Level of theory: DFT, tier \"standard\" \u2192 B3LYP/def2-TZVP (density-fitted) in PySCF  (frontier-orbitals skill)\n\u2022 Geometry: user-supplied experimental O\u2082 geometry from /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz; single-point calculation, no re-optimization (DFT//exp-geom)\n\u2022 Environment: gas phase (no implicit solvent)\n\u2022 Charge 0, multiplicity 3 (triplet; UKS treatment)\n\u2022 SCF converged in 7 cycles; total electronic energy \u2212150.38872 Ha (\u22124092.2855 eV)\n\u2022 Live log: the calculation streamed to a frontier_<timestamp>.out file in the working directory while running (tail-able for SCF progress)\n\nHeadline result (reported exactly as returned by chemkit):\nHOMO\u2013LUMO gap = 5.2880586 eV\n\nCaveats & warnings (verbatim):\n\u2022 common header present\n\u2022 headline field 'homo_lumo_gap_eV' = 5.2880585663493065 (present and numeric)\n\nIntegrity verdict: ok (trustworthy = true)\n\nThe result was obtained with chemkit\u2019s frontier-orbitals skill invoking PySCF at the B3LYP/def2-TZVP level (density-fitting on) in the gas phase."
+}

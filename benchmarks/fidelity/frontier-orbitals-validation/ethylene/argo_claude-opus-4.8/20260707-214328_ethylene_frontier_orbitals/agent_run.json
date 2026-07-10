@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 25.69,
+    "llm_s": 21.1,
+    "engine_s": 4.59,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38666,
+    "completion_tokens": 1370,
+    "total_tokens": 40036
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene frontier-orbital analysis** \u2014 Property: HOMO/LUMO energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n\n**Method-provenance block:**\n- **Level of theory:** DFT, tier `standard` = **B3LYP/def2-TZVP** (density-fitting on by default), computed with **PySCF**.\n- **Geometry provenance:** user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz` (6 atoms: C, C, H, H, H, H); used as-is \u2014 this was a single-point orbital calculation, the geometry was NOT re-optimized at this level.\n- **Environment:** gas phase (no implicit solvent).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (neutral closed-shell singlet; RKS).\n- **Software:** PySCF.\n- **Convergence:** SCF converged (scf_converged = true, 6 SCF cycles).\n\n**Results (all in eV):**\n- HOMO (index 7) = **\u22127.6155818 eV**\n- LUMO (index 8) = **\u22120.17986527 eV**\n- **HOMO\u2013LUMO gap = 7.4357165 eV** (headline value)\n- Nearby orbitals: HOMO\u22122 = \u221211.487503, HOMO\u22121 = \u22129.883854, LUMO+1 = 1.720103, LUMO+2 = 2.3802006 eV.\n- Total electronic energy = \u221278.623486 Hartree (\u22122139.4541 eV). Note: this is the DFT electronic energy origin; it is directly comparable only to other same-method/same-basis (B3LYP/def2-TZVP) energies, never across methods.\n- Koopmans-derived descriptors: vertical IP = 7.6155818 eV, vertical EA = 0.17986527 eV, electronegativity = 3.8977235 eV, chemical hardness = 3.7178583 eV, chemical softness = 0.26897206 eV\u207b\u00b9, electrophilicity index = 2.0431452 eV.\n\n**Warnings:** the result JSON contained no warnings array \u2014 no engine warnings reported (clean run).\n\n**Integrity:** the engine reports `integrity.status = \"ok\"` and `trustworthy = true` (energy finite \u2713, SCF converged \u2713).\n\n**Reproducibility:** command run \u2014\n`cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <ethylene.xyz>`.\n\nNo experimental/literature comparison is offered; the value above is a computed result. All values reproduced exactly as returned by the tool."
+}

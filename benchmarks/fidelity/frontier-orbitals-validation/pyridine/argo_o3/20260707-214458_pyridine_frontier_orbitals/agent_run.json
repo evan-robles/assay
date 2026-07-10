@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.43,
+    "llm_s": 17.46,
+    "engine_s": 11.97,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25464,
+    "completion_tokens": 1688,
+    "total_tokens": 27152
+  },
+  "result_json": {
+    "method": "B3LYP/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance (frontier orbital energies of pyridine)\n\n\u2022 Property: HOMO and LUMO one-electron energies and HOMO\u2013LUMO gap (eV)\n\u2022 Level of theory: DFT, tier \u201cstandard\u201d \u2192 B3LYP/def2-TZVP with density fitting (RIJK) as implemented in PySCF\n\u2022 Geometry provenance: single-point on the user-supplied geometry\u2028(/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz); no re-optimization was performed (notation: DFT//input xyz)\n\u2022 Solvent / environment: gas phase (no implicit solvation model)\n\u2022 Charge & multiplicity: 0, 1 (closed-shell singlet)\n\u2022 Software/backend: PySCF (version bundled with chemkit)\n\u2022 SCF convergence: converged in 10 cycles; gradient information not applicable to single-point\n\u2022 Engine warnings: no warnings reported\n\nHeadline numerical results (gas-phase B3LYP/def2-TZVP single-point)\n  \u2011 HOMO energy = \u22127.2525992 eV\n  \u2011 LUMO energy = \u22121.1127860 eV\n  \u2011 HOMO\u2013LUMO gap = 6.1398131 eV\n  \u2011 Koopmans vertical IP = 7.2525992 eV; EA = 1.1127860 eV\n\nReproducibility\nThe calculation was executed with chemkit skill `frontier-orbitals` using the command recorded in the JSON:\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional B3LYP --basis def2-TZVP --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp3uv5elo5/live.json\nThe live engine log was streamed to the standard .out file created by chemkit during execution (path available in the working directory). The structured result is saved at /home/erobles/chem-skills/.fidelity_scratch/tmp3uv5elo5/live.json.\n\nNo warnings were emitted; integrity check status: ok (trustworthy: true).\n\nThese orbital energies are method- and geometry-specific (B3LYP/def2-TZVP on the provided geometry) and should not be compared directly to values obtained at different levels of theory without proper alignment of references."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 33.66,
+    "llm_s": 29.36,
+    "engine_s": 4.3,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30243,
+    "completion_tokens": 1888,
+    "total_tokens": 32131
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on O\u2082 (dioxygen, triplet ground state) performed at the DFT level using the B3LYP functional with the def2-TZVP basis set (chemkit tier 'standard'), in the gas phase, charge 0, multiplicity 3 (open-shell UKS), using PySCF as the backend. The geometry was taken as-is from the user-supplied .xyz file (single-point; no re-optimization). SCF converged cleanly in 7 cycles. Integrity verdict: trustworthy: true, all checks passed. No warnings were reported by the engine.\n\nKey results:\n- HOMO energy: \u22128.8739616 eV (degenerate; reflects the two singly-occupied \u03c0* orbitals of triplet O\u2082)\n- LUMO energy: \u22123.5859031 eV (also degenerate, LUMO and LUMO+1)\n- HOMO\u2013LUMO gap (headline value): 5.2880586 eV\n- Total electronic energy: \u2212150.38872 Hartree (\u22124092.2855 eV)\n\nKoopmans' theorem estimates (orbital-based): vertical IP = 8.8740 eV, vertical EA = 3.5859 eV, electronegativity = 6.2299 eV, chemical hardness = 2.6440 eV, softness = 0.37821 eV\u207b\u00b9, electrophilicity index = 7.3396 eV.\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 3 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz"
+}

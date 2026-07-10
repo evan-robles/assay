@@ -1,0 +1,36 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.91,
+    "llm_s": 3.77,
+    "engine_s": 12.14,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26060,
+    "completion_tokens": 340,
+    "total_tokens": 26400
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.13981,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "common header present",
+      "headline field 'homo_lumo_gap_eV' = 6.139813146381139 (present and numeric)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital gap** \u2014 DFT at **B3LYP/def2-TZVP** (tier `standard`, PySCF), gas phase, charge 0, multiplicity 1. Geometry: carried from user-provided `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` (not re-optimized). SCF converged (10 cycles). HOMO = \u22127.253 eV, LUMO = \u22121.113 eV \u2192 **gap \u2248 6.1398 eV** (Koopmans-style orbital gap, not an excitation energy). No experimental comparison is offered. Files written: `/home/erobles/chem-skills/.fidelity_scratch/tmpmcx5uihw/live.json`. Method chain: DFT/B3LYP/def2-TZVP//user-geometry."
+}

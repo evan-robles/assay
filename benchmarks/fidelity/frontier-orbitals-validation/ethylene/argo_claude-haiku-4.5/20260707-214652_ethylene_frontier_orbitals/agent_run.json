@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 14.92,
+    "llm_s": 10.49,
+    "engine_s": 4.43,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 46548,
+    "completion_tokens": 1154,
+    "total_tokens": 47702
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene Frontier-Orbital Analysis** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `.xyz` file (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`), single-point calculation (not re-optimized at DFT). SCF converged in 6 cycles.\n\n**HOMO\u2013LUMO gap: 7.436 eV**\n\nFrontier orbitals:\n- HOMO (index 7): \u22127.616 eV\n- LUMO (index 8): \u22120.180 eV\n\nThe gap is reported as a Koopmans-style orbital energy difference (vertical ionization potential minus vertical electron affinity), not an excited-state energy. Additional Koopmans properties derived: electronegativity 3.898 eV, chemical hardness 3.718 eV, electrophilicity index 2.043 eV.\n\nAll integrity checks passed; no warnings reported."
+}

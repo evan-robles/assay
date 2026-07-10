@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.93,
+    "llm_s": 4.17,
+    "engine_s": 4.75,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39690,
+    "completion_tokens": 309,
+    "total_tokens": 39999
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.43572,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier-orbitals task on ethylene performed with DFT at the B3LYP functional and def2-TZVP basis set in gas phase. HOMO energy: -7.61558 eV, LUMO energy: -0.17987 eV, HOMO-LUMO gap: 7.43572 eV."
+}

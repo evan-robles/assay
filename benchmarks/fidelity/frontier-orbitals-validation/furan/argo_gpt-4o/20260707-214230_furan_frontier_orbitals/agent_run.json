@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.34,
+    "llm_s": 15.35,
+    "engine_s": 8.99,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26047,
+    "completion_tokens": 340,
+    "total_tokens": 26387
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier orbitals of furan** were computed via DFT using the **B3LYP functional and def2-TZVP basis set** (tier 'standard') in **gas phase**, implemented in PySCF (version details not reported). The molecular charge was 0 and the multiplicity was 1 (neutral singlet). Geometry provenance: known structure in XYZ format (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz). SCF converged successfully in 9 cycles.\n\nThe computed **HOMO\u2013LUMO gap** is **6.2574 eV**, derived from:\n- HOMO energy: **\u22126.3598 eV**\n- LUMO energy: **\u22120.1024 eV**\n\nNote: No warnings or issues were reported; SCF convergence confirmed via validation checks.\n\nLive calculation log recorded at \"/home/erobles/chem-skills/.fidelity_scratch/tmp2xxl9p8u/live.json\"."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.21,
+    "llm_s": 17.24,
+    "engine_s": 3.97,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38618,
+    "completion_tokens": 1462,
+    "total_tokens": 40080
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water frontier-orbital analysis \u2014 HOMO\u2013LUMO gap**\n\n**Method-provenance block**\n- **Property:** Frontier-orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy), in eV.\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (density-fit/RI on by default in chemkit), via **PySCF** (RKS, closed-shell).\n- **Geometry provenance:** User-supplied `.xyz` file (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz`, 3 atoms: O, H, H). The DFT was a **single point on that as-provided geometry** \u2014 the geometry was **not** re-optimized in this run.\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (neutral closed-shell singlet).\n- **Software:** PySCF (program reported as `pyscf`).\n- **Convergence:** SCF **converged** in 7 cycles. Integrity check: status `ok`, `trustworthy: true` (energy finite \u2713, SCF converged \u2713).\n\n**Results (eV)**\n- **HOMO** (index 4) = **\u22128.6037183 eV**\n- **LUMO** (index 5) = **+0.33695037 eV**\n- **HOMO\u2013LUMO gap** = **8.9406687 eV** (headline value)\n- Additional orbitals: HOMO\u22122 = \u221214.443673, HOMO\u22121 = \u221210.678837, LUMO+1 = +2.3908259, LUMO+2 = +9.5973296 eV.\n- Total electronic energy = \u221276.462901 Hartree (= \u22122080.6615 eV); energy zero = electronic energy (bare nuclei + electrons).\n- Koopmans-derived descriptors: vertical IP = 8.6037183 eV, vertical EA = \u22120.33695037 eV, electronegativity = 4.133384 eV, chemical hardness = 4.4703343 eV, softness = 0.22369691 eV\u207b\u00b9, electrophilicity index = 1.9109156 eV.\n\n**Warnings:** The result JSON contained **no `warnings` array / no warnings reported** \u2014 this was a clean run.\n\n**Notes / caveats:** These are Koopmans-style orbital energies from a single-point DFT calculation on the supplied (un-reoptimized) geometry; the gap is an orbital-energy difference, not a computed excitation energy. Density fitting (an approximation to the two-electron integrals) is on by default. No experimental comparison is offered.\n\n**Reproducibility:** Command run \u2014 `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <water.xyz>`. A live `<subcommand>_<timestamp>.out` log is streamed to the run's working directory; I can surface its exact path or the result `.json` on request."
+}

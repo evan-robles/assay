@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 44.46,
+    "llm_s": 32.53,
+    "engine_s": 11.93,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 47056,
+    "completion_tokens": 1853,
+    "total_tokens": 48909
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on pyridine (C\u2085H\u2084N, 11 atoms) using DFT at the B3LYP/def2-TZVP level (tier 'standard', density-fitted) in PySCF. Geometry: user-supplied .xyz, single point (not re-optimized at DFT level). Environment: gas phase. Charge: 0, multiplicity: 1 (closed-shell singlet). SCF converged in 10 cycles. No warnings reported. Integrity status: ok, trustworthy: true.\n\nResults (Koopmans' theorem orbital energies):\n  HOMO = \u22127.2525992 eV\n  LUMO = \u22121.112786 eV\n  HOMO\u2013LUMO gap = 6.1398131 eV  \u2190 headline value\n\nAdditional Koopmans/conceptual-DFT descriptors:\n  Vertical IP = 7.2526 eV\n  Vertical EA = 1.1128 eV\n  Electronegativity = 4.1827 eV\n  Chemical hardness = 3.0699 eV\n  Chemical softness = 0.3257 eV\u207b\u00b9\n  Electrophilicity index = 2.8494 eV\n\nTotal electronic energy: \u2212248.3782 Hartree (\u22126758.7152 eV).\n\nCLI invocation: cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out .../live.json"
+}

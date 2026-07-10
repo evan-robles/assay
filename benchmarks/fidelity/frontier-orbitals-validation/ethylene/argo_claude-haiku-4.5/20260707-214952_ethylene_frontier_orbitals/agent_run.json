@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.15,
+    "llm_s": 8.79,
+    "engine_s": 4.36,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30271,
+    "completion_tokens": 1075,
+    "total_tokens": 31346
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Ethylene frontier orbital HOMO\u2013LUMO gap computed via **DFT at the B3LYP/def2-TZVP level** (tier standard, density-fitted) in PySCF, gas phase, charge 0, multiplicity 1, using the supplied ethylene geometry (not geometry-optimized). SCF converged in 6 cycles. The headline result is the HOMO\u2013LUMO gap **7.4357 eV** (Koopmans-style vertical orbital gap, not an excitation energy). HOMO energy is \u22127.6156 eV (orbital index 7), LUMO energy is \u22120.1799 eV (orbital index 8). No warnings reported. Calculation verified via PySCF backend with integrity status ok/trustworthy."
+}

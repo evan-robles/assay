@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.54,
+    "llm_s": 19.68,
+    "engine_s": 4.85,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38729,
+    "completion_tokens": 1424,
+    "total_tokens": 40153
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen (O\u2082) frontier-orbital analysis \u2014 Method Provenance Block**\n\n- **Property:** Frontier-orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (as requested), density-fit as chemkit does by default.\n- **Software:** PySCF (open-shell UKS, since multiplicity = 3).\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`, 2 atoms: O, O). This was a **single point on the supplied geometry \u2014 not re-optimized** at this level.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** charge 0, **multiplicity 3** (triplet \u2014 the correct O\u2082 ground state; open-shell UKS treatment).\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 5.2880586 eV**\n\nFrontier orbital energies (occupations from the UKS calculation):\n- HOMO\u22122 (index 13): \u221212.571514 eV (occ 1.0)\n- HOMO\u22121 (index 14): \u22128.8739616 eV (occ 1.0)\n- HOMO (index 15): \u22128.8739616 eV (occ 1.0)\n- LUMO (index 16): \u22123.5859031 eV (occ 0.0)\n- LUMO+1 (index 17): \u22123.5859031 eV (occ 0.0)\n- LUMO+2 (index 18): +3.6845879 eV (occ 0.0)\n\nTotal electronic energy: \u2212150.38872 Hartree (\u22124092.2855 eV). Koopmans-derived descriptors: vertical IP = 8.8739616 eV, vertical EA = 3.5859031 eV, electronegativity = 6.2299323 eV, chemical hardness = 2.6440293 eV, electrophilicity index = 7.3395664 eV.\n\n**Convergence & warnings:** SCF converged (`scf_converged: true`, 7 cycles). The result JSON contained **no `warnings` array / no warnings reported** \u2014 clean run. Integrity check: **status \"ok\", trustworthy = true** (energy finite \u2713, SCF converged \u2713, schema header \u2713, headline present \u2713).\n\n**Reproducibility:** Command run \u2014 `cli.py frontier --method dft --mult 3 --functional b3lyp --basis def2-tzvp --tier standard <oxygen.xyz>`. Program: PySCF.\n\nNo experimental/literature comparison is offered (none was requested); this is a purely computed value."
+}

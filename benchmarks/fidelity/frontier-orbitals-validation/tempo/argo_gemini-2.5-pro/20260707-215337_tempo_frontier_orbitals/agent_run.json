@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 115.67,
+    "llm_s": 18.23,
+    "engine_s": 97.44,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 27103,
+    "completion_tokens": 172,
+    "total_tokens": 27275
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital analysis of TEMPO was completed using DFT with the B3LYP functional and def2-TZVP basis set (chemkit tier 'standard') in the gas phase. The calculation was performed on the neutral molecule with a multiplicity of 2. The SCF calculation converged successfully.  \n\nThe resulting energies are:  \n- HOMO: -6.3375 eV  \n- LUMO: -2.4651 eV  \n- HOMO-LUMO gap: 3.8724 eV"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.55,
+    "llm_s": 3.63,
+    "engine_s": 11.92,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26060,
+    "completion_tokens": 382,
+    "total_tokens": 26442
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital gap** \u2014 DFT, B3LYP/def2-TZVP (PySCF), gas phase, charge 0, multiplicity 1. Geometry: provided as pyridine.xyz, not re-optimized. SCF converged after 10 cycles.\n\nKey values:\n- HOMO energy: -7.2526 eV\n- LUMO energy: -1.1128 eV\n- HOMO\u2013LUMO gap: **6.1398 eV** (Koopmans-style orbital gap).\n\nOrbitals inspected: HOMO in the 20th orbital (index 20), LUMO in the 21st orbital (index 21).\n\nMethod run via: `chemkit frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard --out pyridine_frontier.json pyridine.xyz`. No warnings were reported, the SCF converged, and the computation passed all integrity checks. Live log file was written during execution, available at `/home/erobles/chem-skills/.fidelity_scratch/tmp8nr6zazo/live.json`. Please ask if you want full orbital visualizations or additional properties derived from Koopmans' theorem."
+}

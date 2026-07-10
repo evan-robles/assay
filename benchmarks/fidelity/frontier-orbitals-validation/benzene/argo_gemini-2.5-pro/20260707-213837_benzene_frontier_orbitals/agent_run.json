@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 31.3,
+    "llm_s": 20.65,
+    "engine_s": 10.65,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 27164,
+    "completion_tokens": 222,
+    "total_tokens": 27386
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier molecular orbitals of benzene were calculated using Density Functional Theory (DFT) at the B3LYP/def2-TZVP level of theory (tier `standard`) with density fitting, as run in the PySCF program. The calculation was performed in the gas phase on the user-provided geometry as a single-point calculation, assuming a neutral charge (0) and a spin multiplicity of 1. The SCF calculation converged in 8 cycles and no warnings were reported.\n\nThe resulting frontier orbital energies are:\nHOMO: -7.0468329 eV\nLUMO: -0.41574728 eV\nHOMO-LUMO gap: 6.6310857 eV"
+}

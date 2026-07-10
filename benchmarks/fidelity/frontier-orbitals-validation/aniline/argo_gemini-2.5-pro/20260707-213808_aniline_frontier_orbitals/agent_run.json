@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 27.36,
+    "llm_s": 13.57,
+    "engine_s": 13.79,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26823,
+    "completion_tokens": 395,
+    "total_tokens": 27218
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "I have run the frontier-orbitals calculation for aniline using DFT.\n\n**Aniline Frontier-Orbital Energies** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**) in PySCF, **gas phase**, charge 0, multiplicity 1. The geometry was taken from the user-provided file. The SCF calculation converged in 9 cycles.\n\nHere are the results:\n*   **HOMO energy:** -5.5538 eV\n*   **LUMO energy:** -0.2490 eV\n*   **HOMO-LUMO gap:** 5.3048 eV\n\nThe calculation was performed using the `frontier-orbitals` skill in the chemkit toolkit. No warnings were reported by the tool."
+}

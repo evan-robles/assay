@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 31.62,
+    "llm_s": 19.64,
+    "engine_s": 11.98,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38676,
+    "completion_tokens": 1504,
+    "total_tokens": 40180
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital analysis** \u2014 computed with chemkit's `frontier-orbitals` skill.\n\n**Method-provenance block**\n- **Property:** Frontier-orbital (HOMO/LUMO) energies and HOMO\u2013LUMO gap.\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (PySCF; density fitting on by default in chemkit).\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`, 11 atoms: N, 5\u00d7C, 5\u00d7H). Used **as-is** \u2014 this is a single-point frontier-orbital calculation at the fixed input geometry (no re-optimization at this or any level).\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (neutral closed-shell singlet; RKS).\n- **Software:** PySCF.\n- **Convergence:** SCF converged (`scf_converged: true`, 10 SCF cycles).\n\n**Headline result**\n- **HOMO\u2013LUMO gap = 6.1398131 eV** (Koopmans-style orbital gap, not an optical/excitation energy).\n\n**Supporting orbital energies**\n- HOMO (index 20) = \u22127.2525992 eV\n- LUMO (index 21) = \u22121.112786 eV\n- HOMO\u22121 = \u22127.4731156 eV; HOMO\u22122 = \u22128.0425195 eV\n- LUMO+1 = \u22120.67231536 eV; LUMO+2 = 1.1781069 eV\n- Total electronic energy = \u2212248.3782 Hartree (\u22126758.7152 eV); energy zero = electronic energy (bare nuclei + electrons). Note: DFT total-energy absolute values are only comparable to other same-method/same-basis results \u2014 do not subtract against xtb/PM7/HF energies.\n\n**Koopmans-derived descriptors** (from HOMO/LUMO): vertical IP = 7.2525992 eV, vertical EA = 1.112786 eV, electronegativity = 4.1826926 eV, chemical hardness = 3.0699066 eV, chemical softness = 0.32574281 eV\u207b\u00b9, electrophilicity index = 2.8494218 eV.\n\n**Warnings:** The result JSON contained **no warnings** (empty \u2014 clean run).\n\n**Integrity:** The engine reported `integrity.status = \"ok\"` and **`trustworthy: true`** (energy finite \u2713, SCF converged \u2713, schema header/headline present \u2713).\n\n**Reproducibility**\n- Command: `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <pyridine.xyz>`\n- The engine also streams a live `<subcommand>_<timestamp>.out` log to its run directory during execution for real-time monitoring (`tail -f`).\n\nNo experimental/literature comparison is offered; this is a computed value only. I can verify a reference value if you'd like one."
+}

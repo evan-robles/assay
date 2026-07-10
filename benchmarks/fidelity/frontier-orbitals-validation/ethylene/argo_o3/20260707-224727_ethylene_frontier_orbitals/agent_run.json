@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 40.78,
+    "llm_s": 36.25,
+    "engine_s": 4.54,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39040,
+    "completion_tokens": 3677,
+    "total_tokens": 42717
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.435716547017943,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier orbital energies of ethylene (C2H4)\nProperty: HOMO, LUMO energies and HOMO\u2013LUMO gap (eV)\nLevel of theory: DFT, tier `standard` = B3LYP/def2-TZVP (RI density-fitted)\nGeometry provenance: user-supplied Cartesian coordinates (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz); single-point only (no re-optimization) \u2192 notation DFT//input-XYZ\nEnvironment: gas phase (no implicit solvation model)\nCharge / multiplicity: 0 / 1 (closed-shell singlet)\nSoftware backend: PySCF 2.x via chemkit `frontier-orbitals` skill\nSCF convergence: converged in 6 cycles; SCF stable\nEngine warnings: no warnings reported\nLive log: calculation output was streamed to a live log file `frontier_<timestamp>.out` in the caller\u2019s cwd as it ran.\nCommand (from cli_invocation):\n/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpz01vllj7/live.json\n\nResults (gas phase, Koopmans orbital energies):\n\u2022 HOMO energy  = \u22127.6155818 eV\n\u2022 LUMO energy  = \u22120.17986527 eV\n\u2192 HOMO\u2013LUMO gap = 7.435716547017943 eV\n\nMethod used: chemkit `frontier-orbitals` at B3LYP/def2-TZVP (tier `standard`) in PySCF.\n"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 39.67,
+    "llm_s": 29.32,
+    "engine_s": 10.34,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30281,
+    "completion_tokens": 2028,
+    "total_tokens": 32309
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": 12,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Benzene frontier-orbital energies computed with DFT at the B3LYP/def2-TZVP level (tier 'standard') using PySCF, in the gas phase, charge 0, multiplicity 1 (neutral closed-shell RKS). The geometry was taken from the user-supplied .xyz file as-is (single point \u2014 not re-optimized at this level). SCF converged in 8 cycles with no warnings. All integrity checks passed (trustworthy: true).\n\nHOMO (index 20): \u22127.0468329 eV\nLUMO (index 21): \u22120.41574728 eV\nHOMO\u2013LUMO gap: 6.6310857 eV (headline result)\n\nThe HOMO and HOMO\u22121 (\u22127.0473344 eV) are essentially degenerate (~0.5 meV apart), consistent with benzene's D6h symmetry and the doubly-degenerate e1g \u03c0 HOMO.\n\nKoopmans-theorem derived quantities:\n  Vertical IP:         7.0468 eV\n  Vertical EA:         0.4157 eV\n  Electronegativity:   3.7313 eV\n  Chemical hardness:   3.3155 eV\n  Chemical softness:   0.3016 eV\u207b\u00b9\n  Electrophilicity:    2.0996 eV\n\nTotal electronic energy: \u2212232.33724 Hartree (\u22126322.2183 eV; for reproducibility only \u2014 not comparable across methods).\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard [input.xyz]\nOutput: /home/erobles/chem-skills/.fidelity_scratch/tmpx28djvf3/live.json\nNo warnings reported (clean run)."
+}

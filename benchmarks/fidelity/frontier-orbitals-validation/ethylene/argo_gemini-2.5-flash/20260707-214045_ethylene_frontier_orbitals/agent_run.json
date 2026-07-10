@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 22.48,
+    "llm_s": 18.01,
+    "engine_s": 4.46,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26438,
+    "completion_tokens": 404,
+    "total_tokens": 26842
+  },
+  "result_json": {
+    "method": "B3LYP/def2-TZVP",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene frontier-orbital energies** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`. SCF converged after 6 cycles.\nHOMO = -7.6155818 eV\nLUMO = -0.17986527 eV\nHOMO-LUMO Gap = 7.4357165 eV\n\nThe method used was Density Functional Theory (DFT) with the B3LYP functional and def2-TZVP basis set (tier `standard`)."
+}

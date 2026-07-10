@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 126.75,
+    "llm_s": 24.67,
+    "engine_s": 102.08,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38801,
+    "completion_tokens": 1498,
+    "total_tokens": 40299
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO frontier-orbital analysis \u2014 HOMO/LUMO and gap**\n\n**Method-provenance block**\n- **Property:** Frontier-orbital energies (HOMO, LUMO) and HOMO\u2013LUMO gap; plus Koopmans-derived reactivity descriptors.\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (as requested), with PySCF's default density fitting (RI approximation to the two-electron integrals). Open-shell \u2192 **UKS** (unrestricted Kohn\u2013Sham).\n- **Software:** PySCF (`pyscf`).\n- **Geometry provenance:** Single point at the **user-supplied geometry** `tempo.xyz` (29 atoms). The geometry was used **as-is** \u2014 it was NOT re-optimized at this (or any) level in this run.\n- **Solvent / environment:** **Gas phase** (no implicit solvation).\n- **Charge / multiplicity:** charge 0, **multiplicity 2** (doublet) \u2014 TEMPO is a stable nitroxide radical, so the doublet is the physically correct spin state.\n- **Convergence:** SCF **converged** in 12 cycles.\n- **Integrity verdict:** engine reports `integrity.status = ok`, **trustworthy = true** (energy finite, SCF converged).\n\n**Results (all in eV)**\n- **HOMO** (index 86, occ 1.0) = **\u22126.3375439 eV**\n- **LUMO** (index 87, occ 0.0) = **\u22122.4651235 eV**\n- **HOMO\u2013LUMO gap = 3.8724203 eV** (headline value; a Koopmans-style orbital gap, not an excitation energy)\n- Neighboring orbitals: HOMO\u22121 = \u22126.9286592, HOMO\u22122 = \u22127.3057732; LUMO+1 = +0.58631725, LUMO+2 = +0.59688153 eV\n- Total electronic energy = \u2212483.88366 Hartree (= \u221213167.145 eV). Note this is a bare electronic energy at a DFT origin and is only comparable to other same-method/same-basis values.\n\n**Koopmans-derived descriptors (eV):** vertical IP = 6.3375439, vertical EA = 2.4651235, electronegativity = 4.4013337, chemical hardness = 1.9362102, softness = 0.51647286 /eV, electrophilicity index = 5.0024886. (Note: for an open-shell radical these single-orbital Koopmans descriptors are approximate.)\n\n**Warnings:** The result JSON's `warnings` array was not present / empty \u2014 **no engine warnings were reported** for this run.\n\n**Reproducibility:** Command run \u2014\n`cli.py frontier --method dft --mult 2 --functional b3lyp --basis def2-tzvp --tier standard .../tempo/tempo.xyz --out .../live.json`\n\nNo experimental/literature comparison is offered \u2014 ask if you want one and I'll verify a source against the research standards first."
+}

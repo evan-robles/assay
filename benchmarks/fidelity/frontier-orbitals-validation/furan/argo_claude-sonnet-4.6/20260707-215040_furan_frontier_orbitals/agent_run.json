@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 40.02,
+    "llm_s": 31.07,
+    "engine_s": 8.96,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 47069,
+    "completion_tokens": 1882,
+    "total_tokens": 48951
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": 9,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on furan (C\u2084H\u2084O, 9 atoms, charge 0, multiplicity 1) using DFT at tier 'standard' \u2014 B3LYP/def2-TZVP (density-fit RI, PySCF RKS) \u2014 in the gas phase, on the user-supplied geometry (single point, no re-optimization at this level).\n\n**Headline result: HOMO\u2013LUMO gap = 6.2573602 eV** (B3LYP/def2-TZVP, gas phase)\n\nKey orbital energies:\n- HOMO (index 17): \u22126.3597638 eV\n- LUMO (index 18): \u22120.1024036 eV\n- HOMO\u2013LUMO gap: 6.2573602 eV\n\nTotal electronic energy: \u2212230.11429 Hartree (\u22126261.7289 eV). SCF converged in 9 cycles. Integrity check: trustworthy = true (all checks passed). No warnings reported \u2014 clean run.\n\nKoopmans-derived descriptors: vertical IP = 6.3598 eV, vertical EA = 0.1024 eV, electronegativity = 3.2311 eV, chemical hardness = 3.1287 eV, softness = 0.3196 eV\u207b\u00b9, electrophilicity index = 1.6684 eV.\n\nCLI: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard furan.xyz"
+}

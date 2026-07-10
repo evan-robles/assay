@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 109.64,
+    "llm_s": 12.53,
+    "engine_s": 97.12,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30355,
+    "completion_tokens": 1503,
+    "total_tokens": 31858
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "TEMPO frontier-orbital HOMO\u2013LUMO gap was calculated using DFT at the B3LYP/def2-TZVP level (tier standard, density-fitted) in PySCF, gas phase, charge 0, multiplicity 2 (open-shell doublet for the N-centered radical). Geometry: fixed single-point on user-supplied /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz (29 atoms). SCF converged in 12 cycles; integrity checks passed. Frontier-orbital energies: HOMO = \u22126.3375 eV, LUMO = \u22122.4651 eV. The HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy) is 3.8724 eV. Command: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --mult 2 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz."
+}

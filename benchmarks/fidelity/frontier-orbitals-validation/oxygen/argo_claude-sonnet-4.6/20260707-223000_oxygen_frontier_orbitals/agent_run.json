@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 35.73,
+    "llm_s": 31.48,
+    "engine_s": 4.26,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30263,
+    "completion_tokens": 1839,
+    "total_tokens": 32102
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbitals single-point calculation on O\u2082 (triplet ground state, multiplicity = 3, charge = 0) using DFT at the B3LYP/def2-TZVP level of theory (tier 'standard'), in the gas phase, via PySCF (UKS, spin-unrestricted). No solvent. Geometry taken as-is from the supplied .xyz file (no re-optimization). SCF converged cleanly in 7 cycles. No warnings reported. Integrity: trustworthy = true.\n\nKey results:\n  HOMO energy:       \u22128.8739616 eV  (degenerate with HOMO\u22121; corresponds to singly-occupied \u03c0* of O\u2082 triplet)\n  LUMO energy:       \u22123.5859031 eV  (degenerate with LUMO+1)\n  HOMO\u2013LUMO gap:      5.2880586 eV  [headline value]\n  Total energy:    \u2212150.38872 Hartree (\u22124092.2855 eV)\n\nKoopmans descriptors (all from UKS B3LYP/def2-TZVP, gas phase):\n  Vertical IP:       8.8740 eV\n  Vertical EA:       3.5859 eV\n  Electronegativity: 6.2299 eV\n  Chemical hardness: 2.6440 eV\n  Softness:          0.3782 eV\u207b\u00b9\n  Electrophilicity:  7.3396 eV\n\nMethod: UKS B3LYP/def2-TZVP (tier standard), PySCF with RI density fitting. Gas phase. Charge 0, multiplicity 3."
+}

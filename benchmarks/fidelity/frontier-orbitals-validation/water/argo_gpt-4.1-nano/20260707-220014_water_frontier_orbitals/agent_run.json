@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.93,
+    "llm_s": 5.0,
+    "engine_s": 3.93,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39682,
+    "completion_tokens": 378,
+    "total_tokens": 40060
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": 3,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier-orbitals calculation on water was performed using DFT at the B3LYP functional with the def2-TZVP basis set, in the gas phase, following the chemkit method tier \"standard.\" The total electronic energy is approximately -76.462901 Hartree, and the HOMO-LUMO energy gap is approximately 8.94067 eV. The SCF converged in 7 cycles without warnings or errors. The method used: DFT, tier \"standard\" (B3LYP/def2-TZVP), gas phase, charge 0, multiplicity 1, in PySCF."
+}

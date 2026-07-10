@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.86,
+    "llm_s": 20.71,
+    "engine_s": 4.15,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26231,
+    "completion_tokens": 1460,
+    "total_tokens": 27691
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen frontier-orbital calculation** \u2014 Property: HOMO\u2013LUMO gap from a DFT frontier-orbitals calculation. Method used: DFT, tier `standard`, **b3lyp/def2-tzvp** in PySCF. Geometry: fixed, user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz` with 2 atoms; this was a single-point orbital calculation, not a geometry optimization. Environment: **gas phase** (`solvent: null`). Charge and spin: charge 0, multiplicity 3. Software reported by chemkit: `pyscf`. SCF convergence: `scf_converged: true` in 7 cycles. No warnings field was returned by the tool result; no warnings reported. The chemkit integrity verdict was `trustworthy: true`.\n\nHeadline result: **HOMO\u2013LUMO gap = 5.2880586 eV**.\n\nAdditional orbital values returned by chemkit: HOMO = -8.8739616 eV; LUMO = -3.5859031 eV. Total electronic energy = -150.38872 hartree = -4092.2855 eV. The reported gap is a Kohn\u2013Sham orbital energy gap, not an excitation energy.\n\nReproducibility: chemkit CLI invocation returned by the tool was `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 3 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp8lcfk_91/live.json`. The tool result did not return a live `.out` log path, so I am not fabricating one."
+}

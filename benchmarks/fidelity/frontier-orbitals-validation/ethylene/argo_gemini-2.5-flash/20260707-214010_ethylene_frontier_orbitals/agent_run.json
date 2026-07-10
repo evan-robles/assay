@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 10.66,
+    "llm_s": 6.14,
+    "engine_s": 4.53,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26456,
+    "completion_tokens": 322,
+    "total_tokens": 26778
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbitals of ethylene have been computed using Density Functional Theory (DFT) with the B3LYP functional and def2-TZVP basis set (tier `standard`) in PySCF, gas phase, charge 0, multiplicity 1. The geometry was taken from the provided `.xyz` file and not optimized at this level. The SCF converged successfully in 6 cycles.\n\nThe HOMO-LUMO gap for ethylene is **7.4357 eV**.\nThe HOMO energy is -7.6156 eV.\nThe LUMO energy is -0.1799 eV."
+}

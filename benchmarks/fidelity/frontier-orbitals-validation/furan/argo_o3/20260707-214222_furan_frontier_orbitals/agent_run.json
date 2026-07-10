@@ -1,0 +1,35 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 25.06,
+    "llm_s": 25.06,
+    "engine_s": 0.0,
+    "turns": 5,
+    "tool_calls": 0,
+    "prompt_tokens": 61853,
+    "completion_tokens": 1546,
+    "total_tokens": 63399
+  },
+  "result_json": {
+    "method": null,
+    "charge": null,
+    "multiplicity": null,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": null,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [
+      "Calculation not run: required inputs (molecular charge and spin multiplicity) were not provided by the user."
+    ],
+    "integrity_trustworthy": false,
+    "provenance": "computed"
+  },
+  "prose": "Unable to run the requested frontier\u2010orbital DFT (B3LYP/def2\u2010TZVP) calculation for furan because two mandatory inputs remain unspecified:\n\n\u2022 Total charge of the molecule\n\u2022 Spin multiplicity (2S + 1)\n\nThe calculation cannot be launched without explicit values for both fields, and the reporting standards prohibit assuming them without user confirmation. Typical furan is neutral (charge 0) and closed\u2010shell (multiplicity 1), but I need you to confirm or correct these numbers before proceeding.\n\nNo computation has been performed, so no orbital energies or files exist to report. Please provide the charge and multiplicity if you\u2019d like me to rerun the calculation."
+}

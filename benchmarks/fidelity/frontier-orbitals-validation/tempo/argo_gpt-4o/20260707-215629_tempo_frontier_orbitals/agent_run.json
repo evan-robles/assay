@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 102.89,
+    "llm_s": 4.05,
+    "engine_s": 98.84,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26130,
+    "completion_tokens": 309,
+    "total_tokens": 26439
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The **HOMO\u2013LUMO gap** of TEMPO was calculated using **DFT B3LYP/def2-TZVP (tier 'standard')** in the gas phase, assuming a **charge of 0** and a **multiplicity of 2**. The method converged successfully in 12 SCF cycles using PySCF. The HOMO energy is **\u22126.3375 eV**, the LUMO energy is **\u22122.4651 eV**, and the HOMO\u2013LUMO gap is **3.8724 eV**. The geometry for TEMPO was sourced from the file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`. No warnings were reported, and the calculation's integrity status is trustworthy. For full transparency, the result endpoint was logged live during runtime."
+}

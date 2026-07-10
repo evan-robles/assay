@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 20.43,
+    "llm_s": 10.05,
+    "engine_s": 10.37,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30276,
+    "completion_tokens": 1281,
+    "total_tokens": 31557
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene HOMO\u2013LUMO gap** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fitted RKS) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: single-point calculation on supplied `.xyz` structure (C\u2086H\u2086, 12 atoms); coordinates not relaxed at this level. SCF converged in 8 cycles. **HOMO\u2013LUMO gap = 6.6310857 eV** (Koopmans-style orbital gap, not an excitation energy). HOMO energy = \u22127.0468329 eV; LUMO energy = \u22120.41574728 eV. Integrity status: OK and trustworthy. Command: `frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <benzene.xyz>`."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.09,
+    "llm_s": 10.4,
+    "engine_s": 4.69,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30296,
+    "completion_tokens": 1258,
+    "total_tokens": 31554
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Formaldehyde frontier-orbital gap calculated using DFT at the B3LYP/def2-TZVP level (tier 'standard', with density fitting) in PySCF, gas phase, charge 0, multiplicity 1. The geometry was the user-supplied formaldehyde.xyz file (4 atoms: O, C, H, H), run as a single point without re-relaxation. SCF converged in 8 cycles. HOMO energy = \u22127.652 eV (orbital index 7), LUMO energy = \u22121.783 eV (orbital index 8), HOMO\u2013LUMO gap (Koopmans vertical gap) = 5.8696712 eV. No warnings. Integrity status: ok, trustworthy=true."
+}

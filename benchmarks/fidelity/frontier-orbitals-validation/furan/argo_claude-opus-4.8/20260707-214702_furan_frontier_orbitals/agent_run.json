@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 30.09,
+    "llm_s": 21.2,
+    "engine_s": 8.89,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38649,
+    "completion_tokens": 1931,
+    "total_tokens": 40580
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbitals task on furan computed with DFT at the B3LYP/def2-TZVP level, tier 'standard' (density fitting on by default), in PySCF, gas phase, charge 0, multiplicity 1 (neutral closed-shell singlet). Geometry: user-supplied furan.xyz (9 atoms) used as-is \u2014 single point, not re-optimized. SCF converged in 9 cycles; engine integrity status 'ok', trustworthy=true.\n\nResults (eV): HOMO = -6.3597638, LUMO = -0.1024036, HOMO-LUMO gap (headline) = 6.2573602 eV. Other orbitals: HOMO-1 = -7.8707441, HOMO-2 = -10.332024, LUMO+1 = 1.4483308, LUMO+2 = 1.702378. Koopmans descriptors (eV): vertical IP = 6.3597638, vertical EA = 0.1024036, electronegativity = 3.2310837, chemical hardness = 3.1286801, electrophilicity index = 1.6684195; chemical softness = 0.3196236 eV^-1. Total electronic energy = -230.11429 hartree (-6261.7289 eV); this energy zero is method-specific and only comparable to other B3LYP/def2-TZVP values.\n\nThe gap is a Koopmans-style orbital-energy gap, not an optical excitation energy. No warnings were reported by the engine (empty warnings array \u2014 clean run). Command: cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard furan.xyz. Result JSON: /home/erobles/chem-skills/.fidelity_scratch/tmptv50ies2/live.json. No experimental comparison offered."
+}

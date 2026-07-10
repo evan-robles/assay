@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 30.72,
+    "llm_s": 16.73,
+    "engine_s": 13.99,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39039,
+    "completion_tokens": 1196,
+    "total_tokens": 40235
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "HOMO\u2013LUMO gap of aniline (computed): 5.3048177 eV\n\nMethod block\nProperty: frontier orbital energies (HOMO, LUMO, gap)\nLevel of theory: DFT, tier \u2018standard\u2019 (B3LYP/def2-TZVP, density-fit) in PySCF 2.x\nGeometry: single-point on supplied /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz (no re-optimization)\nEnvironment: gas phase (no implicit solvent)\nCharge 0, multiplicity 1 (closed-shell)\nSCF convergence: converged in 9 cycles\nLive .out log recorded during run; see path in cli_invocation for real-time output.\nWarnings: no warnings reported by engine.\n\nThis result was obtained with chemkit\u2019s frontier-orbitals skill using --method dft and tier standard, corresponding to B3LYP/def2-TZVP."
+}

@@ -1,0 +1,22 @@
+[engine reference] REUSED cached engine-reference/ (determinism: identical across two runs (within 1e-06 numeric tol))
+[live] injected rules: calculation-reporting-standards, research-standards
+[live] model=argo:o3 via argo-proxy http://127.0.0.1:60639/v1
+[live] agent submitted final_report. (total=6.4s llm=6.4s engine=0.0s turns=1 tool_calls=0)
+
+[Layer B - invocation fidelity]
+  [FAIL] method  {'intended': 'dft', 'got': None}
+  [FAIL] charge  {'intended': 0, 'got': None}
+  [FAIL] multiplicity  {'intended': 1, 'got': None}
+  [PASS] solvent  {'intended': None, 'got': None}
+  [FAIL] functional  {'intended': 'b3lyp', 'got': None}
+  [FAIL] basis  {'intended': 'def2-tzvp', 'got': None}
+  [FAIL] tier  {'intended': 'standard', 'got': None}
+
+[Layer C - reporting fidelity]
+  [FAIL] reported homo_lumo_gap_eV  {'detail': 'agent did not report this value at all'}
+  [PASS] warnings preserved  {'truth_count': 0, 'preserved_count': 0, 'in_array': 0, 'in_prose_only': 0, 'missing_count': 0, 'sim_threshold': 0.97}
+  [WARN] integrity verdict surfaced  {'truth': True, 'reported': None}
+  [PASS] provenance not mislabeled experimental  {'got': '(unstated)'}
+
+==> OVERALL: FAIL
+Artifacts: /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/argo_o3/20260707-223211_ethylene_frontier_orbitals

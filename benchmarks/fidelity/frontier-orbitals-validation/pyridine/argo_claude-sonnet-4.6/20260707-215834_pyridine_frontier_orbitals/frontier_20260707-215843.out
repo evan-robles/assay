@@ -1,0 +1,29 @@
+# chemkit live log
+# subcommand : frontier
+# args       : --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmptdsxmyfw/live.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmptdsxmyfw/live.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/argo_claude-sonnet-4.6/20260707-215834_pyridine_frontier_orbitals
+# started    : 20260707-215843
+# ============================================================
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py", line 1110, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py", line 1043, in main
+    result = _dispatch(args, parser, cli, pyscf_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py", line 259, in _dispatch
+    return frontier.run(
+           ^^^^^^^^^^^^^
+  File "/home/erobles/chem-skills/mcp_server/chemkit_engine/tasks/frontier.py", line 49, in run
+    atoms = read_geometry(input_path)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/erobles/chem-skills/mcp_server/chemkit_engine/io.py", line 16, in read_geometry
+    raise FileNotFoundError(f"Geometry file not found: {path}")
+FileNotFoundError: Geometry file not found: /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals/pyridine/pyridine.xyz
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

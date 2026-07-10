@@ -1,0 +1,38 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 9.06,
+    "llm_s": 4.52,
+    "engine_s": 4.54,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39715,
+    "completion_tokens": 459,
+    "total_tokens": 40174
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.43572,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [
+      "energy_finite: total/electronic energy = -2139.4540556281086 (must be a finite number)",
+      "scf_converged: True (SCF must converge for the energy/orbitals to be meaningful)",
+      "schema_header: present",
+      "schema_headline: 'homo_lumo_gap_eV' = 7.435716547018137 (present and numeric)"
+    ],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital analysis on ethylene was performed using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase. The calculation converged with SCF, and the HOMO energy is -7.61558 eV, while the LUMO energy is -0.17987 eV. The HOMO\u2013LUMO gap is approximately 7.4357 eV. The total electronic energy is -2139.4541 eV. This method used in the calculation is PySCF with the specified functional and basis set."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 124.85,
+    "llm_s": 24.68,
+    "engine_s": 100.16,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38801,
+    "completion_tokens": 1389,
+    "total_tokens": 40190
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO frontier-orbital analysis** \u2014 Property: frontier orbital energies and HOMO\u2013LUMO gap.\n\n**Method-provenance block:**\n- **Level of theory:** DFT, tier `standard` = **B3LYP/def2-TZVP** (density-fit RI, chemkit default), unrestricted Kohn\u2013Sham (UKS, since open-shell). Backend: **PySCF**.\n- **Geometry provenance:** user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz` (29 atoms). This was a **single point** on the supplied geometry as-is \u2014 the structure was NOT re-optimized at this level.\n- **Solvent/environment:** **gas phase** (no implicit solvent).\n- **Charge / multiplicity:** charge 0, **multiplicity 2** (doublet) \u2014 appropriate for TEMPO, which is a persistent nitroxide radical with one unpaired electron.\n- **Convergence:** SCF converged (`scf_converged: true`, 12 SCF cycles).\n\n**Results (in eV):**\n- HOMO (index 86) = **\u22126.3375439 eV**\n- LUMO (index 87) = **\u22122.4651235 eV**\n- **HOMO\u2013LUMO gap = 3.8724203 eV** (headline value)\n\nFor an open-shell doublet these are the frontier orbital energies as returned by the engine; note this is a Koopmans-style orbital gap, not an excitation energy. The engine also reported Koopmans-derived descriptors: vertical IP = 6.3375439 eV, vertical EA = 2.4651235 eV, electronegativity = 4.4013337 eV, chemical hardness = 1.9362102 eV, chemical softness = 0.51647286 eV\u207b\u00b9, electrophilicity index = 5.0024886 eV.\n\nTotal electronic energy: \u2212483.88366 Hartree (\u221213167.145 eV); energy zero = electronic energy (bare nuclei + electrons). Note that DFT total-energy zeros are only comparable to same-method, same-basis values.\n\n**Warnings:** The result JSON's warnings array was empty \u2014 **no warnings reported**. All integrity checks passed (energy_finite \u2713, scf_converged \u2713, schema_header \u2713, schema_headline \u2713); the engine's integrity verdict is **trustworthy: true (status: ok)**.\n\n**Reproducibility:** Command run \u2014 `cli.py frontier --method dft --mult 2 --functional b3lyp --basis def2-tzvp --tier standard <tempo.xyz>`. Provenance of all reported numbers: computed."
+}

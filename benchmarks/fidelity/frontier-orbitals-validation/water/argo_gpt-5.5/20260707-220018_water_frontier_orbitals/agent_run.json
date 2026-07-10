@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 17.27,
+    "llm_s": 13.27,
+    "engine_s": 4.0,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26321,
+    "completion_tokens": 997,
+    "total_tokens": 27318
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water frontier-orbital result** \u2014 Property: HOMO\u2013LUMO orbital gap from a frontier-orbitals calculation. Level of theory: DFT, tier `standard` (**B3LYP/def2-TZVP**) using PySCF. Geometry: user-supplied fixed geometry from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` (3 atoms); this was a single-point orbital calculation, not a geometry optimization. Environment: **gas phase**. Charge/multiplicity: charge 0, multiplicity 1. SCF convergence: converged in 7 cycles. Warnings: no warnings reported. Engine integrity trustworthy verdict: `true`.\n\nMethod used: chemkit `frontier-orbitals` with `method='dft'`, `functional='b3lyp'`, `basis='def2-tzvp'`, tier `standard`.\n\nHeadline result: HOMO\u2013LUMO gap = **8.9406687 eV**. HOMO = -8.6037183 eV; LUMO = 0.33695037 eV. Total electronic energy = -76.462901 hartree (-2080.6615 eV).\n\nReproducibility: input file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz`; command reported by chemkit: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp5p420pqo/live.json`. Provenance: computed."
+}

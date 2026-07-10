@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.81,
+    "llm_s": 18.18,
+    "engine_s": 11.64,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26251,
+    "completion_tokens": 1189,
+    "total_tokens": 27440
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital result** \u2014 Computed with DFT **B3LYP/def2-TZVP**, chemkit tier `standard`, using **PySCF**, gas phase, charge 0, multiplicity 1. Geometry: user-supplied fixed XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` (11 atoms); this frontier-orbitals run was a single-point electronic-structure calculation on that geometry, not a geometry optimization.\n\nHeadline result: **HOMO\u2013LUMO gap = 6.1398131 eV**.\n\nAdditional orbital values from the tool:\n- HOMO = -7.2525992 eV\n- LUMO = -1.112786 eV\n- Total electronic energy = -6758.7152 eV = -248.3782 Hartree\n- SCF converged: true, in 10 cycles\n\nWarnings: no warnings were reported by the chemkit result.\n\nReproducibility:\n- chemkit task: `frontier_orbitals`\n- method returned by tool: `b3lyp/def2-tzvp`\n- command returned by tool: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpw822fnp1/live.json`\n- The chemkit result did not include a live `.out` log path, so I cannot report one without guessing.\n\nIntegrity verdict from engine: `trustworthy: true`.\n\nProvenance: computed."
+}

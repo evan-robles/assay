@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.84,
+    "llm_s": 20.38,
+    "engine_s": 4.46,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38668,
+    "completion_tokens": 1297,
+    "total_tokens": 39965
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene (C\u2082H\u2084) frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit RI, PySCF), **gas phase**, charge 0, multiplicity 1 (closed-shell RKS). Geometry: user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`, used as-is \u2014 this was a single-point frontier-orbital evaluation on that fixed geometry (not re-optimized at DFT). Molecule: 6 atoms (C, C, H, H, H, H), 86 basis functions, 8 occupied orbitals. SCF converged in 6 cycles.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 7.4357 eV** (Koopmans-style orbital gap, not an excitation energy).\n\nFrontier-orbital energies:\n- HOMO (index 7): \u22127.61558 eV\n- LUMO (index 8): \u22120.179865 eV\n- HOMO\u22121: \u22129.88385 eV, HOMO\u22122: \u221211.4875 eV\n- LUMO+1: +1.72010 eV, LUMO+2: +2.38020 eV\n\nKoopmans-derived descriptors: vertical IP = 7.61558 eV, vertical EA = 0.179865 eV, electronegativity = 3.89772 eV, chemical hardness = 3.71786 eV, chemical softness = 0.268972 eV\u207b\u00b9, electrophilicity index = 2.04315 eV.\n\nTotal electronic energy: \u221278.623486 Hartree (= \u22122139.4541 eV = \u221249336.983 kcal/mol); energy zero = electronic energy (bare nuclei + electrons).\n\n**Method summary:** DFT B3LYP/def2-TZVP with density fitting (RI), gas phase, via PySCF. Command: `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <ethylene.xyz>`.\n\n**Convergence & integrity:** SCF converged (`scf_converged: true`, 6 cycles). The engine's integrity verdict is **trustworthy: true** (status \"ok\"; checks passed: energy_finite, scf_converged, schema_header, schema_headline). **No warnings were reported by the tool** (the `warnings` field/array was empty \u2014 clean run).\n\nNo experimental or literature comparison is offered; ask if you'd like one and I'll verify a source first."
+}

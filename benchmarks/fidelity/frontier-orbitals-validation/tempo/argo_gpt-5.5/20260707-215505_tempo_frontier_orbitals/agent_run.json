@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 118.34,
+    "llm_s": 21.97,
+    "engine_s": 96.37,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26314,
+    "completion_tokens": 1298,
+    "total_tokens": 27612
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO frontier-orbital result** \u2014 Property: HOMO\u2013LUMO orbital gap from a DFT frontier-orbitals calculation. Method used: chemkit `frontier-orbitals` with DFT tier `standard`, explicitly `b3lyp/def2-tzvp` in PySCF. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz` (29 atoms); this was a single-point orbital calculation at that geometry, not a geometry optimization. Environment: gas phase. Charge/multiplicity: charge 0, multiplicity 2. SCF converged: true, in 12 cycles. Warnings: no warnings were reported in the tool result.\n\nHeadline result: HOMO\u2013LUMO gap = **3.8724203 eV**.\nHOMO = -6.3375439 eV; LUMO = -2.4651235 eV. The tool also returned Koopmans-style quantities: vertical IP = 6.3375439 eV and vertical EA = 2.4651235 eV. Total electronic energy = -483.88366 hartree = -13167.145 eV.\n\nReproducibility: chemkit reported CLI invocation `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 2 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpjhc1fcv6/live.json`. Engine integrity verdict: `trustworthy: true`. Provenance: computed, not experimental."
+}

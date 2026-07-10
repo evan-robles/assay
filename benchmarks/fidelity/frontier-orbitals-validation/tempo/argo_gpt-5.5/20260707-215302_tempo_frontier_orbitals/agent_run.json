@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 121.54,
+    "llm_s": 24.69,
+    "engine_s": 96.86,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26354,
+    "completion_tokens": 1785,
+    "total_tokens": 28139
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO frontier orbitals \u2014 computed result**\n\n**Method/provenance.** Property: frontier-orbital energies and HOMO\u2013LUMO gap. Level of theory: DFT **b3lyp/def2-tzvp**, chemkit tier `standard`, run with **PySCF**. Geometry: fixed, user-supplied XYZ at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz` (29 atoms); this was a single-point frontier-orbital calculation, not a geometry optimization. Environment: **gas phase**. Charge: **0**. Multiplicity: **2**. SCF convergence: **converged**, 12 SCF cycles. Warnings: no warnings were reported by the tool result. Integrity verdict: `trustworthy: true`.\n\n**Headline result:** HOMO\u2013LUMO gap = **3.8724203 eV**.\n\nAdditional orbital energies returned by chemkit:\n- HOMO-2: -7.3057732 eV, occupation 1.0\n- HOMO-1: -6.9286592 eV, occupation 1.0\n- HOMO: **-6.3375439 eV**, occupation 1.0\n- LUMO: **-2.4651235 eV**, occupation 0.0\n- LUMO+1: 0.58631725 eV, occupation 0.0\n- LUMO+2: 0.59688153 eV, occupation 0.0\n\nKoopmans-style quantities returned:\n- vertical_IP_eV: 6.3375439\n- vertical_EA_eV: 2.4651235\n- electronegativity_eV: 4.4013337\n- chemical_hardness_eV: 1.9362102\n- chemical_softness_per_eV: 0.51647286\n- electrophilicity_index_eV: 5.0024886\n\nTotal electronic energy returned: -13167.145 eV = -483.88366 Hartree. Energy zero: electronic energy (bare nuclei + electrons).\n\nReproducibility: chemkit reported this invocation:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --mult 2 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmper4419g5/live.json`\n\nThe chemkit return did not include a separate live `.out` log path; the returned JSON output path in the invocation is `/home/erobles/chem-skills/.fidelity_scratch/tmper4419g5/live.json`."
+}

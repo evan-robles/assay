@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 109.73,
+    "llm_s": 7.91,
+    "engine_s": 101.82,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26691,
+    "completion_tokens": 427,
+    "total_tokens": 27118
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital energies and the HOMO-LUMO gap for TEMPO were computed using the `frontier-orbitals` skill.\n\n**TEMPO frontier-orbital energies and gap** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 2. Geometry: from user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`. SCF converged in 12 cycles.\n\nThe HOMO energy is -6.33754 eV, the LUMO energy is -2.46512 eV, and the resulting Koopmans-style HOMO-LUMO gap is 3.87242 eV. No warnings were reported."
+}

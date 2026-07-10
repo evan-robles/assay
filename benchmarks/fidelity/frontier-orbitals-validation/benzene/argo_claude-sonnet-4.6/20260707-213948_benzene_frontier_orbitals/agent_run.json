@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 46.49,
+    "llm_s": 35.72,
+    "engine_s": 10.77,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 47174,
+    "completion_tokens": 1956,
+    "total_tokens": 49130
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": 12,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier orbital analysis of benzene (C\u2086H\u2086, 12 atoms) computed at the DFT level using B3LYP/def2-TZVP (tier 'standard'), PySCF RKS backend, gas phase, charge 0, multiplicity 1. Geometry taken from the user-supplied .xyz file (single-point; no re-optimization at this level). SCF converged in 8 cycles. No warnings reported by the engine. Integrity status: trustworthy = true, all checks passed.\n\nKey results:\n- HOMO energy: \u22127.0468329 eV (index 20)\n- LUMO energy: \u22120.41574728 eV (index 21)\n- HOMO\u2013LUMO gap: 6.6310857 eV (Koopmans orbital eigenvalue difference, not an excitation energy)\n\nThe HOMO and HOMO\u22121 are essentially degenerate (\u22127.0468 vs \u22127.0473 eV), consistent with benzene's e\u2081g \u03c0 symmetry; likewise the LUMO and LUMO+1 are near-degenerate (\u22120.4157 vs \u22120.4151 eV, e\u2082u symmetry).\n\nCLI invocation: /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out ...\n\nNo experimental comparison is offered \u2014 ask if you want one and a verified source will be located first."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.44,
+    "llm_s": 27.95,
+    "engine_s": 4.49,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38665,
+    "completion_tokens": 1605,
+    "total_tokens": 40270
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Ethylene frontier-orbital analysis\n\n**Property:** Frontier molecular orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n\n**Method-provenance block**\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (density-fit RKS in PySCF). This is the tier the user requested, and both the chemkit knob and the underlying theory are the same choice here.\n- **Software/backend:** PySCF (`pyscf`).\n- **Geometry provenance:** User-supplied `.xyz` file (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz`, 6 atoms: C, C, H, H, H, H). Used **as-is** \u2014 this was a single-point frontier-orbital evaluation at the provided geometry; the geometry was **not** re-optimized at this (or any) level.\n- **Solvent/environment:** **Gas phase** (no implicit solvation; `solvent: null`).\n- **Charge / multiplicity:** charge **0**, multiplicity **1** (neutral closed-shell singlet).\n- **Convergence:** SCF **converged** in 6 cycles (`scf_converged: true`).\n\n**Headline result**\n- **HOMO\u2013LUMO gap = 7.4357 eV** (headline value, at least 5 sig figs: 7.4357165 eV)\n- HOMO (index 7) = **\u22127.6156 eV** (occupation 2.0)\n- LUMO (index 8) = **\u22120.17987 eV** (occupation 0.0)\n\n**Neighboring frontier orbitals**\n- HOMO\u22122 (idx 5): \u221211.4875 eV; HOMO\u22121 (idx 6): \u22129.88385 eV\n- LUMO+1 (idx 9): +1.72010 eV; LUMO+2 (idx 10): +2.38020 eV\n\n**Koopmans-derived descriptors** (from the same orbital energies): vertical IP = 7.6156 eV, vertical EA = 0.17987 eV, electronegativity = 3.8977 eV, chemical hardness = 3.7179 eV, chemical softness = 0.26897 eV\u207b\u00b9, electrophilicity index = 2.0431 eV.\n\n**Total electronic energy** (bare nuclei + electrons, this level): \u221278.623486 Hartree (= \u22122139.4541 eV = \u221249336.983 kcal/mol). Note this is an electronic energy origin defined by B3LYP/def2-TZVP and is only comparable to other same-method, same-basis energies.\n\n**Approximations to note:** density fitting (RI) is on by default in chemkit \u2014 it is an approximation to the two-electron integrals. Implicit solvation is not used (gas phase). This is a single-point on a single provided geometry (no conformer averaging).\n\n**Integrity / warnings:** The engine's integrity verdict is `status: ok`, **trustworthy: true** (checks: energy finite \u2713, SCF converged \u2713, schema header \u2713, schema headline \u2713). The result JSON contained **no `warnings` array entries \u2014 no warnings were reported** (clean run).\n\n**Reproducibility**\n- Command: `.../chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <ethylene.xyz> --out .../live.json`"
+}

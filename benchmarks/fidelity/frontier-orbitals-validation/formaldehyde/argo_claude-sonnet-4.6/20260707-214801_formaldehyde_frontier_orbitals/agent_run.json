@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 38.05,
+    "llm_s": 33.44,
+    "engine_s": 4.62,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 47136,
+    "completion_tokens": 2184,
+    "total_tokens": 49320
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": 4,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on formaldehyde (H\u2082C=O, 4 atoms: O, C, H, H) using DFT at the B3LYP/def2-TZVP level (tier 'standard', density-fit RI, PySCF RKS), gas phase, charge 0, multiplicity 1. Geometry: user-supplied .xyz file at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz \u2014 single-point, no re-optimisation at this level. SCF converged in 8 cycles. No warnings reported (clean run). Integrity status: trustworthy = true, all checks passed.\n\nKey results (Koopmans-theorem, orbital energy differences):\n  HOMO energy      = \u22127.6523067 eV\n  LUMO energy      = \u22121.7826355 eV\n  HOMO\u2013LUMO gap    =  5.8696712 eV  \u2190 headline value\n  Total energy     = \u2212114.55325 Hartree (\u22123117.1528 eV)\n\nKoopmans descriptors:\n  Vertical IP            = 7.6523067 eV\n  Vertical EA            = 1.7826355 eV\n  Electronegativity (\u03c7)  = 4.7174711 eV\n  Chemical hardness (\u03b7)  = 2.9348356 eV\n  Chemical softness (\u03c3)  = 0.34073459 eV\u207b\u00b9\n  Electrophilicity (\u03c9)   = 3.7914447 eV\n\nCaveats: (1) Single-point on supplied geometry \u2014 not re-optimised at B3LYP/def2-TZVP. (2) Koopmans-theorem IP/EA are frozen-orbital estimates, not \u0394SCF values. (3) The HOMO\u2013LUMO gap is a ground-state KS orbital energy difference, not an optical/TD-DFT excitation energy.\n\nCLI invocation:\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier \\\n    --method dft --functional b3lyp --basis def2-tzvp --tier standard \\\n    /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz \\\n    --out /home/erobles/chem-skills/.fidelity_scratch/tmplfwog1xd/live.json"
+}

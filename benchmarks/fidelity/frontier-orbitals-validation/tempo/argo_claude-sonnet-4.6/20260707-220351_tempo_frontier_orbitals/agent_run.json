@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 132.31,
+    "llm_s": 32.13,
+    "engine_s": 100.17,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30453,
+    "completion_tokens": 1848,
+    "total_tokens": 32301
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier orbitals computed for TEMPO (2,2,6,6-tetramethylpiperidine-1-oxyl) using DFT UKS at the B3LYP/def2-TZVP level (tier 'standard', density-fit) in PySCF. Gas phase, charge 0, multiplicity 2 (open-shell doublet \u2014 correct for the stable nitroxide radical). Geometry taken from the user-supplied .xyz file at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz; single-point calculation (not re-optimized). SCF converged in 12 cycles. No warnings reported. The engine integrity check returned trustworthy=true.\n\nKey results:\n- HOMO (SOMO, orbital index 86): \u22126.3375439 eV\n- LUMO (orbital index 87): \u22122.4651235 eV\n- HOMO\u2013LUMO gap: 3.8724203 eV (headline value)\n- Total energy: \u2212483.88366 Hartree\n\nKoopmans descriptors: vertical IP = 6.3375 eV, vertical EA = 2.4651 eV, chemical hardness \u03b7 = 1.9362 eV, electrophilicity \u03c9 = 5.0025 eV.\n\nNo warnings were reported by the engine (warnings array empty)."
+}

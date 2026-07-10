@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.45,
+    "llm_s": 16.89,
+    "engine_s": 4.55,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38647,
+    "completion_tokens": 1423,
+    "total_tokens": 40070
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene frontier-orbital analysis \u2014 HOMO\u2013LUMO gap**\n\n**Method-provenance block**\n- **Property:** Frontier molecular orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy), in eV.\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP/def2-TZVP** (density-fitting/RI on by default in chemkit), computed with **PySCF** (RKS, closed-shell).\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/ethylene/ethylene.xyz` (6 atoms: C, C, H, H, H, H). This was a **single-point** frontier-orbital calculation on the supplied geometry \u2014 the geometry was **not** re-optimized at this level.\n- **Solvent / environment:** **Gas phase** (no implicit solvation; `solvent: null`).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (neutral closed-shell singlet).\n- **Software:** PySCF.\n- **Convergence:** SCF **converged** in 6 cycles.\n\n**Results (B3LYP/def2-TZVP, gas phase)**\n- HOMO (orbital index 7): **\u22127.6155818 eV**\n- LUMO (orbital index 8): **\u22120.17986527 eV**\n- **HOMO\u2013LUMO gap: 7.4357165 eV** (headline value)\n- HOMO\u22121: \u22129.883854 eV; HOMO\u22122: \u221211.487503 eV; LUMO+1: +1.720103 eV; LUMO+2: +2.3802006 eV\n- Total electronic energy: \u221278.623486 Hartree (\u22122139.4541 eV)\n- Koopmans-derived descriptors: vertical IP = 7.6155818 eV; vertical EA = 0.17986527 eV; electronegativity = 3.8977235 eV; chemical hardness = 3.7178583 eV; chemical softness = 0.26897206 eV\u207b\u00b9; electrophilicity index = 2.0431452 eV.\n\n**Convergence / warnings / integrity:** The result JSON contained **no `warnings` array / no warnings reported** (clean run). Integrity check: **status \"ok\", trustworthy = true** \u2014 all checks passed (energy finite, SCF converged, schema header and headline present).\n\n**Note on the gap:** This is a Koopmans-style orbital-energy gap from ground-state DFT orbitals, not a computed optical/excitation energy. Energies are model-dependent (B3LYP/def2-TZVP with density fitting) and should not be compared against energies from a different method/basis.\n\n**Reproducibility:** Command run \u2014 `.../cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <ethylene.xyz> --out <live.json>`."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 34.67,
+    "llm_s": 23.84,
+    "engine_s": 10.83,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39181,
+    "completion_tokens": 2266,
+    "total_tokens": 41447
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": 12,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance block\n\u2022 Property: HOMO and LUMO orbital energies and the HOMO\u2013LUMO gap (eV).\n\u2022 Level of theory: DFT, tier \u2018standard\u2019 \u2192 B3LYP/def2-TZVP (RI density-fitted) in PySCF.\n\u2022 Geometry provenance: single-point calculation on the supplied file /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz (no further optimisation). This is therefore a B3LYP/def2-TZVP//input-geometry result.\n\u2022 Solvent / environment: gas phase (no implicit solvation).\n\u2022 Charge = 0, multiplicity = 1 (closed-shell singlet).\n\u2022 Software/back-end: PySCF via chemkit frontier-orbitals skill.\n\u2022 Convergence & diagnostics: SCF converged (8 cycles). chemkit integrity check status = ok, trustworthy = true. No engine warnings were reported.\n\nKey numerical results (gas phase)\n\u2022 HOMO energy  = \u22127.0468329 eV\n\u2022 LUMO energy  = \u22120.41574728 eV\n\u2022 HOMO\u2013LUMO gap (headline value) = 6.6310857 eV\n\nReproducibility\n\u2022 chemkit command:\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out \u2026/live.json\n\u2022 Result JSON: /home/erobles/chem-skills/.fidelity_scratch/tmpuiq4__2j/live.json\n\u2022 A live PySCF output log was streamed during the run to the standard chemkit frontier_<timestamp>.out file in the working directory; it can be inspected or tailed for full SCF details.\n\nNo warnings were emitted by the chemkit engine (warnings array is empty)."
+}

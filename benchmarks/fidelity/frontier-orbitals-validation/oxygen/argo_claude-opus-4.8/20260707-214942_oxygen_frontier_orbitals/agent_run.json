@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.69,
+    "llm_s": 19.51,
+    "engine_s": 4.19,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38729,
+    "completion_tokens": 1627,
+    "total_tokens": 40356
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier-orbital analysis of oxygen (O\u2082)** \u2014 computed result.\n\n**Method provenance block**\n- **Property:** Frontier molecular orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (density-fitting on by default in chemkit), engine **PySCF**.\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`, 2 atoms, O\u2013O). Used **as-is** \u2014 this is a single-point frontier-orbital evaluation at the supplied geometry; no optimization was performed at this level.\n- **Environment:** **Gas phase** (no solvent).\n- **Charge / multiplicity:** charge **0**, multiplicity **3** (triplet \u2014 the correct O\u2082 ground state; open-shell, treated with unrestricted KS/UKS).\n- **Convergence:** SCF **converged** in 7 cycles.\n\n**Results**\n- **HOMO** (index 15, occ 1.0) = **\u22128.8739616 eV**\n- **LUMO** (index 16, occ 0.0) = **\u22123.5859031 eV**\n- **HOMO\u2013LUMO gap = 5.2880586 eV** (headline value)\n- Total electronic energy = \u2212150.38872 Hartree (\u22124092.2855 eV; \u221294370.346 kcal/mol). Note this is a bare electronic energy with a DFT-defined origin \u2014 not comparable across methods.\n- Additional orbitals returned: HOMO\u22122 (idx 13) = \u221212.571514 eV; HOMO\u22121 (idx 14) = \u22128.8739616 eV; LUMO+1 (idx 17) = \u22123.5859031 eV; LUMO+2 (idx 18) = 3.6845879 eV. (The degenerate HOMO/HOMO\u22121 and LUMO/LUMO+1 pairs reflect the \u03c0/\u03c0* symmetry of O\u2082.)\n- Koopmans-derived descriptors: vertical IP = 8.8739616 eV, vertical EA = 3.5859031 eV, electronegativity = 6.2299323 eV, chemical hardness = 2.6440293 eV, chemical softness = 0.37821064 eV\u207b\u00b9, electrophilicity index = 7.3395664 eV.\n\n**Warnings:** The result JSON reported **no warnings** (empty warnings array) \u2014 clean run.\n\n**Integrity:** engine `integrity.status = \"ok\"`, `trustworthy = true`; all checks passed (energy finite, SCF converged, schema header and headline present).\n\n**Reproducibility:** `cli.py frontier --method dft --mult 3 --functional b3lyp --basis def2-tzvp --tier standard <oxygen.xyz> --out .../live.json`. A live `<subcommand>_<timestamp>.out` log is streamed to the run's cwd during execution and can be `tail -f`'d.\n\nSignificant figures are reported as returned; note that B3LYP/def2-TZVP orbital energies are basis- and grid-dependent, so the last digits are not physically meaningful to full precision. No experimental/literature comparison is offered \u2014 ask if you want one and I'll verify a source first."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.94,
+    "llm_s": 9.72,
+    "engine_s": 4.22,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30268,
+    "completion_tokens": 953,
+    "total_tokens": 31221
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen (O\u2082) frontier-orbital gap** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 3 (open-shell triplet). Geometry: O\u2082 molecule from user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`, used as-is (single-point calculation).\n\n**Frontier orbital energies (Koopmans-style):**\n- HOMO (index 15, doubly occupied \u03b1/\u03b2): **\u22128.874 eV**\n- LUMO (index 16, virtual): **\u22123.586 eV**\n- **HOMO\u2013LUMO gap: 5.288 eV**\n\nThe orbital structure reflects the open-shell (U)KS treatment: the two singly occupied orbitals (HOMO-1 and HOMO at indices 14\u201315) are degenerate at \u22128.874 eV, and the first virtual level (LUMO at index 16, also degenerate LUMO/LUMO+1) sits at \u22123.586 eV.\n\n**Secondary Koopmans properties:**\n- Vertical ionization potential: 8.874 eV  \n- Vertical electron affinity: 3.586 eV  \n- Electronegativity (via Koopmans): 6.230 eV  \n- Chemical hardness: 2.644 eV  \n- Electrophilicity index: 7.340 eV  \n\n**Convergence:** SCF converged in 7 cycles. No warnings reported. **Integrity status: OK** (all checks passed; calculation is trustworthy).\n\n**Command:** `chemkit frontier --method dft --mult 3 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`\n\n**Files:** Live calculation log and `.molden` orbital file were written to the engine's working directory; the result JSON is in `/home/erobles/chem-skills/.fidelity_scratch/tmp6m3ryp6f/live.json`."
+}

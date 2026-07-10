@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.68,
+    "llm_s": 19.51,
+    "engine_s": 9.17,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38652,
+    "completion_tokens": 1402,
+    "total_tokens": 40054
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Furan frontier-orbital analysis** \u2014 DFT frontier-orbitals computed with PySCF.\n\n**Method-provenance block:**\n- **Property:** Frontier orbital energies (HOMO/LUMO) and HOMO\u2013LUMO gap.\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP / def2-TZVP** (PySCF; density fitting on by default).\n- **Geometry provenance:** User-supplied `.xyz` (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/furan/furan.xyz`, 9 atoms: O, 4\u00d7C, 4\u00d7H). Used as-is \u2014 this is a single-point frontier-orbital calculation at the fixed input geometry (not re-optimized at this level).\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (neutral closed-shell singlet).\n- **Software:** PySCF.\n- **Convergence:** SCF converged (`scf_converged: true`, 9 SCF cycles).\n\n**Results (all energies in eV):**\n- **HOMO** (index 17, occ 2.0) = **\u22126.3597638 eV**\n- **LUMO** (index 18, occ 0.0) = **\u22120.1024036 eV**\n- **HOMO\u2013LUMO gap** = **6.2573602 eV** \u2190 headline value\n\nNearby orbitals: HOMO\u22122 = \u221210.332024 eV, HOMO\u22121 = \u22127.8707441 eV; LUMO+1 = +1.4483308 eV, LUMO+2 = +1.702378 eV.\n\nKoopmans-derived descriptors: vertical IP = 6.3597638 eV, vertical EA = 0.1024036 eV, electronegativity = 3.2310837 eV, chemical hardness = 3.1286801 eV, chemical softness = 0.3196236 eV\u207b\u00b9, electrophilicity index = 1.6684195 eV. (These are Koopmans-style orbital-energy estimates; the gap is an orbital gap, not an excitation energy.)\n\nTotal electronic energy: \u2212230.11429 Hartree (\u22126261.7289 eV). Note this is the electronic energy zero for this method and is only comparable to other B3LYP/def2-TZVP results at the same geometry \u2014 do not compare energy zeros across methods.\n\n**Warnings:** The tool reported no warnings (empty warnings \u2014 clean run).\n\n**Integrity:** The engine reports `integrity.status = \"ok\"` and `trustworthy = true` (all checks passed: energy finite, SCF converged, schema header and headline present).\n\n**Reproducibility:** Command \u2014 `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <furan.xyz>`."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.65,
+    "llm_s": 10.36,
+    "engine_s": 11.29,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26928,
+    "completion_tokens": 396,
+    "total_tokens": 27324
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital energies** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz`. SCF converged in 10 cycles. No warnings reported.\n\nThe energies are:\n*   HOMO = -7.2526 eV\n*   LUMO = -1.1128 eV\n*   HOMO-LUMO gap = 6.1398 eV\n\nThe HOMO-LUMO gap for pyridine is 6.1398 eV."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 25.12,
+    "llm_s": 20.85,
+    "engine_s": 4.26,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30248,
+    "completion_tokens": 1652,
+    "total_tokens": 31900
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Oxygen (O\u2082) frontier-orbital HOMO\u2013LUMO gap computed via DFT using B3LYP functional with def2-TZVP basis set (tier standard) in PySCF, gas phase, charge 0, multiplicity 3 (triplet ground state). The molecule was treated as a single-point calculation on the user-supplied geometry without re-optimization. SCF converged in 7 cycles. HOMO energy: \u22128.8740 eV; LUMO energy: \u22123.5859 eV; gap: 5.2881 eV. The frontier orbitals are degenerate (\u03b1 and \u03b2 spins both occupied at HOMO, both empty at LUMO), consistent with O\u2082's \u00b3\u03a3_g\u207b triplet-diradical ground state. This is a computed orbital-energy gap, not an experimental excitation energy or ionization potential. All integrity checks passed."
+}

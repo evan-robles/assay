@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 19.71,
+    "llm_s": 15.82,
+    "engine_s": 3.89,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38621,
+    "completion_tokens": 1303,
+    "total_tokens": 39924
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Water frontier-orbital analysis** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit RI) in PySCF, **gas phase** (no solvent), charge 0, multiplicity 1 (RKS, closed-shell). Geometry: user-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` (3 atoms: O, H, H), used as-is \u2014 this was a single-point frontier-orbital evaluation, the geometry was NOT re-optimized at this level. SCF converged in 7 cycles.\n\n**Method used:** DFT with the B3LYP functional and the def2-TZVP basis set (chemkit tier `standard`, which expands to exactly B3LYP/def2-TZVP), gas phase, via the PySCF backend. Command: `frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard`.\n\n**Headline result \u2014 HOMO\u2013LUMO gap = 8.9406687 eV** (Koopmans-style orbital energy gap, not an excitation energy).\n\nSupporting frontier data (all in eV):\n- HOMO (index 4, occ 2.0) = \u22128.6037183\n- LUMO (index 5, occ 0.0) = +0.33695037\n- HOMO\u22121 = \u221210.678837, HOMO\u22122 = \u221214.443673\n- LUMO+1 = +2.3908259, LUMO+2 = +9.5973296\n- Koopmans descriptors: vertical IP = 8.6037183, vertical EA = \u22120.33695037, electronegativity = 4.133384, chemical hardness = 4.4703343, chemical softness = 0.22369691 eV\u207b\u00b9, electrophilicity index = 1.9109156\n\nTotal electronic energy: \u221276.462901 Hartree (\u22122080.6615 eV; \u221247981.195 kcal/mol), energy zero = electronic energy (bare nuclei + electrons). Note that this absolute energy is only comparable to other B3LYP/def2-TZVP results \u2014 energy zeros are not transferable across methods.\n\n**Convergence & warnings:** SCF converged = true (7 cycles). The result JSON's integrity block reports status \"ok\" and trustworthy = true, with all checks passing (energy finite, SCF converged, schema header present, headline present/numeric). No warnings were reported by the engine (the result contained no `warnings` array entries \u2014 clean run).\n\nNo experimental/literature comparison is offered; the value above is a computed result only. I can verify a reference source on request."
+}

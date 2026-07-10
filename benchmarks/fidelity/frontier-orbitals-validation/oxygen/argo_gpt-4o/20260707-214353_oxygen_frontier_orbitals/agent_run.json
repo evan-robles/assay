@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 9.92,
+    "llm_s": 5.54,
+    "engine_s": 4.39,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26051,
+    "completion_tokens": 367,
+    "total_tokens": 26418
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Oxygen Frontier-Orbital Energies and HOMO\u2013LUMO Gap** \u2014 This was computed using DFT at the B3LYP/def2-TZVP level, tier `standard`, in PySCF, gas phase. The calculation specified a charge of 0 and a triplet multiplicity (2S+1=3). Oxygen geometry was provided as a fixed input (`/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`), and the SCF converged cleanly in 7 cycles. Computed results:\n\n- **HOMO energy:** \u22128.8740 eV\n- **LUMO energy:** \u22123.5859 eV\n- **HOMO\u2013LUMO gap:** 5.2881 eV  \n\nCommand: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --mult 3 --functional b3lyp --basis def2-tzvp --tier standard`.\n\nNo warnings were reported, and all energy/trustworthiness checks passed."
+}

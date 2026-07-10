@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.2,
+    "llm_s": 16.93,
+    "engine_s": 4.27,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39096,
+    "completion_tokens": 1683,
+    "total_tokens": 40779
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Method provenance and key results\n\n\u2022 Property: Kohn\u2013Sham HOMO\u2013LUMO gap (Koopmans-style orbital gap)  \n\u2022 Level of theory: DFT, tier `standard` = B3LYP/def2-TZVP with RI density-fitting (PySCF)  \n\u2022 Geometry provenance: user-supplied O\u2082 structure (/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz); single-point only, no re-optimization (notation: DFT//input geometry).  \n\u2022 Environment: gas phase (no implicit solvation).  \n\u2022 Charge = 0, multiplicity = 3 (triplet O\u2082, unrestricted KS).  \n\u2022 Software: PySCF backend via chemkit `frontier-orbitals` skill.  \n\u2022 Convergence & warnings: SCF converged in 7 cycles; **no warnings reported** by the engine.  \n\u2022 Live log: calculation ran with real-time output to the standard chemkit `frontier_<timestamp>.out` log in the working directory (written line-by-line while running); JSON results saved to /home/erobles/chem-skills/.fidelity_scratch/tmpa1c479ez/live.json.  \n\nComputed orbital energies (eV):  \n\u2013 HOMO (\u03b2, \u03c0_g): \u22128.8739616  \n\u2013 LUMO (\u03c0_g*): \u22123.5859031  \n\u21d2 HOMO\u2013LUMO gap = **5.2880586 eV**\n\n(These are Kohn\u2013Sham orbital energies; the gap is not an optical excitation energy and should not be compared directly to experimental spectra without further treatment.)"
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 126.09,
+    "llm_s": 27.14,
+    "engine_s": 98.95,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 47114,
+    "completion_tokens": 1666,
+    "total_tokens": 48780
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier orbital calculation on TEMPO (2,2,6,6-tetramethylpiperidine-1-oxyl) using DFT at the B3LYP/def2-TZVP level (tier 'standard') in PySCF, gas phase, charge 0, multiplicity 2 (open-shell doublet, UKS). Geometry from user-supplied .xyz file (fixed, no re-optimization). SCF converged in 12 cycles. No warnings reported (clean run). Integrity check: trustworthy = true, all checks passed.\n\nKey results:\n- HOMO energy: \u22126.3375439 eV\n- LUMO energy: \u22122.4651235 eV\n- HOMO\u2013LUMO gap (headline value): 3.8724203 eV\n- Total energy: \u2212483.88366 Hartree\n- Vertical IP (Koopmans): 6.3375 eV\n- Vertical EA (Koopmans): 2.4651 eV\n\nThe HOMO corresponds to the singly-occupied MO (SOMO) of the persistent N\u2013O\u2022 radical. These are Koopmans-theorem orbital energies, not excitation energies."
+}

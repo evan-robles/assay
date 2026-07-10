@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.06,
+    "llm_s": 3.12,
+    "engine_s": 11.94,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26059,
+    "completion_tokens": 237,
+    "total_tokens": 26296
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The computed HOMO\u2013LUMO gap of pyridine is 6.13981 eV, obtained using density functional theory (DFT) at the B3LYP functional with def2-TZVP basis set (tier 'standard') in the gas phase. The calculation was performed using PySCF on a fixed geometry with no changes to charge (0) and multiplicity (1). SCF convergence was successfully achieved, and the frontier orbital energies are: HOMO = -7.25260 eV and LUMO = -1.11279 eV."
+}

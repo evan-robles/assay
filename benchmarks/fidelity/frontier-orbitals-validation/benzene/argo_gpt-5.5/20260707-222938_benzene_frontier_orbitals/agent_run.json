@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-5.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 25.27,
+    "llm_s": 13.9,
+    "engine_s": 11.37,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26340,
+    "completion_tokens": 1048,
+    "total_tokens": 27388
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Benzene frontier-orbital result** \u2014 Property: HOMO\u2013LUMO orbital gap. Level of theory: DFT, tier `standard` (**B3LYP/def2-TZVP**) using PySCF. Geometry: fixed user-supplied XYZ file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz` (12 atoms); this was a single-point frontier-orbital calculation, not a geometry optimization. Environment: gas phase. Charge/multiplicity: charge 0, multiplicity 1. SCF convergence: converged in 8 cycles. Warnings: no warnings reported. Engine integrity trustworthy verdict: true. Provenance: computed.\n\nHeadline result: **HOMO\u2013LUMO gap = 6.6310857 eV**.\n\nAdditional orbital values returned by chemkit: HOMO = -7.0468329 eV; LUMO = -0.41574728 eV. Total electronic energy = -232.33724 Hartree (-6322.2183 eV). Koopmans-style quantities returned: vertical IP = 7.0468329 eV; vertical EA = 0.41574728 eV; electronegativity = 3.7312901 eV; chemical hardness = 3.3155428 eV; chemical softness = 0.30160974 eV^-1; electrophilicity index = 2.0995847 eV.\n\nExact chemkit command reported by the engine: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --charge 0 --mult 1 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpaa6h7cmb/live.json`. The chemkit result did not include a live `.out` log path field; the JSON output path in the returned command was `/home/erobles/chem-skills/.fidelity_scratch/tmpaa6h7cmb/live.json`."
+}

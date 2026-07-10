@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 39.48,
+    "llm_s": 27.87,
+    "engine_s": 11.61,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25444,
+    "completion_tokens": 3845,
+    "total_tokens": 29289
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine frontier-orbital gap** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fit RI-J), in PySCF, gas phase, charge 0, multiplicity 1. Geometry: single-point energy on the user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz` (no geometry optimization). SCF converged in 10 cycles (no warnings reported). HOMO energy = \u22127.2525992 eV; LUMO energy = \u22121.1127860 eV \u2192 frontier-gap = 6.1398131 eV. Command: `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz --out live.json`. The calculation log is being written live to `frontier-orbitals_<timestamp>.out` in the working directory (you can `tail -f` it)."
+}

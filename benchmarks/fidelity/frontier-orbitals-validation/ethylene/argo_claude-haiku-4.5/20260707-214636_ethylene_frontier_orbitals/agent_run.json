@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 14.51,
+    "llm_s": 10.04,
+    "engine_s": 4.47,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 46534,
+    "completion_tokens": 1163,
+    "total_tokens": 47697
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Ethylene Frontier Orbitals** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, density-fit) in PySCF, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied ethylene.xyz (6 atoms), single-point calculation. SCF converged in 6 cycles.\n\n**Results:**\n\nHOMO\u2013LUMO gap: **7.436 eV** (headline value).\n\nFrontier orbital energies:\n- HOMO (index 7): \u22127.616 eV, occupation 2.0\n- LUMO (index 8): \u22120.180 eV, occupation 0.0\n\nKoopmans-style derived quantities:\n- Vertical ionization potential: 7.616 eV\n- Vertical electron affinity: 0.180 eV\n- Electronegativity: 3.898 eV\n- Chemical hardness: 3.718 eV\n- Electrophilicity index: 2.043 eV\n\nTotal electronic energy: \u221278.623486 Hartree (\u22122139.454 eV).\n\nNo warnings reported. All integrity checks passed (`integrity.trustworthy: true`)."
+}

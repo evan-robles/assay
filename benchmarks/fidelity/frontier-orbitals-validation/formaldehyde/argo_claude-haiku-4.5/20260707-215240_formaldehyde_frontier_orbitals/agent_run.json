@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.51,
+    "llm_s": 9.07,
+    "engine_s": 4.44,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30288,
+    "completion_tokens": 1134,
+    "total_tokens": 31422
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Formaldehyde frontier-orbital HOMO\u2013LUMO gap** \u2014 DFT, B3LYP/def2-TZVP (tier standard, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: fixed single-point (user-supplied formaldehyde.xyz, 4 atoms). SCF converged in 8 cycles. \n\nHOMO energy: \u22127.652 eV (orbital index 7, occupied).\nLUMO energy: \u22121.783 eV (orbital index 8, virtual).\n**HOMO\u2013LUMO gap = 5.870 eV** (Koopmans interpretation: vertical ionization potential / electron affinity).\n\nAdditional Koopmans quantities: electronegativity 4.717 eV, hardness 2.935 eV, electrophilicity 3.791 eV.\n\nTotal electronic energy: \u22123117.153 eV (\u2212114.553 Hartree). Integrity status: ok. No warnings."
+}

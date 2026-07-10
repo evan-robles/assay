@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 135.84,
+    "llm_s": 32.83,
+    "engine_s": 103.01,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 47267,
+    "completion_tokens": 1997,
+    "total_tokens": 49264
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on TEMPO (2,2,6,6-tetramethylpiperidine-1-oxyl), a stable nitroxide radical.\n\n**Property:** HOMO, LUMO, and HOMO\u2013LUMO gap energies (Koopmans-style orbital energies).\n\n**Level of theory:** DFT, tier `standard` \u2192 B3LYP/def2-TZVP (density-fitted), PySCF UKS (open-shell).\n\n**Geometry provenance:** User-supplied .xyz at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz \u2014 used as-is (single point, not re-optimized at this level).\n\n**Solvent / environment:** Gas phase (no implicit solvent).\n\n**Charge:** 0. **Multiplicity:** 2 (open-shell doublet).\n\n**SCF convergence:** Converged in 12 cycles. No warnings reported. Integrity: trustworthy = true.\n\n**Results:**\n- HOMO (index 86): \u22126.3375439 eV\n- LUMO (index 87): \u22122.4651235 eV\n- **HOMO\u2013LUMO gap: 3.8724203 eV** (headline value)\n- Total energy: \u2212483.88366 Eh / \u221213167.145 eV / \u2212303641.58 kcal/mol\n\n**Koopmans descriptors:**\n- Vertical IP: 6.3375 eV\n- Vertical EA: 2.4651 eV\n- Electronegativity: 4.4013 eV\n- Chemical hardness: 1.9362 eV\n- Chemical softness: 0.5165 eV\u207b\u00b9\n- Electrophilicity index: 5.0025 eV\n\n**Command:** cli.py frontier --method dft --charge 0 --mult 2 --functional b3lyp --basis def2-tzvp --tier standard tempo.xyz\n\nNo warnings were reported by the engine (clean run). No experimental comparison is offered."
+}

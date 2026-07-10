@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 135.28,
+    "llm_s": 35.97,
+    "engine_s": 99.3,
+    "turns": 4,
+    "tool_calls": 1,
+    "prompt_tokens": 53055,
+    "completion_tokens": 2355,
+    "total_tokens": 55410
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier\u2010orbital energies of TEMPO\n\nMethod provenance\n\u2022 Property: HOMO, LUMO, and Koopmans\u2010style HOMO\u2013LUMO gap (electronic energies, eV)\n\u2022 Level of theory: DFT, tier `standard` = B3LYP/def2-TZVP with RI (density fitting)\n\u2022 Geometry provenance: user-supplied Cartesian coordinates in /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz; treated as a fixed geometry (single-point calculation, no re-optimization)\n\u2022 Solvent / environment: gas phase (no implicit solvent)\n\u2022 Charge = 0, multiplicity = 2 (doublet, UKS)\n\u2022 Software: PySCF (backend invoked via chemkit `frontier-orbitals` skill)\n\u2022 SCF convergence: converged in 12 cycles\n\u2022 Engine warnings: none (the `warnings` array is empty)\n\u2022 Live engine log streamed during the run to the file `frontier_*.out`; final JSON result at /home/erobles/chem-skills/.fidelity_scratch/tmp8hpxqn1d/live.json.\n\nResults (eV)\n\u2022 HOMO energy ............ \u22126.3375439\n\u2022 LUMO energy ............ \u22122.4651235\n\u2022 HOMO\u2013LUMO gap .......... 3.8724203   \u2190 headline value\n\nThis result is flagged as trustworthy by the engine integrity checks, with all tests passed and no warnings surfaced."
+}

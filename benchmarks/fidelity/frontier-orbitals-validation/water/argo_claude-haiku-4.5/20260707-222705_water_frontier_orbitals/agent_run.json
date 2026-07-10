@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 12.75,
+    "llm_s": 8.82,
+    "engine_s": 3.94,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30246,
+    "completion_tokens": 1077,
+    "total_tokens": 31323
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Water frontier-orbital analysis performed via DFT, tier `standard` (B3LYP/def2-TZVP, density-fitted) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied fixed coordinates. SCF converged in 7 cycles. HOMO = \u22128.6037183 eV, LUMO = +0.33695037 eV. HOMO\u2013LUMO gap = 8.9406687 eV. Koopmans vertical IP = 8.604 eV, vertical EA = \u22120.337 eV. All integrity checks passed (energy finite, SCF converged, schema valid)."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 22.2,
+    "llm_s": 10.66,
+    "engine_s": 11.54,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 46596,
+    "completion_tokens": 1240,
+    "total_tokens": 47836
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Pyridine Frontier-Orbital Analysis** \u2014 DFT, **B3LYP/def2-TZVP** (tier `standard`, with density fitting), PySCF backend, **gas phase**, charge 0, multiplicity 1. Geometry: user-supplied `.xyz` file (pyridine.xyz); single-point calculation on a fixed geometry (not optimized at DFT). SCF converged in 10 cycles. **HOMO\u2013LUMO gap = 6.1398 eV** (Koopmans orbital gap; this is an orbital-energy gap, not an excitation energy). Detailed frontier-orbital energies: HOMO (\u22127.2526 eV, occupied), LUMO (\u22121.1128 eV, virtual). Additional Koopmans descriptors reported: vertical ionization potential = 7.2526 eV, vertical electron affinity = 1.1128 eV, electronegativity = 4.1827 eV, chemical hardness = 3.0699 eV, electrophilicity index = 2.8494 eV. Total electronic energy: \u2212248.3782 Hartree. System: pyridine (C\u2085H\u2085N), 11 atoms, 21 occupied orbitals. Integrity status: ok, trustworthy."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.01,
+    "llm_s": 24.02,
+    "engine_s": 4.0,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25376,
+    "completion_tokens": 1718,
+    "total_tokens": 27094
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital gap (HOMO\u2013LUMO) of water \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, RI density-fitted) in PySCF  (gas phase), charge 0, multiplicity 1. Geometry: user-supplied `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz` (no re-optimization; single-point only). SCF converged in 7 cycles.\n\nResult (Koopmans orbital energies):\n  HOMO  = \u20138.6037183 eV\n  LUMO  =  0.33695037 eV\n  HOMO\u2013LUMO gap = 8.9406687 eV\n\nWarnings: none reported by the engine.\n\nLive log & reproducibility: the run was launched via\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpvhd0bd3t/live.json\nand streamed to a timestamped `.out` file in the current working directory (available for inspection). The JSON results are stored at `/home/erobles/chem-skills/.fidelity_scratch/tmpvhd0bd3t/live.json`.\n\nThe value reported above is the exact headline `homo_lumo_gap_eV` returned by chemkit\u2019s `frontier-orbitals` skill; provenance: computed."
+}

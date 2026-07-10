@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 8.9,
+    "llm_s": 4.7,
+    "engine_s": 4.2,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26048,
+    "completion_tokens": 265,
+    "total_tokens": 26313
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The HOMO-LUMO gap of oxygen was computed as **5.28806 eV** using DFT at the **B3LYP/def2-TZVP** level (PySCF), tier `standard`, in the gas phase. The calculation employed a spin multiplicity of 3 with no solvent (gas phase), and the SCF converged successfully in 7 iterations. The geometry comprised 2 oxygen atoms, as provided in `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`. HOMO energy: \u22128.874 eV, LUMO energy: \u22123.586 eV."
+}

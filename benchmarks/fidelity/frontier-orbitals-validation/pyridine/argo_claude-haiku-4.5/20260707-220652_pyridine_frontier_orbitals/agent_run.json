@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 23.84,
+    "llm_s": 12.02,
+    "engine_s": 11.82,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30293,
+    "completion_tokens": 1362,
+    "total_tokens": 31655
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Pyridine frontier-orbital analysis via DFT, tier `standard` (B3LYP/def2-TZVP, density-fit) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied pyridine.xyz (11 atoms), single-point calculation (not optimized). SCF converged in 10 cycles. HOMO\u2212LUMO gap = 6.140 eV; HOMO = \u22127.253 eV, LUMO = \u22121.113 eV. Orbital descriptors (Koopmans-style): vertical IP = 7.253 eV, vertical EA = 1.113 eV, electronegativity = 4.183 eV, hardness = 3.070 eV, electrophilicity = 2.849 eV. Integrity status: ok, trustworthy. All checks pass. No warnings reported."
+}

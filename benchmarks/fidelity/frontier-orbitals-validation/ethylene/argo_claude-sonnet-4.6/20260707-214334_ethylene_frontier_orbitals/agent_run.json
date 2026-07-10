@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 38.76,
+    "llm_s": 34.12,
+    "engine_s": 4.64,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30216,
+    "completion_tokens": 1820,
+    "total_tokens": 32036
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 7.4357165,
+    "n_atoms": 6,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital calculation on ethylene (C\u2082H\u2084, 6 atoms) performed with DFT at the B3LYP/def2-TZVP level (PySCF RKS, tier 'standard'), gas phase, charge 0, multiplicity 1. Single-point on the user-supplied geometry (not re-optimized at DFT). SCF converged in 6 cycles. No warnings reported. Integrity check: trustworthy=true, all checks passed.\n\nHOMO (index 7) = \u22127.6155818 eV\nLUMO (index 8) = \u22120.17986527 eV\nHOMO\u2013LUMO gap (headline) = 7.4357165 eV (Koopmans-style orbital gap, not a true excitation energy)\nTotal energy = \u221278.623486 Hartree (\u22122139.4541 eV)\n\nKoopmans-derived: vertical IP = 7.6156 eV, vertical EA = 0.1799 eV, electronegativity = 3.8977 eV, chemical hardness = 3.7179 eV, electrophilicity = 2.0431 eV.\n\nDensity fitting (RI) was applied by default. The HOMO/LUMO energies are Kohn\u2013Sham orbital energies; the gap is not a true optical gap. No experimental comparison was made."
+}

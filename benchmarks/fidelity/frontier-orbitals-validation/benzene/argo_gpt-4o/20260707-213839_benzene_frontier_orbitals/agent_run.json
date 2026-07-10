@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 15.21,
+    "llm_s": 4.2,
+    "engine_s": 11.01,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26067,
+    "completion_tokens": 429,
+    "total_tokens": 26496
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": 12,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The HOMO\u2013LUMO energy gap (frontier-orbital gap) of benzene was calculated using DFT at the B3LYP functional with the def2-TZVP basis set, tier 'standard', employing the PySCF quantum chemistry package. The simulation was performed in the gas phase treating the system as neutral singlet (charge 0, spin multiplicity 1). A single-point calculation was run based on the fixed input geometry provided in the file located at /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz, and the number of electrons and orbitals were confirmed for all occupancies. The self-consistent field (SCF) converged after 8 cycles, and no warnings were reported during the run.\n\nThe computed HOMO energy is \u22127.047 eV, the LUMO energy is \u22120.4157 eV, and the HOMO\u2013LUMO gap is precisely **6.63109 eV**. The software checked all predefined integrity conditions and deemed the result trustworthy.\n\nFiles generated include a comprehensive output JSON for further post-analysis, accessible at `/home/erobles/chem-skills/.fidelity_scratch/tmpjmlq5s5_/live.json`. Calculation provenance: `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard benzene.xyz --out ./live.json`."
+}

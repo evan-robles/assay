@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-flash",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 101.61,
+    "llm_s": 9.71,
+    "engine_s": 91.9,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26566,
+    "completion_tokens": 611,
+    "total_tokens": 27177
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO frontier-orbital energies** \u2014 DFT, tier `standard` (**B3LYP/def2-TZVP**, density-fit) in PySCF, gas phase, charge 0, multiplicity 2. Geometry: user-supplied from `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz`. SCF converged after 12 cycles.\n\nHOMO energy: -6.3375439 eV\nLUMO energy: -2.4651235 eV\nHOMO-LUMO gap: 3.8724203 eV\n\nNo warnings were reported.\n\n**Reproducibility:**\nThe calculation was performed using the following command:\n`/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --mult 2 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp1e9q4mrw/live.json`"
+}

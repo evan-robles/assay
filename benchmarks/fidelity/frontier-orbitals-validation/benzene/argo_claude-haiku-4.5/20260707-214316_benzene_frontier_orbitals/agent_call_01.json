@@ -1,0 +1,119 @@
+{
+  "task": "frontier_orbitals",
+  "method": "b3lyp/def2-tzvp",
+  "program": "pyscf",
+  "input_file": "/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz",
+  "n_atoms": 12,
+  "atoms": [
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/benzene/benzene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp6jh_7uwi/live.json",
+  "total_energy_eV": -6322.2183,
+  "total_energy_hartree": -232.33724,
+  "total_energy_kcal_mol": -145793.82,
+  "energy_zero": "electronic energy (bare nuclei + electrons)",
+  "n_orbitals": 222,
+  "n_occupied": 21,
+  "homo_index": 20,
+  "lumo_index": 21,
+  "homo_eV": -7.0468329,
+  "lumo_eV": -0.41574728,
+  "homo_lumo_gap_eV": 6.6310857,
+  "orbitals": [
+    {
+      "label": "HOMO-2",
+      "index": 18,
+      "energy_eV": -9.487467,
+      "occupation": 2.0
+    },
+    {
+      "label": "HOMO-1",
+      "index": 19,
+      "energy_eV": -7.0473344,
+      "occupation": 2.0
+    },
+    {
+      "label": "HOMO",
+      "index": 20,
+      "energy_eV": -7.0468329,
+      "occupation": 2.0
+    },
+    {
+      "label": "LUMO",
+      "index": 21,
+      "energy_eV": -0.41574728,
+      "occupation": 0.0
+    },
+    {
+      "label": "LUMO+1",
+      "index": 22,
+      "energy_eV": -0.41513054,
+      "occupation": 0.0
+    },
+    {
+      "label": "LUMO+2",
+      "index": 23,
+      "energy_eV": 1.2021883,
+      "occupation": 0.0
+    }
+  ],
+  "koopmans": {
+    "vertical_IP_eV": 7.0468329,
+    "vertical_EA_eV": 0.41574728,
+    "electronegativity_eV": 3.7312901,
+    "chemical_hardness_eV": 3.3155428,
+    "chemical_softness_per_eV": 0.30160974,
+    "electrophilicity_index_eV": 2.0995847
+  },
+  "scf_converged": true,
+  "scf_cycles": 8,
+  "schema_version": 1,
+  "electronic_energy_eV": -6322.2183,
+  "headline_field": "homo_lumo_gap_eV",
+  "headline_value": 6.6310857,
+  "headline_units": "eV",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -6322.218323566864 (must be a finite number)"
+      },
+      {
+        "name": "scf_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "scf_converged = True (SCF must converge for the energy/orbitals to be meaningful)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'homo_lumo_gap_eV' = 6.631085667557235 (present and numeric)"
+      }
+    ]
+  }
+}

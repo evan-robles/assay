@@ -1,0 +1,33 @@
+{
+  "model": "argo:gemini-2.5-pro",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 21.69,
+    "llm_s": 12.88,
+    "engine_s": 8.82,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26695,
+    "completion_tokens": 352,
+    "total_tokens": 27047
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.2573602,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital analysis of furan was performed using DFT at the tier 'standard' (B3LYP functional, def2-TZVP basis set) in the gas phase, as requested. The calculation was performed on the provided geometry. The SCF calculation converged in 9 cycles.\n\nThe results are as follows:\n- HOMO energy: -6.3598 eV\n- LUMO energy: -0.1024 eV\n- HOMO-LUMO gap: 6.2574 eV\n\nThe calculation was performed with the PySCF program. The molecule was treated as a neutral species with a singlet multiplicity (charge 0, multiplicity 1). No warnings were reported by the tool."
+}

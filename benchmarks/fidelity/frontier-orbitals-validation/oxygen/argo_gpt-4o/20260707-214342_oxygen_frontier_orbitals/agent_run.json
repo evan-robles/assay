@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 9.25,
+    "llm_s": 4.98,
+    "engine_s": 4.27,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26049,
+    "completion_tokens": 359,
+    "total_tokens": 26408
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbital gap (HOMO\u2013LUMO gap) of molecular oxygen (O2) was calculated using **DFT at the B3LYP/def2-TZVP level** (PySCF implementation), tier `standard`, in the gas phase, with a multiplicity of 3 (triplet state). The input geometry was read directly from the provided file `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/oxygen/oxygen.xyz`. The calculation converged after 7 SCF cycles.\n\n**Key Results:**\n- HOMO energy: \u22128.8740 eV\n- LUMO energy: \u22123.5859 eV\n- **HOMO\u2013LUMO gap:** 5.2881 eV\n\nThis output is reliable (`integrity.trustworthy: true`), and no warnings were reported. The live log file was written to `/home/erobles/chem-skills/.fidelity_scratch/tmp18j9mhb9/live.json`. Files: orbital shapes available from generated data with 124 total orbitals."
+}

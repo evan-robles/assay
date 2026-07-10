@@ -1,0 +1,33 @@
+{
+  "model": "argo:o4-mini",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 118.85,
+    "llm_s": 18.92,
+    "engine_s": 99.92,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25525,
+    "completion_tokens": 2393,
+    "total_tokens": 27918
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**TEMPO HOMO\u2013LUMO gap** \u2014 DFT, tier 'standard' (B3LYP/def2-TZVP, density-fit RIJK) in PySCF, gas phase, charge 0, multiplicity 2 (open-shell UKS). Geometry: single-point calculation on the provided TEMPO.xyz (no geometry optimization). SCF converged in 12 cycles. No warnings reported. HOMO = \u22126.3375439 eV, LUMO = \u22122.4651235 eV \u2192 gap = **3.8724203 eV** (Koopmans approximation)."
+}

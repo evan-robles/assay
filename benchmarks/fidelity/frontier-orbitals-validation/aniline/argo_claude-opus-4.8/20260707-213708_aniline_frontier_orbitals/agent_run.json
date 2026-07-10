@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 31.99,
+    "llm_s": 18.44,
+    "engine_s": 13.54,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38657,
+    "completion_tokens": 1397,
+    "total_tokens": 40054
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.3048177,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Aniline frontier-orbital analysis \u2014 Method Provenance Block**\n\n- **Property:** Frontier molecular orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` = **B3LYP / def2-TZVP** (hybrid GGA functional; density fitting is on by default in chemkit).\n- **Software:** PySCF (RKS, closed-shell).\n- **Geometry provenance:** User-supplied `.xyz` at `/home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/aniline/aniline.xyz` (14 atoms: C6H5NH2). This was a **single point on the supplied geometry** \u2014 the geometry was used as-is and NOT re-optimized at this level.\n- **Solvent / environment:** **Gas phase** (no implicit solvation applied).\n- **Charge / multiplicity:** charge 0, multiplicity 1 (neutral closed-shell singlet).\n- **Convergence:** SCF **converged** in 9 cycles.\n- **Integrity verdict:** engine reports `integrity.trustworthy = true` (status \"ok\"; energy finite \u2713, SCF converged \u2713).\n\n**Results (eV):**\n- **HOMO** (orbital 24) = \u22125.553772 eV\n- **LUMO** (orbital 25) = \u22120.2489544 eV\n- **HOMO\u2013LUMO gap = 5.3048177 eV** \u2190 headline value\n- HOMO\u22121 = \u22126.8461949 eV; HOMO\u22122 = \u22128.4041702 eV\n- LUMO+1 = +0.30750756 eV; LUMO+2 = +0.77617648 eV\n\nKoopmans-derived descriptors: vertical IP = 5.553772 eV, vertical EA = 0.2489544 eV, electronegativity = 2.9013632 eV, chemical hardness = 2.6524088 eV, chemical softness = 0.37701579 eV\u207b\u00b9, electrophilicity index = 1.5868422 eV.\n\nTotal electronic energy: \u2212287.71578 Hartree (\u22127829.1453 eV). Note this is a DFT electronic energy with its own energy origin \u2014 only directly comparable to other B3LYP/def2-TZVP energies.\n\n**Warnings:** The engine reported **no warnings** (the result contained no warnings array entries \u2014 clean run).\n\n**Reproducibility:** CLI invocation \u2014 `cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard <aniline.xyz>`. A live `.out` log is streamed to the caller's working directory during the run and can be `tail -f`'d for the SCF cycle-by-cycle progress.\n\nNo experimental/literature comparison is offered; this is a computed result only. I can verify a reference value against a source if you'd like one."
+}

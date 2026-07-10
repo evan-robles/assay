@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 104.97,
+    "llm_s": 12.68,
+    "engine_s": 92.3,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30351,
+    "completion_tokens": 1425,
+    "total_tokens": 31776
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "TEMPO frontier-orbital analysis via DFT (B3LYP/def2-TZVP, tier standard, PySCF) on user-supplied geometry in gas phase, charge 0, multiplicity 2 (open-shell radical). SCF converged in 12 cycles. Headline property: HOMO\u2013LUMO gap = 3.87 eV. Koopmans-derived ionization potential = 6.34 eV, electron affinity = 2.47 eV, electronegativity = 4.40 eV, hardness = 1.94 eV, softness = 0.516 eV\u207b\u00b9, electrophilicity index = 5.00 eV. Electronic energy: \u221213167.145 eV. Integrity status: trustworthy (all checks pass). No warnings reported."
+}

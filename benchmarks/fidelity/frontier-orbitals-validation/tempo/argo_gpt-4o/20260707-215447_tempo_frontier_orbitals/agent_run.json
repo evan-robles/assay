@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 100.13,
+    "llm_s": 4.24,
+    "engine_s": 95.89,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26131,
+    "completion_tokens": 273,
+    "total_tokens": 26404
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": 29,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier orbitals of TEMPO were calculated using DFT at the B3LYP functional with the def2-tzvp basis set under the `standard` tier, in the gas phase, and with a spin multiplicity of 2. The calculation was performed using PySCF, and the SCF procedure converged in 12 cycles. The HOMO was found at \u22126.33754 eV, the LUMO at \u22122.46512 eV, yielding a HOMO\u2013LUMO gap of approximately 3.87242 eV. The `.xyz` geometry used was a 29-atom structure specified in the provided path. The computation has passed all electronic integrity checks and is assessed as trustworthy."
+}

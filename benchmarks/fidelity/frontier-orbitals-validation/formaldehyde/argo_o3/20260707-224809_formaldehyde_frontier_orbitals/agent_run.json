@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 24.6,
+    "llm_s": 20.02,
+    "engine_s": 4.58,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25396,
+    "completion_tokens": 2061,
+    "total_tokens": 27457
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.8696712,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Computed property: frontier-orbital energies and HOMO\u2013LUMO gap of formaldehyde\n\nMethod provenance\n\u2022 Property: HOMO, LUMO, and HOMO\u2013LUMO energy gap (Koopmans-style orbital energies) in electron-volts (eV).\n\u2022 Level of theory: DFT, tier \"standard\" = B3LYP/def2-TZVP with density fitting (PySCF backend).\n\u2022 Geometry provenance: fixed experimental geometry supplied by user (file \u201cformaldehyde.xyz\u201d); no re-optimization was performed (single-point calculation \u2192 DFT//exp-geom).\n\u2022 Solvent / environment: gas phase (no implicit solvation model).\n\u2022 Charge & multiplicity: 0, 1 (closed-shell singlet).\n\u2022 Software: chemkit frontier-orbitals skill (PySCF v2 backend; invoked via chemkit_engine CLI, see command below).\n\u2022 Convergence & warnings: SCF converged in 8 cycles; no warnings reported by the engine.  Integrity check status: ok, trustworthy = true.\n\nKey results (electronic energies):\n  HOMO  = \u22127.6523067 eV\n  LUMO  = \u22121.7826355 eV\n  HOMO\u2013LUMO gap = 5.8696712 eV  \u2190 headline value\n\nReproducibility\nThe job was launched with:\n  /home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/formaldehyde/formaldehyde.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmptgk3t828/live.json\nA live engine log was written during execution to the automatically generated file \u201cfrontier-orbitals_<timestamp>.out\u201d in the working directory; it can be inspected with e.g. `tail -f` for full SCF details. The summarized JSON result is stored at /home/erobles/chem-skills/.fidelity_scratch/tmptgk3t828/live.json.\n\nNo warnings were reported by the tool.\n\nMethod used: chemkit \u201cfrontier-orbitals\u201d skill with DFT (B3LYP/def2-TZVP, tier standard) in the gas phase."
+}

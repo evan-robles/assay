@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-opus-4.8",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 119.67,
+    "llm_s": 19.3,
+    "engine_s": 100.37,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 38795,
+    "completion_tokens": 1675,
+    "total_tokens": 40470
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 2,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 3.8724203,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "## Frontier-orbital analysis of TEMPO\n\n**Method-provenance block**\n- **Property:** Frontier molecular orbital energies and HOMO\u2013LUMO gap (Koopmans-style orbital gap, not an excitation energy).\n- **Level of theory:** DFT, tier `standard` \u2192 **B3LYP/def2-TZVP** (density-fitting on by default), backend **PySCF**.\n- **Open-shell treatment:** Multiplicity 2 (doublet radical) \u2192 **UKS** (unrestricted Kohn\u2013Sham). TEMPO is a persistent nitroxide radical, so the doublet is the correct ground state. Note: the returned frontier orbitals are reported with fractional-style occupations (HOMO occ = 1.0, LUMO occ = 0.0), reflecting the singly-occupied frontier region of this open-shell system.\n- **Geometry provenance:** User-supplied `tempo.xyz` (29 atoms), used **as-is** \u2014 this was a single-point frontier-orbital evaluation; the geometry was **not** re-optimized at this level.\n- **Solvent / environment:** **Gas phase** (no implicit solvent).\n- **Charge / multiplicity:** charge **0**, multiplicity **2**.\n- **Convergence:** SCF **converged** in 12 cycles. Engine integrity check: **status ok, trustworthy = true** (energy finite \u2713, SCF converged \u2713, schema header/headline present \u2713).\n\n**Results**\n- **HOMO** = \u22126.3375439 eV\n- **LUMO** = \u22122.4651235 eV\n- **HOMO\u2013LUMO gap = 3.8724203 eV** (headline value)\n- Additional frontier orbitals: HOMO\u22121 = \u22126.9286592 eV, HOMO\u22122 = \u22127.3057732 eV; LUMO+1 = +0.58631725 eV, LUMO+2 = +0.59688153 eV.\n- Total electronic energy: \u2212483.88366 Hartree (\u221213167.145 eV).\n- Koopmans-derived descriptors: vertical IP = 6.3375439 eV, vertical EA = 2.4651235 eV, electronegativity = 4.4013337 eV, chemical hardness = 1.9362102 eV, chemical softness = 0.51647286 eV\u207b\u00b9, electrophilicity index = 5.0024886 eV.\n\n**Method used:** DFT (B3LYP/def2-TZVP, tier `standard`, density-fit), unrestricted Kohn\u2013Sham for the doublet, gas phase, PySCF.\n\n**Warnings:** The result JSON contained **no `warnings` array / no warnings reported** \u2014 this was a clean run.\n\n**Reproducibility**\n- Command: `/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py frontier --method dft --mult 2 --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/tempo/tempo.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp_59ezf4t/live.json`\n- Live result JSON written to `/home/erobles/chem-skills/.fidelity_scratch/tmp_59ezf4t/live.json`.\n\nNumbers are quoted verbatim from the tool output; DFT total-energy last digits are basis/grid-dependent and should not be over-interpreted. No experimental comparison is offered \u2014 I can verify a literature source on request."
+}

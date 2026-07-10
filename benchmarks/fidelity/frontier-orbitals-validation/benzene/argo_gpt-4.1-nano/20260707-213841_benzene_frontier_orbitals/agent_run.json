@@ -1,0 +1,38 @@
+{
+  "model": "argo:gpt-4.1-nano",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 17.24,
+    "llm_s": 6.53,
+    "engine_s": 10.71,
+    "turns": 3,
+    "tool_calls": 1,
+    "prompt_tokens": 39889,
+    "completion_tokens": 765,
+    "total_tokens": 40654
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": 12,
+    "smiles": null,
+    "warnings": [
+      "energy_finite: total/electronic energy = -6322.218323566866 (must be a finite number)",
+      "scf_converged: scf_converged = True (SCF must converge for the energy/orbitals to be meaningful)",
+      "schema_header: common header present",
+      "schema_headline: headline field 'homo_lumo_gap_eV' = 6.631085667557272 (present and numeric)"
+    ],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "The frontier-orbitals calculation on benzene was performed using DFT at the B3LYP functional with the def2-TZVP basis set (tier 'standard') in the gas phase. The total electronic energy is approximately -6322.2183 eV. The HOMO energy is -7.04683 eV, and the LUMO energy is -0.41575 eV, resulting in a HOMO-LUMO gap of approximately 6.6311 eV. The SCF converged in 8 cycles. The method used was **DFT, B3LYP/def2-TZVP (tier 'standard') in PySCF**."
+}

@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-sonnet-4.6",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 32.5,
+    "llm_s": 28.21,
+    "engine_s": 4.29,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30256,
+    "completion_tokens": 1939,
+    "total_tokens": 32195
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 3,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 5.2880586,
+    "n_atoms": 2,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier orbitals of O\u2082 computed at DFT tier 'standard' (B3LYP/def2-TZVP, density-fit, PySCF UKS), gas phase, charge 0, multiplicity 3 (triplet ground state). Geometry taken as-is from the user-supplied .xyz file (single-point; not re-optimized). SCF converged in 7 cycles. Integrity: trustworthy = true, all checks passed. HOMO = \u22128.8739616 eV, LUMO = \u22123.5859031 eV, HOMO\u2013LUMO gap = 5.2880586 eV (headline value). The HOMO and HOMO\u22121 are degenerate (both \u22128.8740 eV), consistent with O\u2082's two singly-occupied \u03c0* orbitals in the triplet state. Koopmans descriptors: vertical IP = 8.8739616 eV, vertical EA = 3.5859031 eV, electronegativity = 6.2299323 eV, chemical hardness = 2.6440293 eV, softness = 0.37821064 eV\u207b\u00b9, electrophilicity = 7.3395664 eV. No warnings reported."
+}

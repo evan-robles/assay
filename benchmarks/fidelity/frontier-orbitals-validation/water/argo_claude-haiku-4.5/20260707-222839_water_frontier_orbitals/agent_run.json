@@ -1,0 +1,33 @@
+{
+  "model": "argo:claude-haiku-4.5",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 13.77,
+    "llm_s": 9.75,
+    "engine_s": 4.02,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 30251,
+    "completion_tokens": 1190,
+    "total_tokens": 31441
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": null,
+    "provenance": "computed"
+  },
+  "prose": "Water frontier-orbital gap calculated using DFT with B3LYP/def2-TZVP (tier standard, density-fitted) in PySCF, gas phase, charge 0, multiplicity 1. Geometry: user-supplied water.xyz, used as-is in a single-point calculation. SCF converged in 7 cycles. HOMO energy = \u22128.6037183 eV, LUMO energy = +0.33695037 eV, yielding a HOMO\u2013LUMO gap (Koopmans-style orbital gap) of 8.9406687 eV. Total electronic energy = \u221276.462901 Hartree. Integrity check passed; all validation checks successful. Command: chemkit frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/water/water.xyz."
+}

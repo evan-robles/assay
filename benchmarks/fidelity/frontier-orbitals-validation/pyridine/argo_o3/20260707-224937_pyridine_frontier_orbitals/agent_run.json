@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 29.77,
+    "llm_s": 18.08,
+    "engine_s": 11.7,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25443,
+    "completion_tokens": 1794,
+    "total_tokens": 27237
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.1398131,
+    "n_atoms": 11,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "Frontier-orbital gap of pyridine (HOMO\u2013LUMO)\nMethod provenance\n\u2022 Property: Koopmans-style HOMO\u2013LUMO energy gap (electron-volts)\n\u2022 Level of theory: DFT, tier `standard` \u2261 B3LYP/def2-TZVP with default density-fitting (PySCF)\n\u2022 Geometry provenance: single-point calculation on the user-supplied pyridine.xyz geometry (coordinates not re-optimized; DFT//input-xyz)\n\u2022 Environment: gas phase (no implicit solvent)\n\u2022 Charge 0, multiplicity 1 (closed-shell singlet, RKS)\n\u2022 Software: chemkit frontier-orbitals skill \u2192 PySCF backend (SCF converged in 10 cycles)\n\nResult (gas-phase, B3LYP/def2-TZVP):\n  \u2013 HOMO energy  = \u22127.2525992 eV\n  \u2013 LUMO energy  = \u22121.112786 eV\n  \u2192 HOMO\u2013LUMO gap = 6.1398131 eV\n\nSCF status & warnings\n\u2022 SCF converged: true (10 cycles)\n\u2022 Engine warnings: none reported (warnings array empty)\n\nReproducibility\nThe job was launched with:\n  chemkit frontier-orbitals --method dft --functional b3lyp --basis def2-tzvp --tier standard /home/erobles/chem-skills/benchmarks/fidelity/frontier-orbitals-validation/pyridine/pyridine.xyz\nand wrote its JSON result to\n  /home/erobles/chem-skills/.fidelity_scratch/tmp3uqfpqe2/live.json\nA live engine log was streamed to a .out file in the current working directory while the calculation ran (path emitted at launch).\n\nNo experimental comparison is provided; this is a purely computed DFT estimate."
+}

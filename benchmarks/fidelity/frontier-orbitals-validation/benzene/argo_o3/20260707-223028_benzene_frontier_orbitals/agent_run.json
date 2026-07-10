@@ -1,0 +1,33 @@
+{
+  "model": "argo:o3",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 28.71,
+    "llm_s": 17.87,
+    "engine_s": 10.84,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 25451,
+    "completion_tokens": 1634,
+    "total_tokens": 27085
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 6.6310857,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier-orbital gap (HOMO\u2013LUMO) of benzene** \u2014 DFT, tier `standard` (B3LYP/def2-TZVP, density-fitted) in PySCF  (chemkit `frontier-orbitals` skill), **gas phase**, charge 0, multiplicity 1.\nGeometry: user-supplied Cartesian coordinates (`benzene.xyz`); single-point orbital calculation on that fixed geometry (no re-optimization; notation DFT//input-xyz).\nSCF converged in 8 cycles.\nHOMO energy = \u22127.0468329 eV\u2003(LUMO = \u22120.41574728 eV) \u21d2 **HOMO\u2013LUMO gap = 6.6310857 eV**.\n\nLive log: the run streamed to the standard chemkit `<frontier_YYYYMMDD-HHMMSS>.out` file in the working directory (available for inspection via `tail -f`).\n\nNo warnings were reported by the engine (result `warnings` array empty). Integrity check status: ok; `trustworthy: true`.\n\nMethod provenance\n1. Property: HOMO, LUMO energies and gap (eV) at a fixed geometry\n2. Level of theory: B3LYP/def2-TZVP (density-fitted) DFT\n3. Geometry provenance: user-provided benzene.xyz (12 atoms); no relaxation (`single-point`)\n4. Environment: gas phase (no implicit solvation)\n5. Charge 0, multiplicity 1 (closed-shell singlet, RHF/RKS)\n6. Software: PySCF (invoked via chemkit `frontier-orbitals` skill)\n7. Convergence & caveats: SCF converged in 8 cycles; no warnings; density fitting approximation active by default\n\nFiles produced (paths relative to run directory):\n\u2022 JSON results: `/home/erobles/chem-skills/.fidelity_scratch/tmph8z8kp8b/live.json`\n\u2022 Live SCF/DFT log: `<frontier_YYYYMMDD-HHMMSS>.out` (path announced at start of run)\n\nThe reported gap (6.6310857 eV) is a Koopmans-type orbital gap; it is not a correlated excitation energy and should not be directly compared to experimental UV/vis gaps without appropriate corrections or higher-level methods."
+}

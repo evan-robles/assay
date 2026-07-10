@@ -1,0 +1,33 @@
+{
+  "model": "argo:gpt-4o",
+  "endpoint": "http://127.0.0.1:60639/v1",
+  "timing": {
+    "total_s": 7.27,
+    "llm_s": 3.41,
+    "engine_s": 3.86,
+    "turns": 2,
+    "tool_calls": 1,
+    "prompt_tokens": 26026,
+    "completion_tokens": 340,
+    "total_tokens": 26366
+  },
+  "result_json": {
+    "method": "b3lyp/def2-tzvp",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null,
+    "functional": null,
+    "basis": null,
+    "tier": null,
+    "solvent_model": null
+  },
+  "reported": {
+    "homo_lumo_gap_eV": 8.9406687,
+    "n_atoms": null,
+    "smiles": null,
+    "warnings": [],
+    "integrity_trustworthy": true,
+    "provenance": "computed"
+  },
+  "prose": "**Frontier orbitals calculation for water molecule**:\n\nLevel of theory: **DFT, B3LYP/def2-TZVP** (PySCF), gas phase, charge 0, multiplicity 1.\n\nGeometry provenance: Input geometry was directly provided (`water.xyz`), consisting of 3 atoms: O, H, and H, and used as-is.\n\nSCF Convergence: The SCF converged successfully in 7 cycles.\n\nResults:\n- HOMO energy = -8.6037183 eV\n- LUMO energy = 0.33695037 eV\n- HOMO-LUMO gap = **8.9406687 eV**\n\nNo warnings were reported during the run, and integrity checks passed. Files are saved to `/home/erobles/chem-skills/.fidelity_scratch/tmpxqyy02w0/live.json`. The calculation used PySCF (`cli.py frontier --method dft --functional b3lyp --basis def2-tzvp --tier standard`)."
+}
