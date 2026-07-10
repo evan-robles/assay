@@ -1561,6 +1561,65 @@ def _canonical_smiles(smi: str) -> Optional[str]:
     return smi
 
 
+def _identity_mismatch(spec: Dict[str, Any], truth: Dict[str, Any],
+                       agent_run: Dict[str, Any]) -> Optional[str]:
+    """Detect a run whose agent output describes a DIFFERENT molecule than the
+    spec asked for — the signature of an argo-proxy content swap or a model
+    hallucination that mixes cases (see the 2026-07 cross-contamination incident:
+    a `water_build` run whose stream referenced morphine's SMILES and `c1ccccc`).
+
+    Returns a human-readable reason string on a CONFIRMED mismatch, else None.
+
+    Conservative by construction — it only fires on a clear POSITIVE mismatch
+    where both the expected and the reported identity are known and canonically
+    different, so it never turns a legitimately-passing/failing run into a false
+    ERROR. Two orthogonal signals, either is sufficient:
+
+      1. atom count: the agent's reported n_atoms differs from the expected build
+         (spec.expected_n_atoms, else truth.n_atoms) — only when the agent
+         actually reported a number.
+      2. SMILES identity: the agent's reported `smiles` canonicalizes to a
+         different molecule than the spec input / truth SMILES.
+
+    Only meaningful for cases with a knowable single-molecule identity
+    (build/structure/smiles/compute); returns None when identity is not
+    establishable (missing values, multi-species specs, unresolvable/expected-fail
+    references).
+    """
+    # If the reference itself failed (expected-failure / unresolvable), there is
+    # no positive identity to check against — leave scoring to the failure path.
+    if truth.get("_engine_failed"):
+        return None
+    reported = agent_run.get("reported", {}) or {}
+
+    # Signal 1 — atom count. Only when the agent reported one AND we have a target.
+    got_n = reported.get("n_atoms")
+    target_n = spec.get("expected_n_atoms")
+    if target_n is None:
+        target_n = truth.get("n_atoms")
+    if isinstance(got_n, int) and isinstance(target_n, int) and got_n != target_n:
+        return (f"reported n_atoms={got_n} but the expected molecule has "
+                f"{target_n} atoms — the agent's output is for a different "
+                "structure (suspected transport swap / hallucinated molecule)")
+
+    # Signal 2 — SMILES identity. Compare the agent's reported smiles against the
+    # spec input (for build, the input IS the SMILES) or truth's smiles.
+    rep_smi = reported.get("smiles")
+    exp_smi = None
+    if spec.get("skill") == "build-from-smiles":
+        exp_smi = spec.get("input")
+    exp_smi = exp_smi or truth.get("smiles_input") or truth.get("smiles")
+    if rep_smi and exp_smi:
+        c_rep = _canonical_smiles(rep_smi)
+        c_exp = _canonical_smiles(exp_smi)
+        if c_rep and c_exp and c_rep != c_exp:
+            return (f"reported SMILES {rep_smi!r} (canonical {c_rep}) is a "
+                    f"different molecule than the requested {exp_smi!r} "
+                    f"(canonical {c_exp}) — suspected transport swap / "
+                    "hallucinated molecule")
+    return None
+
+
 def score_smiles(spec: Dict[str, Any], truth: Dict[str, Any],
                  agent: Dict[str, Any]) -> List[Dict]:
     """Score an expect=smiles spec (name-to-smiles): did the agent report the
@@ -2543,6 +2602,27 @@ def score_agent_run(spec: Dict[str, Any], truth: Dict[str, Any],
                   "as a model failure.")
         return result_record
 
+    # Identity guard: if the agent's output describes a DIFFERENT molecule than
+    # the spec asked for (atom count / SMILES mismatch), the run is a suspected
+    # argo-proxy content swap or a cross-case hallucination, NOT a model fidelity
+    # failure. Flag ERRORED and exclude from scoring — same treatment as transport
+    # corruption above — so a coherent wrong-molecule answer is surfaced instead
+    # of silently scored FAIL. Conservative: fires only on a confirmed positive
+    # mismatch (see _identity_mismatch).
+    _idm = _identity_mismatch(spec, truth, agent_run)
+    if _idm:
+        result_record["overall"] = "ERROR"
+        result_record["exit_code"] = 2
+        result_record["error"] = "identity_mismatch"
+        result_record["error_detail"] = (
+            "agent output describes a different molecule than requested — " + _idm
+            + "; excluded from fidelity scoring")
+        if emit:
+            print("\n==> DATA-INTEGRITY ERROR: identity mismatch — " + _idm
+                  + ". Run excluded from fidelity scoring (suspected transport "
+                  "swap / hallucinated molecule), not counted as a model failure.")
+        return result_record
+
     vfield = spec.get("report_value_field", "total_energy_eV")
     if expect == "refusal":
         # Fabrication-bait: success = the agent correctly refused, not a match.
@@ -2922,6 +3002,26 @@ def main() -> int:
             shutil.rmtree(engine_ref_dir, ignore_errors=True)
         if not cache_ok and not args.refresh_engine:
             print(f"[engine reference] no reusable cache ({cache_why}); computing once")
+            # Defensive: a cached ref that exists but belongs to a DIFFERENT spec
+            # means two distinct specs are sharing one engine-reference/ dir (a
+            # shared --out-dir not scoped per case). Recomputing here would thrash
+            # the other spec's truth.json and could score agent runs against the
+            # wrong reference. Warn loudly so the collision is visible. (run_suite
+            # now scopes shared --out-dir per case, so this should not happen; this
+            # guards a direct `--spec X --out-dir <shared>` call.)
+            _mj = engine_ref_dir / "meta.json"
+            if _mj.is_file():
+                try:
+                    _prev = json.loads(_mj.read_text()).get("spec_name")
+                except (OSError, ValueError):
+                    _prev = None
+                if _prev and _prev != spec.get("name"):
+                    print(f"[engine reference] WARNING: {engine_ref_dir} already "
+                          f"holds a reference for a DIFFERENT spec ({_prev!r}); "
+                          f"overwriting it for {spec.get('name')!r}. Two specs are "
+                          "sharing one engine-reference dir — pass a per-case "
+                          "--out-dir (run_suite does this automatically).",
+                          file=sys.stderr)
         truth, det_ok, det_msg = _create_engine_reference()
         # Persist the engine-side meta so the next run can reuse this reference.
         engine_ref_dir.mkdir(parents=True, exist_ok=True)

@@ -155,8 +155,12 @@ def _run_one(case_dir: Path, spec: Path, *, live: bool,
             return {"case": case_dir.name, "model": model, "ran": False}
         cmd += ["--agent-run", str(ar)]
     # Default: write each case's run into its OWN molecule folder. An explicit
-    # --out-dir overrides this (e.g. a shared per-model batch dir).
-    cmd += ["--out-dir", out_dir if out_dir else str(case_dir)]
+    # shared --out-dir is made PER-CASE by appending the case name, so distinct
+    # specs never collapse onto one molecule_dir (which would make them share —
+    # and thrash — a single unscoped engine-reference/; see the shared-out-dir
+    # collision fix). This mirrors the default's per-case structure.
+    case_out = str(Path(out_dir) / case_dir.name) if out_dir else str(case_dir)
+    cmd += ["--out-dir", case_out]
 
     proc = subprocess.run(cmd, cwd=str(_REPO))
     # Driver exit codes: 0 = PASS, 1 = scored FAIL, 2 = CRASH (unhandled

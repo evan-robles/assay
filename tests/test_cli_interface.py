@@ -381,3 +381,55 @@ def test_mcp_tools_no_schema_required_fields():
     schemas = _tool_schemas()
     for name, sch in schemas.items():
         assert not sch.get("required"), f"{name} unexpectedly has required fields: {sch.get('required')}"
+
+
+# --------------------------------------------------------------------------- #
+# Identity guard (Fix A) + shared --out-dir scoping (Fix B)
+# --------------------------------------------------------------------------- #
+def test_identity_guard_flags_wrong_molecule():
+    """The scorer's identity guard flags a run whose agent output describes a
+    DIFFERENT molecule than the spec asked for (the cross-contamination / proxy
+    swap symptom), and stays silent on a matching or ambiguous run."""
+    drv = _load_driver()
+    spec = {"skill": "build-from-smiles", "input": "O", "expected_n_atoms": 3}
+    truth = {"n_atoms": 3, "smiles_input": "O"}
+
+    # matching water -> no mismatch
+    assert drv._identity_mismatch(spec, truth, {"reported": {"n_atoms": 3, "smiles": "O"}}) is None
+    # water spec but morphine reported (40 atoms) -> mismatch
+    morph = "CN1CC[C@]23[C@@H]4[C@H]1CC5=C2C(=C(C=C5)O)O[C@H]3[C@H](C=C4)O"
+    assert drv._identity_mismatch(spec, truth, {"reported": {"n_atoms": 40, "smiles": morph}})
+    # different SMILES only (no atom count) -> mismatch
+    assert drv._identity_mismatch(spec, truth, {"reported": {"smiles": "c1ccccc1"}})
+    # no identity data -> None (no false ERROR)
+    assert drv._identity_mismatch(spec, truth, {"reported": {"integrity_trustworthy": True}}) is None
+    # expected-failure reference -> None (leave to failure path)
+    assert drv._identity_mismatch(spec, {"_engine_failed": True}, {"reported": {}}) is None
+
+
+def test_identity_guard_errors_the_run():
+    """score_agent_run turns an identity mismatch into an ERROR record (exit 2),
+    excluded from fidelity scoring — not a silent FAIL."""
+    drv = _load_driver()
+    spec = {"skill": "build-from-smiles", "input": "O", "expected_n_atoms": 3, "expect": "structure"}
+    truth = {"n_atoms": 3, "smiles_input": "O"}
+    agent = {"reported": {"n_atoms": 40, "smiles": "CN1CCC", "provenance": "computed"},
+             "prose": "Built morphine, 40 atoms."}
+    rec = drv.score_agent_run(spec, truth, agent, det_ok=True, expect="structure",
+                              mode="live", emit=False)
+    assert rec["overall"] == "ERROR"
+    assert rec["exit_code"] == 2
+    assert rec["error"] == "identity_mismatch"
+
+
+def test_shared_out_dir_is_scoped_per_case():
+    """run_suite makes a shared --out-dir per-case (appends the case name) so two
+    distinct specs never collapse onto one engine-reference/ dir."""
+    from pathlib import Path
+    # mirrors run_suite._run_one: case_out = Path(out_dir)/case_name when out_dir set
+    def case_out(out_dir, case):
+        return str(Path(out_dir) / case) if out_dir else f"default/{case}"
+    assert case_out("runs_o3", "water") != case_out("runs_o3", "morphine")
+    assert case_out("runs_o3", "water").endswith("runs_o3/water")
+    # default path unchanged (per-case)
+    assert case_out(None, "water") == "default/water"
