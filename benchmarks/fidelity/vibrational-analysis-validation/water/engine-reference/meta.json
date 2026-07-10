@@ -3,7 +3,7 @@
   "skill": "vibrational-analysis",
   "flags": [
     "--method",
-    "xtb",
+    "mopac",
     "--no-preopt",
     "--charge",
     "0",
@@ -12,11 +12,10 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/water.xyz",
   "expect": "compute",
-  "spec_hash": "e30b772d089e9304",
+  "spec_hash": "0cf335a37c2d8564",
   "determinism_ok": true,
-  "determinism_msg": "migrated; determinism PASS in original run",
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
   "engine_failed": false,
-  "git_commit": "3428dfc",
-  "timestamp": "migrated",
-  "_migrated_from": "20260624-130121_water_vibrational_analysis__argo_o3"
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:34:06"
 }

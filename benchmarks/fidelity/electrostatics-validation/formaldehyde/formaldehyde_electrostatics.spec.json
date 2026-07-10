@@ -2,13 +2,13 @@
   "name": "formaldehyde_electrostatics",
   "skill": "electrostatics",
   "xyz": "benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz",
-  "prompt": "Run the electrostatics task on formaldehyde using the GFN2-xTB method in the gas phase. Report the dipole moment in Debye as the headline value (the electrostatics task also returns a total energy and partial charges \u2014 do NOT report those as the headline value), and state the method used. Use charge 0 and multiplicity 1. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the electrostatics task on formaldehyde using the PM7 (mopac) method in the gas phase. Report the dipole moment in Debye as the headline value (the electrostatics task also returns a total energy and partial charges \u2014 do NOT report those as the headline value), state the method used, and surface any warnings the calculation produced about PM7 parameter coverage. Use charge 0 and multiplicity 1. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
-    "xtb"
+    "mopac"
   ],
   "intended": {
-    "method": "xtb",
+    "method": "mopac",
     "charge": 0,
     "multiplicity": 1,
     "solvent": null

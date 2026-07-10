@@ -1,0 +1,154 @@
+# chemkit live log
+# subcommand : rxn-energy
+# args       : --method mopac --reactant /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/ch4.xyz --reactant 2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/o2.xyz,mult=3 --product /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/co2.xyz --product 2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/h2o.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpe6255x1t/a.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3 -m chemkit_engine.cli rxn-energy --method mopac --reactant /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/ch4.xyz --reactant 2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/o2.xyz,mult=3 --product /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/co2.xyz --product 2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/h2o.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpe6255x1t/a.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/engine-reference/determinism
+# started    : 20260709-183440
+# ============================================================
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul  9, 2026, at 18:34.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul  9, 2026, at 18:34.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul  9, 2026, at 18:34.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul  9, 2026, at 18:34.
+
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpe6255x1t/a.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "reaction_energy",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/ch4.xyz",
+  "n_atoms": 18,
+  "atoms": [],
+  "charge": null,
+  "multiplicity": null,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py rxn-energy --method mopac --reactant /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/ch4.xyz --reactant 2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/o2.xyz,mult=3 --product /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/co2.xyz --product 2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/h2o.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpe6255x1t/a.json",
+  "mode": "sp",
+  "temperature_K": null,
+  "pressure_Pa": null,
+  "delta_E_eV": -7.257764642557603,
+  "delta_E_hartree": -0.26671793112449543,
+  "delta_E_kcal_mol": -167.36802868307691,
+  "reactants": [
+    {
+      "spec": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/ch4.xyz",
+      "path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/ch4.xyz",
+      "coef": 1.0,
+      "charge": 0,
+      "multiplicity": 1,
+      "energy_eV": -0.6246239244818079,
+      "method": "PM7",
+      "sp": {
+        "converged": true
+      }
+    },
+    {
+      "spec": "2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/o2.xyz,mult=3",
+      "path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/o2.xyz",
+      "coef": 2.0,
+      "charge": 0,
+      "multiplicity": 3,
+      "energy_eV": -0.3977160471294858,
+      "method": "PM7",
+      "sp": {
+        "converged": true
+      }
+    }
+  ],
+  "products": [
+    {
+      "spec": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/co2.xyz",
+      "path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/co2.xyz",
+      "coef": 1.0,
+      "charge": 0,
+      "multiplicity": 1,
+      "energy_eV": -3.664948463313445,
+      "method": "PM7",
+      "sp": {
+        "converged": true
+      }
+    },
+    {
+      "spec": "2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/h2o.xyz",
+      "path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/methane-combustion/h2o.xyz",
+      "coef": 2.0,
+      "charge": 0,
+      "multiplicity": 1,
+      "energy_eV": -2.5064360989924688,
+      "method": "PM7",
+      "sp": {
+        "converged": true
+      }
+    }
+  ],
+  "balance": {
+    "reactant_total_charge": 0.0,
+    "product_total_charge": 0.0,
+    "charge_balanced": true,
+    "reactant_atom_counts": {
+      "C": 1.0,
+      "H": 4.0,
+      "O": 4.0
+    },
+    "product_atom_counts": {
+      "O": 4.0,
+      "C": 1.0,
+      "H": 4.0
+    },
+    "atom_balanced": true
+  },
+  "schema_version": 1,
+  "headline_field": "delta_E_kcal_mol",
+  "headline_value": -167.36802868307691,
+  "headline_units": "kcal/mol",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "species_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "unconverged species: none"
+      },
+      {
+        "name": "same_method",
+        "ok": true,
+        "severity": "error",
+        "detail": "species methods = ['PM7'] (energies subtracted across a reaction must come from one level of theory)"
+      },
+      {
+        "name": "delta_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "delta_E_kcal_mol = -167.36802868307691 (reaction energy must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'delta_E_kcal_mol' = -167.36802868307691 (present and numeric)"
+      }
+    ]
+  }
+}

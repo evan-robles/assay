@@ -1,19 +1,27 @@
 # chemkit live log
 # subcommand : solvation
-# args       : --method xtb --charge 0 --mult 1 --solvent water /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpy5t36sfa/b.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli solvation --method xtb --charge 0 --mult 1 --solvent water /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpy5t36sfa/b.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/20260624-113546_methanol_solvation/determinism
-# started    : 20260624-113547
+# args       : --method mopac --charge 0 --mult 1 --solvent water /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp31wfv4jf/b.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3 -m chemkit_engine.cli solvation --method mopac --charge 0 --mult 1 --solvent water /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp31wfv4jf/b.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/engine-reference/determinism
+# started    : 20260709-183417
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpy5t36sfa/b.json
+
+          MOPAC Job: "mopac.mop" ended normally on Jul  9, 2026, at 18:34.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul  9, 2026, at 18:34.
+
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp31wfv4jf/b.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
 {
   "task": "solvation",
-  "method": "GFN2-xTB",
-  "program": "xtb",
+  "method": "PM7",
+  "program": "mopac",
   "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/methanol.xyz",
   "n_atoms": 6,
   "atoms": [
@@ -27,12 +35,12 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": "water",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py solvation --method xtb --charge 0 --mult 1 --solvent water /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpy5t36sfa/b.json",
-  "delta_G_solv_eV": -0.13626314803968853,
-  "delta_G_solv_hartree": -0.005007578327980772,
-  "delta_G_solv_kcal_mol": -3.142302842919991,
-  "energy_gas_eV": -223.82711137732116,
-  "energy_solv_eV": -223.96337452536085,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py solvation --method mopac --charge 0 --mult 1 --solvent water /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp31wfv4jf/b.json",
+  "delta_G_solv_eV": -0.2443463180949066,
+  "delta_G_solv_hartree": -0.008979561566107108,
+  "delta_G_solv_kcal_mol": -5.634759955663303,
+  "energy_gas_eV": -2.1221464457126853,
+  "energy_solv_eV": -2.366492763807592,
   "geometry_note": "single-point on the supplied geometry; no separate gas/solvent opt",
   "warnings": [
     "Electronic \u0394G_solv only \u2014 no cavitation, dispersion-repulsion, or thermal correction. This is an electronic-energy difference E(solv) \u2212 E(gas), not a thermodynamic free energy (no ZPE/entropy).",
@@ -40,6 +48,10 @@
     "Semi-empirical implicit solvation is screening-grade; \u00b12\u20133 kcal/mol typical.",
     "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
   ],
+  "schema_version": 1,
+  "headline_field": "delta_G_solv_kcal_mol",
+  "headline_value": -5.634759955663303,
+  "headline_units": "kcal/mol",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -48,7 +60,19 @@
         "name": "dgsolv_finite",
         "ok": true,
         "severity": "error",
-        "detail": "delta_G_solv_eV = -0.13626314803968853 (must be finite)"
+        "detail": "delta_G_solv_eV = -0.2443463180949066 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'delta_G_solv_kcal_mol' = -5.634759955663303 (present and numeric)"
       }
     ]
   }

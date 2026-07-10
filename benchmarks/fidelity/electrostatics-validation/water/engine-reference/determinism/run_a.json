@@ -1,7 +1,7 @@
 {
   "task": "electrostatics",
-  "method": "GFN2-xTB",
-  "program": "xtb",
+  "method": "PM7",
+  "program": "mopac",
   "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/water/water.xyz",
   "n_atoms": 3,
   "atoms": [
@@ -12,23 +12,30 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp25z99bpi/a.json",
-  "total_energy_eV": -137.9674,
-  "total_energy_hartree": -5.0702086,
-  "total_energy_kcal_mol": -3181.6039,
-  "dipole_debye": 2.2870277,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpgmwv__dl/a.json",
+  "total_energy_eV": -2.5016578,
+  "total_energy_hartree": -0.091934229,
+  "total_energy_kcal_mol": -57.6896,
+  "final_heat_of_formation_kcal_mol": -57.6896,
   "dipole_vector_debye": [
-    1.6944701,
-    1.2544665,
-    -0.88632994
+    1.6,
+    1.185,
+    -0.837
   ],
+  "dipole_debye": 2.1598134,
   "partial_charges": [
-    -0.56095663,
-    0.28047829,
-    0.28047834
+    -0.64252,
+    0.32126,
+    0.32126
   ],
-  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
-  "sum_of_charges": -7.2164497e-16,
+  "partial_charges_scheme": "Mulliken (PM7)",
+  "sum_of_charges": 0.0,
+  "ionization_potential_eV": 12.0311,
+  "schema_version": 1,
+  "electronic_energy_eV": -2.5016578,
+  "headline_field": "dipole_debye",
+  "headline_value": 2.1598134,
+  "headline_units": "debye",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -37,7 +44,19 @@
         "name": "charge_consistency",
         "ok": true,
         "severity": "error",
-        "detail": "sum_of_charges = -7.216449660063518e-16, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+        "detail": "sum_of_charges = 0.0, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'dipole_debye' = 2.1598134178673862 (present and numeric)"
       }
     ]
   }

@@ -1,21 +1,21 @@
 # chemkit live log
 # subcommand : scan
-# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/ethane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpioucg8f5/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli scan --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/ethane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpioucg8f5/truth.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/20260625-115539_ethane_conformational_analysis
-# started    : 20260625-115544
+# args       : --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/ethane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmptvuhet6k/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3 -m chemkit_engine.cli scan --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/ethane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmptvuhet6k/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/engine-reference
+# started    : 20260709-183450
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpioucg8f5/truth.json
-# trajectory: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpioucg8f5/truth_dih3_1_2_6.xyz
-# plot: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpioucg8f5/truth_dih3_1_2_6.png
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmptvuhet6k/truth.json
+# trajectory: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmptvuhet6k/truth_dih3_1_2_6.xyz
+# plot: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmptvuhet6k/truth_dih3_1_2_6.png
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
 {
   "task": "conformational_analysis",
-  "method": "GFN2-xTB",
-  "program": "xtb",
+  "method": "PM7",
+  "program": "mopac",
   "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/ethane.xyz",
   "n_atoms": 8,
   "atoms": [
@@ -31,9 +31,9 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py scan --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/ethane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpioucg8f5/truth.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py scan --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformational-analysis-validation/ethane/ethane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmptvuhet6k/truth.json",
   "scan_type": "relaxed_dihedral",
-  "constraint": "exact (ASE FixInternals)",
+  "constraint": "soft (pre-rotated seed + PM7 EF relaxation)",
   "steps_per_scan": 24,
   "n_dihedrals_scanned": 1,
   "dihedrals": [
@@ -45,214 +45,215 @@
         6
       ],
       "n_points": 24,
-      "n_converged": 24,
-      "min_angle_deg": 179.9999999999899,
-      "min_energy_kcal_mol": -4603.6099246765325,
-      "max_angle_deg": 119.99999999999999,
-      "max_energy_kcal_mol": -4601.034233897647,
-      "barrier_kcal_mol": 2.5859899696042703,
-      "barrier_grid_kcal_mol": 2.5756907788854733,
-      "trajectory": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpioucg8f5/truth_dih3_1_2_6.xyz",
-      "plot": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpioucg8f5/truth_dih3_1_2_6.png",
+      "n_converged": 20,
+      "min_angle_deg": 299.49859109053665,
+      "min_energy_kcal_mol": -18.19787,
+      "max_angle_deg": 0.015819221909995525,
+      "max_energy_kcal_mol": -17.17357,
+      "barrier_kcal_mol": 1.0243000000000002,
+      "barrier_grid_kcal_mol": 1.0243000000000002,
+      "trajectory": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmptvuhet6k/truth_dih3_1_2_6.xyz",
+      "plot": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmptvuhet6k/truth_dih3_1_2_6.png",
       "points": [
         {
           "step": 0,
           "target_deg": 0.0,
-          "measured_deg": 0.0,
-          "energy_kcal_mol": -4601.046738403474,
+          "measured_deg": 0.015819221909995525,
+          "energy_kcal_mol": -17.17357,
           "converged": true,
-          "delta_E_kcal_mol": 2.563186273058818
+          "delta_E_kcal_mol": 1.0243000000000002
         },
         {
           "step": 1,
           "target_deg": 15.0,
-          "measured_deg": 14.999999999999998,
-          "energy_kcal_mol": -4601.418651609493,
+          "measured_deg": 59.72320574941701,
+          "energy_kcal_mol": -18.19778,
           "converged": true,
-          "delta_E_kcal_mol": 2.1912730670392193
+          "delta_E_kcal_mol": 9.000000000014552e-05
         },
         {
           "step": 2,
           "target_deg": 30.0,
-          "measured_deg": 30.000000000000004,
-          "energy_kcal_mol": -4602.38312990238,
+          "measured_deg": 59.48042409734724,
+          "energy_kcal_mol": -18.19753,
           "converged": true,
-          "delta_E_kcal_mol": 1.2267947741529497
+          "delta_E_kcal_mol": 0.00034000000000133923
         },
         {
           "step": 3,
           "target_deg": 45.0,
-          "measured_deg": 45.0,
-          "energy_kcal_mol": -4603.284611959097,
+          "measured_deg": 59.56398403736252,
+          "energy_kcal_mol": -18.19762,
           "converged": true,
-          "delta_E_kcal_mol": 0.325312717435736
+          "delta_E_kcal_mol": 0.0002500000000011937
         },
         {
           "step": 4,
           "target_deg": 60.0,
-          "measured_deg": 59.99999999998993,
-          "energy_kcal_mol": -4603.59814793336,
-          "converged": true,
-          "delta_E_kcal_mol": 0.011776743172049464
+          "measured_deg": 59.99999977929332,
+          "energy_kcal_mol": -18.19779,
+          "converged": false,
+          "delta_E_kcal_mol": 8.00000000005241e-05
         },
         {
           "step": 5,
           "target_deg": 75.0,
-          "measured_deg": 75.0,
-          "energy_kcal_mol": -4603.278496799767,
-          "converged": true,
-          "delta_E_kcal_mol": 0.3314278767657015
+          "measured_deg": 74.99999977130041,
+          "energy_kcal_mol": -18.04795,
+          "converged": false,
+          "delta_E_kcal_mol": 0.1499200000000016
         },
         {
           "step": 6,
           "target_deg": 90.0,
-          "measured_deg": 89.99999999999997,
-          "energy_kcal_mol": -4602.390542697892,
+          "measured_deg": 60.78110939794228,
+          "energy_kcal_mol": -18.19588,
           "converged": true,
-          "delta_E_kcal_mol": 1.2193819786407403
+          "delta_E_kcal_mol": 0.001990000000002823
         },
         {
           "step": 7,
           "target_deg": 105.0,
-          "measured_deg": 104.99999999998997,
-          "energy_kcal_mol": -4601.440404900057,
+          "measured_deg": 59.64277996435311,
+          "energy_kcal_mol": -18.19707,
           "converged": true,
-          "delta_E_kcal_mol": 2.1695197764756813
+          "delta_E_kcal_mol": 0.0008000000000016882
         },
         {
           "step": 8,
           "target_deg": 120.0,
-          "measured_deg": 119.99999999999999,
-          "energy_kcal_mol": -4601.034233897647,
+          "measured_deg": 119.94907461051902,
+          "energy_kcal_mol": -17.17364,
           "converged": true,
-          "delta_E_kcal_mol": 2.5756907788854733
+          "delta_E_kcal_mol": 1.0242300000000029
         },
         {
           "step": 9,
           "target_deg": 135.0,
-          "measured_deg": 135.0,
-          "energy_kcal_mol": -4601.446397929346,
+          "measured_deg": 179.09506345514092,
+          "energy_kcal_mol": -18.19604,
           "converged": true,
-          "delta_E_kcal_mol": 2.163526747186552
+          "delta_E_kcal_mol": 0.0018300000000017747
         },
         {
           "step": 10,
           "target_deg": 150.0,
-          "measured_deg": 150.0,
-          "energy_kcal_mol": -4602.380689009877,
+          "measured_deg": 178.70749580554758,
+          "energy_kcal_mol": -18.19513,
           "converged": true,
-          "delta_E_kcal_mol": 1.229235666655768
+          "delta_E_kcal_mol": 0.0027400000000028513
         },
         {
           "step": 11,
           "target_deg": 165.0,
-          "measured_deg": 165.0,
-          "energy_kcal_mol": -4603.285487078079,
+          "measured_deg": 180.36095137376736,
+          "energy_kcal_mol": -18.1975,
           "converged": true,
-          "delta_E_kcal_mol": 0.3244375984531871
+          "delta_E_kcal_mol": 0.0003700000000002035
         },
         {
           "step": 12,
           "target_deg": 180.0,
-          "measured_deg": 179.9999999999899,
-          "energy_kcal_mol": -4603.6099246765325,
-          "converged": true,
-          "delta_E_kcal_mol": 0.0
+          "measured_deg": 179.99999995358587,
+          "energy_kcal_mol": -18.19761,
+          "converged": false,
+          "delta_E_kcal_mol": 0.00026000000000081513
         },
         {
           "step": 13,
           "target_deg": 195.0,
-          "measured_deg": 195.0,
-          "energy_kcal_mol": -4603.276129316231,
+          "measured_deg": 180.1867514057343,
+          "energy_kcal_mol": -18.19491,
           "converged": true,
-          "delta_E_kcal_mol": 0.3337953603013375
+          "delta_E_kcal_mol": 0.002960000000001628
         },
         {
           "step": 14,
           "target_deg": 210.0,
-          "measured_deg": 210.0,
-          "energy_kcal_mol": -4602.388851269195,
+          "measured_deg": 179.04860232599103,
+          "energy_kcal_mol": -18.19622,
           "converged": true,
-          "delta_E_kcal_mol": 1.2210734073378262
+          "delta_E_kcal_mol": 0.0016500000000014836
         },
         {
           "step": 15,
           "target_deg": 225.0,
-          "measured_deg": 225.0,
-          "energy_kcal_mol": -4601.446308731476,
+          "measured_deg": 180.24625920394928,
+          "energy_kcal_mol": -18.19751,
           "converged": true,
-          "delta_E_kcal_mol": 2.1636159450563355
+          "delta_E_kcal_mol": 0.0003600000000005821
         },
         {
           "step": 16,
           "target_deg": 240.0,
-          "measured_deg": 239.99999999999997,
-          "energy_kcal_mol": -4601.036403836163,
+          "measured_deg": 239.95987513052947,
+          "energy_kcal_mol": -17.17362,
           "converged": true,
-          "delta_E_kcal_mol": 2.5735208403693832
+          "delta_E_kcal_mol": 1.024250000000002
         },
         {
           "step": 17,
           "target_deg": 255.0,
-          "measured_deg": 255.00000000000003,
-          "energy_kcal_mol": -4601.447629735608,
+          "measured_deg": 299.3845777372371,
+          "energy_kcal_mol": -18.19775,
           "converged": true,
-          "delta_E_kcal_mol": 2.1622949409247667
+          "delta_E_kcal_mol": 0.0001200000000025625
         },
         {
           "step": 18,
           "target_deg": 270.0,
-          "measured_deg": 270.0,
-          "energy_kcal_mol": -4602.381870087297,
+          "measured_deg": 299.49859109053665,
+          "energy_kcal_mol": -18.19787,
           "converged": true,
-          "delta_E_kcal_mol": 1.2280545892353985
+          "delta_E_kcal_mol": 0.0
         },
         {
           "step": 19,
           "target_deg": 285.0,
-          "measured_deg": 285.00000000000006,
-          "energy_kcal_mol": -4603.285806944404,
+          "measured_deg": 299.5785976791321,
+          "energy_kcal_mol": -18.1966,
           "converged": true,
-          "delta_E_kcal_mol": 0.3241177321287978
+          "delta_E_kcal_mol": 0.0012700000000016587
         },
         {
           "step": 20,
           "target_deg": 300.0,
-          "measured_deg": 299.9999999999899,
-          "energy_kcal_mol": -4603.609152870619,
-          "converged": true,
-          "delta_E_kcal_mol": 0.0007718059132457711
+          "measured_deg": 299.9999999016693,
+          "energy_kcal_mol": -18.19669,
+          "converged": false,
+          "delta_E_kcal_mol": 0.0011800000000015132
         },
         {
           "step": 21,
           "target_deg": 315.0,
-          "measured_deg": 315.0,
-          "energy_kcal_mol": -4603.283280685693,
+          "measured_deg": 300.6186824190705,
+          "energy_kcal_mol": -18.19586,
           "converged": true,
-          "delta_E_kcal_mol": 0.3266439908393295
+          "delta_E_kcal_mol": 0.0020100000000020657
         },
         {
           "step": 22,
           "target_deg": 330.0,
-          "measured_deg": 330.00000000000006,
-          "energy_kcal_mol": -4602.381427693127,
+          "measured_deg": 299.3793813744295,
+          "energy_kcal_mol": -18.19442,
           "converged": true,
-          "delta_E_kcal_mol": 1.228496983405421
+          "delta_E_kcal_mol": 0.0034500000000008413
         },
         {
           "step": 23,
           "target_deg": 345.0,
-          "measured_deg": 345.0,
-          "energy_kcal_mol": -4601.456936758659,
+          "measured_deg": 301.5161748452208,
+          "energy_kcal_mol": -18.19579,
           "converged": true,
-          "delta_E_kcal_mol": 2.152987917873361
+          "delta_E_kcal_mol": 0.0020800000000029684
         }
       ],
-      "barrier_interpolated_kcal_mol": 2.5859899696042703,
-      "max_angle_interpolated_deg": 120.16655100624565,
-      "min_angle_interpolated_deg": 179.87508674531577
+      "barrier_interpolated_kcal_mol": 0.8261468271454788,
+      "max_angle_interpolated_deg": 0.24982650936849413,
+      "min_angle_interpolated_deg": 34.97571131158917
     }
   ],
+  "schema_version": 1,
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -262,6 +263,12 @@
         "ok": true,
         "severity": "error",
         "detail": "dihedral(s) with ZERO converged points: none (every point of a scanned dihedral failed to optimize)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
       }
     ]
   }

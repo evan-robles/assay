@@ -2,14 +2,14 @@
   "name": "formaldehyde_vibrational_analysis",
   "skill": "vibrational-analysis",
   "xyz": "benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/formaldehyde.xyz",
-  "prompt": "Run the vibrational-analysis task on formaldehyde using the GFN2-xTB method in the gas phase. Do NOT perform a pre-optimization \u2014 pass --no-preopt so the Hessian is taken on the supplied geometry as-is. Report the electronic energy in eV as the headline value (the vibrational-analysis task also returns the enthalpy and the Gibbs free energy, both in eV \u2014 do NOT report those as the headline value), and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
+  "prompt": "Run the vibrational-analysis task on formaldehyde using the PM7 (mopac) method in the gas phase. Do NOT perform a pre-optimization \u2014 pass --no-preopt so the Hessian is taken on the supplied geometry as-is. Report the electronic energy in eV as the headline value (the vibrational-analysis task also returns the enthalpy and the Gibbs free energy, both in eV \u2014 do NOT report those as the headline value), state the method used, and surface any warnings the calculation produced about PM7 parameter coverage. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
-    "xtb",
+    "mopac",
     "--no-preopt"
   ],
   "intended": {
-    "method": "xtb",
+    "method": "mopac",
     "charge": 0,
     "multiplicity": 1,
     "solvent": null

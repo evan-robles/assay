@@ -1,19 +1,31 @@
 # chemkit live log
 # subcommand : logp
-# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/benzene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp_hwt8ioq/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/benzene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp_hwt8ioq/truth.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/20260624-113050_benzene_logp_partition
-# started    : 20260624-113052
+# args       : --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/benzene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpjggja3_b/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3 -m chemkit_engine.cli logp --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/benzene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpjggja3_b/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/engine-reference
+# started    : 20260709-183422
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp_hwt8ioq/truth.json
+
+          MOPAC Job: "mopac.mop" ended normally on Jul  9, 2026, at 18:34.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul  9, 2026, at 18:34.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul  9, 2026, at 18:34.
+
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpjggja3_b/truth.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
 {
   "task": "logp",
-  "method": "GFN2-xTB",
-  "program": "xtb",
+  "method": "PM7",
+  "program": "mopac",
   "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/benzene.xyz",
   "n_atoms": 12,
   "atoms": [
@@ -33,23 +45,26 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/benzene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp_hwt8ioq/truth.json",
-  "logp": 2.0314483943204857,
-  "delta_G_solv_water_kcal_mol": -0.8728912100268985,
-  "delta_G_solv_octanol_kcal_mol": -3.6443962543983375,
-  "delta_delta_G_kcal_mol": 2.771505044371439,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py logp --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/benzene/benzene.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpjggja3_b/truth.json",
+  "logp": -0.19616653074409787,
+  "delta_G_solv_water_kcal_mol": -1.993419984314921,
+  "delta_G_solv_octanol_kcal_mol": -1.7257899864207482,
+  "delta_delta_G_kcal_mol": -0.26762999789417274,
   "RT_ln10_kcal_mol_at_298K": 1.3643,
   "water_solvent_key": "water",
   "octanol_solvent_key": "octanol",
-  "energy_gas_eV": -432.08612035548543,
-  "energy_water_eV": -432.1239725009088,
-  "energy_octanol_eV": -432.2441563345596,
+  "energy_gas_eV": 0.9954429525259116,
+  "energy_water_eV": 0.9090000805283911,
+  "energy_octanol_eV": 0.9206056156553069,
   "warnings": [
     "logP from semi-empirical \u0394G_solv differences is screening-grade; \u00b11 log unit typical.",
-    "Each leg is an electronic-energy difference on a single frozen geometry \u2014 no ZPE/thermal/entropy and no per-phase relaxation. The reported delta_G_solv_* legs are electronic only; the 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference, so logP itself is insensitive to it, but the individual legs are not corrected \u0394G*_solv.",
-    "For chemoinformatic logP, also consider RDKit's Crippen/XLogP (group-contribution).",
+    "Electronic-only \u0394G_solv on a single frozen geometry (no ZPE/thermal/entropy). The 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference (logP is insensitive to it), but the individual delta_G_solv_* legs are not corrected \u0394G*_solv.",
     "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
   ],
+  "schema_version": 1,
+  "headline_field": "logp",
+  "headline_value": -0.19616653074409787,
+  "headline_units": "dimensionless",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -58,7 +73,19 @@
         "name": "logp_finite",
         "ok": true,
         "severity": "error",
-        "detail": "logp = 2.0314483943204857 (must be finite)"
+        "detail": "logp = -0.19616653074409787 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'logp' = -0.19616653074409787 (present and numeric)"
       }
     ]
   }

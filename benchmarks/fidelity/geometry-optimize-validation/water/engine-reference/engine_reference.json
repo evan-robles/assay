@@ -1,7 +1,7 @@
 {
   "task": "geometry_optimization",
-  "method": "GFN2-xTB",
-  "program": "xtb",
+  "method": "PM7",
+  "program": "mopac",
   "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/water/water.xyz",
   "n_atoms": 3,
   "atoms": [
@@ -12,14 +12,29 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py opt --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpijwxbhcc/truth.json",
-  "total_energy_eV": -137.97654,
-  "total_energy_hartree": -5.0705444,
-  "total_energy_kcal_mol": -3181.8147,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py opt --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp_jjp082q/truth.json",
+  "total_energy_eV": -2.5063889,
+  "total_energy_hartree": -0.092108091,
+  "total_energy_kcal_mol": -57.7987,
+  "final_heat_of_formation_kcal_mol": -57.7987,
   "converged": true,
-  "n_steps": 3,
   "fmax_target_eV_per_A": 0.05,
-  "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/water/20260624-114817_water_geometry_optimize/water_xtb_opt.xyz",
+  "mopac_gradient_norm_kcal_per_A": 1.07463,
+  "mopac_status": "EF reported geometry optimised.",
+  "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/geometry-optimize-validation/water/engine-reference/water_mopac_opt.xyz",
+  "mopac_workdir": "/tmp/chemkit_mopac_mgiqbaby",
+  "mopac_keywords": [
+    "PM7",
+    "GNORM=1.153",
+    "AUX",
+    "GEO-OK",
+    "THREADS=1"
+  ],
+  "schema_version": 1,
+  "electronic_energy_eV": -2.5063889,
+  "headline_field": "total_energy_eV",
+  "headline_value": -2.5063889,
+  "headline_units": "eV",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -34,7 +49,19 @@
         "name": "energy_finite",
         "ok": true,
         "severity": "error",
-        "detail": "total/electronic energy = -137.9765421760492 (must be a finite number)"
+        "detail": "total/electronic energy = -2.5063888518405544 (must be a finite number)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'total_energy_eV' = -2.5063888518405544 (present and numeric)"
       }
     ]
   }

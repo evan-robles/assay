@@ -1,0 +1,22 @@
+{
+  "spec_name": "water-formation_reaction_energy",
+  "skill": "reaction-energy",
+  "flags": [
+    "--method",
+    "mopac",
+    "--reactant",
+    "2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/water-formation/h2.xyz",
+    "--reactant",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/water-formation/o2.xyz,mult=3",
+    "--product",
+    "2*/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/reaction-energy-validation/water-formation/h2o.xyz"
+  ],
+  "positional": null,
+  "expect": "compute",
+  "spec_hash": "f3c1d2a22fd84ab9",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:34:39"
+}

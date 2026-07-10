@@ -3,7 +3,7 @@
   "skill": "solvation",
   "flags": [
     "--method",
-    "xtb",
+    "mopac",
     "--charge",
     "0",
     "--mult",
@@ -13,11 +13,10 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/solvation-validation/water/water.xyz",
   "expect": "compute",
-  "spec_hash": "1dcdded3d9ffdb19",
+  "spec_hash": "846741c6f99290e5",
   "determinism_ok": true,
-  "determinism_msg": "migrated; determinism PASS in original run",
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
   "engine_failed": false,
-  "git_commit": "3428dfc",
-  "timestamp": "migrated",
-  "_migrated_from": "20260624-113646_water_solvation__argo_o3"
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:34:14"
 }

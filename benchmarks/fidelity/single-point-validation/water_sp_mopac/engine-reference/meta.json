@@ -1,0 +1,20 @@
+{
+  "spec_name": "water_sp_mopac",
+  "skill": "single-point-energy",
+  "flags": [
+    "--method",
+    "mopac",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_mopac/water_mopac.xyz",
+  "expect": "compute",
+  "spec_hash": "267ad61f6c676ad9",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:33:11"
+}

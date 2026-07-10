@@ -3,7 +3,7 @@
   "skill": "logp-partition",
   "flags": [
     "--method",
-    "xtb",
+    "mopac",
     "--charge",
     "0",
     "--mult",
@@ -11,11 +11,10 @@
   ],
   "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/methanol/methanol.xyz",
   "expect": "compute",
-  "spec_hash": "6c437bbce86a4b29",
+  "spec_hash": "e9c1ab038edcfac4",
   "determinism_ok": true,
-  "determinism_msg": "migrated; determinism PASS in original run",
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
   "engine_failed": false,
-  "git_commit": "3428dfc",
-  "timestamp": "migrated",
-  "_migrated_from": "20260624-113239_methanol_logp_partition__argo_o3"
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:34:27"
 }

@@ -16,13 +16,13 @@
       "spec": "2*benchmarks/fidelity/reaction-energy-validation/water-formation/h2o.xyz"
     }
   ],
-  "prompt": "Run the reaction-energy task for the reaction 2 H2 + O2 -> 2 H2O using the GFN2-xTB method in the gas phase, in single-point mode. Each species is passed via --reactant/--product with its stoichiometric coefficient (and charge/mult where needed). Report the reaction energy delta_E in kcal/mol as the headline value, and state the method used. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the reaction-energy task for the reaction 2 H2 + O2 -> 2 H2O using the PM7 (mopac) method in the gas phase, in single-point mode. Each species is passed via --reactant/--product with its stoichiometric coefficient (and charge/mult where needed). Report the reaction energy delta_E in kcal/mol as the headline value, state the method used, and surface any warnings the calculation produced about PM7 parameter coverage. Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
-    "xtb"
+    "mopac"
   ],
   "intended": {
-    "method": "xtb",
+    "method": "mopac",
     "charge": 0,
     "multiplicity": 1,
     "solvent": null

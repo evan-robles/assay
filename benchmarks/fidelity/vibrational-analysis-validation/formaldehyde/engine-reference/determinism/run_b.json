@@ -1,7 +1,7 @@
 {
   "task": "vibrational_thermochemistry",
-  "method": "GFN2-xTB",
-  "program": "xtb",
+  "method": "PM7",
+  "program": "mopac",
   "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/formaldehyde.xyz",
   "n_atoms": 4,
   "atoms": [
@@ -13,42 +13,58 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp9ebw920q/b.json",
-  "electronic_energy_eV": -195.21817,
-  "zpe_eV": 0.67161687,
-  "zpe_kcal_mol": 15.487853,
-  "enthalpy_eV": -194.44184,
-  "entropy_eV_per_K": 0.0023305662,
-  "gibbs_free_energy_eV": -195.1367,
-  "temperature_K": 298.15,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method mopac --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0hx4or75/b.json",
+  "heat_of_formation_kcal_mol": -25.0051,
+  "electronic_energy_eV": -1.0843238,
+  "zpe_kcal_mol": 15.215896,
+  "zpe_eV": 0.6598237,
+  "heat_of_formation_T_kcal_mol": -25.01,
+  "enthalpy_kcal_mol": -25.01,
+  "enthalpy_eV": -1.0845362,
+  "entropy_cal_K_mol": 52.312,
+  "entropy_eV_per_K": 0.002268463,
+  "heat_capacity_cal_K_mol": 8.582,
+  "gibbs_free_energy_kcal_mol": -40.598976,
+  "gibbs_free_energy_eV": -1.7605382,
+  "temperature_K": 298.0,
   "pressure_Pa": 101325.0,
-  "geometry": "nonlinear",
-  "symmetry_number": 1,
   "n_real_vib_modes": 6,
   "n_imaginary_modes": 0,
   "vibrational_frequencies_cm-1": [
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    1019.5234,
-    1067.2846,
-    1456.8208,
-    1620.6099,
-    2828.7827,
-    2840.8893
+    1102.94,
+    1188.16,
+    1380.64,
+    1758.44,
+    2578.33,
+    2635.16
   ],
-  "n_soft_imaginary_modes": 0,
-  "n_saddle_imaginary_modes": 0,
-  "geometry_auto_detected": true,
+  "mopac_keywords": [
+    "PM7",
+    "FORCE",
+    "THERMO",
+    "AUX",
+    "LET",
+    "GEO-OK",
+    "ROT=1",
+    "THREADS=10"
+  ],
+  "mopac_workdir": "/tmp/chemkit_mopac_freq_7tfgz3ou",
+  "code_specific": {
+    "ionization_potential_eV": 10.331,
+    "dipole_debye": 2.71701
+  },
+  "symmetry_number": 1,
   "warnings": [
-    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
   ],
   "preopt": {
     "performed": false
   },
+  "schema_version": 1,
+  "total_energy_eV": -1.0843238,
+  "headline_field": "electronic_energy_eV",
+  "headline_value": -1.0843238,
+  "headline_units": "eV",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -63,8 +79,27 @@
         "name": "gibbs_finite",
         "ok": true,
         "severity": "error",
-        "detail": "gibbs_free_energy_eV = np.float64(-195.13670196785512) (must be finite)"
+        "detail": "gibbs_free_energy_eV = -1.7605382273743566 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'electronic_energy_eV' = -1.0843237629766456 (present and numeric)"
       }
     ]
-  }
+  },
+  "warnings_structured": [
+    {
+      "code": "thermo_electronic_only_9e3e31da",
+      "text": "symmetry_number defaulted to 1; if the molecule has rotational symmetry (H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    }
+  ],
+  "warnings_block": "\u26a0\ufe0f Tool warnings \u2014 surface ALL of these to the user verbatim (do not drop, summarize, or paraphrase any):\n- symmetry_number defaulted to 1; if the molecule has rotational symmetry (H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
 }

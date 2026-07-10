@@ -1,19 +1,19 @@
 # chemkit live log
 # subcommand : electrostatics
-# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpmxl7sfvc/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli electrostatics --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpmxl7sfvc/truth.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/20260624-111941_formaldehyde_electrostatics
-# started    : 20260624-111943
+# args       : --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpltejfv0l/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3 -m chemkit_engine.cli electrostatics --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpltejfv0l/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/engine-reference
+# started    : 20260709-183434
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpmxl7sfvc/truth.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpltejfv0l/truth.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
 {
   "task": "electrostatics",
-  "method": "GFN2-xTB",
-  "program": "xtb",
+  "method": "PM7",
+  "program": "mopac",
   "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz",
   "n_atoms": 4,
   "atoms": [
@@ -25,24 +25,31 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpmxl7sfvc/truth.json",
-  "total_energy_eV": -195.2181752137127,
-  "total_energy_hartree": -7.1741356154740386,
-  "total_energy_kcal_mol": -4501.838066922033,
-  "dipole_debye": 2.487075256274238,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpltejfv0l/truth.json",
+  "total_energy_eV": -1.0843237629766456,
+  "total_energy_hartree": -0.039848163308357554,
+  "total_energy_kcal_mol": -25.005100000000002,
+  "final_heat_of_formation_kcal_mol": -25.0051,
   "dipole_vector_debye": [
-    -2.487075254886128,
-    5.961542224445177e-05,
-    5.788498602989823e-05
+    -2.717,
+    0.0,
+    0.0
   ],
+  "dipole_debye": 2.717,
   "partial_charges": [
-    -0.2779600771159959,
-    0.1736416374737315,
-    0.05215418312819637,
-    0.05216425651406833
+    -0.3967,
+    0.19207,
+    0.10232,
+    0.10231
   ],
-  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
-  "sum_of_charges": 3.0531133177191805e-16,
+  "partial_charges_scheme": "Mulliken (PM7)",
+  "sum_of_charges": -1.3877787807814457e-17,
+  "ionization_potential_eV": 10.331,
+  "schema_version": 1,
+  "electronic_energy_eV": -1.0843237629766456,
+  "headline_field": "dipole_debye",
+  "headline_value": 2.717,
+  "headline_units": "debye",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -51,7 +58,19 @@
         "name": "charge_consistency",
         "ok": true,
         "severity": "error",
-        "detail": "sum_of_charges = 3.0531133177191805e-16, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+        "detail": "sum_of_charges = -1.3877787807814457e-17, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'dipole_debye' = 2.717 (present and numeric)"
       }
     ]
   }

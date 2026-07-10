@@ -2,13 +2,13 @@
   "name": "water_geometry_optimize",
   "skill": "geometry-optimize",
   "xyz": "benchmarks/fidelity/geometry-optimize-validation/water/water.xyz",
-  "prompt": "Run the geometry-optimize task on water using the GFN2-xTB method in the gas phase. Report the total energy in eV as the headline value (the engine also reports the same energy in hartree and kcal/mol \u2014 report the eV value), and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
+  "prompt": "Run the geometry-optimize task on water using the PM7 (mopac) method in the gas phase. Report the total energy in eV as the headline value (the engine also reports the same energy in hartree and kcal/mol \u2014 report the eV value), state the method used, and surface any warnings the calculation produced about PM7 parameter coverage. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
-    "xtb"
+    "mopac"
   ],
   "intended": {
-    "method": "xtb",
+    "method": "mopac",
     "charge": 0,
     "multiplicity": 1,
     "solvent": null

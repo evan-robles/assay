@@ -2,13 +2,13 @@
   "name": "ethane_conformational_analysis",
   "skill": "conformational-analysis",
   "xyz": "benchmarks/fidelity/conformational-analysis-validation/ethane/ethane.xyz",
-  "prompt": "Run the conformational-analysis task on ethane using the GFN2-xTB method in the gas phase. Pass only --method xtb and the .xyz file \u2014 the task auto-detects all rotatable bonds by default, so do NOT add any extra flag for that (there is no --auto/--rotors flag). Report the rotation barrier(s) found (per scanned dihedral) and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
+  "prompt": "Run the conformational-analysis task on ethane using the PM7 (mopac) method in the gas phase. Pass only --method mopac and the .xyz file \u2014 the task auto-detects all rotatable bonds by default, so do NOT add any extra flag for that (there is no --auto/--rotors flag). Report the rotation barrier(s) found (per scanned dihedral), state the method used, and surface any warnings the calculation produced about PM7 parameter coverage. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
-    "xtb"
+    "mopac"
   ],
   "intended": {
-    "method": "xtb",
+    "method": "mopac",
     "charge": 0,
     "multiplicity": 1,
     "solvent": null

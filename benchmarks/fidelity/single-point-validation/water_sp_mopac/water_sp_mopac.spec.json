@@ -1,0 +1,22 @@
+{
+  "name": "water_sp_mopac",
+  "skill": "single-point-energy",
+  "xyz": "benchmarks/fidelity/single-point-validation/water_sp_mopac/water_mopac.xyz",
+  "prompt": "Compute the single-point energy of water using the PM7 (mopac) method in the gas phase. Report the total energy in eV, state the method used, and surface any warnings the calculation produced about PM7 parameter coverage. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
+  "intended_flags": [
+    "--method",
+    "mopac"
+  ],
+  "intended": {
+    "method": "mopac",
+    "charge": 0,
+    "multiplicity": 1,
+    "solvent": null
+  },
+  "report_value_field": "total_energy_eV",
+  "energy_tol_eV": 0.001,
+  "rules": [
+    "calculation-reporting-standards",
+    "research-standards"
+  ]
+}

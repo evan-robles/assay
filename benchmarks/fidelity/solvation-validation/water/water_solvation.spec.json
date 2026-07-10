@@ -2,13 +2,13 @@
   "name": "water_solvation",
   "skill": "solvation",
   "xyz": "benchmarks/fidelity/solvation-validation/water/water.xyz",
-  "prompt": "Run the solvation task on water using the GFN2-xTB method in implicit water solvent. Report the solvation free energy delta_G_solv in kcal/mol as the headline value (the solvation task also returns this quantity in eV/hartree and the separate gas- and solution-phase energies \u2014 do NOT report those as the headline value), and state the method used. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
+  "prompt": "Run the solvation task on water using the PM7 (mopac) method in implicit water solvent. Report the solvation free energy delta_G_solv in kcal/mol as the headline value (the solvation task also returns this quantity in eV/hartree and the separate gas- and solution-phase energies \u2014 do NOT report those as the headline value), state the method used, and surface any warnings the calculation produced about PM7 parameter coverage. Use the chemkit tools; do not guess the number. Use charge 0 and multiplicity 1.",
   "intended_flags": [
     "--method",
-    "xtb"
+    "mopac"
   ],
   "intended": {
-    "method": "xtb",
+    "method": "mopac",
     "charge": 0,
     "multiplicity": 1,
     "solvent": "water"

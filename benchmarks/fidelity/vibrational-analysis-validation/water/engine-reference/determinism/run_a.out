@@ -1,19 +1,19 @@
 # chemkit live log
 # subcommand : freq
-# args       : --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmps7fyaa82/a.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmps7fyaa82/a.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/20260624-130121_water_vibrational_analysis/determinism
-# started    : 20260624-130122
+# args       : --method mopac --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpzoc4z36c/a.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3 -m chemkit_engine.cli freq --method mopac --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpzoc4z36c/a.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/engine-reference/determinism
+# started    : 20260709-183403
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmps7fyaa82/a.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpzoc4z36c/a.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
 {
   "task": "vibrational_thermochemistry",
-  "method": "GFN2-xTB",
-  "program": "xtb",
+  "method": "PM7",
+  "program": "mopac",
   "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/water.xyz",
   "n_atoms": 3,
   "atoms": [
@@ -24,39 +24,55 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmps7fyaa82/a.json",
-  "electronic_energy_eV": -137.96740224524743,
-  "zpe_eV": 0.5340386514520397,
-  "zpe_kcal_mol": 12.315223865209044,
-  "enthalpy_eV": -137.33050088391687,
-  "entropy_eV_per_K": 0.002017212807543809,
-  "gibbs_free_energy_eV": -137.93193288248605,
-  "temperature_K": 298.15,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method mopac --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/water/water.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpzoc4z36c/a.json",
+  "heat_of_formation_kcal_mol": -57.6896,
+  "electronic_energy_eV": -2.5016578280677737,
+  "zpe_kcal_mol": 10.089766,
+  "zpe_eV": 0.4375336645993744,
+  "heat_of_formation_T_kcal_mol": -57.69,
+  "enthalpy_kcal_mol": -57.69,
+  "enthalpy_eV": -2.5016751737094705,
+  "entropy_cal_K_mol": 45.144,
+  "entropy_eV_per_K": 0.0019576291218918415,
+  "heat_capacity_cal_K_mol": 8.042,
+  "gibbs_free_energy_kcal_mol": -71.142912,
+  "gibbs_free_energy_eV": -3.0850486520332394,
+  "temperature_K": 298.0,
   "pressure_Pa": 101325.0,
-  "geometry": "nonlinear",
-  "symmetry_number": 1,
   "n_real_vib_modes": 3,
   "n_imaginary_modes": 0,
   "vibrational_frequencies_cm-1": [
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    1588.3921697116325,
-    3505.632313921915,
-    3520.5999337315548
+    1438.54,
+    2782.57,
+    2836.78
   ],
-  "n_soft_imaginary_modes": 0,
-  "n_saddle_imaginary_modes": 0,
-  "geometry_auto_detected": true,
+  "mopac_keywords": [
+    "PM7",
+    "FORCE",
+    "THERMO",
+    "AUX",
+    "LET",
+    "GEO-OK",
+    "ROT=1",
+    "THREADS=10"
+  ],
+  "mopac_workdir": "/tmp/chemkit_mopac_freq_wyr7yt1_",
+  "code_specific": {
+    "ionization_potential_eV": 12.0311,
+    "dipole_debye": 2.1596
+  },
+  "symmetry_number": 1,
   "warnings": [
-    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
   ],
   "preopt": {
     "performed": false
   },
+  "schema_version": 1,
+  "total_energy_eV": -2.5016578280677737,
+  "headline_field": "electronic_energy_eV",
+  "headline_value": -2.5016578280677737,
+  "headline_units": "eV",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -71,7 +87,19 @@
         "name": "gibbs_finite",
         "ok": true,
         "severity": "error",
-        "detail": "gibbs_free_energy_eV = np.float64(-137.93193288248605) (must be finite)"
+        "detail": "gibbs_free_energy_eV = -3.0850486520332394 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'electronic_energy_eV' = -2.5016578280677737 (present and numeric)"
       }
     ]
   }

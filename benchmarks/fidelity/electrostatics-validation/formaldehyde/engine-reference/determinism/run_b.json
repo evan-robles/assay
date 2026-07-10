@@ -1,7 +1,7 @@
 {
   "task": "electrostatics",
-  "method": "GFN2-xTB",
-  "program": "xtb",
+  "method": "PM7",
+  "program": "mopac",
   "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz",
   "n_atoms": 4,
   "atoms": [
@@ -13,24 +13,31 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpw8kxxbfu/b.json",
-  "total_energy_eV": -195.21818,
-  "total_energy_hartree": -7.1741356,
-  "total_energy_kcal_mol": -4501.8381,
-  "dipole_debye": 2.4870753,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py electrostatics --method mopac --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/electrostatics-validation/formaldehyde/formaldehyde.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7fyaanng/b.json",
+  "total_energy_eV": -1.0843238,
+  "total_energy_hartree": -0.039848163,
+  "total_energy_kcal_mol": -25.0051,
+  "final_heat_of_formation_kcal_mol": -25.0051,
   "dipole_vector_debye": [
-    -2.4870753,
-    5.9615422e-05,
-    5.7884986e-05
+    -2.717,
+    0.0,
+    0.0
   ],
+  "dipole_debye": 2.717,
   "partial_charges": [
-    -0.27796008,
-    0.17364164,
-    0.052154183,
-    0.052164257
+    -0.3967,
+    0.19207,
+    0.10232,
+    0.10231
   ],
-  "partial_charges_scheme": "Mulliken (GFN2-xTB)",
-  "sum_of_charges": 3.0531133e-16,
+  "partial_charges_scheme": "Mulliken (PM7)",
+  "sum_of_charges": -1.3877788e-17,
+  "ionization_potential_eV": 10.331,
+  "schema_version": 1,
+  "electronic_energy_eV": -1.0843238,
+  "headline_field": "dipole_debye",
+  "headline_value": 2.717,
+  "headline_units": "debye",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -39,7 +46,19 @@
         "name": "charge_consistency",
         "ok": true,
         "severity": "error",
-        "detail": "sum_of_charges = 3.0531133177191805e-16, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+        "detail": "sum_of_charges = -1.3877787807814457e-17, molecular charge = 0 (partial charges must sum to the total charge within 0.05 e)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'dipole_debye' = 2.717 (present and numeric)"
       }
     ]
   }
