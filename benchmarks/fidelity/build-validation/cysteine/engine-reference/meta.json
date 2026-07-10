@@ -5,13 +5,12 @@
     "--charge",
     "0"
   ],
-  "positional": "cysteine",
+  "positional": "C([C@@H](C(=O)O)N)S",
   "expect": "structure",
-  "spec_hash": "c71693a45c0f55f4",
+  "spec_hash": "c934d0b2a9d3a977",
   "determinism_ok": true,
-  "determinism_msg": "migrated; determinism PASS in original run",
+  "determinism_msg": "skipped (expect=structure)",
   "engine_failed": false,
-  "git_commit": "3428dfc",
-  "timestamp": "migrated",
-  "_migrated_from": "20260619-134610_cysteine_build__argo_o3"
+  "git_commit": "199143303",
+  "timestamp": "2026-07-09T23:07:11"
 }

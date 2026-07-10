@@ -1,10 +1,10 @@
 {
   "name": "acetate_build",
   "skill": "build-from-smiles",
-  "input": "acetate",
+  "input": "CC(=O)[O-]",
   "input_kind": "string",
   "expect": "structure",
-  "prompt": "Build a 3D structure of the acetate anion (CH3COO-, charge -1) from its name using the build-from-smiles tool. Report what you built (the molecule and its atom count) and the source it was resolved from. Do not fabricate coordinates; use the tool.",
+  "prompt": "Build a 3D structure of the acetate anion from the SMILES `CC(=O)[O-]` using the build-from-smiles tool. Report what you built (the molecule and its atom count). Do not fabricate coordinates; use the tool. This is an ion with net charge -1; pass that charge to the tool.",
   "intended_flags": [],
   "intended": {
     "method": "",

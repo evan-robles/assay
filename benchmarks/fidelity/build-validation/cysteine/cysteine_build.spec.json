@@ -1,10 +1,10 @@
 {
   "name": "cysteine_build",
   "skill": "build-from-smiles",
-  "input": "cysteine",
+  "input": "C([C@@H](C(=O)O)N)S",
   "input_kind": "string",
   "expect": "structure",
-  "prompt": "Build a 3D structure of cysteine from its name using the build-from-smiles tool. Report what you built (the molecule and its atom count) and the source it was resolved from. Do not fabricate coordinates; use the tool. Use charge 0.",
+  "prompt": "Build a 3D structure of cysteine from the SMILES `C([C@@H](C(=O)O)N)S` using the build-from-smiles tool. Report what you built (the molecule and its atom count). Do not fabricate coordinates; use the tool. Use charge 0.",
   "intended_flags": [],
   "intended": {
     "method": "",

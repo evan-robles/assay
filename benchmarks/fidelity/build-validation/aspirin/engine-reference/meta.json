@@ -5,13 +5,12 @@
     "--charge",
     "0"
   ],
-  "positional": "aspirin",
+  "positional": "CC(=O)OC1=CC=CC=C1C(=O)O",
   "expect": "structure",
-  "spec_hash": "9fdaebc838e02c95",
+  "spec_hash": "7addf20ff7c32985",
   "determinism_ok": true,
-  "determinism_msg": "migrated; determinism PASS in original run",
+  "determinism_msg": "skipped (expect=structure)",
   "engine_failed": false,
-  "git_commit": "3428dfc",
-  "timestamp": "migrated",
-  "_migrated_from": "20260619-134534_aspirin_build__argo_o3"
+  "git_commit": "199143303",
+  "timestamp": "2026-07-09T23:07:03"
 }

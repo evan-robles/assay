@@ -1,28 +1,18 @@
 {
   "task": "build_from_smiles",
   "program": "openbabel",
-  "input": "water",
+  "input": "O",
   "smiles_input": "O",
   "n_atoms": 3,
   "build": {
     "method": "obabel --gen3d",
-    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_2t4stcm2.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/water.xyz --title chemkit build: water"
+    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_4w5vso6w.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/water/engine-reference/O.xyz --title chemkit build: O"
   },
-  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/water.xyz",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build --charge 0 water --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpwh88d1hc/truth.json",
-  "smiles_source": {
-    "smiles": "O",
-    "name_input": "water",
-    "source": "PubChem",
-    "smiles_kind": "isomeric",
-    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 962, Water. https://pubchem.ncbi.nlm.nih.gov/compound/962 (accessed 2026-06-18).",
-    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/962",
-    "identifier": "CID 962",
-    "from_cache": true,
-    "warnings": []
-  },
+  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/water/engine-reference/engine_reference.xyz",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build --charge 0 O --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp55pcipx4/truth.json",
+  "schema_version": 1,
   "integrity": {
-    "status": "ok",
+    "status": "warning",
     "trustworthy": true,
     "checks": [
       {
@@ -30,6 +20,12 @@
         "ok": true,
         "severity": "error",
         "detail": "n_atoms = 3 (3D embedding must yield at least one atom)"
+      },
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
       }
     ]
   }

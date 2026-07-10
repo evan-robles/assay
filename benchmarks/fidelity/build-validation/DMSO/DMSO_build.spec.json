@@ -1,10 +1,10 @@
 {
   "name": "DMSO_build",
   "skill": "build-from-smiles",
-  "input": "dimethyl sulfoxide",
+  "input": "CS(=O)C",
   "input_kind": "string",
   "expect": "structure",
-  "prompt": "Build a 3D structure of dimethyl sulfoxide from its name using the build-from-smiles tool. Report what you built (the molecule and its atom count) and the source it was resolved from. Do not fabricate coordinates; use the tool. Use charge 0.",
+  "prompt": "Build a 3D structure of dimethyl sulfoxide from the SMILES `CS(=O)C` using the build-from-smiles tool. Report what you built (the molecule and its atom count). Do not fabricate coordinates; use the tool. Use charge 0.",
   "intended_flags": [],
   "intended": {
     "method": "",

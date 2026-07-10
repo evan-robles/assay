@@ -1,40 +1,30 @@
 # chemkit live log
 # subcommand : build
-# args       : --charge 0 aspirin --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpcv_30m1f/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli build --charge 0 aspirin --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpcv_30m1f/truth.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills
-# started    : 20260619-134535
+# args       : --charge 0 CC(=O)OC1=CC=CC=C1C(=O)O --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpee9hy3f_/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli build --charge 0 CC(=O)OC1=CC=CC=C1C(=O)O --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpee9hy3f_/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/aspirin/engine-reference
+# started    : 20260709-230702
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpcv_30m1f/truth.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpee9hy3f_/truth.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
 {
   "task": "build_from_smiles",
   "program": "openbabel",
-  "input": "aspirin",
+  "input": "CC(=O)OC1=CC=CC=C1C(=O)O",
   "smiles_input": "CC(=O)OC1=CC=CC=C1C(=O)O",
   "n_atoms": 21,
   "build": {
     "method": "obabel --gen3d",
-    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_6dit_v30.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/aspirin.xyz --title chemkit build: aspirin"
+    "command": "/opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/obabel /tmp/chemkit_build_8vq0qoeb.smi --gen3d -O /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/aspirin/engine-reference/CC__O_OC1_CC_CC_C1C__O_O.xyz --title chemkit build: CC(=O)OC1=CC=CC=C1C(=O)O"
   },
-  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/aspirin.xyz",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build --charge 0 aspirin --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpcv_30m1f/truth.json",
-  "smiles_source": {
-    "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
-    "name_input": "aspirin",
-    "source": "PubChem",
-    "smiles_kind": "isomeric",
-    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 2244, Aspirin. https://pubchem.ncbi.nlm.nih.gov/compound/2244 (accessed 2026-06-19).",
-    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/2244",
-    "identifier": "CID 2244",
-    "from_cache": true,
-    "warnings": []
-  },
+  "xyz_path": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/build-validation/aspirin/engine-reference/CC__O_OC1_CC_CC_C1C__O_O.xyz",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py build --charge 0 CC(=O)OC1=CC=CC=C1C(=O)O --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpee9hy3f_/truth.json",
+  "schema_version": 1,
   "integrity": {
-    "status": "ok",
+    "status": "warning",
     "trustworthy": true,
     "checks": [
       {
@@ -42,6 +32,12 @@
         "ok": true,
         "severity": "error",
         "detail": "n_atoms = 21 (3D embedding must yield at least one atom)"
+      },
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
       }
     ]
   }
