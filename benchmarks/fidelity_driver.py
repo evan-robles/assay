@@ -1840,95 +1840,115 @@ _SKILL_NAMES = [
 
 
 def _typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
-    """Convert the typed `chemkit` tool params into CANONICAL engine argv.
+    """Convert the typed `chemkit` tool params into CANONICAL engine argv, via the
+    ONE shared converter the MCP server also uses
+    (``chemkit_engine.arg_spec.params_to_argv``).
 
-    This is the core robustness win: a weak model fills typed fields (method as an
-    enum, charge as an int, xyz as a string) and CANNOT emit an invented flag
-    (--phase), mistype the method (--method b3lyp), or scramble arg order — we
-    build the exact `--method <m> [--charge N] [--mult M] [--solvent S] ...
-    <xyz> <extra_args...>` here. `extra_args` is the escape hatch for rare
-    skill-specific flags (--nfrontier/--monomer/--reactant/--ha/--dihedral/...);
-    it still flows through the engine's did-you-mean, so a bad one is guided, not
-    silently accepted. `solvent` of none/gas/gas phase/vacuum is omitted (gas
-    phase = no --solvent)."""
-    argv: List[str] = []
-    m = params.get("method")
-    if m:
-        argv += ["--method", str(m)]
-    charge = params.get("charge")
-    if charge is not None:
-        argv += ["--charge", str(charge)]
-    mult = params.get("multiplicity")
-    if mult is not None:
-        argv += ["--mult", str(mult)]
-    solvent = params.get("solvent")
-    if solvent and str(solvent).strip().lower() not in (
-            "none", "gas", "gas phase", "gas-phase", "vacuum", ""):
-        argv += ["--solvent", str(solvent)]
-    for key, flag in (("functional", "--functional"), ("basis", "--basis"),
-                      ("tier", "--tier")):
-        v = params.get(key)
-        if v:
-            argv += [flag, str(v)]
-    # extra_args: rare skill-specific flags, verbatim (normalized downstream).
-    extra = params.get("extra_args") or []
-    argv += [str(a) for a in extra]
-    # positional geometry / SMILES / name goes LAST.
-    xyz = params.get("xyz")
-    if xyz:
-        argv.append(str(xyz))
-    return argv
+    This is the core robustness win: a model fills typed fields — now including
+    the per-skill required flags (redox ``ox_charge``/``red_charge``, pka
+    ``ha``/``a_minus``) — and CANNOT emit an invented flag, mistype an enum, or
+    scramble order. The converter only emits params that exist for the chosen
+    skill, so a value for a field the skill lacks (the historical
+    xyz/charge injection into pka) is silently dropped instead of breaking the
+    call. The legacy alias ``xyz`` is mapped to the skill's real positional
+    (``input``/``smiles``/``name``). ``extra_args`` stays as a rare escape hatch.
+    """
+    from chemkit_engine import arg_spec as _A
+    skill = params.get("skill")
+    if not skill:
+        return []
+    values = {k: v for k, v in params.items()
+              if k not in ("skill", "extra_args")}
+    # Legacy alias: the flat benchmark schema historically used `xyz` for the
+    # positional. Map it onto whatever this skill's real positional dest is.
+    if "xyz" in values:
+        pos = next((p.name for p in _A.skill_params(skill) if p.positional), None)
+        if pos and pos not in values:
+            values[pos] = values.pop("xyz")
+        else:
+            values.pop("xyz", None)
+    extra = [str(a) for a in (params.get("extra_args") or [])]
+    return _A.params_to_argv(skill, values, extra_args=extra)
 
 
-_CHEMKIT_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "chemkit",
-        "description": (
-            "Run a chemkit computational-chemistry skill. Fill the TYPED fields "
-            "below — do NOT pass raw CLI flags. `xyz` is the molecule file path "
-            "(or, for build-from-smiles/name-to-smiles, the SMILES string or "
-            "molecule name). Gas phase is the default (omit `solvent`). Use "
-            "`extra_args` ONLY for rare skill-specific flags not covered by the "
-            "typed fields (e.g. --nfrontier, --monomer, --reactant, --ha, "
-            "--dihedral, --cubes). Returns the raw result JSON."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "skill": {"type": "string", "enum": _SKILL_NAMES,
-                          "description": "which skill to run"},
-                "xyz": {"type": "string",
-                        "description": "path to the geometry file (or SMILES/name "
-                                       "for build-from-smiles / name-to-smiles)"},
-                "method": {"type": "string", "enum": ["xtb", "mopac", "dft", "hf"],
-                           "description": "level-of-theory backend"},
-                "charge": {"type": ["integer", "null"], "description": "molecular charge"},
-                "multiplicity": {"type": ["integer", "null"],
-                                 "description": "spin multiplicity 2S+1"},
-                "solvent": {"type": ["string", "null"],
-                            "description": "implicit solvent name or dielectric; "
-                                           "omit for gas phase"},
-                "functional": {"type": ["string", "null"], "description": "DFT functional"},
-                "basis": {"type": ["string", "null"], "description": "DFT/HF basis set"},
-                "tier": {"type": ["string", "null"],
-                         # NOTE: null is expressed via the "null" in `type`, NOT by
-                         # putting None in `enum`. A None enum member is rejected by
-                         # stricter OpenAI-compatible backends (argo's Gemini
-                         # endpoint returns HTTP 500 "enum.N Input should be a valid
-                         # string" from Pydantic; observed 2026-07-06, all
-                         # gemini-2.5-pro/flash calls failed). Enum values must all
-                         # be strings; nullability comes from the type union above.
-                         "enum": ["fast", "standard", "accurate"],
-                         "description": "DFT tier preset (optional; omit for default)"},
-                "extra_args": {"type": "array", "items": {"type": "string"},
-                               "description": "rare skill-specific CLI flags only "
-                                              "(e.g. ['--nfrontier','3'])"},
+def _build_chemkit_tool() -> Dict[str, Any]:
+    """Build the benchmark's `chemkit` tool schema from the engine arg-spec —
+    the SAME single source of truth the MCP server uses. One tool with a `skill`
+    enum plus the UNION of every skill's typed params (all optional but `skill`);
+    the shared params_to_argv emits only the params that belong to the chosen
+    skill, so a value for a field the skill lacks is dropped rather than injected.
+
+    This surfaces the per-skill required flags (redox ox_charge/red_charge, pka
+    ha/a_minus, …) as first-class typed properties the model can see — the fix for
+    the many-arg skills — while remaining a single function tool (per-skill oneOf
+    is avoided for argo-proxy compatibility).
+
+    JSON-schema type rules mirror the server: enums are string `enum`s with
+    nullability via a `["<type>","null"]` UNION, never a None enum member (a None
+    enum member 500s argo's Gemini endpoint — observed 2026-07-06)."""
+    from chemkit_engine import arg_spec as _A
+
+    _PY_TO_JSON = {int: "integer", float: "number", str: "string", bool: "boolean"}
+    props: Dict[str, Any] = {
+        "skill": {"type": "string", "enum": list(_SKILL_NAMES),
+                  "description": "which skill to run"},
+        # Legacy alias kept for back-compat; mapped to the skill's real positional.
+        "xyz": {"type": ["string", "null"],
+                "description": "positional input: geometry path (or SMILES/name "
+                               "for build-from-smiles / name-to-smiles). Prefer the "
+                               "skill's own named positional where shown."},
+        "extra_args": {"type": "array", "items": {"type": "string"},
+                       "description": "rare skill-specific CLI flags only; unknown "
+                                      "flags are rejected"},
+    }
+    # Union every skill's typed params. On a name collision across skills (e.g.
+    # `method`, `mode`, `charge`) keep the first; enums are unioned so the field
+    # accepts any skill's choices (the converter still validates per-skill).
+    for skill in _SKILL_NAMES:
+        for p in _A.skill_params(skill):
+            base = _PY_TO_JSON.get(p.py_type, "string")
+            if p.name not in props:
+                if p.is_list:
+                    schema: Dict[str, Any] = {
+                        "type": ["array", "null"],
+                        "items": {"type": _PY_TO_JSON.get(p.py_type, "string")},
+                    }
+                elif p.annotation_is_enum:
+                    schema = {"type": ["string", "null"], "enum": list(p.choices)}
+                else:
+                    schema = {"type": [base, "null"]}
+                if p.help:
+                    schema["description"] = p.help[:180]
+                props[p.name] = schema
+            elif p.annotation_is_enum and "enum" in props[p.name]:
+                # merge choices from another skill's same-named enum field
+                merged = list(dict.fromkeys(props[p.name]["enum"] + list(p.choices)))
+                props[p.name]["enum"] = merged
+
+    return {
+        "type": "function",
+        "function": {
+            "name": "chemkit",
+            "description": (
+                "Run a chemkit computational-chemistry skill. Set `skill`, then "
+                "fill the TYPED fields this skill needs — do NOT pass raw CLI "
+                "flags. Each skill's required inputs are typed fields (e.g. "
+                "redox-potential needs ox_charge & red_charge; pka-acidity needs "
+                "ha & a_minus; single-geometry skills use the positional `xyz`/"
+                "`input`). Gas phase is the default (omit `solvent`). `extra_args` "
+                "is a rare escape hatch; unknown flags are rejected. Returns the "
+                "raw result JSON."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": props,
+                "required": ["skill"],
             },
-            "required": ["skill"],
         },
-    },
-}
+    }
+
+
+_CHEMKIT_TOOL = _build_chemkit_tool()
 
 # Discovery tools — the "discoverable, not spoon-fed" interface. The agent is NOT
 # handed the full CLI spec up front; instead it can CALL these to look up the
@@ -2382,18 +2402,19 @@ def run_live_agent(spec: Dict[str, Any],
                     # the positional preserved intact.
                     extra = [str(a) for a in (fargs.get("extra_args") or [])]
                     if extra:
+                        # Only extra_args (rare skill-specific flags a weak model
+                        # might space-mash) need normalizing; the typed fields and
+                        # the positional are placed correctly by params_to_argv, so
+                        # feed the normalized extra_args back through the shared
+                        # converter with the typed fields intact.
                         norm_extra = _normalize_tool_args(extra)
                         if norm_extra != extra:
                             print(f"[live] normalized extra_args (split "
                                   f"space-mashed tokens): {extra} -> {norm_extra}")
-                        # rebuild argv with normalized extra_args, positional last
-                        fargs_wo_extra = {k: v for k, v in fargs.items()
-                                          if k != "extra_args"}
-                        cargs = _typed_args_to_argv(fargs_wo_extra)
-                        pos = cargs.pop() if (fargs_wo_extra.get("xyz")) else None
-                        cargs += norm_extra
-                        if pos is not None:
-                            cargs.append(pos)
+                        fargs_norm = {k: v for k, v in fargs.items()
+                                      if k != "extra_args"}
+                        fargs_norm["extra_args"] = norm_extra
+                        cargs = _typed_args_to_argv(fargs_norm)
                     else:
                         cargs = _typed_args_to_argv(fargs)
                 print(f"[live] agent calls chemkit: {skill} {cargs}")

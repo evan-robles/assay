@@ -382,83 +382,164 @@ def tool_error_envelope(subcommand: str):
     return deco
 
 
-def _typed_args_to_argv(
-    xyz: str | None = None, method: str | None = None,
-    charge: int | None = None, multiplicity: int | None = None,
-    solvent: str | None = None, functional: str | None = None,
-    basis: str | None = None, tier: str | None = None,
-    extra_args: list[str] | None = None,
-) -> list[str]:
-    """Build canonical engine argv from TYPED tool params. Typed params make an
-    invalid invocation structurally impossible (the MCP SDK validates types/enums
-    before the call), so a caller — human, a weak agent, or the benchmark —
-    cannot invent flags (--phase), mistype the method (--method b3lyp), or
-    scramble arg order. Mirrors benchmarks/fidelity_driver.py::_typed_args_to_argv.
-    Gas phase = omit --solvent (none/gas/vacuum synonyms dropped). `extra_args`
-    is the escape hatch for rare skill-specific flags (still parsed by the engine,
-    which gives did-you-mean on a bad one)."""
-    argv: list[str] = []
-    if method:
-        argv += ["--method", str(method)]
-    if charge is not None:
-        argv += ["--charge", str(charge)]
-    if multiplicity is not None:
-        argv += ["--mult", str(multiplicity)]
-    if solvent and str(solvent).strip().lower() not in (
-            "none", "gas", "gas phase", "gas-phase", "vacuum", ""):
-        argv += ["--solvent", str(solvent)]
-    if functional:
-        argv += ["--functional", str(functional)]
-    if basis:
-        argv += ["--basis", str(basis)]
-    if tier:
-        argv += ["--tier", str(tier)]
-    if extra_args:
-        argv += [str(a) for a in extra_args]
-    if xyz:
-        argv.append(str(xyz))
-    return argv
+import inspect  # noqa: E402 - used by the per-skill signature synthesizer below
+from typing import List as _List, Literal as _Literal, Optional as _Optional  # noqa: E402
+
+
+def _annotation_for(p) -> Any:
+    """Python type annotation for one arg_spec.Param, in the form FastMCP turns
+    into the JSON schema we want. Enums become Literal[...] so the client sees an
+    `enum`; the annotation is always Optional[...] so `null` lands in the type
+    UNION (not as an enum member — an enum `null` makes the argo/Gemini endpoint
+    500). Lists (append actions) become list[...].
+
+    Every param is Optional at the SCHEMA level even when the skill requires it,
+    for two reasons: (1) the back-compat `args` raw-token path must be callable
+    without also filling the typed fields (Pydantic validates the schema BEFORE
+    our body runs, so a schema-required field would reject a valid `args` call);
+    (2) true requiredness is enforced by the engine's argparse, which gives a
+    clear `error: the following arguments are required: --ha` — better than a
+    generic Pydantic rejection. Required params are still surfaced to the agent
+    in the tool description's arg list (marked "required")."""
+    if p.is_bool:
+        base: Any = bool
+    elif p.annotation_is_enum:
+        base = _Literal[tuple(p.choices)]  # type: ignore[valid-type]
+    else:
+        base = p.py_type
+    if p.is_list:
+        base = _List[base]  # type: ignore[valid-type]
+    return _Optional[base]
+
+
+def _snake(tool_name: str) -> str:
+    """kebab-case tool name -> a valid python identifier for the synthesized
+    function's __name__ (used only to name the generated schema model)."""
+    return tool_name.replace("-", "_")
 
 
 def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
-    """Register one MCP tool that dispatches to `subcommand`."""
-    description = _description(skill_folder, subcommand)
+    """Register one MCP tool with its OWN typed signature.
 
-    @mcp.tool(name=tool_name, description=description)
+    Instead of the old shared generic signature (xyz/method/charge/.../extra_args),
+    each tool advertises exactly the arguments its skill actually has — required
+    scientific flags included (e.g. redox-potential shows ox_charge/red_charge;
+    pka-acidity shows ha/a_minus). The MCP SDK validates types/enums before the
+    call, so an agent cannot invent a flag, mistype an enum, or (the key fix for
+    the many-arg skills) fill a field the skill does not have: the wrapper only
+    ever emits params that exist for THIS subcommand, so nothing gets injected
+    that the subcommand would reject.
+
+    Mechanics: the SDK derives a tool's JSON schema from the function signature
+    (inspect.signature). We keep ONE generic body and give it a SYNTHESIZED
+    __signature__ built from arg_spec.skill_params(subcommand); the shared
+    arg_spec.params_to_argv turns the validated kwargs back into engine argv.
+    """
+    from chemkit_engine import arg_spec as _arg_spec_mod
+
+    description = _description(skill_folder, subcommand)
+    params = _arg_spec_mod.skill_params(subcommand)
+    allowed_flags = _arg_spec_mod.known_flags(subcommand)
+    param_names = {p.name for p in params}
+
     @tool_error_envelope(subcommand)
     @log_tool_call(tool_name)
-    def _tool(
-        xyz: str | None = None, method: str | None = None,
-        charge: int | None = None, multiplicity: int | None = None,
-        solvent: str | None = None, functional: str | None = None,
-        basis: str | None = None, tier: str | None = None,
-        extra_args: list[str] | None = None,
-        args: list[str] | None = None, cwd: str | None = None,
-    ) -> str:
-        """Run this chemkit skill. Fill the TYPED fields (xyz, method, charge,
-        multiplicity, solvent, functional, basis, tier) — do NOT pass raw CLI
-        flags. `xyz` is the geometry path (or SMILES/name for build/resolve).
-        Gas phase is the default (omit solvent). `extra_args` is only for rare
-        skill-specific flags. `cwd` resolves relative paths. (`args`, a raw CLI
-        token list, is still accepted for back-compat — e.g. the `chemkit` CLI
-        front door — and takes precedence when given.)
-
-        REPORTING CONTRACT — surface warnings verbatim. If the result JSON has a
-        `warnings` array, you MUST relay EVERY warning to the user verbatim (none
-        dropped, summarized, or paraphrased). The result includes a ready-to-paste
-        `warnings_block` field — relay that ONE field verbatim and you have
-        surfaced them all correctly. Also report the `integrity.trustworthy`
-        verdict, and never present a computed value as experimental."""
-        if args:
-            argv = list(args)
-        else:
-            argv = _typed_args_to_argv(
-                xyz=xyz, method=method, charge=charge, multiplicity=multiplicity,
-                solvent=solvent, functional=functional, basis=basis, tier=tier,
-                extra_args=extra_args)
+    def impl(**kwargs) -> str:
+        # Back-compat: a raw CLI token list still wins (the `chemkit` front door,
+        # older callers). Everything else flows through the typed → argv path.
+        raw = kwargs.pop("args", None)
+        cwd = kwargs.pop("cwd", None)
+        extra = kwargs.pop("extra_args", None)
+        if raw:
+            return _run_engine(subcommand, list(raw), cwd=cwd)
+        # Validate the slim escape hatch: reject any unknown flag rather than
+        # passing it through to argparse blindly (with a did-you-mean hint).
+        if extra:
+            bad = _validate_extra_flags(extra, allowed_flags)
+            if bad:
+                return json.dumps({
+                    "error": (f"chemkit {subcommand}: unknown flag(s) in "
+                              f"extra_args: {', '.join(bad)}. Use the typed "
+                              f"parameters instead of raw flags where possible."),
+                    "subcommand": subcommand,
+                    "valid_flags": sorted(allowed_flags),
+                })
+        typed = {k: v for k, v in kwargs.items() if k in param_names}
+        argv = _arg_spec_mod.params_to_argv(subcommand, typed, extra_args=extra)
         return _run_engine(subcommand, argv, cwd=cwd)
 
-    return _tool
+    # Build the per-skill signature: the skill's typed params + the three
+    # cross-cutting wrapper params (extra_args / args / cwd), all keyword-only.
+    # Every param is keyword-only with a default (None for required ones, the
+    # argparse default otherwise) so the schema never marks a field required —
+    # requiredness is enforced by the engine (see _annotation_for). This keeps
+    # the back-compat `args` raw-token path callable without the typed fields.
+    sig_params = [
+        inspect.Parameter(
+            p.name, inspect.Parameter.KEYWORD_ONLY,
+            annotation=_annotation_for(p),
+            default=(p.default if (not p.required and p.default is not None)
+                     else None),
+        )
+        for p in params
+    ]
+    sig_params += [
+        inspect.Parameter("extra_args", inspect.Parameter.KEYWORD_ONLY,
+                          annotation=_Optional[_List[str]], default=None),
+        inspect.Parameter("args", inspect.Parameter.KEYWORD_ONLY,
+                          annotation=_Optional[_List[str]], default=None),
+        inspect.Parameter("cwd", inspect.Parameter.KEYWORD_ONLY,
+                          annotation=_Optional[str], default=None),
+    ]
+    impl.__signature__ = inspect.Signature(sig_params, return_annotation=str)
+    impl.__name__ = _snake(tool_name)
+    impl.__doc__ = _TOOL_DOC
+
+    mcp.add_tool(impl, name=tool_name, description=description)
+    return impl
+
+
+def _validate_extra_flags(extra: list, allowed: set) -> list[str]:
+    """Return the list of --flags in `extra` that are not valid for this skill.
+    Only tokens that look like flags (start with '-') are checked; values are
+    left alone."""
+    bad = []
+    for tok in extra:
+        s = str(tok)
+        if s.startswith("-") and not _looks_like_negative_number(s):
+            flag = s.split("=", 1)[0]  # handle --flag=value
+            if flag not in allowed:
+                bad.append(flag)
+    return bad
+
+
+def _looks_like_negative_number(s: str) -> bool:
+    """True for '-1', '-0.5' etc. — a value, not a flag (so a charge of -1 in
+    extra_args isn't mistaken for an unknown flag)."""
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+# Shared docstring for every generated tool (the per-skill args are advertised in
+# the tool's typed schema + its description; this covers the reporting contract).
+_TOOL_DOC = (
+    "Run this chemkit skill. Fill the TYPED parameters this tool advertises — "
+    "they are exactly the arguments this skill accepts (required ones have no "
+    "default). Do NOT pass raw CLI flags; there is no need to guess flag names. "
+    "`extra_args` is a rare escape hatch for a flag with no typed parameter "
+    "(unknown flags are rejected with a suggestion). `cwd` resolves relative "
+    "input/output paths. (`args`, a raw CLI token list, is still accepted for "
+    "back-compat and takes precedence when given.)\n\n"
+    "REPORTING CONTRACT — surface warnings verbatim. If the result JSON has a "
+    "`warnings` array, you MUST relay EVERY warning to the user verbatim (none "
+    "dropped, summarized, or paraphrased). The result includes a ready-to-paste "
+    "`warnings_block` field — relay that ONE field verbatim and you have surfaced "
+    "them all correctly. Also report the `integrity.trustworthy` verdict, and "
+    "never present a computed value as experimental."
+)
 
 
 for _name, (_sub, _folder) in TOOLS.items():

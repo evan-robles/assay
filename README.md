@@ -35,6 +35,8 @@ duplicated into the skills — each skill is a compact wrapper (~18 lines).
 │   │   ├── requirements.txt                   # just the `mcp` client SDK
 │   │   └── examples/<calc-name>/              # README.md + generated .json/.xyz/.png
 │   └── (20 skill folders total)
+├── workflows/
+│   └── name-to-3d-structure.md    # multi-step procedures chaining skills (rules/workflow-standards.md)
 ├── tools/build_skill_folders.py   # regenerates the thin clients
 └── tests/                         # regression suite (drives the thin clients)
 ```
@@ -71,7 +73,12 @@ load them automatically (`trigger: model_decision`) for the matching task.
 ## Skills catalog
 
 All 20 skills (each is also an MCP tool of the same name, mapping to the engine
-subcommand shown):
+subcommand shown). Each MCP tool advertises **its own typed arguments** —
+generated from the engine's argparse via `describe_subcommand()` — so an agent
+sees exactly the fields a skill takes (e.g. `redox-potential` shows
+`ox_charge`/`red_charge`/`ref`; `pka-acidity` shows `ha`/`a_minus`) rather than a
+generic argument bag, and cannot invent a flag or inject one a skill does not
+accept:
 
 | Skill / tool | Engine | What it does |
 |--------------|--------|--------------|
@@ -87,7 +94,7 @@ subcommand shown):
 | `logp-partition` | `logp` | Octanol–water logP from a solvation-free-energy cycle |
 | `reaction-profile` | `profile` | End-to-end: activation/reaction ΔG, IRC verdict, annotated diagram |
 | `pka-acidity` | `pka` | Aqueous pKa via a thermodynamic cycle (absolute or reference-anchored) |
-| `build-from-smiles` | `build` | SMILES or molecule name → 3D `.xyz` (online name lookup, optional QM refine) |
+| `build-from-smiles` | `build` | SMILES → 3D `.xyz` (SMILES-only, optional QM refine; for a name use `name-to-smiles` first) |
 | `name-to-smiles` | `resolve` | Molecule name → SMILES from online sources, with source attribution and an ACS citation |
 | `fukui-reactivity` | `fukui` | Per-atom electrophilic/nucleophilic/radical Fukui + Morell dual descriptor |
 | `transition-state` | `ts` | Locate a first-order saddle; freq check for exactly one imaginary mode |
@@ -177,7 +184,7 @@ python skills/redox-potential/scripts/redox-potential.py --method xtb --ref SHE 
 python skills/pka-acidity/scripts/pka-acidity.py --method xtb --mode reference mol.xyz
 python skills/reaction-profile/scripts/reaction-profile.py --method xtb reactant.xyz ts.xyz product.xyz
 python skills/conformer-search/scripts/conformer-search.py --method xtb mol.xyz
-python skills/build-from-smiles/scripts/build-from-smiles.py ethanol   # name or SMILES → 3D xyz
+python skills/build-from-smiles/scripts/build-from-smiles.py 'CCO'   # SMILES → 3D xyz (use name-to-smiles for a name)
 ```
 
 All tasks write a single JSON file with a common header:

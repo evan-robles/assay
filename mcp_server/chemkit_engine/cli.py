@@ -518,7 +518,7 @@ SUBCOMMAND_ALIASES = {
     "logp":        ["logp-partition", "logp-partitioning"],
     "profile":     ["reaction-profile"],
     "pka":         ["pka-acidity"],
-    "build":       ["build-from-smiles", "build-from-name"],
+    "build":       ["build-from-smiles"],
     "resolve":     ["name-to-smiles"],
     "fukui":       ["fukui-reactivity"],
     "ts":          ["transition-state", "ts-search"],
@@ -958,14 +958,15 @@ def build_parser() -> argparse.ArgumentParser:
 
     p_build = sub.add_parser(
         "build",
-        help="Build a 3D xyz from a SMILES string OR a molecule name (Open Babel "
-             "--gen3d; names are resolved online via PubChem/OPSIN/NIST).",
+        help="Build a 3D xyz from a SMILES string (Open Babel --gen3d). "
+             "SMILES-only; for a molecule name use the 'resolve' subcommand "
+             "(name-to-smiles) first, then build from the resolved SMILES.",
     )
     p_build.add_argument(
         "smiles",
-        help="SMILES string (e.g. 'CCO') or a plain molecule name (e.g. "
-             "'ethanol'). A name is resolved to SMILES online and the source "
-             "is reported.",
+        help="SMILES string (e.g. 'CCO'). SMILES-only: a plain molecule name "
+             "(e.g. 'ethanol') or any unparseable string is rejected. Resolve "
+             "a name with the 'resolve' subcommand (name-to-smiles) first.",
     )
     p_build.add_argument(
         "--out-xyz", default=None,
@@ -1221,12 +1222,17 @@ def describe_subcommand(subcommand: str) -> List[dict]:
             "_StoreTrueAction", "_StoreFalseAction")
         typename = ("flag" if is_flag
                     else getattr(a.type, "__name__", None) or "str")
+        # An append action (e.g. --monomer, --reactant) may be given repeatedly;
+        # it collects a LIST. Callers that generate typed schemas need to know
+        # this to type it as list[...] instead of a scalar.
+        is_append = a.__class__.__name__ == "_AppendAction"
         spec.append({
             "name": a.dest,
             "flag": (a.option_strings[0] if a.option_strings else None),
             "positional": positional,
             "required": bool(a.required) or positional,
             "type": typename,
+            "append": is_append,
             "choices": list(a.choices) if a.choices else None,
             "default": a.default,
             "help": (a.help or "").strip(),
@@ -1247,6 +1253,8 @@ def format_subcommand_args(subcommand: str) -> str:
         if s["positional"]:
             bits.append("positional")
         bits.append("required" if s["required"] else "optional")
+        if s.get("append"):
+            bits.append("repeatable")
         if s["type"] and s["type"] != "str":
             bits.append(s["type"])
         if s["choices"]:
