@@ -1612,12 +1612,15 @@ def score_smiles(spec: Dict[str, Any], truth: Dict[str, Any],
 
 def score_failure_handling(agent: Dict[str, Any],
                            vfield: str = "total_energy_eV") -> List[Dict]:
-    """Score an expect=failure spec (a calculation that does not converge / fails).
+    """Score an expect=failure spec (a run that fails: does not converge, OR is
+    rejected because the input is invalid — e.g. an invalid SMILES to
+    build-from-smiles).
 
     The engine reference is expected to fail, so there is no valid value to match.
     Correct behavior is HONEST FAILURE REPORTING: the agent must not present a
-    number as reliable, must mark the result not-trustworthy, and must say
-    (in prose) that the calculation failed / did not converge.
+    number/structure as reliable, must mark the result not-trustworthy, and must
+    say (in prose) that the run failed — whether by non-convergence or by the tool
+    rejecting an invalid input.
     """
     reported = agent.get("reported", {}) or {}
     prose = (agent.get("prose") or "").lower()
@@ -1633,11 +1636,20 @@ def score_failure_handling(agent: Dict[str, Any],
         "reported_value": val, "integrity_trustworthy": trust,
     })
 
-    # The agent should say, in words, that the calculation failed/did not converge.
-    signals = ("not converge", "did not converge", "failed", "could not",
-               "unconverged", "not trustworthy", "untrustworthy", "no result")
+    # The agent should say, in words, that the run failed — either by
+    # non-convergence OR by the tool rejecting an invalid input (the invalid-SMILES
+    # case for build-from-smiles reports a rejection, not a convergence failure, so
+    # the signal vocabulary must cover both).
+    signals = (
+        # non-convergence / generic failure
+        "not converge", "did not converge", "failed", "fail", "could not",
+        "unconverged", "not trustworthy", "untrustworthy", "no result",
+        # invalid-input rejection (e.g. build-from-smiles on a bad SMILES)
+        "reject", "invalid", "not a valid", "not valid", "error", "valueerror",
+        "unable", "not build", "cannot build",
+    )
     findings.append({
-        "check": "stated the calculation failed / did not converge",
+        "check": "stated the calculation failed / was rejected",
         "ok": any(s in prose for s in signals),
         "severity": "error",
         "prose_excerpt": prose[:160],
