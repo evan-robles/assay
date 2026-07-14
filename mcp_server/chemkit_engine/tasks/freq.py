@@ -565,11 +565,11 @@ def _run_ase(
         # Rotational entropy is over-estimated by R·ln(σ) when σ_true > 1.
         # Common cases: H2O σ=2, NH3 σ=3, CH4/benzene σ=12. Surface a warning
         # rather than silently defaulting; the user must look up σ for their
-        # point group and re-run with --symmetry-number if needed.
+        # point group and re-run with --symmetry if needed.
         warns.append(
             "symmetry_number defaulted to 1; if the molecule has rotational "
             "symmetry (e.g. H2O σ=2, NH3 σ=3, CH4 σ=12) the entropy and Gibbs "
-            "energy are over-estimated by R·ln(σ). Re-run with --symmetry-number "
+            "energy are over-estimated by R·ln(σ). Re-run with --symmetry "
             "set to the correct value for your point group."
         )
     if warns:
@@ -766,7 +766,7 @@ def _run_mopac(
         warns.append(
             "symmetry_number defaulted to 1; if the molecule has rotational "
             "symmetry (H2O σ=2, NH3 σ=3, CH4 σ=12) the entropy and Gibbs "
-            "energy are over-estimated by R·ln(σ). Re-run with --symmetry-number "
+            "energy are over-estimated by R·ln(σ). Re-run with --symmetry "
             "set to the correct value for your point group."
         )
     if warns:

@@ -23,12 +23,20 @@ pkill -9 -f fidelity_driver 2>/dev/null
 
 echo "[stop] 4. qdel every assay-nodeholder job (loop until none; catches clones)"
 for attempt in 1 2 3 4 5; do
-    ids=$(qstat -u "$USER" 2>/dev/null | awk '/assay-nod/{print $1}')
+    # Get FULL job ids. `qstat -u $USER | awk '{print $1}'` TRUNCATES the id to
+    # "<n>.aurora-pbs-*" (with a literal *), which qdel rejects as "illegally
+    # formed job identifier" — that is why an earlier version looped 5× and left
+    # the job alive. `qselect -N <name>` returns untruncated ids selected by job
+    # name, which qdel accepts. Fall back to a full-id qstat parse if qselect is
+    # unavailable.
+    ids=$(qselect -N assay-nodeholder -u "$USER" 2>/dev/null)
+    [ -z "$ids" ] && ids=$(qstat -f -u "$USER" 2>/dev/null \
+        | awk '/^Job Id:/{jid=$3} /Job_Name = assay-nodeholder/{print jid}')
     [ -z "$ids" ] && { echo "  no assay jobs remaining."; break; }
     echo "  attempt $attempt: qdel $ids"
     for j in $ids; do
         qdel "$j" 2>/dev/null
-        # a queued job that won't clear on plain qdel needs a forced delete
+        # a queued/exiting job that won't clear on plain qdel needs a forced delete
         [ "$attempt" -ge 2 ] && qdel -W force "$j" 2>/dev/null
     done
     # re-touch in case a dying holder deleted the flag before its clone read it

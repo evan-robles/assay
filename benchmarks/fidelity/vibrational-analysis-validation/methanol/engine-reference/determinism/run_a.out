@@ -1,12 +1,12 @@
 # chemkit live log
 # subcommand : freq
-# args       : --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp6zeb9jqu/a.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp6zeb9jqu/a.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methanol/20260624-130011_methanol_vibrational_analysis/determinism
-# started    : 20260624-130012
+# args       : --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpvipi8304/a.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpvipi8304/a.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methanol/engine-reference/determinism
+# started    : 20260710-130516
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp6zeb9jqu/a.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpvipi8304/a.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -27,13 +27,13 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp6zeb9jqu/a.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/methanol/methanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpvipi8304/a.json",
   "electronic_energy_eV": -223.82711137732116,
-  "zpe_eV": 1.3399242778819795,
-  "zpe_kcal_mol": 30.899387899505047,
-  "enthalpy_eV": -222.37512484557826,
-  "entropy_eV_per_K": 0.00243927542083992,
-  "gibbs_free_energy_eV": -223.10239481230167,
+  "zpe_eV": 1.3399242778819964,
+  "zpe_kcal_mol": 30.899387899505754,
+  "enthalpy_eV": -222.37512484557823,
+  "entropy_eV_per_K": 0.002439275420839928,
+  "gibbs_free_energy_eV": -223.10239481230164,
   "temperature_K": 298.15,
   "pressure_Pa": 101325.0,
   "geometry": "nonlinear",
@@ -47,28 +47,33 @@
     0.0,
     0.0,
     0.0,
-    511.69933780042356,
-    990.5077331925236,
-    1063.5172456773087,
-    1089.4494129518114,
-    1217.6049197619175,
-    1407.925130501709,
-    1490.9395293434873,
-    1497.9448142810284,
-    2956.4501423912843,
-    2961.8558354215356,
-    2995.2681482490516,
-    3431.2740281718334
+    511.6993378003307,
+    990.5077331926173,
+    1063.5172456773628,
+    1089.4494129517711,
+    1217.6049197619266,
+    1407.9251305016614,
+    1490.9395293434113,
+    1497.944814281087,
+    2956.450142391284,
+    2961.8558354215097,
+    2995.268148249085,
+    3431.2740281721353
   ],
   "n_soft_imaginary_modes": 0,
   "n_saddle_imaginary_modes": 0,
   "geometry_auto_detected": true,
   "warnings": [
-    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry set to the correct value for your point group."
   ],
   "preopt": {
     "performed": false
   },
+  "schema_version": 1,
+  "total_energy_eV": -223.82711137732116,
+  "headline_field": "electronic_energy_eV",
+  "headline_value": -223.82711137732116,
+  "headline_units": "eV",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -83,7 +88,19 @@
         "name": "gibbs_finite",
         "ok": true,
         "severity": "error",
-        "detail": "gibbs_free_energy_eV = np.float64(-223.10239481230167) (must be finite)"
+        "detail": "gibbs_free_energy_eV = np.float64(-223.10239481230164) (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'electronic_energy_eV' = -223.82711137732116 (present and numeric)"
       }
     ]
   }

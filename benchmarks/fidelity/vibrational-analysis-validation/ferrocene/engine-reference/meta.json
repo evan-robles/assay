@@ -14,9 +14,8 @@
   "expect": "compute",
   "spec_hash": "ad206720d6c842af",
   "determinism_ok": true,
-  "determinism_msg": "migrated; determinism PASS in original run",
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
   "engine_failed": false,
-  "git_commit": "3428dfc",
-  "timestamp": "migrated",
-  "_migrated_from": "20260624-125742_ferrocene_vibrational_analysis__argo_o3"
+  "git_commit": "bb0199e9b",
+  "timestamp": "2026-07-10T13:05:00"
 }

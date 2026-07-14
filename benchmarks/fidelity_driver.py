@@ -1819,15 +1819,28 @@ def score_layer_b(
 
     def _coverage_in_prose(wn, prose):
         # The warning is embedded in a longer prose; a whole-string ratio would be
-        # diluted. Take the single longest contiguous match block and report the
-        # fraction of the warning it covers — a near-verbatim inclusion scores ~1.
+        # diluted. Sum ALL matching blocks between the warning and the prose and
+        # report the fraction of the warning they cover — so a near-verbatim
+        # inclusion scores ~1 even when a stray inserted char (a comma, markdown
+        # emphasis) splits it into several contiguous runs. (The old single-
+        # longest-block metric collapsed to ~0.44 on one inserted comma in an
+        # otherwise 99%-verbatim copy — a false negative.) A genuine paraphrase or
+        # truncation still leaves large uncovered spans and stays below threshold.
         if not prose or not wn:
             return 0.0
-        m = difflib.SequenceMatcher(None, wn, prose).find_longest_match(
-            0, len(wn), 0, len(prose))
-        return m.size / len(wn)
+        blocks = difflib.SequenceMatcher(None, wn, prose).get_matching_blocks()
+        covered = sum(b.size for b in blocks)
+        return covered / len(wn)
 
-    truth_warns = truth.get("warnings") or []
+    # Grade against the warnings the AGENT'S OWN engine run emitted, not the fixed
+    # reference's. Warnings are invocation-dependent: an agent that sets a correct
+    # option (e.g. --symmetry for a symmetric molecule) legitimately produces
+    # fewer warnings than a naive reference run, and must not be scored as having
+    # "dropped" a warning it never received. Fall back to truth.warnings only for
+    # older agent records that predate the recorded `engine_warnings` field.
+    truth_warns = agent.get("engine_warnings")
+    if truth_warns is None:
+        truth_warns = truth.get("warnings") or []
     rep_warns = agent.get("reported", {}).get("warnings") or []
     prose_norm = _norm(agent.get("prose") or "")
     rep_array_norm = [_norm(w) for w in rep_warns]
@@ -2087,28 +2100,23 @@ _FINAL_REPORT_TOOL = {
                                           "tasks only; else null). Null if the name "
                                           "could not be resolved — never invent one."},
                 "warnings": {"type": "array", "items": {"type": "string"},
-                             "description": "EVERY warning from the tool result, "
-                                            "reproduced verbatim. REQUIRED whenever "
-                                            "the tool result had warnings: list them "
-                                            "here (or reproduce them verbatim in your "
-                                            "prose — both count). Do not drop, "
-                                            "summarize, or paraphrase any warning. If "
-                                            "you'd rather not retype long warnings, "
-                                            "set `warnings_acknowledged: true` instead "
-                                            "and they will be surfaced for you "
-                                            "verbatim. If the tool result had NO "
-                                            "warnings, pass []."},
+                             "description": "Optional. The tool result's warnings are "
+                                            "surfaced to the user verbatim BY DEFAULT "
+                                            "— you do NOT need to retype them here. "
+                                            "Leave this empty ([]) and they are "
+                                            "preserved for you automatically. Only add "
+                                            "entries if you want to include ADDITIONAL "
+                                            "notes of your own; anything you add is "
+                                            "unioned with the tool's warnings."},
                 "warnings_acknowledged": {"type": ["boolean", "null"],
-                             "description": "Set true to surface ALL warnings from the "
-                                            "tool result verbatim WITHOUT retyping "
-                                            "them — the harness copies the exact "
-                                            "warning text from the tool result you "
-                                            "ran into your report. Use this instead of "
-                                            "manually copying long warnings into "
-                                            "`warnings`/prose. (You still must acknowledge "
-                                            "warnings exist by setting this; a run that "
-                                            "neither lists warnings nor sets this flag "
-                                            "drops them.)"},
+                             "description": "Leave unset/true (the default): ALL "
+                                            "warnings from the tool result are surfaced "
+                                            "verbatim automatically, so you never have "
+                                            "to copy them. Set this to FALSE ONLY to "
+                                            "DELIBERATELY suppress the tool's warnings "
+                                            "(rare — this drops them from the report "
+                                            "and is recorded as an intentional "
+                                            "omission)."},
                 "integrity_trustworthy": {"type": ["boolean", "null"]},
                 "provenance": {"type": "string",
                                "enum": ["computed", "experimental", "calculated"]},
@@ -2134,15 +2142,13 @@ _LIVE_INSTRUCTIONS = (
     "headline number under `value` as a single bare number (not an object) at "
     "AT LEAST 5 significant figures, copied exactly from the tool's result with "
     "no rounding (and the atom count under `n_atoms` for a structure-building "
-    "task), and surface EVERY warning from the tool result. You have TWO ways to "
-    "do this and MUST use one whenever the tool result has warnings: (1) EASIEST "
-    "— set `warnings_acknowledged: true` in final_report and the harness copies "
-    "every warning verbatim for you (no retyping); or (2) copy every warning "
-    "verbatim yourself into the `warnings` field or your prose. Never drop, "
-    "summarize, or paraphrase a warning. If the tool result had NO warnings, set "
-    "`warnings: []`. Also report the engine's integrity.trustworthy verdict, and "
-    "provenance='computed' (a computed/built result is NEVER 'experimental'). "
-    "State the method or build tool you used in your prose."
+    "task). WARNINGS ARE HANDLED FOR YOU: the tool result's warnings are surfaced "
+    "to the user verbatim BY DEFAULT — you do NOT need to copy or retype them. "
+    "Just leave `warnings: []` and they are preserved automatically. Set "
+    "`warnings_acknowledged: false` ONLY if you deliberately want to suppress the "
+    "tool's warnings (rare). Also report the engine's integrity.trustworthy "
+    "verdict, and provenance='computed' (a computed/built result is NEVER "
+    "'experimental'). State the method or build tool you used in your prose."
 )
 
 # chemkit's runtime-behavior rules. In the real harness these load via
@@ -2364,29 +2370,38 @@ def run_live_agent(spec: Dict[str, Any],
                 # don't grade it on the wrong one). Falls back to the last call.
                 scored_result = _select_scored_result(engine_results, spec)
                 _cs = scored_result.get("code_specific") or {}
-                # Warnings pass-by-reference: an agent may set
-                # `warnings_acknowledged: true` to surface every tool-result
-                # warning verbatim WITHOUT retyping them (reduces the
-                # transcription burden that weak models fail by dropping warnings
-                # entirely — observed gpt-4.1-nano on logp). When set, inject the
-                # exact warning strings from the scored engine result into the
-                # reported warnings. This does NOT weaken the "warnings preserved"
-                # check (the reader still gets every warning verbatim); it only
-                # removes the copying burden. `_warnings_acknowledged` is recorded
-                # so the per-model flag-use RATE can be reported (so "surfaced via
-                # flag" is visible, never hidden — see BENCHMARK-DESIGN §9).
-                _ack = bool(fargs.get("warnings_acknowledged"))
+                # Warnings pass-by-reference — ALWAYS ON. The tool result's warnings
+                # are surfaced to the reader verbatim UNCONDITIONALLY: the harness
+                # injects the exact warning strings from the scored engine result
+                # into the reported warnings, every run. This reflects the real MCP
+                # deployment, where the engine's `warnings_block` travels WITH the
+                # result to the reader regardless of what the model retypes — so a
+                # weak model can never cause a warning to be lost in transit
+                # (transcription burden was the dominant benchmark failure mode:
+                # models with perfect value/method fidelity failing only on warning
+                # copying, across vibrational-analysis / logp / redox / pka).
+                #
+                # Consequence: "warnings preserved" becomes a delivered-to-reader
+                # GUARANTEE, not a model-discriminating check — it should pass on
+                # every run whose engine produced warnings. Whether the MODEL ITSELF
+                # surfaced them (in its typed `warnings` or prose) is recorded
+                # separately (`warnings_surfaced_by_model`) so model warning-behavior
+                # can still be reported without gating core fidelity. Applies to
+                # every skill uniformly (see BENCHMARK-DESIGN §9).
                 _agent_warnings = list(fargs.get("warnings") or [])
                 _engine_warnings = list(scored_result.get("warnings") or [])
-                if _ack:
-                    # Union: keep anything the agent typed AND inject the engine's
-                    # verbatim warnings it didn't (dedup, preserve order).
-                    _reported_warnings = list(_agent_warnings)
-                    for w in _engine_warnings:
-                        if w not in _reported_warnings:
-                            _reported_warnings.append(w)
-                else:
-                    _reported_warnings = _agent_warnings
+                # Union: whatever the model typed, PLUS every engine warning verbatim
+                # (dedup, preserve order — model-added notes first, then any engine
+                # warning not already present).
+                _reported_warnings = list(_agent_warnings)
+                for w in _engine_warnings:
+                    if w not in _reported_warnings:
+                        _reported_warnings.append(w)
+                # Record whether the MODEL itself surfaced the warnings (typed array
+                # non-empty, or it did not affirmatively suppress) — descriptive
+                # only, does not affect scoring.
+                _model_surfaced = bool(_agent_warnings) or (
+                    fargs.get("warnings_acknowledged") is not False)
                 return {
                     # Which agent produced this run, and over what endpoint —
                     # recorded so agent_run.json is self-identifying (you can tell
@@ -2440,11 +2455,23 @@ def run_live_agent(spec: Dict[str, Any],
                         "provenance": fargs.get("provenance", ""),
                     },
                     "prose": fargs.get("prose", ""),
-                    # Whether the agent used the pass-by-reference flag to surface
-                    # warnings (vs. transcribing them). Recorded so the per-model
-                    # flag-use rate is reportable — keeps "surfaced via flag"
-                    # visible rather than hidden. (See BENCHMARK-DESIGN §9.)
-                    "warnings_acknowledged": _ack,
+                    # Warning surfacing is ALWAYS-ON: engine warnings are injected
+                    # verbatim into `reported.warnings` every run (see above), so
+                    # "warnings preserved" is a delivered-to-reader guarantee.
+                    # `warnings_surfaced_by_model` records whether the MODEL itself
+                    # surfaced them (descriptive only, does not gate scoring) so
+                    # per-model warning behavior stays reportable. (BENCHMARK-DESIGN §9.)
+                    "warnings_surfaced_by_model": _model_surfaced,
+                    # The warnings the agent's OWN engine run actually emitted.
+                    # Warnings are INVOCATION-DEPENDENT: a smarter agent that sets a
+                    # correct option (e.g. --symmetry for a symmetric molecule)
+                    # legitimately produces FEWER warnings than a naive reference
+                    # run. "warnings preserved" must therefore be graded against the
+                    # agent's OWN engine warnings, not the fixed reference's — else a
+                    # model is penalized for eliminating a warning by doing the right
+                    # thing (observed: Opus setting --symmetry on vibrational-analysis
+                    # suppressed the symmetry warning the reference still carried).
+                    "engine_warnings": _engine_warnings,
                 }
             if fn == "chemkit":
                 skill = fargs.get("skill", "")

@@ -1,12 +1,12 @@
 # chemkit live log
 # subcommand : freq
-# args       : --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/carbon-dioxide/carbon_dioxide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp2ju73di9/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/carbon-dioxide/carbon_dioxide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp2ju73di9/truth.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/carbon-dioxide/20260624-125616_carbon-dioxide_vibrational_analysis
-# started    : 20260624-125619
+# args       : --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/carbon-dioxide/carbon_dioxide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0ozn9fwy/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/carbon-dioxide/carbon_dioxide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0ozn9fwy/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/carbon-dioxide/engine-reference
+# started    : 20260710-130435
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp2ju73di9/truth.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0ozn9fwy/truth.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -24,10 +24,10 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/carbon-dioxide/carbon_dioxide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp2ju73di9/truth.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/carbon-dioxide/carbon_dioxide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0ozn9fwy/truth.json",
   "electronic_energy_eV": -280.2064968748512,
-  "zpe_eV": 0.2908625818959519,
-  "zpe_kcal_mol": 6.707450481948942,
+  "zpe_eV": 0.2908625818959518,
+  "zpe_kcal_mol": 6.707450481949009,
   "enthalpy_eV": -279.81885459260474,
   "entropy_eV_per_K": 0.0022778292170859927,
   "gibbs_free_energy_eV": -280.49798937367893,
@@ -43,20 +43,25 @@
     0.0,
     0.0,
     0.0,
-    690.2227014250618,
-    690.4565985734667,
-    1176.3759570128475,
-    2134.874612270286
+    690.222701425062,
+    690.4565985734671,
+    1176.3759570128461,
+    2134.8746122702864
   ],
   "n_soft_imaginary_modes": 0,
   "n_saddle_imaginary_modes": 0,
   "geometry_auto_detected": true,
   "warnings": [
-    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry set to the correct value for your point group."
   ],
   "preopt": {
     "performed": false
   },
+  "schema_version": 1,
+  "total_energy_eV": -280.2064968748512,
+  "headline_field": "electronic_energy_eV",
+  "headline_value": -280.2064968748512,
+  "headline_units": "eV",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -72,6 +77,18 @@
         "ok": true,
         "severity": "error",
         "detail": "gibbs_free_energy_eV = np.float64(-280.49798937367893) (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'electronic_energy_eV' = -280.2064968748512 (present and numeric)"
       }
     ]
   }

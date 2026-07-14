@@ -1,12 +1,12 @@
 # chemkit live log
 # subcommand : freq
-# args       : --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/ammonia-planar-ts.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn78qopra/b.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/ammonia-planar-ts.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn78qopra/b.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/20260624-125543_ammonia-planar-ts_vibrational_analysis/determinism
-# started    : 20260624-125545
+# args       : --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/ammonia-planar-ts.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp4ey47vd6/b.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/ammonia-planar-ts.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp4ey47vd6/b.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/engine-reference/determinism
+# started    : 20260710-130419
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn78qopra/b.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp4ey47vd6/b.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -25,7 +25,7 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/ammonia-planar-ts.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn78qopra/b.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py freq --method xtb --no-preopt --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/vibrational-analysis-validation/ammonia-planar-ts/ammonia-planar-ts.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp4ey47vd6/b.json",
   "electronic_energy_eV": -120.14751164193572,
   "zpe_eV": NaN,
   "zpe_kcal_mol": NaN,
@@ -45,12 +45,12 @@
     0.0,
     0.0,
     0.0,
-    -1101.9270653836163,
-    1394.0963715468397,
-    1394.17561202107,
-    3901.6878842841274,
-    4017.7389426921277,
-    4017.904044456499
+    -1101.927065383616,
+    1394.0963715468406,
+    1394.1756120210657,
+    3901.687884284128,
+    4017.738942692127,
+    4017.9040444564994
   ],
   "n_soft_imaginary_modes": 0,
   "n_saddle_imaginary_modes": 1,
@@ -58,11 +58,16 @@
   "geometry_auto_detected": true,
   "warnings": [
     "1 genuine imaginary mode(s) (|\u03bd| > 50i cm\u207b\u00b9) detected \u2014 this geometry is a saddle point, NOT a minimum. Thermochemistry is NOT valid here (and could not be computed: Too few vibration modes (5) after selection. {num_vibs} expected). Re-optimize to a true minimum before using these values.",
-    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry-number set to the correct value for your point group."
+    "symmetry_number defaulted to 1; if the molecule has rotational symmetry (e.g. H2O \u03c3=2, NH3 \u03c3=3, CH4 \u03c3=12) the entropy and Gibbs energy are over-estimated by R\u00b7ln(\u03c3). Re-run with --symmetry set to the correct value for your point group."
   ],
   "preopt": {
     "performed": false
   },
+  "schema_version": 1,
+  "total_energy_eV": -120.14751164193572,
+  "headline_field": "electronic_energy_eV",
+  "headline_value": -120.14751164193572,
+  "headline_units": "eV",
   "integrity": {
     "status": "warning",
     "trustworthy": true,
@@ -78,6 +83,18 @@
         "ok": false,
         "severity": "warning",
         "detail": "gibbs_free_energy_eV = nan (undefined for a first-order saddle \u2014 expected; the electronic energy and frequencies remain valid)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'electronic_energy_eV' = -120.14751164193572 (present and numeric)"
       }
     ]
   }
