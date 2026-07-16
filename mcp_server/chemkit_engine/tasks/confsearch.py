@@ -57,7 +57,8 @@ def run(
 
     workdir = tempfile.mkdtemp(prefix="chemkit_confsearch_")
     src_xyz = os.path.join(workdir, "input.xyz")
-    ase_write(src_xyz, read_geometry(input_path))
+    input_atoms = read_geometry(input_path)   # parsed once; reused for base_result below
+    ase_write(src_xyz, input_atoms)
 
     preopt_note: Optional[str] = None
 
@@ -87,7 +88,7 @@ def run(
     best_xyz = os.path.join(workdir, "obabel_best.xyz")
     ase_write(best_xyz, conformers[0], format="xyz")
 
-    atoms = read_geometry(input_path)
+    atoms = input_atoms
     result = base_result(
         task="conformational_search",
         method="MMFF94 confab (Open Babel)",

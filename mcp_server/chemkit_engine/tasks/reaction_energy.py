@@ -168,6 +168,11 @@ def _evaluate_species(
         block["gibbs_free_energy_eV"] = r_freq.get("gibbs_free_energy_eV")
         block["zpe_eV"] = r_freq.get("zpe_eV")
         block["n_imaginary_modes"] = r_freq.get("n_imaginary_modes")
+        # Propagate the saddle/soft split so the integrity gate distinguishes a
+        # genuine saddle from a floored soft torsional mode (see integrity
+        # ._hard_imaginary_count).
+        block["n_saddle_imaginary_modes"] = r_freq.get("n_saddle_imaginary_modes")
+        block["n_soft_imaginary_modes"] = r_freq.get("n_soft_imaginary_modes")
         block["n_atoms"] = r_freq.get("n_atoms")
         block["freq"] = {
             "preopt_converged": (r_freq.get("preopt") or {}).get("converged"),

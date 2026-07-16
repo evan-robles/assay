@@ -135,8 +135,7 @@ _LABEL_RE = re.compile(
 )
 
 
-def _resolve_labels(labels: List[str], mo_occ, n_alpha: Optional[int] = None,
-                    n_beta: Optional[int] = None) -> List[Tuple[str, int, Optional[str]]]:
+def _resolve_labels(labels: List[str], mo_occ) -> List[Tuple[str, int, Optional[str]]]:
     """Resolve user orbital labels into (display_label, 0-based MO index, spin) tuples.
 
     `mo_occ` may be a 1D list (restricted) or a 2-tuple of 1D lists
@@ -351,7 +350,9 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
     cube_paths: Dict[str, str] = {}
     n_orbitals = 0
     mo_summary: Dict[str, Any] = {}
-    if cubes or True:  # Always load molden to populate mo_summary in result JSON.
+    # Always load the molden to populate mo_summary in the result JSON (whether
+    # or not cube files were requested); cube generation below is gated on `cubes`.
+    if True:
         from pyscf.tools import molden as pmolden, cubegen
         import numpy as np
 
@@ -379,11 +380,6 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
         "xtb_workdir": workdir,
     }
 
-
-# ---------------------------------------------------------------------------
-# MOPAC — implemented in the follow-up task. Stub for now so the dispatcher
-# raises a clear error if invoked with --method mopac.
-# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 # MOPAC

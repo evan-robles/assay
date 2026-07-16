@@ -11,7 +11,8 @@ import numpy as np
 # existing importers (`from ..calculators import MOPAC_SOLVENT_EPS, XTB_SOLVENT_MAP`)
 # keep working unchanged.
 from .schema import XTB_SOLVENT_MAP, MOPAC_SOLVENT_EPS  # noqa: F401 (re-export)
-from .constants import HARTREE_TO_EV, ANGSTROM_TO_BOHR
+from .constants import (HARTREE_TO_EV, ANGSTROM_TO_BOHR,
+                        HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM)
 
 # Solvents supported by the xtb CLI's --alpb flag but NOT by the xtb-python
 # Solvent enum exposed via the ASE wrapper. For these we must route through the
@@ -643,33 +644,70 @@ class _XtbCliCalculator:
         self.results = {}
         self.atoms = None
 
-    def get_potential_energy(self, atoms=None):
+    def _run(self, atoms=None):
+        """Run xtb once with --grad, caching BOTH energy (eV) and forces (eV/Å).
+
+        --grad writes an ORCA-style `.engrad` (energy in Eh, then 3N gradient
+        components in Eh/Bohr). ASE forces are the NEGATIVE gradient, converted to
+        eV/Å. Computing forces here is what lets ASE optimizers/Hessian drivers
+        (BFGS, vibrations) use this CLI fallback — previously `forces` was
+        advertised but never produced, so any force-driven task crashed."""
         from ase.io import write as ase_write
         import re, subprocess
+        import numpy as np
         if atoms is not None:
             self.atoms = atoms
         xyz = os.path.join(self.workdir, "mol.xyz")
         ase_write(xyz, self.atoms)
-        cmd = ["xtb", xyz, "--gfn", "2", "--sp",
+        cmd = ["xtb", xyz, "--gfn", "2", "--grad",
                "--chrg", str(self.charge), "--uhf", str(self.uhf)]
         if self.solvent:
             sol = resolve_xtb_solvent(self.solvent)  # ALPB name; rejects numeric eps
             cmd += ["--alpb", sol]
         res = subprocess.run(cmd, capture_output=True, text=True,
                              cwd=self.workdir, timeout=300)
-        m = re.search(r"total energy\s+([-+]?\d+\.\d+)\s*Eh", res.stdout)
-        if not m:
-            raise RuntimeError("xtb CLI: could not parse total energy.\n" + res.stdout[-2000:])
-        # Convert Hartree -> eV to match ASE convention.
-        energy_eV = float(m.group(1)) * HARTREE_TO_EV
+        # Energy: prefer the .engrad file; fall back to stdout.
+        engrad = os.path.join(self.workdir, "mol.engrad")
+        energy_eV = None
+        grad = None
+        if os.path.isfile(engrad):
+            nums = [float(x) for x in re.findall(r"[-+]?\d+\.\d+(?:[eE][-+]?\d+)?",
+                                                 open(engrad).read())]
+            # engrad layout after the header: [n_atoms?] energy, then 3N gradient.
+            # Our regex only matches floats, so nums = [energy, g1x, g1y, g1z, ...].
+            n = len(self.atoms)
+            if len(nums) >= 1 + 3 * n:
+                energy_eV = nums[0] * HARTREE_TO_EV
+                g = np.asarray(nums[1:1 + 3 * n], dtype=float).reshape(n, 3)
+                grad = g * HARTREE_PER_BOHR_TO_EV_PER_ANGSTROM
+        if energy_eV is None:
+            m = re.search(r"total energy\s+([-+]?\d+\.\d+)\s*Eh", res.stdout)
+            if not m:
+                raise RuntimeError("xtb CLI: could not parse energy.\n"
+                                   + res.stdout[-2000:])
+            energy_eV = float(m.group(1)) * HARTREE_TO_EV
         self.results["energy"] = energy_eV
+        if grad is not None:
+            self.results["forces"] = -grad   # force = -dE/dx
         return energy_eV
 
+    def get_potential_energy(self, atoms=None, force_consistent=False):
+        # ASE optimizers pass force_consistent=True; the xtb SCF energy is already
+        # the force-consistent (free) energy, so the flag is accepted and ignored.
+        return self._run(atoms)
+
+    def get_forces(self, atoms=None):
+        self._run(atoms)
+        if "forces" not in self.results:
+            raise RuntimeError("xtb CLI: could not parse gradient (no .engrad).")
+        return self.results["forces"]
+
     def calculate(self, atoms, properties, system_changes):
-        self.atoms = atoms
-        self.get_potential_energy(atoms)
+        self._run(atoms)
 
     def get_property(self, name, atoms=None, allow_calculation=True):
         if name == "energy":
             return self.get_potential_energy(atoms)
+        if name == "forces":
+            return self.get_forces(atoms)
         raise NotImplementedError(name)

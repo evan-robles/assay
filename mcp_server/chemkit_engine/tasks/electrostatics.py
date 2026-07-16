@@ -154,19 +154,28 @@ def _run_xtb(atoms, *, charge: int, multiplicity: int,
             "Install with `conda install -c conda-forge xtb-python` or `pip install xtb`."
         ) from e
 
-    from xtb.interface import Param  # for set_solvent's Param arg below
+    from xtb.interface import Solvent  # xtb-python's solvent enum
     calc = make_xtb_calculator(atoms, charge=charge, multiplicity=multiplicity)
     if solvent:
         from ..calculators import resolve_xtb_solvent
         sol = resolve_xtb_solvent(solvent)  # ALPB name; rejects numeric eps
-        try:
-            calc.set_solvent(Param.GFN2xTB, sol)
-            solvent_applied = True
-        except Exception:
-            # Older xtb-python lacks set_solvent — the run would otherwise be
-            # gas phase while the result still claims a solvent. Flag it instead
-            # of silently dropping (calculation-reporting-standards #4/§4).
-            solvent_applied = False
+        # The real API is Calculator.set_solvent(solvent: Solvent) — ONE Solvent
+        # enum member (NOT (Param, str), which silently failed and dropped the
+        # solvent to gas phase on every run). Map the ALPB name to the enum;
+        # 'water' is spelled 'h2o' there, and some ALPB solvents (e.g. octanol)
+        # have no enum member — flag those honestly rather than claim solvation.
+        enum_name = {"water": "h2o"}.get(sol, sol)
+        solvent_enum = getattr(Solvent, enum_name, None)
+        if solvent_enum is None:
+            solvent_applied = False   # no xtb-python enum for this solvent
+        else:
+            try:
+                calc.set_solvent(solvent_enum)
+                solvent_applied = True
+            except Exception:
+                # Older xtb-python lacks set_solvent — flag rather than silently
+                # run gas phase while claiming a solvent (calc-reporting #4/§4).
+                solvent_applied = False
     else:
         solvent_applied = None  # gas phase requested; nothing to apply
 

@@ -83,6 +83,22 @@ def _check(name: str, ok: bool, severity: str, detail: str) -> IntegrityCheck:
     return IntegrityCheck(name=name, ok=bool(ok), severity=severity, detail=detail)
 
 
+def _hard_imaginary_count(block: Dict[str, Any]) -> Optional[int]:
+    """The number of GENUINE (saddle) imaginary modes for a freq result block.
+
+    `freq` reports `n_imaginary_modes` as soft+hard, where soft sub-50i rotor
+    modes (floppy torsions that finite-difference noise dips marginally negative)
+    are floored and treated as real low-frequency vibrations — they do NOT make a
+    geometry a saddle. The authoritative "is this a minimum?" count is therefore
+    `n_saddle_imaginary_modes`; fall back to the raw total only when the saddle
+    count is unavailable (older records). This mirrors the pKa check
+    (`_check_pka`) so every convergence gate treats soft modes consistently."""
+    n_saddle = block.get("n_saddle_imaginary_modes")
+    if n_saddle is not None:
+        return n_saddle
+    return block.get("n_imaginary_modes")
+
+
 # ---------------------------------------------------------------------------
 # registry
 # ---------------------------------------------------------------------------
@@ -448,11 +464,15 @@ def _state_converged(block: Dict[str, Any], mode: str, label: str) -> IntegrityC
     """
     zero_dof = (block.get("n_atoms") or 0) <= 1
     if mode == "freq":
-        n_imag = block.get("n_imaginary_modes")
+        # Gate on GENUINE (saddle) imaginary modes; soft floored torsions do not
+        # make a state a saddle (mirrors _check_pka), so a floppy minimum is not
+        # wrongly aborted.
+        n_hard = _hard_imaginary_count(block)
         return _check(
-            f"{label}_converged", (n_imag == 0) or zero_dof, "error",
-            f"{label}.n_imaginary_modes = {n_imag!r} (freq mode: each state "
-            "must be a minimum)"
+            f"{label}_converged", (n_hard in (0, None)) or zero_dof, "error",
+            f"{label}.n_saddle_imaginary_modes = {n_hard!r} (freq mode: each "
+            "state must be a minimum; soft sub-50i rotor modes are floored as "
+            "real and do not count)"
             + (" (zero-DOF system: vacuously converged)" if zero_dof else ""),
         )
     if mode == "adiabatic":
@@ -547,9 +567,11 @@ def _rxn_species_ok(block: Dict[str, Any]) -> bool:
         zero_dof = (block["freq"].get("n_atoms") or block.get("n_atoms") or 0) <= 1
         if zero_dof:
             return True
-        # freq species: preopt converged AND a minimum.
+        # freq species: preopt converged AND a minimum. Gate on GENUINE (saddle)
+        # imaginary modes — soft floored torsions don't make a species a saddle
+        # (mirrors _check_pka), so a floppy true minimum is not wrongly rejected.
         preopt_ok = (block["freq"].get("preopt_converged") in (True, None))
-        return preopt_ok and (block.get("n_imaginary_modes") in (0, None))
+        return preopt_ok and (_hard_imaginary_count(block) in (0, None))
     # sp mode: nothing to converge.
     return True
 

@@ -35,6 +35,58 @@ HERE = Path(__file__).resolve().parent
 ENGINE_DIR = HERE / "chemkit_engine"
 SKILLS_DIR = HERE.parent / "skills"
 
+# --------------------------------------------------------------------------- #
+# Live engine-subprocess registry — lets an interactive caller (the chemkit
+# agent REPL) hard-abort an in-flight calculation on `stop`/Ctrl-C. Each
+# _run_engine Popen registers itself here while running and removes itself when
+# done; kill_active_engines() SIGTERMs whatever is currently live. Thread-safe
+# because the agent turn runs on a background thread while the main thread reads
+# stdin. No-op when nothing is running.
+# --------------------------------------------------------------------------- #
+_ACTIVE_ENGINES: "set[subprocess.Popen]" = set()
+_ACTIVE_ENGINES_LOCK = threading.Lock()
+
+
+def _register_engine(proc: "subprocess.Popen") -> None:
+    with _ACTIVE_ENGINES_LOCK:
+        _ACTIVE_ENGINES.add(proc)
+
+
+def _unregister_engine(proc: "subprocess.Popen") -> None:
+    with _ACTIVE_ENGINES_LOCK:
+        _ACTIVE_ENGINES.discard(proc)
+
+
+def kill_active_engines() -> int:
+    """Stop every currently-running engine subprocess. Sends SIGTERM, then
+    escalates to SIGKILL for any that do not exit within a short grace period.
+    Returns the number signalled. Used by the interactive agent to hard-stop a
+    run."""
+    with _ACTIVE_ENGINES_LOCK:
+        procs = list(_ACTIVE_ENGINES)
+    signalled = []
+    for p in procs:
+        try:
+            if p.poll() is None:
+                p.terminate()
+                signalled.append(p)
+        except Exception:  # noqa: BLE001 - best-effort; process may have exited
+            pass
+    # Escalate: give SIGTERM a moment, then SIGKILL anything still alive so a
+    # backend that traps/ignores SIGTERM cannot keep running after `stop`.
+    deadline = time.monotonic() + 2.0
+    for p in signalled:
+        try:
+            remaining = max(0.0, deadline - time.monotonic())
+            p.wait(timeout=remaining)
+        except Exception:  # noqa: BLE001 - TimeoutExpired or already-reaped
+            try:
+                if p.poll() is None:
+                    p.kill()
+            except Exception:  # noqa: BLE001
+                pass
+    return len(signalled)
+
 # tool name -> (engine subcommand, skill folder for its SKILL.md description)
 # Tool names == skill folder names (kebab-case). Mirrors the chemkit CLI
 # subcommands; one entry per skill.
@@ -180,6 +232,8 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
                 cmd, cwd=run_cwd, env=env, text=True, bufsize=1,
                 stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             )
+            # Register so an interactive `stop` can SIGTERM this live run.
+            _register_engine(proc)
 
             # Reader thread: tee engine stderr -> .out as it arrives.
             stderr_chunks: list[str] = []
@@ -195,10 +249,10 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
             t.start()
 
             # Announce the live-log path AT LAUNCH (before the blocking read
-            # below), so a caller learns where to `tail -f` while the
+            # below), so a caller learns where the live log is while the
             # calculation is still running — calculation-reporting-standards
             # non-negotiable #9. Flush so it isn't buffered behind the result.
-            sys.stderr.write(f"# chemkit live log (tail -f): {out_path}\n")
+            sys.stderr.write(f"# chemkit live log: {out_path}\n")
             sys.stderr.flush()
 
             stdout_data = ""
@@ -232,6 +286,12 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
                 timed_out = True
                 stdout_data = stderr_data = ""
     finally:
+        # Unregister the live subprocess (best-effort; `proc` only exists on the
+        # Popen path). Killed-by-stop runs land here too.
+        try:
+            _unregister_engine(proc)  # type: ignore[name-defined]
+        except Exception:  # noqa: BLE001 - proc may be undefined (fallback path)
+            pass
         if log_fh is not None:
             log_fh.close()
 
@@ -571,34 +631,55 @@ _SUBCOMMAND_TO_TOOL = {sub: name for name, (sub, _folder) in TOOLS.items()}
 def _chemkit_usage() -> str:
     subs = ", ".join(sorted(_SUBCOMMAND_TO_TOOL))
     return (
-        "usage: chemkit <subcommand> [args...]\n\n"
-        "Runs a chemkit calculation through the MCP server (same path as the\n"
-        "skill scripts: live .out log + level-of-theory/integrity gates apply).\n\n"
-        f"subcommands: {subs}\n\n"
-        "Run a subcommand with --help for its arguments, e.g.:\n"
-        "  chemkit sp --help\n"
+        "usage:\n"
+        "  chemkit <subcommand> [args...]        run ONE calculation\n"
+        "  chemkit [--base-url URL] [--model M]  start the interactive AGENT (REPL)\n"
+        "  chemkit --model M --prompt \"...\"       run ONE agent request and exit\n\n"
+        "CALCULATION mode runs a chemkit skill through the MCP server (live .out\n"
+        "log + level-of-theory/integrity gates apply):\n"
+        f"  subcommands: {subs}\n"
+        "  chemkit sp --help                       args for one subcommand\n"
         "  chemkit sp --method xtb mol.xyz\n"
         "  chemkit redox --method dft --tier standard --ox-charge 0 --red-charge -1 mol.xyz\n\n"
-        "To start the MCP server instead (for agents), use: chemkit-mcp\n"
+        "AGENT mode opens a conversational assistant that drives the skills over\n"
+        "an OpenAI-compatible endpoint (env: CHEMKIT_LLM_BASE_URL / _MODEL /\n"
+        "_API_KEY). It is entered when no subcommand is given (bare `chemkit`) or\n"
+        "the first argument is an option:\n"
+        "  chemkit --base-url http://127.0.0.1:60639/v1 --model argo:o3\n"
+        "  chemkit --model argo:o3 --prompt \"single-point energy of water.xyz with xtb\"\n"
+        "  chemkit --help-agent                    full agent-mode options\n\n"
+        "Discovery:  chemkit --list-skills [--json]\n"
+        "MCP server (for external agents/hosts): chemkit-mcp\n"
     )
 
 
 def cli_main(argv: list[str] | None = None) -> int:
-    """Console entry point (`chemkit`): run one calculation via the MCP server.
+    """Console entry point (`chemkit`): two modes, dispatched on the first arg.
 
-    `chemkit sp --method xtb mol.xyz` -> calls the `single-point-energy` MCP
-    tool with the remaining argv. Returns the tool's exit code.
+    * ``chemkit sp --method xtb mol.xyz`` — run ONE calculation via the MCP
+      server (the first token is a skill subcommand).
+    * ``chemkit`` / ``chemkit --base-url X --model Y [--prompt "..."]`` — launch
+      the INTERACTIVE AGENT (a REPL, or one-shot with --prompt). Reached when
+      argv is empty or the first token is an option (starts with ``-``), so it
+      cannot collide with a subcommand.
+
+    ``-h``/``--help`` and ``--list-skills`` are reserved and handled here first.
+    Returns the underlying exit code.
     """
     argv = list(sys.argv[1:] if argv is None else argv)
-    if not argv or argv[0] in ("-h", "--help"):
-        sys.stdout.write(_chemkit_usage())
-        return 0 if argv else 2
 
-    subcommand = argv[0]
-    rest = argv[1:]
+    if argv and argv[0] in ("-h", "--help"):
+        sys.stdout.write(_chemkit_usage())
+        return 0
+
+    # `chemkit --help-agent` — full agent-mode option list (argparse --help).
+    if argv and argv[0] == "--help-agent":
+        from mcp_server.agent_cli import main as _agent_main
+        return _agent_main(["--help"])
 
     # `chemkit --list-skills [--json]` — discovery, handled by the engine.
-    if subcommand in ("--list-skills",):
+    if argv and argv[0] == "--list-skills":
+        rest = argv[1:]
         try:
             from chemkit_engine.cli import list_skills  # type: ignore
             sys.stdout.write(list_skills(as_json=("--json" in rest)))
@@ -606,6 +687,15 @@ def cli_main(argv: list[str] | None = None) -> int:
         except Exception:  # noqa: BLE001
             sys.stdout.write(_chemkit_usage())
             return 0
+
+    # Agent mode: no subcommand given (empty argv) or the first token is an
+    # option (e.g. --base-url / --model / --prompt) rather than a skill name.
+    if not argv or argv[0].startswith("-"):
+        from mcp_server.agent_cli import main as _agent_main
+        return _agent_main(argv)
+
+    subcommand = argv[0]
+    rest = argv[1:]
 
     # Resolve descriptive aliases (frontier-orbitals -> frontier, ...) to the
     # canonical subcommand via the engine's alias map (single source of truth),

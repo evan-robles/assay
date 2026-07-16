@@ -355,6 +355,11 @@ def _state_energy_eV(
         "zpe_eV": st.get("zpe_eV"),
         "geometry_source": "relaxed at this method (opt+freq)",
         "n_imaginary_modes": st.get("n_imaginary_modes"),
+        # Propagate the saddle/soft split so the integrity gate can distinguish a
+        # genuine saddle from a floored soft torsional mode (see integrity
+        # ._hard_imaginary_count / _check_pka).
+        "n_saddle_imaginary_modes": st.get("n_saddle_imaginary_modes"),
+        "n_soft_imaginary_modes": st.get("n_soft_imaginary_modes"),
         "n_atoms": st.get("n_atoms"),
     }
     return g_eV, "ΔG (opt+freq)", block, warns

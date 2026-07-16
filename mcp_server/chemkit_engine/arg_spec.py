@@ -164,6 +164,37 @@ def known_flags(subcommand: str) -> set[str]:
 _GAS_SYNONYMS = {"none", "gas", "gas phase", "gas-phase", "vacuum", ""}
 
 
+def _bool_flag_for(subcommand: str, dest: str, want: bool) -> Optional[str]:
+    """The option string that sets boolean `dest` to `want` for `subcommand`.
+
+    A --flag/--no-flag pair (store_true default=False vs store_false default=True,
+    or vice-versa) shares one dest; skill_params collapses it to a single Param
+    with ONE flag, so emitting that flag can only ever move the dest in one
+    direction. To honor a value that flips the default we must pick the flag with
+    the matching polarity — e.g. verify_freq=False needs `--no-verify-freq`, not
+    `--verify-freq`. Resolve the correct spelling straight from the argparse
+    action (the authoritative source), returning None if no such flag exists."""
+    import argparse as _ap
+    from .cli import build_parser
+    parser = build_parser()
+    sub = None
+    for action in parser._actions:
+        if isinstance(action, _ap._SubParsersAction):
+            sub = action.choices.get(_canonical(subcommand))
+            break
+    if sub is None:
+        return None
+    for a in sub._actions:
+        if a.dest != dest or not a.option_strings:
+            continue
+        cls = a.__class__.__name__
+        if cls == "_StoreTrueAction" and want:
+            return a.option_strings[0]
+        if cls == "_StoreFalseAction" and not want:
+            return a.option_strings[0]
+    return None
+
+
 def params_to_argv(subcommand: str, values: Dict[str, Any],
                    *, extra_args: Optional[List[str]] = None) -> List[str]:
     """Turn a dict of {param_name: value} into the engine CLI token list.
@@ -189,9 +220,15 @@ def params_to_argv(subcommand: str, values: Dict[str, Any],
             positionals.append(str(val))
             continue
         if p.is_bool:
-            # Emit the flag only when the value flips the argparse default.
+            # Emit a flag only when the value flips the argparse default. Use the
+            # flag whose polarity actually sets the requested value: for a
+            # --flag/--no-flag pair the kept Param carries only one spelling, so
+            # emitting p.flag blindly would INVERT a flip (e.g. verify_freq=False
+            # -> --verify-freq -> True). Resolve the correct spelling; fall back
+            # to p.flag only if no polarity-matching flag exists.
             if bool(val) != bool(p.default):
-                argv.append(p.flag)  # type: ignore[arg-type]
+                flag = _bool_flag_for(subcommand, p.name, bool(val)) or p.flag
+                argv.append(flag)  # type: ignore[arg-type]
             continue
         if p.is_list:
             items = val if isinstance(val, (list, tuple)) else [val]

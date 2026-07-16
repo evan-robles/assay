@@ -777,7 +777,20 @@ def _run_mopac(
 def _mopac_freq_keywords(
     *, charge, multiplicity, solvent, temperature_K, symmetrynumber,
 ) -> List[str]:
-    kw = ["PM7", "FORCE", "THERMO", "AUX", "LET", "GEO-OK"]
+    # THERMO computes thermochemistry. A BARE THERMO does NOT mean "298 K only" —
+    # MOPAC sweeps a default range (298→400 K), so leaving it bare both ignores a
+    # requested T and makes the parsed value ambiguous. Pin the exact requested T
+    # with THERMO(T,T) whenever we have a finite positive value (defaulting to
+    # 298.15 K when none is given), so the AUX arrays are [298, T] and the parser
+    # can read the requested row unambiguously.
+    try:
+        t = float(temperature_K) if temperature_K is not None else 298.15
+        if not (np.isfinite(t) and t > 0):
+            t = 298.15
+    except (TypeError, ValueError):
+        t = 298.15
+    thermo = f"THERMO({t:g},{t:g})"
+    kw = ["PM7", "FORCE", thermo, "AUX", "LET", "GEO-OK"]
     kw += mopac_chemistry_keywords(charge, multiplicity, solvent)
     # ROT=σ enters S_rot = R(ln(q_rot) - ln σ); σ=1 over-estimates S for any
     # molecule with rotational symmetry.

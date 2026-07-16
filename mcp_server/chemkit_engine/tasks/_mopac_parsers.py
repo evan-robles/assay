@@ -229,28 +229,32 @@ def parse_mopac_force(workdir: str) -> Dict[str, Any]:
         if m:
             result["heat_of_formation_kcal_mol"] = _ff(m.group(1))
 
-        # Thermo arrays — first entry is at 298 K (the input temperature)
+        # Thermo arrays. MOPAC ALWAYS writes the 298 K row first; when a specific
+        # temperature was requested via THERMO(T,T), the AUX arrays are [298, T],
+        # so the REQUESTED temperature is the LAST entry. Read the last row (which
+        # is 298 K for a default bare-THERMO run, and the requested T otherwise) so
+        # the reported thermochemistry matches the temperature the user asked for.
         temps = _parse_aux_array(aux_text, "THERMODYNAMIC_PROPERTIES_TEMPS")
         H_arr = _parse_aux_array(aux_text, "ENTHALPY_TOT")
         S_arr = _parse_aux_array(aux_text, "ENTROPY_TOT")
         Cp_arr = _parse_aux_array(aux_text, "HEAT_CAPACITY_TOT")
         HofT_arr = _parse_aux_array(aux_text, "H_O_F(T)")
 
-        # MOPAC writes 298 K first by default
         if temps and H_arr:
-            T = temps[0]
+            i = len(temps) - 1                       # requested T is the last row
+            T = temps[i]
             result["temperature_K"] = T
-            result["enthalpy_correction_cal_mol"] = H_arr[0]
-            if S_arr:
-                result["entropy_cal_K_mol"] = S_arr[0]
-            if Cp_arr:
-                result["heat_capacity_cal_K_mol"] = Cp_arr[0]
-            if HofT_arr:
-                result["heat_of_formation_T_kcal_mol"] = HofT_arr[0]
-                # Gibbs free energy of formation at T:
-                # G(T) = ΔHf(T) - T·S(T)
-                if S_arr:
-                    G_kcal = HofT_arr[0] - T * S_arr[0] / 1000.0
+            if i < len(H_arr):
+                result["enthalpy_correction_cal_mol"] = H_arr[i]
+            if i < len(S_arr):
+                result["entropy_cal_K_mol"] = S_arr[i]
+            if i < len(Cp_arr):
+                result["heat_capacity_cal_K_mol"] = Cp_arr[i]
+            if i < len(HofT_arr):
+                result["heat_of_formation_T_kcal_mol"] = HofT_arr[i]
+                # Gibbs free energy of formation at T: G(T) = ΔHf(T) - T·S(T)
+                if i < len(S_arr):
+                    G_kcal = HofT_arr[i] - T * S_arr[i] / 1000.0
                     result["gibbs_free_energy_of_formation_kcal_mol"] = G_kcal
 
     if out_path and "vibrational_frequencies_cm-1" not in result:

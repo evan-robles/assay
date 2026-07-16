@@ -28,7 +28,7 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from ..calculators import program_label, method_label, build_calculator
+from ..calculators import program_label, method_label, label_calculator
 from ..io import read_geometry
 from ..integrity import finalize
 from ..schema import base_result, EV_TO_KCAL
@@ -339,22 +339,26 @@ def run(
         persistent[label] = os.path.abspath(dst)
 
     # ----- 8) Assemble result -----
-    canonical_method = method_label(method)
-    if method in ("dft", "hf"):
-        any_calc = build_calculator(
+    # label_calculator returns a calc only for dft/hf (None for xtb/mopac), and
+    # method_label(method, None) is the canonical name — so this one line matches
+    # the former two-branch code exactly while reusing the shared label helper.
+    canonical_method = method_label(
+        method,
+        label_calculator(
             method, charge=charge, multiplicity=multiplicity, solvent=solvent,
             tier=tier, functional=functional, basis=basis, density_fit=density_fit,
             solvent_model=solvent_model,
-        )
-        canonical_method = method_label(method, any_calc)
+        ),
+    )
 
+    reactant_atoms = read_geometry(reactant_xyz)
     result = base_result(
         task="reaction_profile",
         method=canonical_method,
         program=program_label(method),
         input_path=os.path.abspath(reactant_xyz),
-        n_atoms=len(read_geometry(reactant_xyz)),
-        atoms=read_geometry(reactant_xyz).get_chemical_symbols(),
+        n_atoms=len(reactant_atoms),
+        atoms=reactant_atoms.get_chemical_symbols(),
         charge=charge,
         multiplicity=multiplicity,
         solvent=solvent,

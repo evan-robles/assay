@@ -229,11 +229,6 @@ def _compact_pointer(result: dict, out_path: str) -> str:
     return json.dumps(summary, default=str)
 
 
-def _add_common(p):
-    """Back-compat shim — existing subparsers continue to use this."""
-    _add_chem_options(p)
-
-
 def _default_out(input_path: str, task: str, method: str) -> str:
     stem = os.path.splitext(os.path.basename(input_path))[0]
     return os.path.abspath(f"{stem}_{task}_{method}.json")
@@ -719,10 +714,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser = _add_parser  # type: ignore[assignment]
 
     p_sp = sub.add_parser("sp", help="Single-point energy.")
-    _add_common(p_sp)
+    _add_chem_options(p_sp)
 
     p_opt = sub.add_parser("opt", help="Geometry optimization.")
-    _add_common(p_opt)
+    _add_chem_options(p_opt)
     p_opt.add_argument("--fmax", type=float, default=0.05,
                        help="Force convergence threshold in eV/Å (default 0.05).")
     p_opt.add_argument("--steps", type=int, default=500)
@@ -730,7 +725,7 @@ def build_parser() -> argparse.ArgumentParser:
                        help="Optimized geometry destination. Default: <stem>_<method>_opt.xyz")
 
     p_freq = sub.add_parser("freq", help="Opt-freq: optimize then vibrational analysis + thermochemistry.")
-    _add_common(p_freq)
+    _add_chem_options(p_freq)
     p_freq.add_argument("--temperature", type=float, default=298.15)
     p_freq.add_argument("--pressure", type=float, default=101325.0)
     p_freq.add_argument("--geometry", choices=["monatomic", "linear", "nonlinear"],
@@ -765,14 +760,14 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     p_bind = sub.add_parser("binding", help="Binding/interaction energy.")
-    _add_common(p_bind)
+    _add_chem_options(p_bind)
     p_bind.add_argument("--monomer", action="append", required=True,
                         help="Path to a monomer geometry. Repeat for each fragment.")
     p_bind.add_argument("--monomer-charge", action="append", type=int, default=None)
     p_bind.add_argument("--monomer-mult", action="append", type=int, default=None)
 
     p_redox = sub.add_parser("redox", help="Redox potential vs SHE / Ag-AgCl / Fc+-Fc.")
-    _add_common(p_redox)
+    _add_chem_options(p_redox)
     p_redox.add_argument("--ox-charge", type=int, required=True)
     p_redox.add_argument("--red-charge", type=int, required=True)
     p_redox.add_argument("--ox-mult", type=int, default=1)
@@ -807,7 +802,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     p_conf = sub.add_parser("confsearch", help="Conformer search via Open Babel (confab).")
-    _add_common(p_conf)
+    _add_chem_options(p_conf)
     p_conf.add_argument("--max-conformers", type=int, default=20)
     p_conf.add_argument(
         "--postopt", choices=["none", "mopac"], default="mopac",
@@ -830,7 +825,7 @@ def build_parser() -> argparse.ArgumentParser:
         "frontier",
         help="Frontier molecular orbital energies + HOMO-LUMO gap (no opt).",
     )
-    _add_common(p_front)
+    _add_chem_options(p_front)
     p_front.add_argument(
         "--nfrontier", type=int, default=3,
         help="Number of occupied & virtual orbitals on each side of the gap "
@@ -841,13 +836,13 @@ def build_parser() -> argparse.ArgumentParser:
         "electrostatics",
         help="Dipole + atomic partial charges (single-point, no opt).",
     )
-    _add_common(p_elst)
+    _add_chem_options(p_elst)
 
     p_solv = sub.add_parser(
         "solvation",
         help="ΔG_solv = E(solvated) − E(gas) at fixed geometry (electronic only).",
     )
-    _add_common(p_solv)
+    _add_chem_options(p_solv)
 
     p_logp = sub.add_parser(
         "logp",
@@ -1033,7 +1028,7 @@ def build_parser() -> argparse.ArgumentParser:
         "fukui",
         help="Condensed Fukui functions + dual descriptor (atom-resolved reactivity).",
     )
-    _add_common(p_fukui)
+    _add_chem_options(p_fukui)
     p_fukui.add_argument(
         "--cation-mult", type=int, default=None,
         help="Multiplicity of the N-1 (cation) state. If omitted, derived from "
@@ -1053,7 +1048,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_ts = sub.add_parser(
         "ts", help="Transition-state search (locate a first-order saddle).",
     )
-    _add_common(p_ts)
+    _add_chem_options(p_ts)
     p_ts.add_argument(
         "--steps", type=int, default=500,
         help="Max optimizer iterations (default 500).",
@@ -1072,7 +1067,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_irc = sub.add_parser(
         "irc", help="Intrinsic reaction coordinate (walk down from a TS).",
     )
-    _add_common(p_irc)
+    _add_chem_options(p_irc)
     p_irc.add_argument(
         "--max-points", type=int, default=40,
         help="Max IRC points per direction (default 40).",
@@ -1108,7 +1103,7 @@ def build_parser() -> argparse.ArgumentParser:
     p_scan = sub.add_parser(
         "scan", help="Relaxed dihedral scan (torsional energy profile).",
     )
-    _add_common(p_scan)
+    _add_chem_options(p_scan)
     p_scan.add_argument(
         "--dihedral", default=None,
         help="Comma-separated 1-based atom indices i,j,k,l defining the dihedral "
@@ -1134,7 +1129,7 @@ def build_parser() -> argparse.ArgumentParser:
         help="Visualize molecular orbitals: write .molden + optional .cube files "
              "(no PNG — open the files in Avogadro/Jmol/IboView/VMD/Multiwfn).",
     )
-    _add_common(p_orb)
+    _add_chem_options(p_orb)
     p_orb.add_argument(
         "--cubes", default="",
         help="Comma-separated orbital labels to render as .cube files: "

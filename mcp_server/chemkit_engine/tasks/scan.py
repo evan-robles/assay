@@ -201,7 +201,6 @@ def _canonical_reorder(atoms, input_path: Optional[str] = None):
             # Avoids O(N!) longest-simple-path on cyclic molecules (NP-hard).
             seed = (sorted(terminals)[0] if terminals
                     else min(heavy, key=lambda i: (len(heavy_neigh[i]), i)))
-            _, _, _ = bfs_farthest(seed)  # warmup; not used
             seen = {seed}; heavy_order = [seed]; dq = deque([seed])
             while dq:
                 u = dq.popleft()

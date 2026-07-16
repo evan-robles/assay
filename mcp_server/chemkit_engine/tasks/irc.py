@@ -336,10 +336,19 @@ def _imag_mode_eigenvector_xtb(atoms, charge, multiplicity, solvent):
     Hproj = P @ Hmw @ P
     eigvals, eigvecs = np.linalg.eigh(Hproj)
     vib.clean()
-    # eigvals are ascending; first n_tr are projected-out zeros, next is lowest
-    n_tr = Q.shape[1]
-    # The reaction-coordinate mode = lowest genuine eigenvalue
-    return eigvecs[:, n_tr]
+    # `eigh` returns eigenvalues ASCENDING. At a transition state the Eckart
+    # projection sends the 6 (or 5) trans/rot modes to ~0, and the reaction
+    # coordinate is the single genuinely NEGATIVE (imaginary) eigenvalue — which
+    # therefore sorts to index 0, BELOW the projected zeros. (The old code took
+    # index n_tr, i.e. the lowest POSITIVE vibration — walking a normal vibration
+    # instead of the reaction path.) So the reaction-coordinate eigenvector is the
+    # one at the most-negative eigenvalue, i.e. index 0.
+    if eigvals[0] >= -1e-6:
+        # No imaginary mode — the input is not a first-order saddle. Fall back to
+        # the lowest genuine (post-projection) mode so the caller still gets a
+        # direction, but this geometry is not a valid TS for an IRC.
+        return eigvecs[:, Q.shape[1]]
+    return eigvecs[:, 0]
 
 
 def _xtb_descend(atoms, init_disp_A, charge, multiplicity, solvent,

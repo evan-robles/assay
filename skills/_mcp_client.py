@@ -99,7 +99,7 @@ def run_skill(tool_name: str, argv: list[str] | None = None) -> int:
         out_log = parsed.get("out_log")
         if out_log:
             sys.stderr.write(
-                f"chemkit: live log (watch now): tail -f {out_log}\n"
+                f"chemkit: live log: {out_log}\n"
                 "# Tell the user this path immediately, while the run is going "
                 "(non-negotiable #9).\n"
             )
