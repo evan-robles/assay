@@ -29,7 +29,9 @@ module deliberately knows nothing about specs or grading.
 from __future__ import annotations
 
 import json
+import math
 import os
+import re
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
@@ -547,16 +549,62 @@ def summarize_calculation_result(result: Dict[str, Any]) -> str:
             + "\n".join(parts))
 
 
+def _mentions_headline_value(text: str, hv: Any) -> bool:
+    """True if ``text`` reports the headline value — accepting the model's SENSIBLE
+    ROUNDING, not just a full-precision verbatim paste.
+
+    The old check required ``str(hv)`` as an exact substring, which rejected a
+    good model summary that wrote e.g. "−2077.998 eV" for a stored
+    -2077.9982313705, forcing the robotic engine fallback. Here we pass if:
+      • the exact string appears (fast path, also covers non-numeric headlines), OR
+      • any number in the text equals hv when both are rounded to a shared
+        precision — matched to 4 significant figures (a tolerance that accepts a
+        few-decimal rounding of an energy while still requiring the right number).
+    """
+    if hv is None:
+        return True
+    if str(hv) in text:
+        return True
+    # Models routinely write a Unicode minus (− U+2212) or figure dash instead of
+    # ASCII '-'; normalize so a negative headline (e.g. an energy) is parsed with
+    # its sign intact.
+    text = text.replace("−", "-").replace("–", "-").replace("—", "-")
+    try:
+        target = float(hv)
+    except (TypeError, ValueError):
+        return False  # non-numeric headline that wasn't an exact substring
+
+    def _sig(x: float, figs: int = 4) -> float:
+        if x == 0:
+            return 0.0
+        return round(x, -int(math.floor(math.log10(abs(x)))) + (figs - 1))
+
+    target_sig = _sig(target)
+    # Scan every number-like token in the text; accept if any matches to 4 sig figs.
+    for tok in re.findall(r"[-+]?\d[\d,]*\.?\d*(?:[eE][-+]?\d+)?", text):
+        try:
+            val = float(tok.replace(",", ""))
+        except ValueError:
+            continue
+        if _sig(val) == target_sig:
+            return True
+        # also accept when the model rounded to fewer decimals than we stored
+        for nd in range(0, 7):
+            if round(target, nd) == round(val, nd) and round(val, nd) == val:
+                return True
+    return False
+
+
 def _summary_is_complete(text: str, result: Dict[str, Any]) -> bool:
     """True if the assistant's final text already reports the calculation: it must
-    mention the headline value (full precision), the trustworthy verdict, AND
-    every generated file path. Lenient on wording, strict on the load-bearing
-    facts and on surfacing artifacts."""
+    mention the headline value (full precision OR a sensible rounding), the
+    trustworthy verdict, AND every generated file path. Lenient on wording and on
+    rounding, strict on the load-bearing facts and on surfacing artifacts."""
     if not text or not text.strip():
         return False
     low = text.lower()
     hv = result.get("headline_value")
-    if hv is not None and str(hv) not in text:
+    if not _mentions_headline_value(text, hv):
         return False
     integ = result.get("integrity") or {}
     if "trustworthy" in integ and ("trustworth" not in low and "integrity" not in low):
