@@ -1,0 +1,31 @@
+{
+  "task": "name_to_smiles",
+  "program": "PubChem",
+  "input": "aspirin",
+  "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+  "smiles_source": {
+    "smiles": "CC(=O)OC1=CC=CC=C1C(=O)O",
+    "name_input": "aspirin",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 2244, Aspirin. https://pubchem.ncbi.nlm.nih.gov/compound/2244 (accessed 2026-06-19).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/2244",
+    "identifier": "CID 2244",
+    "from_cache": true,
+    "warnings": []
+  },
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py resolve aspirin --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpt8iesn3j/truth.json",
+  "schema_version": 1,
+  "integrity": {
+    "status": "warning",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
+      }
+    ]
+  }
+}

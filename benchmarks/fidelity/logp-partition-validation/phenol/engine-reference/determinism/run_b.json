@@ -22,7 +22,7 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/phenol/phenol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp6jf7s460/b.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/phenol/phenol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpeu79iuz7/b.json",
   "logp": 2.2208264,
   "delta_G_solv_water_kcal_mol": -3.6506569,
   "delta_G_solv_octanol_kcal_mol": -6.6805304,
@@ -35,10 +35,13 @@
   "energy_octanol_eV": -543.23959,
   "warnings": [
     "logP from semi-empirical \u0394G_solv differences is screening-grade; \u00b11 log unit typical.",
-    "Each leg is an electronic-energy difference on a single frozen geometry \u2014 no ZPE/thermal/entropy and no per-phase relaxation. The reported delta_G_solv_* legs are electronic only; the 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference, so logP itself is insensitive to it, but the individual legs are not corrected \u0394G*_solv.",
-    "For chemoinformatic logP, also consider RDKit's Crippen/XLogP (group-contribution).",
+    "Electronic-only \u0394G_solv on a single frozen geometry (no ZPE/thermal/entropy). The 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference (logP is insensitive to it), but the individual delta_G_solv_* legs are not corrected \u0394G*_solv.",
     "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
   ],
+  "schema_version": 1,
+  "headline_field": "logp",
+  "headline_value": 2.2208264,
+  "headline_units": "dimensionless",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -48,7 +51,34 @@
         "ok": true,
         "severity": "error",
         "detail": "logp = 2.220826384252922 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'logp' = 2.220826384252922 (present and numeric)"
       }
     ]
-  }
+  },
+  "warnings_structured": [
+    {
+      "code": "screening_grade_c87d9be5",
+      "text": "logP from semi-empirical \u0394G_solv differences is screening-grade; \u00b11 log unit typical."
+    },
+    {
+      "code": "thermo_electronic_only_29e5f5ab",
+      "text": "Electronic-only \u0394G_solv on a single frozen geometry (no ZPE/thermal/entropy). The 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference (logP is insensitive to it), but the individual delta_G_solv_* legs are not corrected \u0394G*_solv."
+    },
+    {
+      "code": "single_conformer_240f5541",
+      "text": "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    }
+  ],
+  "warnings_block": "\u26a0\ufe0f Tool warnings \u2014 surface ALL of these to the user verbatim (do not drop, summarize, or paraphrase any):\n- logP from semi-empirical \u0394G_solv differences is screening-grade; \u00b11 log unit typical.\n- Electronic-only \u0394G_solv on a single frozen geometry (no ZPE/thermal/entropy). The 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference (logP is insensitive to it), but the individual delta_G_solv_* legs are not corrected \u0394G*_solv.\n- Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
 }

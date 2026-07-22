@@ -1,0 +1,24 @@
+{
+  "spec_name": "methanol_pka_acidity",
+  "skill": "pka-acidity",
+  "flags": [
+    "--method",
+    "mopac",
+    "--mode",
+    "absolute",
+    "--solvent",
+    "water",
+    "--ha",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/ha.xyz",
+    "--a-minus",
+    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz"
+  ],
+  "positional": null,
+  "expect": "compute",
+  "spec_hash": "7038c16a3267380c",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "d5b24b761",
+  "timestamp": "2026-07-11T17:44:33"
+}

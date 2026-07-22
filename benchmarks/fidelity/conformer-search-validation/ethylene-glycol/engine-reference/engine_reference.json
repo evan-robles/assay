@@ -1,0 +1,93 @@
+{
+  "task": "conformational_search",
+  "method": "MMFF94 confab (Open Babel)",
+  "program": "openbabel",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/ethylene-glycol/ethylene_glycol.xyz",
+  "n_atoms": 10,
+  "atoms": [
+    "O",
+    "O",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py confsearch --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/ethylene-glycol/ethylene_glycol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp3ihmzxmy/truth.json",
+  "n_conformers_found": 3,
+  "n_conformers_kept": 3,
+  "work_directory": "/tmp/chemkit_confsearch_jtrsova5",
+  "best_conformer_xyz": "/tmp/chemkit_confsearch_jtrsova5/obabel_best.xyz",
+  "all_conformers_xyz": "/tmp/chemkit_confsearch_jtrsova5/obabel_conformers.xyz",
+  "conformer_relative_energies_kcal_mol": [
+    0.0,
+    0.34766,
+    2.68973
+  ],
+  "postopt": {
+    "method": "PM7 (MOPAC)",
+    "n_input": 3,
+    "n_converged": 3,
+    "n_unique": 3,
+    "n_failed": 0,
+    "n_saddles_rejected": 0,
+    "rmsd_threshold_A": 0.25,
+    "ewin_kcal_mol": 6.0,
+    "lowest_hof_kcal_mol": -96.43272,
+    "ensemble_xyz": "/tmp/chemkit_confsearch_jtrsova5/postopt_mopac/postopt_ensemble.xyz",
+    "best_xyz": "/tmp/chemkit_confsearch_jtrsova5/postopt_mopac/conf_001_mopac_opt.xyz",
+    "conformers": [
+      {
+        "source_index": 1,
+        "hof_kcal_mol": -96.43272,
+        "rel_hof_kcal_mol": 0.0,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch_jtrsova5/postopt_mopac/conf_001_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 0,
+        "hof_kcal_mol": -96.42128,
+        "rel_hof_kcal_mol": 0.01144,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch_jtrsova5/postopt_mopac/conf_000_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 2,
+        "hof_kcal_mol": -95.26488,
+        "rel_hof_kcal_mol": 1.16784,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch_jtrsova5/postopt_mopac/conf_002_mopac_opt.xyz",
+        "converged": true
+      }
+    ],
+    "seed_source": "obabel_conformers (3)"
+  },
+  "schema_version": 1,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "conformers_found",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_conformers_found = 3 (a search must return \u22651 conformer)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      }
+    ]
+  },
+  "conformers_xyz": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp3ihmzxmy/truth_conformers.xyz"
+}

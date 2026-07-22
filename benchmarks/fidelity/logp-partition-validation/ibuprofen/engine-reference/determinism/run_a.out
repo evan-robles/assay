@@ -1,12 +1,12 @@
 # chemkit live log
 # subcommand : logp
-# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/ibuprofen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp_mnr4v6c/a.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/ibuprofen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp_mnr4v6c/a.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/20260624-113216_ibuprofen_logp_partition/determinism
-# started    : 20260624-113217
+# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/ibuprofen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpco9mw_38/a.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3 -m chemkit_engine.cli logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/ibuprofen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpco9mw_38/a.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/engine-reference/determinism
+# started    : 20260708-122446
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp_mnr4v6c/a.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpco9mw_38/a.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -54,7 +54,7 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/ibuprofen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp_mnr4v6c/a.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/ibuprofen/ibuprofen.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpco9mw_38/a.json",
   "logp": 3.6631299098913037,
   "delta_G_solv_water_kcal_mol": -7.765477043495425,
   "delta_G_solv_octanol_kcal_mol": -12.76308517956013,
@@ -67,10 +67,13 @@
   "energy_octanol_eV": -1229.5191681989995,
   "warnings": [
     "logP from semi-empirical \u0394G_solv differences is screening-grade; \u00b11 log unit typical.",
-    "Each leg is an electronic-energy difference on a single frozen geometry \u2014 no ZPE/thermal/entropy and no per-phase relaxation. The reported delta_G_solv_* legs are electronic only; the 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference, so logP itself is insensitive to it, but the individual legs are not corrected \u0394G*_solv.",
-    "For chemoinformatic logP, also consider RDKit's Crippen/XLogP (group-contribution).",
+    "Electronic-only \u0394G_solv on a single frozen geometry (no ZPE/thermal/entropy). The 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference (logP is insensitive to it), but the individual delta_G_solv_* legs are not corrected \u0394G*_solv.",
     "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
   ],
+  "schema_version": 1,
+  "headline_field": "logp",
+  "headline_value": 3.6631299098913037,
+  "headline_units": "dimensionless",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -80,6 +83,18 @@
         "ok": true,
         "severity": "error",
         "detail": "logp = 3.6631299098913037 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'logp' = 3.6631299098913037 (present and numeric)"
       }
     ]
   }

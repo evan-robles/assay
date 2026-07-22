@@ -1,0 +1,13 @@
+{
+  "spec_name": "2-bromo-3-methylbutane_name_to_smiles",
+  "skill": "name-to-smiles",
+  "flags": [],
+  "positional": "2-bromo-3-methylbutane",
+  "expect": "smiles",
+  "spec_hash": "5b7c1035c14d451a",
+  "determinism_ok": true,
+  "determinism_msg": "skipped (expect=smiles)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:38:05"
+}

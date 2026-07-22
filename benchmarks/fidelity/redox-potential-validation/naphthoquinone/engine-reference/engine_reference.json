@@ -1,0 +1,125 @@
+{
+  "task": "redox_potential",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/naphthoquinone.xyz",
+  "n_atoms": 18,
+  "atoms": [
+    "O",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py redox --method mopac --ox-charge 0 --red-charge -1 --ox-mult 1 --red-mult 2 --solvent water --ref SHE /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/naphthoquinone.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5yortsj6/truth.json",
+  "mode": "adiabatic",
+  "energy_kind": "\u0394E (relaxed/adiabatic)",
+  "redox_potential_V_vs_SHE": 0.33532225,
+  "delta_E_redox_eV": -4.6163222,
+  "delta_E_redox_kcal_mol": -106.45492,
+  "n_electrons": 1,
+  "reference_potential_V_abs": 4.281,
+  "e_abs_she_V": 4.281,
+  "reference_electrode": "SHE",
+  "oxidized_state": {
+    "charge": 0,
+    "multiplicity": 1,
+    "method": "PM7",
+    "energy_eV": -1.2618434,
+    "geometry_source": "relaxed at this method",
+    "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/engine-reference/naphthoquinone_mopac_opt.xyz",
+    "converged": true,
+    "n_atoms": 18
+  },
+  "reduced_state": {
+    "charge": -1,
+    "multiplicity": 2,
+    "method": "PM7",
+    "energy_eV": -5.8781656,
+    "geometry_source": "relaxed at this method",
+    "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/engine-reference/naphthoquinone_mopac_opt.xyz",
+    "converged": true,
+    "n_atoms": 18
+  },
+  "warnings": [
+    "mode=adiabatic: each oxidation state was geometry-optimized separately and the potential uses \u0394E between the relaxed geometries (includes reorganization). It does NOT include ZPE/thermal/entropy (\u0394E used in place of \u0394G); use mode=freq for a true \u0394G.",
+    "Solvation is implicit/continuum only (or gas phase) \u2014 no explicit solvent shell and no Born\u2013Haber solvation cycle. Semi-empirical redox potentials are screening-grade (\u2248\u00b10.3\u20130.5 V); even DFT here omits the explicit-solvation correction. Treat as a screening estimate.",
+    "E\u00b0(vs SHE) uses E_abs(SHE) = 4.281 V. The absolute SHE potential is convention-dependent (literature \u22484.28\u20134.44 V); this is a systematic offset on the reported potential. Override with --e-abs-she to match your reference convention.",
+    "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+  ],
+  "schema_version": 1,
+  "headline_field": "redox_potential_V_vs_SHE",
+  "headline_value": 0.33532225,
+  "headline_units": "V",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "oxidized_state_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "oxidized_state.converged = True (adiabatic mode)"
+      },
+      {
+        "name": "reduced_state_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "reduced_state.converged = True (adiabatic mode)"
+      },
+      {
+        "name": "potential_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "redox_potential_V_vs_SHE = 0.33532224793253285 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'redox_potential_V_vs_SHE' = 0.33532224793253285 (present and numeric)"
+      }
+    ]
+  },
+  "warnings_structured": [
+    {
+      "code": "thermo_electronic_only_8f0ab231",
+      "text": "mode=adiabatic: each oxidation state was geometry-optimized separately and the potential uses \u0394E between the relaxed geometries (includes reorganization). It does NOT include ZPE/thermal/entropy (\u0394E used in place of \u0394G); use mode=freq for a true \u0394G."
+    },
+    {
+      "code": "screening_grade_e38ebaed",
+      "text": "Solvation is implicit/continuum only (or gas phase) \u2014 no explicit solvent shell and no Born\u2013Haber solvation cycle. Semi-empirical redox potentials are screening-grade (\u2248\u00b10.3\u20130.5 V); even DFT here omits the explicit-solvation correction. Treat as a screening estimate."
+    },
+    {
+      "code": "general_4577d6a0",
+      "text": "E\u00b0(vs SHE) uses E_abs(SHE) = 4.281 V. The absolute SHE potential is convention-dependent (literature \u22484.28\u20134.44 V); this is a systematic offset on the reported potential. Override with --e-abs-she to match your reference convention."
+    },
+    {
+      "code": "single_conformer_240f5541",
+      "text": "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+    }
+  ],
+  "warnings_block": "\u26a0\ufe0f Tool warnings \u2014 surface ALL of these to the user verbatim (do not drop, summarize, or paraphrase any):\n- mode=adiabatic: each oxidation state was geometry-optimized separately and the potential uses \u0394E between the relaxed geometries (includes reorganization). It does NOT include ZPE/thermal/entropy (\u0394E used in place of \u0394G); use mode=freq for a true \u0394G.\n- Solvation is implicit/continuum only (or gas phase) \u2014 no explicit solvent shell and no Born\u2013Haber solvation cycle. Semi-empirical redox potentials are screening-grade (\u2248\u00b10.3\u20130.5 V); even DFT here omits the explicit-solvation correction. Treat as a screening estimate.\n- E\u00b0(vs SHE) uses E_abs(SHE) = 4.281 V. The absolute SHE potential is convention-dependent (literature \u22484.28\u20134.44 V); this is a systematic offset on the reported potential. Override with --e-abs-she to match your reference convention.\n- Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+}

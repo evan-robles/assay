@@ -1,0 +1,53 @@
+{
+  "task": "single_point",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/oxygen_sp_xtb/oxygen.xyz",
+  "n_atoms": 2,
+  "atoms": [
+    "O",
+    "O"
+  ],
+  "charge": 0,
+  "multiplicity": 3,
+  "solvent": null,
+  "cli_invocation": "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py sp --method xtb --charge 0 --mult 3 /home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/oxygen_sp_xtb/oxygen.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp5sowybcy/a.json",
+  "total_energy_eV": -215.08201,
+  "total_energy_hartree": -7.9041182,
+  "total_energy_kcal_mol": -4959.9091,
+  "energy_zero": "isolated atoms at infinity (xtb)",
+  "code_specific": {
+    "homo_eV": -12.050595,
+    "lumo_eV": 3.3827654,
+    "homo_lumo_gap_eV": 15.43336
+  },
+  "schema_version": 1,
+  "electronic_energy_eV": -215.08201,
+  "headline_field": "total_energy_eV",
+  "headline_value": -215.08201,
+  "headline_units": "eV",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -215.08201457633328 (must be a finite number)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'total_energy_eV' = -215.08201457633328 (present and numeric)"
+      }
+    ]
+  }
+}

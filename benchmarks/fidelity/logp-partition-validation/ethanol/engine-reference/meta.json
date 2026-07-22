@@ -13,9 +13,8 @@
   "expect": "compute",
   "spec_hash": "48e8118b36c83b37",
   "determinism_ok": true,
-  "determinism_msg": "migrated; determinism PASS in original run",
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
   "engine_failed": false,
-  "git_commit": "3428dfc",
-  "timestamp": "migrated",
-  "_migrated_from": "20260624-113150_ethanol_logp_partition__argo_o3"
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-08T12:24:45"
 }

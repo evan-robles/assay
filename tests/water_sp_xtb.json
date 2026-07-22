@@ -1,0 +1,54 @@
+{
+  "task": "single_point",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/tests/water.xyz",
+  "n_atoms": 3,
+  "atoms": [
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py sp --method xtb --out tests/water_sp_xtb.json --stdout path tests/water.xyz",
+  "total_energy_eV": -137.97179,
+  "total_energy_hartree": -5.0703698,
+  "total_energy_kcal_mol": -3181.7051,
+  "energy_zero": "isolated atoms at infinity (xtb)",
+  "code_specific": {
+    "homo_eV": -12.177235,
+    "lumo_eV": 2.471573,
+    "homo_lumo_gap_eV": 14.648808
+  },
+  "schema_version": 1,
+  "electronic_energy_eV": -137.97179,
+  "headline_field": "total_energy_eV",
+  "headline_value": -137.97179,
+  "headline_units": "eV",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -137.97179043565572 (must be a finite number)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'total_energy_eV' = -137.97179043565572 (present and numeric)"
+      }
+    ]
+  }
+}

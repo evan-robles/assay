@@ -1,0 +1,29 @@
+# chemkit live log
+# subcommand : resolve
+# args       : florbgnax-9-ium --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp4rr2w0cl/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli resolve florbgnax-9-ium --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp4rr2w0cl/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/name-to-smiles-validation/not-a-real-molecule/engine-reference
+# started    : 20260709-183829
+# ============================================================
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py", line 1519, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py", line 1452, in main
+    result = _dispatch(args, parser, cli, pyscf_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py", line 453, in _dispatch
+    return resolve_name.run(
+           ^^^^^^^^^^^^^^^^^
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/tasks/resolve_name.py", line 52, in run
+    resolution = resolve_name_to_smiles(name)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/resolve.py", line 420, in resolve_name_to_smiles
+    raise LookupError(
+LookupError: Could not resolve 'florbgnax-9-ium' to a SMILES from any reliable source. Tried: PubChem, OPSIN, NIST WebBook. Check the spelling, supply a SMILES string directly, or provide an .xyz file.
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+

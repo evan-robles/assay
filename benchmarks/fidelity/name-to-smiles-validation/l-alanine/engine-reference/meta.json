@@ -1,0 +1,13 @@
+{
+  "spec_name": "l-alanine_name_to_smiles",
+  "skill": "name-to-smiles",
+  "flags": [],
+  "positional": "L-alanine",
+  "expect": "smiles",
+  "spec_hash": "b70b0eb28a4fb828",
+  "determinism_ok": true,
+  "determinism_msg": "skipped (expect=smiles)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:38:28"
+}

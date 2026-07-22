@@ -1,0 +1,28 @@
+{
+  "spec_name": "naphthoquinone_redox_potential",
+  "skill": "redox-potential",
+  "flags": [
+    "--method",
+    "mopac",
+    "--ox-charge",
+    "0",
+    "--red-charge",
+    "-1",
+    "--ox-mult",
+    "1",
+    "--red-mult",
+    "2",
+    "--solvent",
+    "water",
+    "--ref",
+    "SHE"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/naphthoquinone/naphthoquinone.xyz",
+  "expect": "compute",
+  "spec_hash": "ff6350960eaf8638",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "d5b24b761",
+  "timestamp": "2026-07-11T15:23:02"
+}

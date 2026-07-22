@@ -1,0 +1,13 @@
+{
+  "spec_name": "aspirin_name_to_smiles",
+  "skill": "name-to-smiles",
+  "flags": [],
+  "positional": "aspirin",
+  "expect": "smiles",
+  "spec_hash": "bf1040e223f9e96c",
+  "determinism_ok": true,
+  "determinism_msg": "skipped (expect=smiles)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:38:07"
+}

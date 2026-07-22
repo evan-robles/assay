@@ -1,0 +1,20 @@
+{
+  "spec_name": "oxygen_sp_xtb",
+  "skill": "single-point-energy",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "3"
+  ],
+  "positional": "/home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/oxygen_sp_xtb/oxygen.xyz",
+  "expect": "compute",
+  "spec_hash": "42fed774327cc357",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "fc8ef5d29",
+  "timestamp": "2026-07-11T23:01:10"
+}

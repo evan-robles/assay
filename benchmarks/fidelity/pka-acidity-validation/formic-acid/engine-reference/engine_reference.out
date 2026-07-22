@@ -1,0 +1,148 @@
+# chemkit live log
+# subcommand : pka
+# args       : --method mopac --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpgw9pv3aw/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method mopac --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpgw9pv3aw/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/engine-reference
+# started    : 20260711-174418
+# ============================================================
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:44.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:44.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:44.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:44.
+
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpgw9pv3aw/truth.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "pka",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/ha.xyz",
+  "n_atoms": 5,
+  "atoms": [
+    "O",
+    "O",
+    "C",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method mopac --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpgw9pv3aw/truth.json",
+  "mode": "reference",
+  "temperature_K": 298.15,
+  "pressure_Pa": 101325.0,
+  "G_HA_kcal_mol": -115.18330800000001,
+  "G_A_minus_kcal_mol": -207.505932,
+  "RT_ln10_kcal_mol": 1.3642470125942985,
+  "G_ref_HA_kcal_mol": -131.467904,
+  "G_ref_A_minus_kcal_mol": -227.53899600000003,
+  "reference_pka": 4.76,
+  "delta_G_isodesmic_kcal_mol": 3.7484680000000026,
+  "pKa": 7.507646112027607,
+  "species": {
+    "HA": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/ha.xyz",
+      "charge": 0,
+      "multiplicity": 1,
+      "G_kcal_mol": -115.18330800000001,
+      "H_kcal_mol": -97.23000000000002,
+      "E_kcal_mol": -97.2314,
+      "ZPE_kcal_mol": 17.934908,
+      "n_imaginary_modes": 0,
+      "n_saddle_imaginary_modes": null,
+      "n_soft_imaginary_modes": null,
+      "optimized_xyz": "/tmp/chemkit_optfreq_gnx4maf7/preopt.xyz"
+    },
+    "A_minus": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/formic-acid/a_minus.xyz",
+      "charge": -1,
+      "multiplicity": 1,
+      "G_kcal_mol": -207.505932,
+      "H_kcal_mol": -190.48000000000002,
+      "E_kcal_mol": -190.477,
+      "ZPE_kcal_mol": 12.260655,
+      "n_imaginary_modes": 0,
+      "n_saddle_imaginary_modes": null,
+      "n_soft_imaginary_modes": null,
+      "optimized_xyz": "/tmp/chemkit_optfreq_v_0ozepn/preopt.xyz"
+    },
+    "ref_HA": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz",
+      "charge": 0,
+      "multiplicity": 1,
+      "G_kcal_mol": -131.467904,
+      "H_kcal_mol": -111.13000000000001,
+      "E_kcal_mol": -111.135,
+      "ZPE_kcal_mol": 34.155777,
+      "n_imaginary_modes": 0,
+      "n_saddle_imaginary_modes": null,
+      "n_soft_imaginary_modes": null,
+      "optimized_xyz": "/tmp/chemkit_optfreq_2irrtees/preopt.xyz"
+    },
+    "ref_A_minus": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz",
+      "charge": -1,
+      "multiplicity": 1,
+      "G_kcal_mol": -227.53899600000003,
+      "H_kcal_mol": -206.44,
+      "E_kcal_mol": -206.442,
+      "ZPE_kcal_mol": 28.436599,
+      "n_imaginary_modes": 0,
+      "n_saddle_imaginary_modes": null,
+      "n_soft_imaginary_modes": null,
+      "optimized_xyz": "/tmp/chemkit_optfreq_csg2ong9/preopt.xyz"
+    }
+  },
+  "warnings": [
+    "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+  ],
+  "schema_version": 1,
+  "headline_field": "pKa",
+  "headline_value": 7.507646112027607,
+  "headline_units": "dimensionless",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "species_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "species with genuine (saddle) imaginary modes: none (every pKa species must be a minimum; soft sub-50i rotor modes are floored as real and do not count)"
+      },
+      {
+        "name": "pka_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "pKa = 7.507646112027607 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'pKa' = 7.507646112027607 (present and numeric)"
+      }
+    ]
+  }
+}

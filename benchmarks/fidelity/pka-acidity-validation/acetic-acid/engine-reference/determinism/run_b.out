@@ -1,0 +1,118 @@
+# chemkit live log
+# subcommand : pka
+# args       : --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpbcq5y2x9/b.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpbcq5y2x9/b.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/engine-reference/determinism
+# started    : 20260711-174349
+# ============================================================
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:43.
+
+
+
+          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:43.
+
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpbcq5y2x9/b.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "pka",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz",
+  "n_atoms": 8,
+  "atoms": [
+    "O",
+    "O",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpbcq5y2x9/b.json",
+  "mode": "absolute",
+  "temperature_K": 298.15,
+  "pressure_Pa": 101325.0,
+  "G_HA_kcal_mol": -131.467904,
+  "G_A_minus_kcal_mol": -227.53899600000003,
+  "hplus_reference": "tissandier_1998",
+  "G_Hplus_aq_kcal_mol": -270.28,
+  "standard_state_correction_kcal_mol": 1.8943284009764536,
+  "RT_ln10_kcal_mol": 1.3642470125942985,
+  "delta_G_dissociation_kcal_mol": -364.45676359902353,
+  "pKa": -267.14866166791904,
+  "species": {
+    "HA": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz",
+      "charge": 0,
+      "multiplicity": 1,
+      "G_kcal_mol": -131.467904,
+      "H_kcal_mol": -111.13000000000001,
+      "E_kcal_mol": -111.135,
+      "ZPE_kcal_mol": 34.155777,
+      "n_imaginary_modes": 0,
+      "n_saddle_imaginary_modes": null,
+      "n_soft_imaginary_modes": null,
+      "optimized_xyz": "/tmp/chemkit_optfreq_22ja7ab6/preopt.xyz"
+    },
+    "A_minus": {
+      "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz",
+      "charge": -1,
+      "multiplicity": 1,
+      "G_kcal_mol": -227.53899600000003,
+      "H_kcal_mol": -206.44,
+      "E_kcal_mol": -206.442,
+      "ZPE_kcal_mol": 28.436599,
+      "n_imaginary_modes": 0,
+      "n_saddle_imaginary_modes": null,
+      "n_soft_imaginary_modes": null,
+      "optimized_xyz": "/tmp/chemkit_optfreq_2je009cc/preopt.xyz"
+    }
+  },
+  "warnings": [
+    "Absolute pKa is highly sensitive to the G(H+,aq) reference (~1.4 unit shift between Tissandier 1998 and Kelly 2006). Prefer mode='reference' against a known acid in the same family.",
+    "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+  ],
+  "schema_version": 1,
+  "headline_field": "pKa",
+  "headline_value": -267.14866166791904,
+  "headline_units": "dimensionless",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "species_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "species with genuine (saddle) imaginary modes: none (every pKa species must be a minimum; soft sub-50i rotor modes are floored as real and do not count)"
+      },
+      {
+        "name": "pka_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "pKa = -267.14866166791904 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'pKa' = -267.14866166791904 (present and numeric)"
+      }
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "task": "conformational_search",
+  "method": "MMFF94 confab (Open Babel)",
+  "program": "openbabel",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/ethanol/ethanol.xyz",
+  "n_atoms": 9,
+  "atoms": [
+    "O",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py confsearch --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/ethanol/ethanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpwcaraoot/b.json",
+  "n_conformers_found": 1,
+  "n_conformers_kept": 1,
+  "work_directory": "/tmp/chemkit_confsearch_vbj2e3lj",
+  "best_conformer_xyz": "/tmp/chemkit_confsearch_vbj2e3lj/obabel_best.xyz",
+  "all_conformers_xyz": "/tmp/chemkit_confsearch_vbj2e3lj/obabel_conformers.xyz",
+  "preoptimization": "Open Babel produced a single conformer; proceeding with ring-pucker / dihedral-grid seeding for post-opt.",
+  "conformer_relative_energies_kcal_mol": [
+    0.0
+  ],
+  "postopt": {
+    "method": "PM7 (MOPAC)",
+    "n_input": 1,
+    "n_converged": 1,
+    "n_unique": 1,
+    "n_failed": 0,
+    "n_saddles_rejected": 0,
+    "rmsd_threshold_A": 0.25,
+    "ewin_kcal_mol": 6.0,
+    "lowest_hof_kcal_mol": -57.82786,
+    "ensemble_xyz": "/tmp/chemkit_confsearch_vbj2e3lj/postopt_mopac/postopt_ensemble.xyz",
+    "best_xyz": "/tmp/chemkit_confsearch_vbj2e3lj/postopt_mopac/conf_000_mopac_opt.xyz",
+    "conformers": [
+      {
+        "source_index": 0,
+        "hof_kcal_mol": -57.82786,
+        "rel_hof_kcal_mol": 0.0,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch_vbj2e3lj/postopt_mopac/conf_000_mopac_opt.xyz",
+        "converged": true
+      }
+    ],
+    "seed_source": "obabel_best"
+  },
+  "schema_version": 1,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "conformers_found",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_conformers_found = 1 (a search must return \u22651 conformer)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      }
+    ]
+  },
+  "conformers_xyz": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpwcaraoot/b_conformers.xyz"
+}

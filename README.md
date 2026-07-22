@@ -1,6 +1,6 @@
-# ATLAS
+# ASSAY
 
-**A**gentic **T**oolkit for **L**ayered **A**tomistic **S**imulations
+**A**gentic **S**imulation **S**uite for **A**utomated chemistr**Y**
 
 *Self-contained, guardrailed chemistry skills over the Model Context Protocol*
 

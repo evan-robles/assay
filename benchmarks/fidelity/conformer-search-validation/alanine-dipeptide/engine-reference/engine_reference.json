@@ -1,0 +1,109 @@
+{
+  "task": "conformational_search",
+  "method": "MMFF94 confab (Open Babel)",
+  "program": "openbabel",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/alanine-dipeptide/alanine-dipeptide.xyz",
+  "n_atoms": 22,
+  "atoms": [
+    "H",
+    "C",
+    "H",
+    "H",
+    "C",
+    "O",
+    "N",
+    "H",
+    "C",
+    "H",
+    "C",
+    "H",
+    "H",
+    "H",
+    "C",
+    "O",
+    "N",
+    "H",
+    "C",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py confsearch --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/alanine-dipeptide/alanine-dipeptide.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp9q34qu52/truth.json",
+  "n_conformers_found": 7,
+  "n_conformers_kept": 7,
+  "work_directory": "/tmp/chemkit_confsearch_dazw81qa",
+  "best_conformer_xyz": "/tmp/chemkit_confsearch_dazw81qa/obabel_best.xyz",
+  "all_conformers_xyz": "/tmp/chemkit_confsearch_dazw81qa/obabel_conformers.xyz",
+  "conformer_relative_energies_kcal_mol": [
+    0.0,
+    1.50061,
+    17.16333,
+    20.75955,
+    23.33409,
+    24.86163,
+    25.30375
+  ],
+  "postopt": {
+    "method": "PM7 (MOPAC)",
+    "n_input": 7,
+    "n_converged": 4,
+    "n_unique": 3,
+    "n_failed": 0,
+    "n_saddles_rejected": 3,
+    "rmsd_threshold_A": 0.25,
+    "ewin_kcal_mol": 6.0,
+    "lowest_hof_kcal_mol": -102.61266,
+    "ensemble_xyz": "/tmp/chemkit_confsearch_dazw81qa/postopt_mopac/postopt_ensemble.xyz",
+    "best_xyz": "/tmp/chemkit_confsearch_dazw81qa/postopt_mopac/conf_004_mopac_opt.xyz",
+    "conformers": [
+      {
+        "source_index": 4,
+        "hof_kcal_mol": -102.61266,
+        "rel_hof_kcal_mol": 0.0,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch_dazw81qa/postopt_mopac/conf_004_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 5,
+        "hof_kcal_mol": -102.09411,
+        "rel_hof_kcal_mol": 0.51855,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch_dazw81qa/postopt_mopac/conf_005_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 0,
+        "hof_kcal_mol": -102.06302,
+        "rel_hof_kcal_mol": 0.54964,
+        "degeneracy": 2,
+        "xyz_path": "/tmp/chemkit_confsearch_dazw81qa/postopt_mopac/conf_000_mopac_opt.xyz",
+        "converged": true
+      }
+    ],
+    "seed_source": "obabel_conformers (7)"
+  },
+  "schema_version": 1,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "conformers_found",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_conformers_found = 7 (a search must return \u22651 conformer)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      }
+    ]
+  },
+  "conformers_xyz": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp9q34qu52/truth_conformers.xyz"
+}

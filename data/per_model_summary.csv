@@ -1,0 +1,11 @@
+model,mean_pass_rate,sd_pass_rate_across_cases,n_cases_accuracy,efficiency_passrate_per_1k_completion_tokens,n_cases_efficiency
+claude-opus-4.8,0.9982,0.0190,111,0.7378,102
+gpt-5.5,0.9928,0.0461,111,1.1691,102
+o3,0.9910,0.0417,111,0.7008,102
+claude-sonnet-4.6,0.9874,0.0945,111,0.6501,102
+o4-mini,0.9874,0.0488,111,0.3255,102
+claude-haiku-4.5,0.9838,0.0548,111,0.8644,102
+gpt-4o,0.9838,0.0900,111,3.6392,102
+gemini-2.5-flash,0.9820,0.0876,111,2.4632,102
+gemini-2.5-pro,0.9820,0.1223,111,3.6203,102
+gpt-4.1-nano,0.8180,0.2757,111,2.4706,102

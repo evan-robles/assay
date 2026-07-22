@@ -1,0 +1,20 @@
+{
+  "spec_name": "1-butanol_conformer_search",
+  "skill": "conformer-search",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/1-butanol/1_butanol.xyz",
+  "expect": "compute",
+  "spec_hash": "c20f5095a81dcab3",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-08T13:41:29"
+}

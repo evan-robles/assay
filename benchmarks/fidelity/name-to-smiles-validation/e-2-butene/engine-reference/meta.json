@@ -1,0 +1,13 @@
+{
+  "spec_name": "e-2-butene_name_to_smiles",
+  "skill": "name-to-smiles",
+  "flags": [],
+  "positional": "(E)-2-butene",
+  "expect": "smiles",
+  "spec_hash": "41065989b30f151b",
+  "determinism_ok": true,
+  "determinism_msg": "skipped (expect=smiles)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:38:23"
+}

@@ -1,0 +1,28 @@
+{
+  "spec_name": "duroquinone_redox_potential",
+  "skill": "redox-potential",
+  "flags": [
+    "--method",
+    "xtb",
+    "--ox-charge",
+    "0",
+    "--red-charge",
+    "-1",
+    "--ox-mult",
+    "1",
+    "--red-mult",
+    "2",
+    "--solvent",
+    "water",
+    "--ref",
+    "SHE"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/duroquinone/duroquinone.xyz",
+  "expect": "compute",
+  "spec_hash": "b17cd6cc913092ea",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "d5b24b761",
+  "timestamp": "2026-07-11T15:22:57"
+}

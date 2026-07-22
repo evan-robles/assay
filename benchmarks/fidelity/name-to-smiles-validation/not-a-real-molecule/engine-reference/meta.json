@@ -1,0 +1,13 @@
+{
+  "spec_name": "not-a-real-molecule_name_to_smiles",
+  "skill": "name-to-smiles",
+  "flags": [],
+  "positional": "florbgnax-9-ium",
+  "expect": "refusal",
+  "spec_hash": "7f90f6ef5a9a1523",
+  "determinism_ok": true,
+  "determinism_msg": "skipped (expect=refusal)",
+  "engine_failed": true,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:38:33"
+}

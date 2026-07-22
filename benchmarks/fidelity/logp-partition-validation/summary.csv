@@ -1,22 +1,131 @@
-case,model,expect,mode,n_pass,n_error,n_runs,pass_rate,modal_verdict,fail_tally,method,solvent,functional,basis,tier,value_field,truth_value,reported_value_latest
+case,model,expect,mode,n_pass,n_error,n_runs,pass_rate,modal_verdict,fail_tally,method,solvent,functional,basis,tier,value_field,truth_value,reported_value_latest,total_s_mean,total_s_std,total_s_se,llm_s_mean,engine_s_mean,prompt_tokens_mean,completion_tokens_mean,total_tokens_mean
+model: argo:claude-haiku-4.5
+model latency: llm_s=17.65 ± 11.43 (SE 1.7) [n=45]  turns=2.0 ± 0.0 (SE 0.0) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x2,GFN2-xTB,,,,,logp,2.29941,2.29941,15.22,5.5,2.46,12.85,2.37,31284.2,973.0,32257.2
+benzene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,PM7,,,,,logp,-0.196167,2.03145,20.15,9.17,4.1,18.31,1.84,31262.0,959.2,32221.2
+diethyl-ether,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,24.95,14.93,6.68,23.08,1.87,31324.6,1185.4,32510.0
+ethanol,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,17.83,8.67,3.88,16.3,1.54,31257.0,1302.8,32559.8
+ibuprofen,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,11.31,0.68,0.31,9.27,2.04,31356.4,1030.6,32387.0
+methanol,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,0.72354,31.24,23.9,10.69,29.58,1.65,31246.2,1184.8,32431.0
+phenol,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083,18.23,5.59,2.5,16.66,1.57,31268.4,1018.4,32286.8
+pyridine,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,16.3,4.54,2.03,14.72,1.58,31274.2,1051.0,32325.2
+toluene,argo:claude-haiku-4.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,19.91,7.44,3.33,18.11,1.81,31289.4,1062.0,32351.4
+
 model: argo:claude-opus-4.8
-aniline,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941
-benzene,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.03145,2.03145
-diethyl-ether,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248
-ethanol,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216
-ibuprofen,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313
-methanol,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,0.72354,0.72354
-phenol,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083
-pyridine,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282
-toluene,argo:claude-opus-4.8,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443
+model latency: llm_s=24.82 ± 7.02 (SE 1.05) [n=45]  turns=2.98 ± 0.15 (SE 0.02) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941,27.27,6.77,3.03,24.96,1.82,62949.0,1528.2,64477.2
+benzene,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.196167,2.03145,32.24,8.21,3.67,29.95,1.81,62951.0,1490.6,64441.6
+diethyl-ether,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,32.96,14.13,6.32,30.57,1.99,58418.0,1607.4,60025.4
+ethanol,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,28.18,5.58,2.5,25.88,1.91,62957.6,1544.6,64502.2
+ibuprofen,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,25.32,2.23,1.0,23.12,1.84,63059.0,1598.6,64657.6
+methanol,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,0.72354,25.58,2.09,0.93,23.31,1.76,62928.4,1492.0,64420.4
+phenol,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083,26.07,6.83,3.06,24.16,1.57,62951.6,1504.2,64455.8
+pyridine,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,24.51,2.97,1.33,22.14,1.93,62972.2,1578.8,64551.0
+toluene,argo:claude-opus-4.8,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,21.48,2.54,1.14,19.27,1.78,62950.4,1290.0,64240.4
+
+model: argo:claude-sonnet-4.6
+model latency: llm_s=39.92 ± 12.13 (SE 1.81) [n=45]  turns=2.91 ± 0.29 (SE 0.04) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941,41.93,11.93,5.34,39.5,1.95,46103.2,1595.6,47698.8
+benzene,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.196167,2.03145,45.6,16.42,7.34,43.2,2.07,45719.4,1443.6,47163.0
+diethyl-ether,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,38.1,8.2,3.67,35.84,1.92,49421.6,1580.2,51001.8
+ethanol,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,42.53,7.33,3.28,40.0,2.11,49344.8,1615.8,50960.6
+ibuprofen,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,39.08,4.41,1.97,36.99,1.68,49457.6,1687.8,51145.4
+methanol,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,0.72354,40.35,6.12,2.74,38.44,1.53,49337.0,1582.8,50919.8
+phenol,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083,36.95,12.36,5.53,34.25,2.23,42112.0,1572.0,43684.0
+pyridine,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,52.45,19.32,8.64,50.19,1.81,49371.2,1721.6,51092.8
+toluene,argo:claude-sonnet-4.6,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,43.1,17.28,7.73,40.9,1.79,49394.0,1560.2,50954.2
+
+model: argo:gemini-2.5-flash
+model latency: llm_s=10.42 ± 4.6 (SE 0.69) [n=45]  turns=2.62 ± 0.58 (SE 0.09) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941,17.35,9.06,4.05,14.85,2.32,36879.2,541.2,37420.4
+benzene,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.196167,2.03145,16.95,4.67,2.09,15.24,1.52,37457.0,537.6,37994.6
+diethyl-ether,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,11.22,2.62,1.17,9.18,1.76,40539.2,566.4,41105.6
+ethanol,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,12.85,3.54,1.58,10.86,1.63,43658.4,424.6,44083.0
+ibuprofen,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,11.25,3.34,1.49,8.67,2.43,33975.6,367.8,34343.4
+methanol,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,0.72354,9.36,2.45,1.09,7.58,1.63,33886.4,553.0,34439.4
+phenol,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083,11.17,1.18,0.53,8.83,2.02,40421.6,467.0,40888.6
+pyridine,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,11.76,3.93,1.76,9.92,1.69,33862.2,658.8,34521.0
+toluene,argo:gemini-2.5-flash,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,10.62,0.46,0.21,8.63,1.79,37180.0,346.2,37526.2
+
+model: argo:gemini-2.5-pro
+model latency: llm_s=15.81 ± 4.95 (SE 0.74) [n=45]  turns=2.09 ± 0.29 (SE 0.04) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941,18.6,6.49,2.9,16.91,1.69,27735.4,249.6,27985.0
+benzene,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.196167,2.03145,16.75,4.47,2.0,15.02,1.72,27573.2,252.8,27826.0
+diethyl-ether,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,17.54,4.08,1.83,15.71,1.77,30830.0,319.0,31149.0
+ethanol,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,16.98,4.72,2.11,15.3,1.69,27670.0,214.2,27884.2
+ibuprofen,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,19.79,7.54,3.37,17.84,1.88,31070.8,326.8,31397.6
+methanol,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,0.72354,17.07,5.76,2.58,14.98,2.02,30775.2,297.8,31073.0
+phenol,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x1,GFN2-xTB,,,,,logp,2.22083,2.22083,17.82,4.08,1.82,16.18,1.64,27638.8,287.6,27926.4
+pyridine,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,14.59,2.09,0.94,12.85,1.74,27575.6,257.0,27832.6
+toluene,argo:gemini-2.5-pro,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,19.35,5.83,2.61,17.52,1.76,30782.0,377.8,31159.8
+
+model: argo:gpt-4.1-nano
+model latency: llm_s=5.1 ± 1.38 (SE 0.21) [n=45]  turns=3.73 ± 0.69 (SE 0.1) [n=45]  tool_calls=1.33 ± 0.48 (SE 0.07) [n=45]
+aniline,argo:gpt-4.1-nano,compute,live,4,0,5,0.8,PASS,integrity verdict surfaced x5; warnings preserved x1,GFN2-xTB,,,,,logp,2.29941,2.29941,10.07,3.05,1.36,7.33,2.32,61750.4,504.0,62254.4
+benzene,argo:gpt-4.1-nano,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x5,PM7,,,,,logp,-0.196167,2.03145,8.61,1.17,0.52,5.02,3.45,61855.2,467.8,62323.0
+diethyl-ether,argo:gpt-4.1-nano,compute,live,3,0,5,0.6,PASS,integrity verdict surfaced x5; warnings preserved x2; method x1; charge x1; multiplicity x1; reported logp x1,GFN2-xTB,,,,,logp,1.55248,1.55248,6.79,1.69,0.76,4.8,1.3,56905.4,358.4,57263.8
+ethanol,argo:gpt-4.1-nano,compute,live,2,0,5,0.4,FAIL,integrity verdict surfaced x5; warnings preserved x3,GFN2-xTB,,,,,logp,1.10216,1.10216,7.55,2.11,0.95,5.06,1.71,57893.0,416.2,58309.2
+ibuprofen,argo:gpt-4.1-nano,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x4,GFN2-xTB,,,,,logp,3.66313,3.66313,7.3,1.62,0.72,5.14,2.09,58022.4,502.0,58524.4
+methanol,argo:gpt-4.1-nano,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x5,PM7,,,,,logp,-0.575027,0.72354,5.77,1.34,0.6,3.92,1.79,45439.2,378.0,45817.2
+phenol,argo:gpt-4.1-nano,compute,live,4,0,5,0.8,PASS,integrity verdict surfaced x5; warnings preserved x1,GFN2-xTB,,,,,logp,2.22083,2.22083,7.09,2.21,0.99,4.66,2.28,48896.4,473.0,49369.4
+pyridine,argo:gpt-4.1-nano,compute,live,4,0,5,0.8,PASS,integrity verdict surfaced x5; warnings preserved x1,GFN2-xTB,,,,,logp,1.34282,1.34282,7.46,0.85,0.38,4.98,2.18,47258.2,387.0,47645.2
+toluene,argo:gpt-4.1-nano,compute,live,3,0,5,0.6,PASS,integrity verdict surfaced x5; warnings preserved x2,GFN2-xTB,,,,,logp,2.33443,2.33443,7.21,0.75,0.33,5.01,1.58,48160.6,491.6,48652.2
+
+model: argo:gpt-4o
+model latency: llm_s=5.54 ± 2.9 (SE 0.43) [n=45]  turns=2.0 ± 0.0 (SE 0.0) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941,9.18,6.03,2.7,6.74,2.44,27191.8,266.4,27458.2
+benzene,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.196167,2.03145,7.47,4.7,2.1,5.66,1.81,27194.4,273.2,27467.6
+diethyl-ether,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,6.17,1.48,0.66,4.51,1.66,27227.8,299.4,27527.2
+ethanol,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,8.44,2.12,0.95,6.88,1.55,27186.6,319.2,27505.8
+ibuprofen,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,6.71,1.58,0.71,4.86,1.85,27260.0,346.0,27606.0
+methanol,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,0.72354,6.71,1.89,0.85,5.04,1.67,27179.6,271.4,27451.0
+phenol,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083,9.33,2.54,1.14,7.38,1.95,27199.0,321.6,27520.6
+pyridine,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,6.77,1.92,0.86,4.5,2.27,27193.4,324.8,27518.2
+toluene,argo:gpt-4o,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,6.59,0.62,0.28,4.33,2.26,27208.0,285.4,27493.4
+
+model: argo:gpt-5.5
+model latency: llm_s=12.78 ± 3.17 (SE 0.47) [n=45]  turns=2.0 ± 0.0 (SE 0.0) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941,14.5,1.99,0.89,12.34,2.16,27366.2,752.6,28118.8
+benzene,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.196167,2.03145,16.2,6.05,2.71,14.24,1.96,27369.0,749.2,28118.2
+diethyl-ether,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,14.01,2.37,1.06,12.24,1.77,27402.4,783.6,28186.0
+ethanol,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,13.51,1.3,0.58,11.77,1.73,27371.2,783.2,28154.4
+ibuprofen,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,13.17,0.65,0.29,10.82,2.35,27432.6,752.0,28184.6
+methanol,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,0.72354,12.33,1.64,0.74,10.67,1.66,27353.6,707.0,28060.6
+phenol,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083,17.59,4.23,1.89,15.58,2.02,27372.2,899.6,28271.8
+pyridine,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,16.36,2.92,1.3,14.39,1.98,27394.6,868.2,28262.8
+toluene,argo:gpt-5.5,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,14.62,2.94,1.32,12.94,1.68,27382.2,849.6,28231.8
 
 model: argo:o3
-aniline,argo:o3,compute,live,9,1,10,0.9,PASS,ERRORED (data corruption in transit) x1,GFN2-xTB,,,,,logp,2.29941,2.29941
-benzene,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.03145,2.03145
-diethyl-ether,argo:o3,compute,live,9,1,10,0.9,PASS,ERRORED (data corruption in transit) x1,GFN2-xTB,,,,,logp,1.55248,1.55248
-ethanol,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216
-ibuprofen,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313
-methanol,argo:o3,compute,live,8,2,10,0.8,PASS,ERRORED (data corruption in transit) x2,GFN2-xTB,,,,,logp,0.72354,0.72354
-phenol,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083
-pyridine,argo:o3,compute,live,10,0,10,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282
-toluene,argo:o3,compute,live,8,2,10,0.8,PASS,ERRORED (data corruption in transit) x2,GFN2-xTB,,,,,logp,2.33443,2.33443
+model latency: llm_s=21.41 ± 6.84 (SE 1.02) [n=45]  turns=3.07 ± 1.03 (SE 0.15) [n=45]  tool_calls=1.02 ± 0.15 (SE 0.02) [n=45]
+aniline,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941,27.43,9.2,4.11,25.01,2.18,50169.2,1620.0,51789.2
+benzene,argo:o3,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.196167,2.03145,18.31,6.16,2.75,16.39,1.83,37926.0,1310.6,39236.6
+diethyl-ether,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,23.03,6.15,2.75,21.15,1.79,34829.2,1492.8,36322.0
+ethanol,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,18.61,4.76,2.13,16.66,1.73,44145.8,1115.2,45261.0
+ibuprofen,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,25.97,6.34,2.83,23.7,2.13,52953.4,1562.4,54515.8
+methanol,argo:o3,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,0.72354,24.18,4.27,1.91,21.76,2.27,38421.4,1599.6,40021.0
+phenol,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083,28.03,6.59,2.95,25.75,1.95,44685.4,1570.0,46255.4
+pyridine,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,20.9,4.08,1.82,19.13,1.63,32358.6,1462.4,33821.0
+toluene,argo:o3,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,25.03,10.41,4.66,23.16,1.8,44626.8,1533.0,46159.8
+
+model: argo:o4-mini
+model latency: llm_s=28.49 ± 11.73 (SE 1.75) [n=45]  turns=2.58 ± 0.62 (SE 0.09) [n=45]  tool_calls=1.0 ± 0.0 (SE 0.0) [n=45]
+aniline,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941,27.08,12.03,5.38,24.96,1.97,38202.0,2193.2,40395.2
+benzene,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.196167,2.03145,32.74,10.86,4.86,30.73,1.93,29311.2,2230.0,31541.2
+diethyl-ether,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,50.48,11.18,5.0,48.13,2.13,35226.4,3547.2,38773.6
+ethanol,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,35.15,13.49,6.03,33.24,1.78,29302.0,2268.0,31570.0
+ibuprofen,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,22.76,3.65,1.63,20.72,1.83,32210.6,2596.4,34807.0
+methanol,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,0.72354,24.29,3.56,1.59,22.53,1.48,44587.6,2652.2,47239.8
+phenol,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083,28.25,7.11,3.18,26.25,1.69,32361.4,3351.8,35713.2
+pyridine,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,29.33,7.45,3.33,26.93,1.58,41500.2,3435.4,44935.6
+toluene,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,24.84,10.53,4.71,22.92,1.77,32368.8,2709.2,35078.0
+
+# engine (DFT compute) wall-time per molecule — TASK-bound (independent of the calling model)
+engine_s[aniline]: 2.12 ± 0.74 (SE 0.1) [n=50]
+engine_s[benzene]: 2.0 ± 0.65 (SE 0.09) [n=50]
+engine_s[diethyl-ether]: 1.8 ± 0.45 (SE 0.06) [n=50]
+engine_s[ethanol]: 1.74 ± 0.35 (SE 0.05) [n=50]
+engine_s[ibuprofen]: 2.01 ± 0.52 (SE 0.07) [n=50]
+engine_s[methanol]: 1.75 ± 0.44 (SE 0.06) [n=50]
+engine_s[phenol]: 1.89 ± 0.49 (SE 0.07) [n=50]
+engine_s[pyridine]: 1.84 ± 0.51 (SE 0.07) [n=50]
+engine_s[toluene]: 1.8 ± 0.34 (SE 0.05) [n=50]

@@ -1,12 +1,12 @@
 # chemkit live log
 # subcommand : logp
-# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/diethyl-ether/diethyl_ether.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1md5_lra/a.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/diethyl-ether/diethyl_ether.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1md5_lra/a.json
-# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/diethyl-ether/20260624-113114_diethyl-ether_logp_partition/determinism
-# started    : 20260624-113115
+# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/diethyl-ether/diethyl_ether.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0tcfzj7m/a.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python3 -m chemkit_engine.cli logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/diethyl-ether/diethyl_ether.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0tcfzj7m/a.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/diethyl-ether/engine-reference/determinism
+# started    : 20260708-122437
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1md5_lra/a.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0tcfzj7m/a.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -36,23 +36,26 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": null,
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/diethyl-ether/diethyl_ether.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1md5_lra/a.json",
-  "logp": 1.5524782476072227,
-  "delta_G_solv_water_kcal_mol": -1.571042302798074,
-  "delta_G_solv_octanol_kcal_mol": -3.689088376008608,
-  "delta_delta_G_kcal_mol": 2.118046073210534,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py logp --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/logp-partition-validation/diethyl-ether/diethyl_ether.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0tcfzj7m/a.json",
+  "logp": 1.5524782476139485,
+  "delta_G_solv_water_kcal_mol": -1.5710423027849656,
+  "delta_G_solv_octanol_kcal_mol": -3.6890883760046758,
+  "delta_delta_G_kcal_mol": 2.11804607321971,
   "RT_ln10_kcal_mol_at_298K": 1.3643,
   "water_solvent_key": "water",
   "octanol_solvent_key": "octanol",
-  "energy_gas_eV": -482.17474370306616,
-  "energy_water_eV": -482.24287054525297,
+  "energy_gas_eV": -482.1747437030663,
+  "energy_water_eV": -482.2428705452526,
   "energy_octanol_eV": -482.3347177159606,
   "warnings": [
     "logP from semi-empirical \u0394G_solv differences is screening-grade; \u00b11 log unit typical.",
-    "Each leg is an electronic-energy difference on a single frozen geometry \u2014 no ZPE/thermal/entropy and no per-phase relaxation. The reported delta_G_solv_* legs are electronic only; the 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference, so logP itself is insensitive to it, but the individual legs are not corrected \u0394G*_solv.",
-    "For chemoinformatic logP, also consider RDKit's Crippen/XLogP (group-contribution).",
+    "Electronic-only \u0394G_solv on a single frozen geometry (no ZPE/thermal/entropy). The 1 atm\u21921 M standard-state term cancels in the water\u2212octanol difference (logP is insensitive to it), but the individual delta_G_solv_* legs are not corrected \u0394G*_solv.",
     "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
   ],
+  "schema_version": 1,
+  "headline_field": "logp",
+  "headline_value": 1.5524782476139485,
+  "headline_units": "dimensionless",
   "integrity": {
     "status": "ok",
     "trustworthy": true,
@@ -61,7 +64,19 @@
         "name": "logp_finite",
         "ok": true,
         "severity": "error",
-        "detail": "logp = 1.5524782476072227 (must be finite)"
+        "detail": "logp = 1.5524782476139485 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'logp' = 1.5524782476139485 (present and numeric)"
       }
     ]
   }

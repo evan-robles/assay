@@ -46,6 +46,33 @@ benchmarks/runs/
 benchmarks/error_dumps/
 benchmarks/fidelity/tested.txt
 
+# ---------------------------------------------------------------------------
+# Fidelity BENCHMARK run scratch (regenerated per run; ~1 GB, not source).
+# These are the volatile outputs of re-running the fidelity suite — per-model
+# agent transcripts, timestamped engine-run dirs and their live .out logs, and
+# ad-hoc scratch dropped at the benchmarks/ root. Curated reference data lives in
+# each example's engine-reference/ + *.spec.json (kept tracked below); everything
+# here is reproducible output that should never be committed.
+# ---------------------------------------------------------------------------
+# Per-model agent run directories (argo_<model>/ under any validation example).
+benchmarks/fidelity/**/argo_*/
+# Pre-fix archives and other dated run snapshots.
+benchmarks/fidelity/**/_pre_fix_archive*/
+# Timestamped engine-run dirs (YYYYMMDD-HHMMSS_<name>/) and their sibling .out.
+benchmarks/fidelity/**/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]_*/
+benchmarks/fidelity/**/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]_*.out
+# Per-suite rollup CSVs regenerated each run.
+benchmarks/fidelity/**/summary.csv
+# Ad-hoc scratch dropped directly at the benchmarks/ root by manual skill runs
+# (result JSON, live .out logs, geometries, cubes/moldens, plots).
+benchmarks/*.out
+benchmarks/*.json
+benchmarks/*.xyz
+benchmarks/*.err
+benchmarks/*.cube
+benchmarks/*.molden
+benchmarks/*.png
+
 # Safety net: keep committed example deliverables tracked.
 !skills/**/examples/**
 
