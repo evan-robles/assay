@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""chemkit MCP server — one unified engine behind the open MCP protocol.
+"""assay MCP server — one unified engine behind the open MCP protocol.
 
-Exposes every chemkit skill as an MCP tool. The chemistry engine lives once, in
+Exposes every assay skill as an MCP tool. The chemistry engine lives once, in
 `mcp_server/chemkit_engine/`; this server owns it and dispatches each tool call
 to the engine's CLI. Built on the official `mcp` SDK (FastMCP) over stdio, so it
 works with ANY MCP-capable client, not just one vendor.
 
-Each tool mirrors a chemkit subcommand. A tool takes the same arguments the CLI
+Each tool mirrors a assay subcommand. A tool takes the same arguments the CLI
 takes, as a list of CLI tokens (`args`), runs `python -m chemkit_engine.cli
 <task> <args>` as an isolated subprocess, and returns the JSON result the engine
 prints.
@@ -36,7 +36,7 @@ ENGINE_DIR = HERE / "chemkit_engine"
 SKILLS_DIR = HERE.parent / "skills"
 
 # --------------------------------------------------------------------------- #
-# Live engine-subprocess registry — lets an interactive caller (the chemkit
+# Live engine-subprocess registry — lets an interactive caller (the assay
 # agent REPL) hard-abort an in-flight calculation on `stop`/Ctrl-C. Each
 # _run_engine Popen registers itself here while running and removes itself when
 # done; kill_active_engines() SIGTERMs whatever is currently live. Thread-safe
@@ -88,7 +88,7 @@ def kill_active_engines() -> int:
     return len(signalled)
 
 # tool name -> (engine subcommand, skill folder for its SKILL.md description)
-# Tool names == skill folder names (kebab-case). Mirrors the chemkit CLI
+# Tool names == skill folder names (kebab-case). Mirrors the assay CLI
 # subcommands; one entry per skill.
 TOOLS = {
     "single-point-energy":     ("sp",             "single-point-energy"),
@@ -117,7 +117,7 @@ TOOLS = {
 # "Processing request of type CallToolRequest") off the server's stderr, which a
 # stdio caller inherits — so the caller's stderr leads with the live-log path and
 # real diagnostics, not transport noise.
-mcp = FastMCP("chemkit", log_level="WARNING")
+mcp = FastMCP("assay", log_level="WARNING")
 
 
 def _arg_spec(subcommand: str) -> str:
@@ -144,7 +144,7 @@ def _description(skill_folder: str, subcommand: str) -> str:
         if m:
             desc = m.group(1).strip()
     arg_spec = _arg_spec(subcommand)
-    args_block = (f"\n\nArguments (chemkit `{subcommand}`):\n{arg_spec}"
+    args_block = (f"\n\nArguments (assay `{subcommand}`):\n{arg_spec}"
                   if arg_spec else "")
     usage = (
         "\n\nInvoke by passing these as a list of CLI tokens in `args` "
@@ -152,7 +152,7 @@ def _description(skill_folder: str, subcommand: str) -> str:
         "for relative input/output paths. Returns the result as JSON. (You can "
         "still run args=[\"--help\"] for the raw argparse help.)"
     )
-    return (desc or f"chemkit {subcommand}") + args_block + usage
+    return (desc or f"assay {subcommand}") + args_block + usage
 
 
 def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str:
@@ -207,7 +207,7 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
     out_path = os.path.join(run_cwd, f"{subcommand}_{stamp}.out")
 
     def _write_header(fh):
-        fh.write("# chemkit live log\n")
+        fh.write("# assay live log\n")
         fh.write(f"# subcommand : {subcommand}\n")
         fh.write(f"# args       : {' '.join(args)}\n")
         fh.write(f"# command    : {' '.join(cmd)}\n")
@@ -252,7 +252,7 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
             # below), so a caller learns where the live log is while the
             # calculation is still running — calculation-reporting-standards
             # non-negotiable #9. Flush so it isn't buffered behind the result.
-            sys.stderr.write(f"# chemkit live log: {out_path}\n")
+            sys.stderr.write(f"# assay live log: {out_path}\n")
             sys.stderr.flush()
 
             stdout_data = ""
@@ -329,7 +329,7 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
             parsed.setdefault("out_log", out_path)
             return json.dumps(parsed)
         return json.dumps({
-            "error": "chemkit engine exited non-zero",
+            "error": "assay engine exited non-zero",
             "returncode": returncode,
             "subcommand": subcommand, "args": args,
             "stderr": stderr_data.strip()[-4000:],
@@ -360,7 +360,7 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
 # FastMCP exposes no tool middleware / before-after hooks (the @mcp.tool
 # decorator is the only seam), so boundary concerns are added as decorators that
 # wrap the tool function INSIDE _make_tool — one place that covers all 20 tools
-# (and, transitively, the `chemkit` CLI, which routes through these same tools).
+# (and, transitively, the `assay` CLI, which routes through these same tools).
 # ---------------------------------------------------------------------------
 
 # Per-tool call logging is on by default but terse; set CHEMKIT_LOG_TOOLS=0 to
@@ -412,7 +412,7 @@ def log_tool_call(tool_name: str):
                              if k not in ("cwd",) and v is not None]
                 arglist = ",".join(str(x) for x in (shown or []))
                 sys.stderr.write(
-                    f"[chemkit] tool={tool_name} args=[{arglist}] "
+                    f"[assay] tool={tool_name} args=[{arglist}] "
                     f"cwd={kw.get('cwd') or '.'} dur={dur_ms}ms {tag}\n"
                 )
                 sys.stderr.flush()
@@ -433,7 +433,7 @@ def tool_error_envelope(subcommand: str):
                 return fn(*a, **kw)
             except Exception as exc:  # noqa: BLE001 - never leak a raw transport error
                 return json.dumps({
-                    "error": f"chemkit {subcommand} failed: "
+                    "error": f"assay {subcommand} failed: "
                              f"{type(exc).__name__}: {exc}",
                     "subcommand": subcommand,
                     "args": list(kw.get("args") or []),
@@ -505,7 +505,7 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
     @tool_error_envelope(subcommand)
     @log_tool_call(tool_name)
     def impl(**kwargs) -> str:
-        # Back-compat: a raw CLI token list still wins (the `chemkit` front door,
+        # Back-compat: a raw CLI token list still wins (the `assay` front door,
         # older callers). Everything else flows through the typed → argv path.
         raw = kwargs.pop("args", None)
         cwd = kwargs.pop("cwd", None)
@@ -518,7 +518,7 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
             bad = _validate_extra_flags(extra, allowed_flags)
             if bad:
                 return json.dumps({
-                    "error": (f"chemkit {subcommand}: unknown flag(s) in "
+                    "error": (f"assay {subcommand}: unknown flag(s) in "
                               f"extra_args: {', '.join(bad)}. Use the typed "
                               f"parameters instead of raw flags where possible."),
                     "subcommand": subcommand,
@@ -586,7 +586,7 @@ def _looks_like_negative_number(s: str) -> bool:
 # Shared docstring for every generated tool (the per-skill args are advertised in
 # the tool's typed schema + its description; this covers the reporting contract).
 _TOOL_DOC = (
-    "Run this chemkit skill. Fill the TYPED parameters this tool advertises — "
+    "Run this assay skill. Fill the TYPED parameters this tool advertises — "
     "they are exactly the arguments this skill accepts (required ones have no "
     "default). Do NOT pass raw CLI flags; there is no need to guess flag names. "
     "`extra_args` is a rare escape hatch for a flag with no typed parameter "
@@ -607,14 +607,14 @@ for _name, (_sub, _folder) in TOOLS.items():
 
 
 def main() -> None:
-    """Console entry point (`chemkit-mcp`): start the stdio MCP server."""
+    """Console entry point (`assay-mcp`): start the stdio MCP server."""
     mcp.run()  # stdio transport
 
 
 # ---------------------------------------------------------------------------
-# `chemkit` human-facing CLI front door.
+# `assay` human-facing CLI front door.
 #
-# Routes a shell call `chemkit <subcommand> <args...>` THROUGH the MCP server
+# Routes a shell call `assay <subcommand> <args...>` THROUGH the MCP server
 # (via the shared _mcp_client), exactly like the per-skill wrapper scripts do —
 # so it inherits every server-path guarantee: the live `.out` log is streamed
 # and its path surfaced (calculation-reporting-standards #9), and the in-engine
@@ -632,33 +632,33 @@ def _chemkit_usage() -> str:
     subs = ", ".join(sorted(_SUBCOMMAND_TO_TOOL))
     return (
         "usage:\n"
-        "  chemkit <subcommand> [args...]        run ONE calculation\n"
-        "  chemkit [--base-url URL] [--model M]  start the interactive AGENT (REPL)\n"
-        "  chemkit --model M --prompt \"...\"       run ONE agent request and exit\n\n"
-        "CALCULATION mode runs a chemkit skill through the MCP server (live .out\n"
+        "  assay <subcommand> [args...]        run ONE calculation\n"
+        "  assay [--base-url URL] [--model M]  start the interactive AGENT (REPL)\n"
+        "  assay --model M --prompt \"...\"       run ONE agent request and exit\n\n"
+        "CALCULATION mode runs a assay skill through the MCP server (live .out\n"
         "log + level-of-theory/integrity gates apply):\n"
         f"  subcommands: {subs}\n"
-        "  chemkit sp --help                       args for one subcommand\n"
-        "  chemkit sp --method xtb mol.xyz\n"
-        "  chemkit redox --method dft --tier standard --ox-charge 0 --red-charge -1 mol.xyz\n\n"
+        "  assay sp --help                       args for one subcommand\n"
+        "  assay sp --method xtb mol.xyz\n"
+        "  assay redox --method dft --tier standard --ox-charge 0 --red-charge -1 mol.xyz\n\n"
         "AGENT mode opens a conversational assistant that drives the skills over\n"
         "an OpenAI-compatible endpoint (env: CHEMKIT_LLM_BASE_URL / _MODEL /\n"
-        "_API_KEY). It is entered when no subcommand is given (bare `chemkit`) or\n"
+        "_API_KEY). It is entered when no subcommand is given (bare `assay`) or\n"
         "the first argument is an option:\n"
-        "  chemkit --base-url http://127.0.0.1:60639/v1 --model argo:o3\n"
-        "  chemkit --model argo:o3 --prompt \"single-point energy of water.xyz with xtb\"\n"
-        "  chemkit --help-agent                    full agent-mode options\n\n"
-        "Discovery:  chemkit --list-skills [--json]\n"
-        "MCP server (for external agents/hosts): chemkit-mcp\n"
+        "  assay --base-url http://127.0.0.1:60639/v1 --model argo:o3\n"
+        "  assay --model argo:o3 --prompt \"single-point energy of water.xyz with xtb\"\n"
+        "  assay --help-agent                    full agent-mode options\n\n"
+        "Discovery:  assay --list-skills [--json]\n"
+        "MCP server (for external agents/hosts): assay-mcp\n"
     )
 
 
 def cli_main(argv: list[str] | None = None) -> int:
-    """Console entry point (`chemkit`): two modes, dispatched on the first arg.
+    """Console entry point (`assay`): two modes, dispatched on the first arg.
 
-    * ``chemkit sp --method xtb mol.xyz`` — run ONE calculation via the MCP
+    * ``assay sp --method xtb mol.xyz`` — run ONE calculation via the MCP
       server (the first token is a skill subcommand).
-    * ``chemkit`` / ``chemkit --base-url X --model Y [--prompt "..."]`` — launch
+    * ``assay`` / ``assay --base-url X --model Y [--prompt "..."]`` — launch
       the INTERACTIVE AGENT (a REPL, or one-shot with --prompt). Reached when
       argv is empty or the first token is an option (starts with ``-``), so it
       cannot collide with a subcommand.
@@ -672,12 +672,12 @@ def cli_main(argv: list[str] | None = None) -> int:
         sys.stdout.write(_chemkit_usage())
         return 0
 
-    # `chemkit --help-agent` — full agent-mode option list (argparse --help).
+    # `assay --help-agent` — full agent-mode option list (argparse --help).
     if argv and argv[0] == "--help-agent":
         from mcp_server.agent_cli import main as _agent_main
         return _agent_main(["--help"])
 
-    # `chemkit --list-skills [--json]` — discovery, handled by the engine.
+    # `assay --list-skills [--json]` — discovery, handled by the engine.
     if argv and argv[0] == "--list-skills":
         rest = argv[1:]
         try:
@@ -699,7 +699,7 @@ def cli_main(argv: list[str] | None = None) -> int:
 
     # Resolve descriptive aliases (frontier-orbitals -> frontier, ...) to the
     # canonical subcommand via the engine's alias map (single source of truth),
-    # so `chemkit frontier-orbitals ...` works at the human/agent front door too.
+    # so `assay frontier-orbitals ...` works at the human/agent front door too.
     try:
         from chemkit_engine.cli import _alias_to_canonical  # type: ignore
         subcommand = _alias_to_canonical().get(subcommand, subcommand)
@@ -718,11 +718,11 @@ def cli_main(argv: list[str] | None = None) -> int:
         except Exception:  # noqa: BLE001
             pass
         sys.stderr.write(
-            f"chemkit: unknown subcommand {subcommand!r}.{hint}\n\n" + _chemkit_usage()
+            f"assay: unknown subcommand {subcommand!r}.{hint}\n\n" + _chemkit_usage()
         )
         return 2
 
-    # A per-subcommand help request (e.g. `chemkit pka --help`) is NOT a
+    # A per-subcommand help request (e.g. `assay pka --help`) is NOT a
     # calculation: it must not spawn the server, create a live `.out` log, or get
     # wrapped in result JSON. Print argparse's help directly, in-process, and
     # exit. (We import the engine CLI lazily and let argparse's own --help action
@@ -749,9 +749,9 @@ def cli_main(argv: list[str] | None = None) -> int:
         from _mcp_client import run_skill  # type: ignore
     except ModuleNotFoundError as exc:
         if exc.name == "mcp":
-            sys.stderr.write("chemkit needs the MCP client SDK: pip install mcp\n")
+            sys.stderr.write("assay needs the MCP client SDK: pip install mcp\n")
             return 2
-        sys.stderr.write(f"chemkit: could not load the MCP client ({exc}).\n")
+        sys.stderr.write(f"assay: could not load the MCP client ({exc}).\n")
         return 2
     return run_skill(tool_name, rest)
 

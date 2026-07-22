@@ -1621,7 +1621,7 @@ def test_tool_descriptions_advertise_arg_spec():
         spec = cli.describe_subcommand(sub)
         assert spec, f"{sub}: empty arg spec"
         desc = server._description(folder, sub)
-        assert f"Arguments (chemkit `{sub}`)" in desc, f"{tool_name}: no args block"
+        assert f"Arguments (assay `{sub}`)" in desc, f"{tool_name}: no args block"
     # spot-check that choices/types are surfaced for a representative subcommand
     sp_desc = server._description("single-point-energy", "sp")
     assert "{xtb|mopac|dft|hf}" in sp_desc

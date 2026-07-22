@@ -1,4 +1,4 @@
-"""`chemkit` command-line interface."""
+"""`assay` command-line interface."""
 from __future__ import annotations
 import argparse
 import json
@@ -114,14 +114,14 @@ def _add_chem_options(p, *, with_input: bool = True, with_solvent: bool = True):
                    help="Enable density fitting (the RI/resolution-of-identity "
                         "approximation to the two-electron integrals) for DFT/HF: "
                         "~3-10x faster SCF for a ~0.1-0.8 mEh error. OFF BY "
-                        "DEFAULT — chemkit uses exact four-center integrals "
+                        "DEFAULT — assay uses exact four-center integrals "
                         "(plain RKS/UKS/RHF/UHF, matching a hand-written PySCF "
                         "run); pass this flag to opt into the RI speedup. "
                         "Ignored for xtb/mopac.")
     p.add_argument("--out", default=None,
                    help="Output JSON path. Default: <input-stem>_<task>_<method>.json")
     p.add_argument("--accept-defaults", dest="accept_defaults", action="store_true",
-                   help="Explicitly consent to chemkit's silent defaults for "
+                   help="Explicitly consent to assay's silent defaults for "
                         "consequential knobs the user did not set (DFT "
                         "tier=standard -> B3LYP/def2-TZVP; HF basis=def2-tzvp; "
                         "gas phase when no --solvent). Without this flag, a DFT/HF "
@@ -602,8 +602,8 @@ def _flag_error_hint(bad_flag: str, subcommand: Optional[str],
     agent), not just the benchmark. Always points at the discovery command so a
     caller can self-correct even when there is no confident single suggestion."""
     sug = _suggest_flag(bad_flag, valid_flags)
-    disc = (f"run `chemkit {subcommand} --help-json` for all valid flags"
-            if subcommand else "run `chemkit --list-skills` to discover the interface")
+    disc = (f"run `assay {subcommand} --help-json` for all valid flags"
+            if subcommand else "run `assay --list-skills` to discover the interface")
     if sug and sug.startswith("-"):
         return f"\n  did you mean: {sug}?  ({disc})"
     if sug:  # a non-flag hint like "(pass the geometry as the positional …)"
@@ -626,7 +626,7 @@ class _SuggestingSubParser(argparse.ArgumentParser):
             re.search(r"(?:ambiguous option|unknown option):\s+(\S+)", message)
         if m and m.group(1).startswith("-"):
             valid = [s for a in self._actions for s in a.option_strings]
-            # self.prog is like "chemkit fukui" -> take the subcommand token.
+            # self.prog is like "assay fukui" -> take the subcommand token.
             sub = self.prog.split()[-1] if self.prog else None
             hint = _flag_error_hint(m.group(1), sub, valid)
         super().error(message + hint)
@@ -660,7 +660,7 @@ class _TopParser(argparse.ArgumentParser):
             sug = _suggest_subcommand(m.group(1))
             if sug:
                 hint = (f"\n  did you mean: {sug!r}?  "
-                        f"(run `chemkit --list-skills` to see all)")
+                        f"(run `assay --list-skills` to see all)")
         else:
             m2 = re.search(r"unrecognized arguments:\s+(--\S+)", message)
             if m2:
@@ -676,7 +676,7 @@ class _TopParser(argparse.ArgumentParser):
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """Construct the full chemkit engine argument parser.
+    """Construct the full assay engine argument parser.
 
     Extracted from main() so the subcommand set is introspectable without
     parsing argv — used by main(), by the TOOLS<->CLI consistency check
@@ -684,10 +684,10 @@ def build_parser() -> argparse.ArgumentParser:
     input-schema derivation.
     """
     parser = _TopParser(
-        prog="chemkit",
+        prog="assay",
         description="ASE-based computational chemistry suite (xtb, MOPAC).",
     )
-    parser.add_argument("--version", action="version", version=f"chemkit {__version__}")
+    parser.add_argument("--version", action="version", version=f"assay {__version__}")
     parser.add_argument(
         "--list-skills", action="store_true",
         help="List every subcommand (with its descriptive aliases) and exit. "
@@ -975,7 +975,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--opt", dest="opt_method", type=_norm_method, choices=["xtb", "mopac", "dft", "hf"],
         default=None,
         help="Optional QM refinement step after the obabel build. Calls "
-             "`chemkit opt` internally; the QM-relaxed xyz becomes the canonical "
+             "`assay opt` internally; the QM-relaxed xyz becomes the canonical "
              "output.",
     )
     p_build.add_argument(
@@ -1163,7 +1163,7 @@ def subcommand_names() -> List[str]:
 
 def list_skills(as_json: bool = False) -> str:
     """Human- or machine-readable listing of every subcommand, its aliases, and
-    its one-line help. Backs `chemkit --list-skills`. Source of truth = the built
+    its one-line help. Backs `assay --list-skills`. Source of truth = the built
     parser, so it never drifts. An agent can call this (or its --json form) to
     DISCOVER the interface instead of guessing skill names."""
     parser = build_parser()
@@ -1182,14 +1182,14 @@ def list_skills(as_json: bool = False) -> str:
         })
     if as_json:
         return json.dumps({"subcommands": rows}, indent=2) + "\n"
-    lines = ["chemkit subcommands (canonical name, then accepted aliases):", ""]
+    lines = ["assay subcommands (canonical name, then accepted aliases):", ""]
     for r in rows:
         al = f"   aliases: {', '.join(r['aliases'])}" if r["aliases"] else ""
         lines.append(f"  {r['subcommand']:16}{r['help']}")
         if al:
             lines.append(f"  {'':16}{al.strip()}")
-    lines += ["", "Run `chemkit <subcommand> --help` for a subcommand's arguments,",
-              "or `chemkit <subcommand> --help-json` for a machine-readable arg spec."]
+    lines += ["", "Run `assay <subcommand> --help` for a subcommand's arguments,",
+              "or `assay <subcommand> --help-json` for a machine-readable arg spec."]
     return "\n".join(lines) + "\n"
 
 
@@ -1268,7 +1268,7 @@ def check_tools_cli_consistency(tools_subcommands) -> List[str]:
 
     `tools_subcommands` is the iterable of subcommands the MCP TOOLS dict maps
     to (server.TOOLS values' [0]); passed in to avoid an engine->server import.
-    A TOOLS entry with no engine subparser would break `chemkit <tool>` and the
+    A TOOLS entry with no engine subparser would break `assay <tool>` and the
     MCP tool silently; a CLI subcommand absent from TOOLS is simply unexposed.
     """
     cli = set(subcommand_names())
@@ -1277,7 +1277,7 @@ def check_tools_cli_consistency(tools_subcommands) -> List[str]:
     for missing in sorted(tools - cli):
         problems.append(
             f"TOOLS subcommand {missing!r} has NO engine CLI subparser "
-            f"(chemkit {missing} would fail)")
+            f"(assay {missing} would fail)")
     for unexposed in sorted(cli - tools):
         problems.append(
             f"engine CLI subcommand {unexposed!r} is not exposed in server.TOOLS")
@@ -1316,7 +1316,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     # model's malformed ['--method dft', ...] arrives as one argv element).
     argv = _split_combined_flag_tokens(argv if argv is not None else sys.argv[1:])
 
-    # Discovery: `chemkit --list-skills [--json]` — list every subcommand and its
+    # Discovery: `assay --list-skills [--json]` — list every subcommand and its
     # descriptive aliases, then exit. Handled BEFORE full parsing so it works with
     # no subcommand. Lets an agent/user discover the interface (source of truth =
     # this parser) instead of guessing skill names.
@@ -1325,7 +1325,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         sys.stdout.write(list_skills(as_json=as_json))
         return 0
 
-    # Discovery: `chemkit <sub> --help-json` — machine-readable arg spec for one
+    # Discovery: `assay <sub> --help-json` — machine-readable arg spec for one
     # subcommand (from describe_subcommand). Handled before parse_args since the
     # subparser doesn't define --help-json. Accepts alias spellings of <sub>.
     if argv and "--help-json" in argv:
@@ -1334,8 +1334,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         if canon is None:
             sug = _suggest_subcommand(sub_name or "")
             hint = f" did you mean {sug!r}?" if sug else ""
-            sys.stderr.write(f"chemkit: unknown subcommand {sub_name!r}.{hint} "
-                             f"Run `chemkit --list-skills`.\n")
+            sys.stderr.write(f"assay: unknown subcommand {sub_name!r}.{hint} "
+                             f"Run `assay --list-skills`.\n")
             return 2
         sys.stdout.write(json.dumps(
             {"subcommand": canon, "aliases": SUBCOMMAND_ALIASES.get(canon, []),
@@ -1351,8 +1351,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     # required=False only so --list-skills can run without one). Missing one ->
     # helpful usage, not a bare argparse crash.
     if getattr(args, "task", None) is None:
-        parser.error("a subcommand is required. Run `chemkit --list-skills` to "
-                     "see all subcommands (and their aliases), or `chemkit <sub> "
+        parser.error("a subcommand is required. Run `assay --list-skills` to "
+                     "see all subcommands (and their aliases), or `assay <sub> "
                      "--help` for a subcommand's arguments.")
 
     # Normalize an alias subcommand (e.g. 'frontier-orbitals') to its canonical
@@ -1393,7 +1393,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         if _method == "dft" and not (_has_tier or _has_func or _has_basis):
             parser.error(
                 "--method dft was given without --tier/--functional/--basis. "
-                "chemkit would SILENTLY default to tier=standard "
+                "assay would SILENTLY default to tier=standard "
                 "(B3LYP/def2-TZVP, density-fit) — do not choose the level of "
                 "theory silently. Either pass an explicit --tier/--functional/"
                 "--basis, or, only after confirming with the user, pass "
@@ -1402,7 +1402,7 @@ def main(argv: Optional[List[str]] = None) -> int:
             )
         if _method == "hf" and not _has_basis:
             parser.error(
-                "--method hf was given without --basis. chemkit would SILENTLY "
+                "--method hf was given without --basis. assay would SILENTLY "
                 "default to basis=def2-tzvp — do not choose the level of theory "
                 "silently. Either pass an explicit --basis, or, only after "
                 "confirming with the user, pass --accept-defaults to consciously "
