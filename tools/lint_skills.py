@@ -238,16 +238,108 @@ def lint_registry_sync() -> List[str]:
     return problems
 
 
+# ---------------------------------------------------------------------------
+# Dependency-DAG lint (DESIGN.md §5/§8): a composite skill imports its sibling
+# skills' run() DIRECTLY (from skills.<pkg>.scripts...). Verify each skill's
+# declared `depends_on:` frontmatter matches its ACTUAL sibling imports, that
+# every declared dep exists, and that the whole graph is acyclic.
+# ---------------------------------------------------------------------------
+
+def _pkg_to_name() -> Dict[str, str]:
+    """skill package dir -> kebab display name (from each SKILL.md frontmatter)."""
+    out: Dict[str, str] = {}
+    for d in _SKILLS.iterdir():
+        if not d.is_dir() or d.name.startswith((".", "_")):
+            continue
+        md = d / "SKILL.md"
+        if md.is_file():
+            fm = _parse_frontmatter(md.read_text()) or {}
+            out[d.name] = fm.get("name", d.name)
+    return out
+
+
+def _declared_deps(md_text: str) -> List[str]:
+    """Parse a `depends_on: [a, b]` (or empty) frontmatter flow-list -> [names]."""
+    fm = _parse_frontmatter(md_text) or {}
+    raw = fm.get("depends_on", "").strip()
+    if not raw:
+        return []
+    return [x.strip() for x in raw.strip("[]").split(",") if x.strip()]
+
+
+def _actual_sibling_imports(run_py: Path, self_pkg: str) -> set:
+    """Sibling skill PACKAGES this run.py imports from (from skills.<pkg>.scripts...)."""
+    if not run_py.is_file():
+        return set()
+    pkgs = set(re.findall(r"from skills\.(\w+)\.scripts", run_py.read_text()))
+    pkgs.discard(self_pkg)
+    return pkgs
+
+
+def lint_dependency_dag() -> List[str]:
+    """Return DAG problems ([] = clean): declared==actual deps, deps exist, acyclic."""
+    problems: List[str] = []
+    pkg2name = _pkg_to_name()
+    name2pkg = {v: k for k, v in pkg2name.items()}
+    graph: Dict[str, set] = {}
+
+    for pkg, name in sorted(pkg2name.items()):
+        md = _SKILLS / pkg / "SKILL.md"
+        run_py = _SKILLS / pkg / "scripts" / "run.py"
+        declared = set(_declared_deps(md.read_text() if md.is_file() else ""))
+        actual_pkgs = _actual_sibling_imports(run_py, pkg)
+        actual = {pkg2name.get(p, p) for p in actual_pkgs}
+
+        # declared deps must exist as skills
+        for dep in declared:
+            if dep not in name2pkg:
+                problems.append(f"{name}: declared dep {dep!r} is not a known skill")
+        # declared must match actual sibling imports (both directions)
+        if declared != actual:
+            missing = actual - declared
+            extra = declared - actual
+            if missing:
+                problems.append(
+                    f"{name}: imports {sorted(missing)} but does not declare them in depends_on")
+            if extra:
+                problems.append(
+                    f"{name}: declares depends_on {sorted(extra)} it does not import")
+        graph[name] = actual
+
+    # acyclicity (DFS)
+    WHITE, GREY, BLACK = 0, 1, 2
+    color = {n: WHITE for n in graph}
+
+    def visit(n: str, stack: List[str]) -> bool:
+        color[n] = GREY
+        for m in sorted(graph.get(n, ())):
+            if m not in graph:
+                continue
+            if color[m] == GREY:
+                problems.append(f"dependency cycle: {' -> '.join(stack + [n, m])}")
+                return True
+            if color[m] == WHITE and visit(m, stack + [n]):
+                return True
+        color[n] = BLACK
+        return False
+
+    for n in sorted(graph):
+        if color[n] == WHITE:
+            visit(n, [])
+    return problems
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description="lint SKILL.md + skill spine + registry sync")
+    ap = argparse.ArgumentParser(description="lint SKILL.md + skill spine + registry sync + dep DAG")
     ap.add_argument("skill", nargs="?", help="one skill name (default: all)")
     ap.add_argument("--spine", action="store_true", help="also run the run.py spine lint")
     ap.add_argument("--registry", action="store_true", help="also run the registry-sync lint")
+    ap.add_argument("--dag", action="store_true", help="also run the dependency-DAG lint")
     ap.add_argument("--all", action="store_true", help="run every lint")
     args = ap.parse_args()
 
     if args.all:
-        args.spine = args.registry = True
+        args.spine = args.registry = args.dag = True
 
     if args.skill:
         dirs = [_SKILLS / args.skill]
@@ -294,6 +386,16 @@ def main() -> int:
             rc = 1
         else:
             print("registry in sync (discovery == server.TOOLS == hook subcmds)")
+
+    if args.dag:
+        dag = lint_dependency_dag()
+        if dag:
+            print("[DEPENDENCY-DAG FAIL]")
+            for p in dag:
+                print(f"        - {p}")
+            rc = 1
+        else:
+            print("dependency DAG OK (depends_on == sibling imports, deps exist, acyclic)")
 
     return rc
 

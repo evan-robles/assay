@@ -2,6 +2,7 @@
 name: vibrational-analysis
 description: Computes vibrational frequencies, zero-point energy, and thermochemistry and verifies whether a geometry is a minimum or a transition state.
 category: chemistry
+depends_on: [conformer-search, geometry-optimize]
 ---
 
 # Vibrational Analysis

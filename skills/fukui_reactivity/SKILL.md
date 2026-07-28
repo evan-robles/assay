@@ -2,6 +2,7 @@
 name: fukui-reactivity
 description: Rank the atoms in a molecule by electrophilic, nucleophilic, and radical reactivity using condensed Fukui functions and the Morell dual descriptor.
 category: chemistry
+depends_on: [electrostatics]
 ---
 
 # Fukui Reactivity (Atom-Level)

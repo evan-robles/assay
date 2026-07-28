@@ -2,6 +2,7 @@
 name: transition-state
 description: Locate the first-order saddle point (transition state) for a chemical reaction starting from a TS-guess geometry, with a frequency check confirming exactly one imaginary mode.
 category: chemistry
+depends_on: [vibrational-analysis]
 ---
 
 # Transition-State Search

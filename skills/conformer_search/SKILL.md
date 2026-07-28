@@ -2,6 +2,7 @@
 name: conformer-search
 description: Samples the low-energy conformers of a flexible molecule and returns a ranked conformational ensemble.
 category: chemistry
+depends_on: [geometry-optimize]
 ---
 
 # Conformer Search

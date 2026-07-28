@@ -1657,6 +1657,16 @@ def test_registry_in_sync():
     assert not problems, "registry-sync drift:\n" + "\n".join(problems)
 
 
+def test_dependency_dag():
+    """Each composite skill's declared depends_on: frontmatter matches its actual
+    direct sibling-skill imports, every declared dep exists, and the graph is
+    acyclic (DESIGN.md §5). Catches a composite importing a sibling without
+    declaring it, a stale declaration, or an accidental import cycle."""
+    lint = _load_lint_module()
+    problems = lint.lint_dependency_dag()
+    assert not problems, "dependency-DAG problems:\n" + "\n".join(problems)
+
+
 def test_tool_descriptions_advertise_arg_spec():
     """Every MCP tool description embeds its derived argument spec (flags, types,
     choices) so an agent can call correctly without a `--help` round-trip."""

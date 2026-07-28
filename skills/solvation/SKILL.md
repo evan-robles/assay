@@ -2,6 +2,7 @@
 name: solvation
 description: Estimates the electronic solvation free energy of a molecule in a given implicit solvent.
 category: chemistry
+depends_on: [single-point-energy]
 ---
 
 # Solvation

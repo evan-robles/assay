@@ -2,6 +2,7 @@
 name: pka-acidity
 description: Estimate the aqueous pKa of an acid HA from a thermodynamic cycle, either absolutely or anchored against a known reference acid.
 category: chemistry
+depends_on: [vibrational-analysis]
 ---
 
 # pKa Estimation

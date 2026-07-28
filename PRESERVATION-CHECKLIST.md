@@ -18,8 +18,8 @@ Legend: ☐ not done · ☑ done · N/A not applicable
 - ☑ Server (`mcp_server/server.py`) builds typed tools via skill `build_parser()` introspection (#1); TOOLS + CONVERTED_SKILLS are now DISCOVERED, not hand-maintained (phase 6; verified byte-identical param specs to the old CLI subparsers)
 - ☑ `assay`/`chemkit` CLI front-door dispatches to `skills/<n>/scripts/run.py` (phase 7: `_dispatch_calc` → `_run_engine` → skill run.py via runlog, no MCP round-trip); `--help`/`--help-json` served from the skill's `build_parser()`; alias resolution + did-you-mean + `--list-skills` preserved; both `assay` and `chemkit` entry points exist
 - ☑ PreToolUse hook `chemkit-method-gate.sh` retained; `METHOD_REQUIRED_SUBCMDS` regenerated from manifests + kept in sync by the registry-sync lint (#11; phase 8a)
-- ☑ `tools/lint_skills.py`: spine lint (#10.2-1) + registry-sync lint (#10.2-2) wired into CI via test_all_skill_spines_pass_lint + test_registry_in_sync (phase 8a)
-- ◑ Full `tests/` suite (test_regression.py, test_cli_interface.py) green *(at baseline: 148 pass / 1 skip / 1 pre-existing ferrocene-spec fail — +2 new lint tests; the fail is unrelated to this refactor)*
+- ☑ `tools/lint_skills.py`: spine lint (#10.2-1) + registry-sync lint (#10.2-2) + dependency-DAG lint (#5) wired into CI via test_all_skill_spines_pass_lint + test_registry_in_sync + test_dependency_dag (phase 8a + polish)
+- ◑ Full `tests/` suite (test_regression.py, test_cli_interface.py) green *(at baseline: 149 pass / 1 skip / 1 pre-existing ferrocene-spec fail — +3 lint tests over the original 146; the fail is unrelated to this refactor)*
 - ☑ `rules/skill-standards.md` + `README.md` updated: dropped "thin client"; documented the `run()`/`build_parser()`/`run_cli` + `SKILL_NAME`/`SUBCOMMAND` manifest contract, `assay_core` library, and discovery (phase 8c)
 
 ## Per-skill grid
@@ -56,18 +56,18 @@ and its declared `depends_on:` must match its imports (DAG lint).
 
 | Composite | imports (sibling skill run()) | `depends_on:` declared | sub-step still integrity-gated (#8) |
 |---|---|---|---|
-| vibrational-analysis | opt, conformer-search | ☐ (composes via the opt/confsearch task shims → skills, not yet direct sibling imports) | ☑ (sub-steps run through the skill run()s, which gate) |
-| conformational-analysis | conformer-search, opt | ☐ (via task shims → skills) | ☑ (sub-steps gate) |
-| binding-energy | single-point-energy | ☐ (via sp task shim → skill) | ☑ (sub-steps gate) |
-| logp-partition | single-point-energy | ☐ (via sp task shim → skill) | ☑ (sub-steps gate) |
-| solvation | single-point-energy | ☐ (via sp task shim → skill) | ☑ (sub-steps gate) |
-| fukui-reactivity | electrostatics | ☐ (via electrostatics task shim → skill) | ☑ (sub-steps gate) |
-| redox-potential | sp, opt, freq | ☐ (via task shims → skills) | ☑ (sub-steps gate) |
-| reaction-energy | sp, opt, freq | ☐ (via task shims → skills) | ☑ (sub-steps gate) |
-| pka-acidity | freq | ☐ (via freq task shim → skill) | ☑ (sub-steps gate) |
-| transition-state | freq | ☐ (via freq task shim → skill) | ☑ (sub-steps gate) |
-| reaction-profile | opt, freq, ts, irc | ☐ (via task shims → skills) | ☑ (sub-steps gate) |
-| build-from-smiles | opt (optional QM refine) | ☐ (composes via the opt task shim → skill, not yet a direct sibling import) | ☑ (the --opt step runs through opt's skill run(), which gates) |
+| vibrational-analysis | opt, conformer-search | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| conformational-analysis | conformer-search, opt | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| binding-energy | single-point-energy | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| logp-partition | single-point-energy | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| solvation | single-point-energy | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| fukui-reactivity | electrostatics | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| redox-potential | sp, opt, freq | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| reaction-energy | sp, opt, freq | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| pka-acidity | freq | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| transition-state | freq | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| reaction-profile | opt, freq, ts, irc | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
+| build-from-smiles | opt (optional QM refine) | ☑ (direct `from skills.X.scripts.run import run`; depends_on declared) | ☑ (sub-steps run the sibling skill's run(), which gates) |
 
 ## Sign-off gate
 

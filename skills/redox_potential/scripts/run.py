@@ -9,15 +9,23 @@ Runnable stand-alone via scripts/run.py.
 """
 from __future__ import annotations
 
+import os as _os, sys as _sys
+# Ensure the repo root is importable so `from skills.<sibling>...` resolves when
+# this file is run directly as a script (python skills/<pkg>/scripts/run.py),
+# where only the script's own dir is on sys.path.
+_REPO_ROOT = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))))
+if _REPO_ROOT not in _sys.path:
+    _sys.path.insert(0, _REPO_ROOT)
+
 # Skill discovery manifest (read by assay_core.discovery / the MCP server).
 SKILL_NAME = "redox-potential"      # kebab display name (matches SKILL.md frontmatter)
 SUBCOMMAND = "redox"      # engine subcommand this skill implements
 import os
 from typing import Any, Dict, Optional
 
-from assay_core.tasks import sp as sp_task
-from assay_core.tasks import opt as opt_task
-from assay_core.tasks import freq as freq_task
+from skills.single_point_energy.scripts import run as sp_task
+from skills.geometry_optimize.scripts import run as opt_task
+from skills.vibrational_analysis.scripts import run as freq_task
 from assay_core.calculators import program_label
 from assay_core.io import read_geometry
 from assay_core.integrity import finalize

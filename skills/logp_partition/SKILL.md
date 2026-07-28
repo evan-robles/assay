@@ -2,6 +2,7 @@
 name: logp-partition
 description: Estimates the octanol-water partition coefficient of a neutral molecule from a solvation-free-energy thermodynamic cycle.
 category: chemistry
+depends_on: [single-point-energy]
 ---
 
 # Logp Partition

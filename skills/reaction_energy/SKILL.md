@@ -2,6 +2,7 @@
 name: reaction-energy
 description: Compute the reaction energy, enthalpy, and free energy for a balanced chemical reaction by evaluating every species at one consistent level of theory and subtracting reactants from products.
 category: chemistry
+depends_on: [geometry-optimize, single-point-energy, vibrational-analysis]
 ---
 
 # Reaction Energy

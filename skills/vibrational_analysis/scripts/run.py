@@ -11,6 +11,14 @@ siblings in-process (via their task shims) — that depends only on the shared
 """
 from __future__ import annotations
 
+import os as _os, sys as _sys
+# Ensure the repo root is importable so `from skills.<sibling>...` resolves when
+# this file is run directly as a script (python skills/<pkg>/scripts/run.py),
+# where only the script's own dir is on sys.path.
+_REPO_ROOT = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))))
+if _REPO_ROOT not in _sys.path:
+    _sys.path.insert(0, _REPO_ROOT)
+
 # Skill discovery manifest (read by assay_core.discovery / the MCP server).
 SKILL_NAME = "vibrational-analysis"      # kebab display name (matches SKILL.md frontmatter)
 SUBCOMMAND = "freq"      # engine subcommand this skill implements
@@ -32,7 +40,7 @@ from assay_core.integrity import finalize
 from assay_core.schema import base_result, element_warnings, KCAL_TO_EV, CAL_TO_EV
 from assay_core.constants import EV_PER_CM, CM_PER_EV
 from assay_core.tasks._mopac_parsers import parse_mopac_extras, parse_mopac_force
-from assay_core.tasks import opt as opt_task
+from skills.geometry_optimize.scripts import run as opt_task
 
 
 def _gas_phase_entropy_warning(solvent: Optional[str]) -> List[str]:
@@ -104,7 +112,7 @@ def run(
     if auto_confsearch:
         # Run CREST + PM7 postopt; substitute the lowest-energy minimum as
         # the input geometry for the subsequent preopt+freq pipeline.
-        from assay_core.tasks import confsearch as cs_task
+        from skills.conformer_search.scripts import run as cs_task
         cs_result = cs_task.run(
             input_path,
             method="xtb",          # CREST is xtb-only; postopt at PM7

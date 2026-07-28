@@ -9,6 +9,14 @@ depends only on the shared `assay_core` physics library. Runnable stand-alone:
 """
 from __future__ import annotations
 
+import os as _os, sys as _sys
+# Ensure the repo root is importable so `from skills.<sibling>...` resolves when
+# this file is run directly as a script (python skills/<pkg>/scripts/run.py),
+# where only the script's own dir is on sys.path.
+_REPO_ROOT = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))))
+if _REPO_ROOT not in _sys.path:
+    _sys.path.insert(0, _REPO_ROOT)
+
 # Skill discovery manifest (read by assay_core.discovery / the MCP server).
 SKILL_NAME = "conformer-search"      # kebab display name (matches SKILL.md frontmatter)
 SUBCOMMAND = "confsearch"      # engine subcommand this skill implements
@@ -918,7 +926,7 @@ def _postopt_mopac(
     rotatable_bonds: Optional[List[Dict[str, Any]]] = None,
 ):
     """Re-optimize each seed conformer with PM7 (native EF), then dedup."""
-    from assay_core.tasks.opt import _run_mopac
+    from skills.geometry_optimize.scripts.run import _run_mopac
 
     post_dir = os.path.join(workdir, "postopt_mopac")
     os.makedirs(post_dir, exist_ok=True)

@@ -2,6 +2,7 @@
 name: binding-energy
 description: Computes the binding or interaction energy between a molecular complex and its constituent fragments.
 category: chemistry
+depends_on: [single-point-energy]
 ---
 
 # Binding Energy

@@ -2,6 +2,7 @@
 name: build-from-smiles
 description: Generate a 3D xyz geometry from a SMILES string using Open Babel, optionally refining with QM.
 category: chemistry
+depends_on: [geometry-optimize]
 ---
 
 # Build 3D Molecule from SMILES

@@ -10,6 +10,14 @@ geometry-optimize sibling via its task shim). Runnable stand-alone:
 """
 from __future__ import annotations
 
+import os as _os, sys as _sys
+# Ensure the repo root is importable so `from skills.<sibling>...` resolves when
+# this file is run directly as a script (python skills/<pkg>/scripts/run.py),
+# where only the script's own dir is on sys.path.
+_REPO_ROOT = _os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))))
+if _REPO_ROOT not in _sys.path:
+    _sys.path.insert(0, _REPO_ROOT)
+
 # Skill discovery manifest (read by assay_core.discovery / the MCP server).
 SKILL_NAME = "build-from-smiles"      # kebab display name (matches SKILL.md frontmatter)
 SUBCOMMAND = "build"      # engine subcommand this skill implements
@@ -209,7 +217,7 @@ def run(
 
     # Optional QM refinement step
     if opt_method:
-        from assay_core.tasks import opt as opt_task
+        from skills.geometry_optimize.scripts import run as opt_task
         q = 0 if opt_charge is None else opt_charge
         m = 1 if opt_multiplicity is None else opt_multiplicity
         qm_xyz = os.path.splitext(out_xyz)[0] + f"_{opt_method}.xyz"

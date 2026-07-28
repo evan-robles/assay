@@ -2,6 +2,7 @@
 name: conformational-analysis
 description: Map the torsional energy profile and rotation barrier around a specific bond via a relaxed dihedral scan, producing a per-dihedral energy-vs-angle PNG and a relaxed trajectory.
 category: chemistry
+depends_on: [conformer-search, geometry-optimize]
 ---
 
 # Conformational Analysis (Relaxed Dihedral Scan)

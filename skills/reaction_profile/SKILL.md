@@ -2,6 +2,7 @@
 name: reaction-profile
 description: Characterize a reaction end-to-end to produce activation and reaction free energies, an IRC connectivity verdict, and an annotated energy diagram.
 category: chemistry
+depends_on: [geometry-optimize, intrinsic-reaction-coordinate, transition-state, vibrational-analysis]
 ---
 
 # Reaction Profile

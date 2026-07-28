@@ -2,6 +2,7 @@
 name: redox-potential
 description: Estimates the one- or multi-electron oxidation or reduction potential of a redox-active species against a chosen reference electrode.
 category: chemistry
+depends_on: [geometry-optimize, single-point-energy, vibrational-analysis]
 ---
 
 # Redox Potential
