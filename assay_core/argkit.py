@@ -359,9 +359,12 @@ def run_cli(parser: argparse.ArgumentParser,
             *,
             task: str,
             argv: Optional[List[str]] = None,
+            call_run: Optional[Callable[[argparse.Namespace, str, dict], dict]] = None,
             build_run_kwargs: Optional[Callable[[argparse.Namespace, str, dict], dict]] = None,
+            resolve_out: Optional[Callable[[argparse.Namespace, dict], str]] = None,
+            post_write: Optional[Callable[[argparse.Namespace, dict, str], None]] = None,
             emit_artifact_paths: Optional[Callable[[dict], None]] = None) -> int:
-    """The mandatory `__main__` spine for a self-contained single-input skill.
+    """The mandatory `__main__` spine for a self-contained skill.
 
     Every guardrail a stand-alone skill run must not bypass is wired here, in the
     same order and with the same behavior as the engine CLI's main():
@@ -369,7 +372,7 @@ def run_cli(parser: argparse.ArgumentParser,
       parse (choices #3 + normalizers #4 already applied via type=)
         -> gas-phase synonym normalize
         -> level-of-theory gate (#2)
-        -> fd-1 -> fd-2 redirect (#9, protects the result JSON from backend banners)
+        -> fd-1 -> fd-2 redirect + live .out (#9/#10, protects the result JSON)
         -> call run_fn under the integrity catch (#8, --allow-unconverged, --out on failure)
         -> input_configs.yaml persistence (#12)
         -> restore stdout, emit per --stdout mode (#7) + artifact paths to stderr
@@ -377,11 +380,21 @@ def run_cli(parser: argparse.ArgumentParser,
 
     Args:
       parser: the skill's build_parser() (must compose the shared option builders).
-      run_fn: the skill's typed run(); called with (input_path, **kwargs).
+      run_fn: the skill's typed run().
       task: the task id used for the default --out name and integrity naming.
-      build_run_kwargs: optional (args, cli, pyscf_kwargs) -> kwargs mapper for
-        skills whose run() takes extra positional/keyword args beyond the common
-        set. Defaults to the single-input calc convention.
+      call_run: optional (args, cli, pyscf_kwargs) -> result. Full control of HOW
+        run_fn is invoked, for skills whose run() does not take a leading
+        input_path (e.g. build takes molecule=, resolve takes name=). Overrides
+        build_run_kwargs. Defaults to the single-input calc convention:
+        run_fn(args.input, method=..., charge=..., ..., **pyscf_kwargs).
+      build_run_kwargs: optional (args, cli, pyscf_kwargs) -> kwargs for the
+        single-input convention (run_fn(args.input, **kwargs)) when a skill just
+        needs a few extra keyword args (e.g. opt's fmax/steps).
+      resolve_out: optional (args, result) -> out path, for skills with bespoke
+        naming (build, resolve). Defaults to args.out or <stem>_<task>_<method>.json.
+      post_write: optional (args, result, out_path) -> None, run AFTER the result
+        JSON is written, for extra artifacts (e.g. confsearch's ensemble xyz). May
+        mutate result + is expected to re-write it if so.
       emit_artifact_paths: optional (result) -> None hook to print extra artifact
         paths (plots, cubes, trajectories) to stderr, mirroring main()'s per-task
         stderr lines.
@@ -400,18 +413,20 @@ def run_cli(parser: argparse.ArgumentParser,
     cli = cli_invocation()
     pyscf_kwargs = pyscf_kwargs_from_args(args)
 
-    if build_run_kwargs is not None:
-        run_kwargs = build_run_kwargs(args, cli, pyscf_kwargs)
-        input_path = getattr(args, "input", None)
-    else:
-        input_path = args.input
-        run_kwargs = dict(
-            method=args.method, charge=args.charge,
-            multiplicity=args.multiplicity, solvent=args.solvent,
-            cli=cli, **pyscf_kwargs,
-        )
+    # Decide how run_fn is invoked. `call_run` gives full control (build/resolve);
+    # otherwise use the single-input convention with optional extra kwargs.
+    if call_run is None:
+        if build_run_kwargs is not None:
+            _run_kwargs = build_run_kwargs(args, cli, pyscf_kwargs)
+        else:
+            _run_kwargs = dict(
+                method=args.method, charge=args.charge,
+                multiplicity=args.multiplicity, solvent=args.solvent,
+                cli=cli, **pyscf_kwargs,
+            )
 
-    out_path = args.out or _default_out(input_path, task, getattr(args, "method", "na"))
+        def call_run(a, c, pk):  # noqa: ARG001 - uniform signature
+            return run_fn(a.input, **_run_kwargs)
 
     from . import runlog
     import datetime
@@ -457,25 +472,65 @@ def run_cli(parser: argparse.ArgumentParser,
         # No log (e.g. read-only cwd): still protect the result JSON via fd1->fd2.
         os.dup2(2, 1)
 
+    def _resolve_out(result: dict) -> str:
+        if resolve_out is not None:
+            return resolve_out(args, result)
+        if getattr(args, "out", None):
+            return args.out
+        return _default_out(args.input, task, getattr(args, "method", "na"))
+
+    def _restore_fds():
+        try:
+            sys.stdout.flush(); sys.stderr.flush()
+        except Exception:  # noqa: BLE001
+            pass
+        os.dup2(_real_stdout_fd, 1)
+        os.dup2(_real_stderr_fd, 2)
+
     integrity_failed = False
     try:
-        result = run_fn(input_path, **run_kwargs)
-        write_result(result, out_path)
-    except IntegrityError as e:
-        result = e.result                 # the stamped partial result
-        write_result(result, out_path)    # EVIDENCE PRESERVED on disk
-        integrity_failed = True
+        try:
+            result = call_run(args, cli, pyscf_kwargs)
+            out_path = _resolve_out(result)
+            write_result(result, out_path)
+        except IntegrityError as e:
+            result = e.result                 # the stamped partial result
+            out_path = _resolve_out(result)
+            write_result(result, out_path)    # EVIDENCE PRESERVED on disk
+            integrity_failed = True
 
-    # Parameter persistence (skill-standards): full effective params next to --out.
-    try:
-        ledger.write_input_configs(args, out_path, task=task)
-    except Exception:  # noqa: BLE001 - persistence must never fail the calc
-        pass
+        # Optional post-write artifacts (e.g. confsearch ensemble xyz); may
+        # mutate + re-write result.
+        if post_write is not None:
+            try:
+                post_write(args, result, out_path)
+            except Exception:  # noqa: BLE001 - side-writes must not fail the calc
+                pass
 
-    sys.stdout.flush()
-    sys.stderr.flush()
-    os.dup2(_real_stdout_fd, 1)
-    os.dup2(_real_stderr_fd, 2)
+        # Parameter persistence (skill-standards): full effective params by --out.
+        try:
+            ledger.write_input_configs(args, out_path, task=task)
+        except Exception:  # noqa: BLE001 - persistence must never fail the calc
+            pass
+    except Exception as exc:  # noqa: BLE001
+        # A NON-integrity error from run() (e.g. invalid SMILES, missing binary,
+        # unreadable geometry): restore the real fds so the message reaches the
+        # caller's stderr (not just the .out log), record it in the log, then
+        # exit nonzero — matching the pre-inversion CLI behavior.
+        _restore_fds()
+        os.close(_real_stdout_fd); os.close(_real_stderr_fd)
+        if log_fh is not None:
+            try:
+                log_fh.write(f"\n# ERROR: {type(exc).__name__}: {exc}\n")
+                log_fh.flush(); log_fh.close()
+            except Exception:  # noqa: BLE001
+                pass
+        print(f"{parser.prog or task}: error: {exc}", file=sys.stderr)
+        if log_fh is not None:
+            print(f"# assay live log: {live_out}", file=sys.stderr)
+        return 1
+
+    _restore_fds()
     os.close(_real_stdout_fd)
     os.close(_real_stderr_fd)
 

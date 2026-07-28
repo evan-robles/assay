@@ -12,7 +12,7 @@ Compute the molecular dipole moment of water from atomic charges using a fast se
 
 ```bash
 # Env: anl_env
-python skills/electrostatics/scripts/electrostatics.py --method xtb water.xyz --out water_electrostatics.json
+python skills/electrostatics/scripts/run.py --method xtb water.xyz --out water_electrostatics.json
 ```
 
 Generated files: [`water_electrostatics.json`](water_electrostatics.json), [`water.xyz`](water.xyz)

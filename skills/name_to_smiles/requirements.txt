@@ -1,4 +1,4 @@
-# electrostatics is a self-contained skill: scripts/run.py owns the workflow and imports
+# name-to-smiles is a self-contained skill: scripts/run.py owns the workflow and imports
 # the shared physics library `assay_core`. Installing assay_core (the repo's
 # `pip install -e .`) pulls in the Python deps below transitively; they are
 # listed here so the skill's own dependency surface is explicit.

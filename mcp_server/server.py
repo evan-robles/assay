@@ -42,6 +42,12 @@ SKILLS_DIR = REPO_ROOT / "skills"
 # skill folders. Until then, unconverted subcommands fall back to the engine CLI.
 CONVERTED_SKILLS = {
     "sp": "single_point_energy",
+    "opt": "geometry_optimize",
+    "freq": "vibrational_analysis",
+    "confsearch": "conformer_search",
+    "build": "build_from_smiles",
+    "resolve": "name_to_smiles",
+    "electrostatics": "electrostatics",
 }
 
 
@@ -101,23 +107,24 @@ def kill_active_engines() -> int:
     return len(signalled)
 
 # tool name -> (engine subcommand, skill folder for its SKILL.md description)
-# Tool names == skill folder names (kebab-case). Mirrors the assay CLI
-# subcommands; one entry per skill.
+# Tool name is the kebab display name; the folder is the on-disk skill dir —
+# underscore-named for CONVERTED skills (importable package), kebab for the rest
+# (still generated thin clients). Mirrors the assay CLI subcommands; one per skill.
 TOOLS = {
     "single-point-energy":     ("sp",             "single_point_energy"),
-    "geometry-optimize":       ("opt",            "geometry-optimize"),
-    "vibrational-analysis":    ("freq",           "vibrational-analysis"),
+    "geometry-optimize":       ("opt",            "geometry_optimize"),
+    "vibrational-analysis":    ("freq",           "vibrational_analysis"),
     "binding-energy":          ("binding",        "binding-energy"),
     "redox-potential":         ("redox",          "redox-potential"),
-    "conformer-search":        ("confsearch",     "conformer-search"),
+    "conformer-search":        ("confsearch",     "conformer_search"),
     "frontier-orbitals":       ("frontier",       "frontier-orbitals"),
     "electrostatics":          ("electrostatics", "electrostatics"),
     "solvation":               ("solvation",      "solvation"),
     "logp-partition":          ("logp",           "logp-partition"),
     "reaction-profile":        ("profile",        "reaction-profile"),
     "pka-acidity":             ("pka",            "pka-acidity"),
-    "build-from-smiles":       ("build",          "build-from-smiles"),
-    "name-to-smiles":          ("resolve",        "name-to-smiles"),
+    "build-from-smiles":       ("build",          "build_from_smiles"),
+    "name-to-smiles":          ("resolve",        "name_to_smiles"),
     "fukui-reactivity":        ("fukui",          "fukui-reactivity"),
     "transition-state":        ("ts",             "transition-state"),
     "intrinsic-reaction-coordinate": ("irc",      "intrinsic-reaction-coordinate"),

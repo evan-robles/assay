@@ -26,7 +26,7 @@ Compute the dipole moment (magnitude and Cartesian vector, in Debye) and atomic 
 
 ```bash
 # Env: anl_env
-python skills/electrostatics/scripts/electrostatics.py --method <xtb|mopac|dft|hf> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge N] [--mult N] [--out <path>] input.xyz
+python skills/electrostatics/scripts/run.py --method <xtb|mopac|dft|hf> [--tier <T>] [--functional <F>] [--basis <B>] [--solvent <S>] [--charge N] [--mult N] [--out <path>] input.xyz
 ```
 
 Arguments:
@@ -48,7 +48,7 @@ Read the JSON — it is already written to `--out` (default `<stem>_electrostati
 ## Examples
 ```bash
 # Env: anl_env
-python skills/electrostatics/scripts/electrostatics.py --method xtb --solvent water mol.xyz
+python skills/electrostatics/scripts/run.py --method xtb --solvent water mol.xyz
 ```
 See [`examples/`](examples/) for a validated example with literature comparison.
 

@@ -29,19 +29,19 @@ For each skill, confirm the entrypoint spine, then the applicable guardrails.
 | Skill | typed `run()` (#1) | uses `run_cli` spine (#2,7,8,9,12) | shared `choices`+normalizers (#3,#4) | `--stdout` modes (#7) | integrity gate verified (#8) | fd-redirect: JSON clean (#9) | live `.out` path (#10) | `input_configs.yaml` (#12) | `--out` default+on-fail (#13) | regression + example reproduce numbers |
 |---|---|---|---|---|---|---|---|---|---|---|
 | single-point-energy | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
-| geometry-optimize | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| vibrational-analysis | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| conformer-search | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| geometry-optimize | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| vibrational-analysis | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| conformer-search | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
 | conformational-analysis | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| build-from-smiles | ☐ | ☐ | ☐ (`--opt` not `--method`) | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| name-to-smiles | ☐ | ☐ | N/A (no QM knobs) | ☐ | N/A | ☐ | ☐ | ☐ | ☐ | ☐ |
+| build-from-smiles | ☑ | ☑ | ☑ (`--opt` not `--method`) | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| name-to-smiles | ☑ | ☑ | N/A (no QM knobs) | ☑ | N/A | ☑ | ☑ | ☑ | ☑ | ☑ |
 | binding-energy | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | redox-potential | ☐ | ☐ | ☐ (+`--ref`,`--mode`) | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | pka-acidity | ☐ | ☐ | ☐ (+`--mode`; `--accept-defaults`) | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | logp-partition | ☐ | ☐ | ☐ (solvent pinned) | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | solvation | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | frontier-orbitals | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| electrostatics | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| electrostatics | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
 | fukui-reactivity | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | transition-state | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | intrinsic-reaction-coordinate | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
@@ -56,7 +56,7 @@ and its declared `depends_on:` must match its imports (DAG lint).
 
 | Composite | imports (sibling skill run()) | `depends_on:` declared | sub-step still integrity-gated (#8) |
 |---|---|---|---|
-| vibrational-analysis | opt, conformer-search | ☐ | ☐ |
+| vibrational-analysis | opt, conformer-search | ☐ (composes via the opt/confsearch task shims → skills, not yet direct sibling imports) | ☑ (sub-steps run through the skill run()s, which gate) |
 | conformational-analysis | conformer-search, opt | ☐ | ☐ |
 | binding-energy | single-point-energy | ☐ | ☐ |
 | logp-partition | single-point-energy | ☐ | ☐ |
@@ -67,7 +67,7 @@ and its declared `depends_on:` must match its imports (DAG lint).
 | pka-acidity | freq | ☐ | ☐ |
 | transition-state | freq | ☐ | ☐ |
 | reaction-profile | opt, freq, ts, irc | ☐ | ☐ |
-| build-from-smiles | opt (optional QM refine) | ☐ | ☐ |
+| build-from-smiles | opt (optional QM refine) | ☐ (composes via the opt task shim → skill, not yet a direct sibling import) | ☑ (the --opt step runs through opt's skill run(), which gates) |
 
 ## Sign-off gate
 
