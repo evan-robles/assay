@@ -2,12 +2,12 @@
 """assay MCP server — one unified engine behind the open MCP protocol.
 
 Exposes every assay skill as an MCP tool. The chemistry engine lives once, in
-`mcp_server/chemkit_engine/`; this server owns it and dispatches each tool call
-to the engine's CLI. Built on the official `mcp` SDK (FastMCP) over stdio, so it
-works with ANY MCP-capable client, not just one vendor.
+the repo-root `assay_core/` library; this server owns it and dispatches each tool
+call to the engine's CLI. Built on the official `mcp` SDK (FastMCP) over stdio,
+so it works with ANY MCP-capable client, not just one vendor.
 
 Each tool mirrors a assay subcommand. A tool takes the same arguments the CLI
-takes, as a list of CLI tokens (`args`), runs `python -m chemkit_engine.cli
+takes, as a list of CLI tokens (`args`), runs `python -m assay_core.cli
 <task> <args>` as an isolated subprocess, and returns the JSON result the engine
 prints.
 Running each calculation in its own process keeps long, stateful QM jobs (pyscf
@@ -32,8 +32,9 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 HERE = Path(__file__).resolve().parent
-ENGINE_DIR = HERE / "chemkit_engine"
-SKILLS_DIR = HERE.parent / "skills"
+REPO_ROOT = HERE.parent
+ENGINE_DIR = REPO_ROOT / "assay_core"
+SKILLS_DIR = REPO_ROOT / "skills"
 
 # --------------------------------------------------------------------------- #
 # Live engine-subprocess registry — lets an interactive caller (the assay
@@ -113,11 +114,25 @@ TOOLS = {
     "visualize-orbitals":      ("orbitals",       "visualize-orbitals"),
 }
 
+# Server instructions injected into every connecting MCP client (Claude Code
+# renders these as a "# MCP Server Instructions" context block automatically, and
+# any MCP-capable client receives them in the `initialize` response). Committed to
+# the repo so the guidance ships with the package — every user who connects gets
+# ASSAY's operating rules with no per-user setup. Kept lean deliberately: it
+# orients and points to rules/*.md rather than pasting them, since it loads into
+# context every session. Guarded so a missing file never breaks startup.
+_INSTRUCTIONS_PATH = HERE / "INSTRUCTIONS.md"
+_INSTRUCTIONS = (
+    _INSTRUCTIONS_PATH.read_text(encoding="utf-8")
+    if _INSTRUCTIONS_PATH.exists()
+    else None
+)
+
 # log_level="WARNING" keeps the SDK's per-request INFO chatter (e.g.
 # "Processing request of type CallToolRequest") off the server's stderr, which a
 # stdio caller inherits — so the caller's stderr leads with the live-log path and
 # real diagnostics, not transport noise.
-mcp = FastMCP("assay", log_level="WARNING")
+mcp = FastMCP("assay", log_level="WARNING", instructions=_INSTRUCTIONS)
 
 
 def _arg_spec(subcommand: str) -> str:
@@ -126,7 +141,7 @@ def _arg_spec(subcommand: str) -> str:
     an agent call correctly WITHOUT a `--help` round-trip. Best-effort: returns
     "" if the engine can't be imported (description still works without it)."""
     try:
-        from chemkit_engine.cli import format_subcommand_args
+        from assay_core.cli import format_subcommand_args
         return format_subcommand_args(subcommand)
     except Exception:  # pragma: no cover - never break tool registration
         return ""
@@ -167,12 +182,12 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
     always gets structured output.
     """
     env = dict(os.environ)
-    # Make `import chemkit_engine` resolve to mcp_server/chemkit_engine for the subprocess.
+    # Make `import assay_core` resolve to the repo-root assay_core/ for the subprocess.
     env["PYTHONPATH"] = os.pathsep.join(
-        [str(HERE), env.get("PYTHONPATH", "")]
+        [str(REPO_ROOT), env.get("PYTHONPATH", "")]
     ).rstrip(os.pathsep)
     run_cwd = cwd if (cwd and os.path.isdir(cwd)) else str(HERE)
-    cmd = [sys.executable, "-m", "chemkit_engine.cli", subcommand, *args]
+    cmd = [sys.executable, "-m", "assay_core.cli", subcommand, *args]
 
     # --- Optional remote execution (CHEMKIT_REMOTE_HOST) -----------------------
     # On clusters (e.g. Aurora) the agent + this server can run on a LOGIN node
@@ -495,7 +510,7 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
     __signature__ built from arg_spec.skill_params(subcommand); the shared
     arg_spec.params_to_argv turns the validated kwargs back into engine argv.
     """
-    from chemkit_engine import arg_spec as _arg_spec_mod
+    from assay_core import arg_spec as _arg_spec_mod
 
     description = _description(skill_folder, subcommand)
     params = _arg_spec_mod.skill_params(subcommand)
@@ -681,7 +696,7 @@ def cli_main(argv: list[str] | None = None) -> int:
     if argv and argv[0] == "--list-skills":
         rest = argv[1:]
         try:
-            from chemkit_engine.cli import list_skills  # type: ignore
+            from assay_core.cli import list_skills  # type: ignore
             sys.stdout.write(list_skills(as_json=("--json" in rest)))
             return 0
         except Exception:  # noqa: BLE001
@@ -701,7 +716,7 @@ def cli_main(argv: list[str] | None = None) -> int:
     # canonical subcommand via the engine's alias map (single source of truth),
     # so `assay frontier-orbitals ...` works at the human/agent front door too.
     try:
-        from chemkit_engine.cli import _alias_to_canonical  # type: ignore
+        from assay_core.cli import _alias_to_canonical  # type: ignore
         subcommand = _alias_to_canonical().get(subcommand, subcommand)
     except Exception:  # noqa: BLE001
         pass
@@ -711,7 +726,7 @@ def cli_main(argv: list[str] | None = None) -> int:
         # did-you-mean suggestion from the engine's fuzzy matcher.
         hint = ""
         try:
-            from chemkit_engine.cli import _suggest_subcommand  # type: ignore
+            from assay_core.cli import _suggest_subcommand  # type: ignore
             sug = _suggest_subcommand(subcommand)
             if sug:
                 hint = f" did you mean {sug!r}?"
@@ -731,7 +746,7 @@ def cli_main(argv: list[str] | None = None) -> int:
         if str(HERE) not in sys.path:
             sys.path.insert(0, str(HERE))
         try:
-            from chemkit_engine.cli import main as engine_main  # type: ignore
+            from assay_core.cli import main as engine_main  # type: ignore
         except Exception:  # noqa: BLE001 — fall back to the server path if import fails
             engine_main = None
         if engine_main is not None:

@@ -10,7 +10,7 @@ crown-jewel fidelity benchmark).
 
 The check that matters most: `report_value_field` must be either null or the
 CANONICAL headline field the engine actually emits for that skill's task — read
-from chemkit_engine.result_schema.HEADLINE (the same registry the engine's
+from assay_core.result_schema.HEADLINE (the same registry the engine's
 canonicalize() uses). This makes "Layer C scored the right field" verifiable
 statically, not dependent on hand-kept maps.
 
@@ -29,7 +29,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 _REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(_REPO / "mcp_server"))
+sys.path.insert(0, str(_REPO))  # assay_core lives at the repo root
 
 # Allowed enum values, mirrored from the engine CLI.
 _METHODS = {"xtb", "mopac", "dft", "hf"}
@@ -57,7 +57,7 @@ def _skill_to_taskid() -> Dict[str, Optional[str]]:
       skill(folder) --TOOLS--> subcommand --engine--> task-id.
     """
     from server import TOOLS  # folder == tool name == spec.skill
-    from chemkit_engine import cli  # subcommand set (validation only)
+    from assay_core import cli  # subcommand set (validation only)
 
     folder_to_sub = {folder: sub for (sub, folder) in TOOLS.values()}
     # subcommand -> task-id: the engine's _dispatch maps subcommand to a task
@@ -166,7 +166,7 @@ def main() -> int:
     ap.add_argument("suite", nargs="?", help="one *-validation folder (default: all)")
     args = ap.parse_args()
 
-    from chemkit_engine import result_schema
+    from assay_core import result_schema
     skill_to_task = _skill_to_taskid()
     headline = result_schema.HEADLINE
 

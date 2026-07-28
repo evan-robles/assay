@@ -57,10 +57,10 @@ def skill_names() -> List[str]:
 # --------------------------------------------------------------------------- #
 def typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
     """Convert the model's typed ``chemkit`` tool params into canonical engine
-    argv via ``chemkit_engine.arg_spec.params_to_argv`` — the same converter the
+    argv via ``assay_core.arg_spec.params_to_argv`` — the same converter the
     MCP server uses. A value for a field the chosen skill lacks is dropped (not
     injected); the legacy ``xyz`` alias maps to the skill's real positional."""
-    from chemkit_engine import arg_spec as _A
+    from assay_core import arg_spec as _A
     skill = params.get("skill")
     if not skill:
         return []
@@ -88,7 +88,7 @@ def _build_chemkit_tool() -> Dict[str, Any]:
 
     Enums are string ``enum``s with nullability via a ``["<type>","null"]`` union,
     never a ``None`` enum member (a None enum member 500s argo's Gemini endpoint)."""
-    from chemkit_engine import arg_spec as _A
+    from assay_core import arg_spec as _A
 
     _PY_TO_JSON = {int: "integer", float: "number", str: "string", bool: "boolean"}
     names = skill_names()
@@ -302,7 +302,7 @@ def list_skills_json() -> str:
     from the engine's authoritative discovery — the same data
     ``chemkit --list-skills --json`` surfaces."""
     try:
-        from chemkit_engine.cli import list_skills as _ls
+        from assay_core.cli import list_skills as _ls
         return _ls(as_json=True)
     except Exception as exc:  # noqa: BLE001 - discovery must never crash a turn
         return json.dumps({"error": f"list_skills failed: {exc}",
@@ -338,7 +338,7 @@ def _resolve_skill(name: str) -> str:
         if name == sub:
             return tool_name
     try:
-        from chemkit_engine.cli import _alias_to_canonical
+        from assay_core.cli import _alias_to_canonical
         canon = _alias_to_canonical().get(name, name)
         for tool_name, (sub, _folder) in server.TOOLS.items():
             if canon == sub:

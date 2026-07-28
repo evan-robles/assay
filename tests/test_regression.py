@@ -1214,13 +1214,13 @@ def test_orbitals_open_shell_o2_triplet_hf(tmp_run):
 
 import importlib  # noqa: E402
 
-_MCP = str(Path(__file__).parent.parent / "mcp_server")
+_MCP = str(Path(__file__).parent.parent)  # repo root (assay_core lives here)
 if _MCP not in sys.path:
     sys.path.insert(0, _MCP)
 
 
 def _integrity():
-    return importlib.import_module("chemkit_engine.integrity")
+    return importlib.import_module("assay_core.integrity")
 
 
 # ---- 1) module unit tests (no QM) ----------------------------------------
@@ -1488,7 +1488,7 @@ def test_gate_binding_charge_mismatch_aborts(tmp_run):
 # are pure-dict unit tests (no engine run), mirroring the integrity unit tests.
 # ===========================================================================
 def _result_schema():
-    return importlib.import_module("chemkit_engine.result_schema")
+    return importlib.import_module("assay_core.result_schema")
 
 
 def test_schema_canonicalize_stamps_headline_pointer():
@@ -1579,14 +1579,14 @@ def _server_tools():
 
 
 def test_tools_cli_consistency():
-    cli = importlib.import_module("chemkit_engine.cli")
+    cli = importlib.import_module("assay_core.cli")
     tools_subs = [sub for (sub, _folder) in _server_tools().values()]
     problems = cli.check_tools_cli_consistency(tools_subs)
     assert not problems, "TOOLS<->CLI mismatch:\n" + "\n".join(problems)
 
 
 def test_tools_cli_consistency_detects_a_phantom_tool():
-    cli = importlib.import_module("chemkit_engine.cli")
+    cli = importlib.import_module("assay_core.cli")
     tools_subs = [sub for (sub, _folder) in _server_tools().values()]
     # inject a subcommand the engine has no subparser for -> must be flagged
     problems = cli.check_tools_cli_consistency(tools_subs + ["not_a_subcommand"])
@@ -1616,7 +1616,7 @@ def test_tool_descriptions_advertise_arg_spec():
     """Every MCP tool description embeds its derived argument spec (flags, types,
     choices) so an agent can call correctly without a `--help` round-trip."""
     server = importlib.import_module("server")
-    cli = importlib.import_module("chemkit_engine.cli")
+    cli = importlib.import_module("assay_core.cli")
     for tool_name, (sub, folder) in server.TOOLS.items():
         spec = cli.describe_subcommand(sub)
         assert spec, f"{sub}: empty arg spec"
@@ -1659,7 +1659,7 @@ def test_populated_specs_pass_static_schema():
         "spec_schema", repo / "benchmarks" / "spec_schema.py")
     ss = importlib.util.module_from_spec(spec_mod)
     spec_mod.loader.exec_module(ss)
-    rs = importlib.import_module("chemkit_engine.result_schema")
+    rs = importlib.import_module("assay_core.result_schema")
     skill_to_task = ss._skill_to_taskid()
     headline = rs.HEADLINE
     base = repo / "benchmarks" / "fidelity"

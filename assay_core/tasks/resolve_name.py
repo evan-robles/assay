@@ -6,7 +6,7 @@ reports which source answered with an ACS-format citation. This is the pure
 lookup half of `build-from-smiles`: it does NOT generate a 3D geometry, run
 Open Babel, or do any QM. Use `build-from-smiles` when you actually want an .xyz.
 
-The heavy lifting lives in ``chemkit_engine.resolve.resolve_name_to_smiles``;
+The heavy lifting lives in ``assay_core.resolve.resolve_name_to_smiles``;
 this task is a thin wrapper that shapes the result into the standard chemkit
 JSON envelope and runs it through the shared ``finalize`` seam.
 """

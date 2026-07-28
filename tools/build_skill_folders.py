@@ -2,7 +2,7 @@
 """Generate the thin per-skill client scripts (conforming to skill-standards.md).
 
 Architecture: the chemistry engine lives ONCE behind the MCP server
-(`mcp_server/server.py` + `mcp_server/chemkit_engine/`). Each skill folder is:
+(`mcp_server/server.py` + `assay_core/`). Each skill folder is:
 
   skills/<kebab-name>/
     SKILL.md                  - the skill doc (authored; left untouched here)
@@ -88,11 +88,11 @@ def main():
         with open(os.path.join(folder, "requirements.txt"), "w") as f:
             f.write(REQUIREMENTS)
         # Remove stale root-level client + any old inlined engine tree
-        # (handles both the legacy `_engine` name and the current `chemkit_engine`).
+        # (handles both the legacy `_engine`/`chemkit_engine` names and the current `assay_core`).
         for stale in (os.path.join(folder, f"{name}.py"),):
             if os.path.isfile(stale):
                 os.remove(stale)
-        for engine_name in ("_engine", "chemkit_engine"):
+        for engine_name in ("_engine", "chemkit_engine", "assay_core"):
             engine = os.path.join(folder, engine_name)
             if os.path.isdir(engine):
                 shutil.rmtree(engine)

@@ -23,7 +23,7 @@ Usage:
         --queue debug --walltime 01:00:00
 
     # or submit an arbitrary command:
-    python tools/aurora_submit.py submit --cmd "python -m chemkit_engine.cli sp --method xtb mol.xyz"
+    python tools/aurora_submit.py submit --cmd "python -m assay_core.cli sp --method xtb mol.xyz"
 
     python tools/aurora_submit.py status  <jobid>
     python tools/aurora_submit.py collect <jobid-or-rundir>

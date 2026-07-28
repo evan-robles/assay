@@ -55,6 +55,7 @@ Requirements:
 from __future__ import annotations
 
 import argparse
+import ast
 import difflib
 import hashlib
 import json
@@ -127,10 +128,10 @@ def _resolve_skill_name(skill: str) -> str:
         return skill  # already a real skill folder
     try:
         import sys as _sys
-        _mcp = str(_REPO / "mcp_server")
+        _mcp = str(_REPO)  # assay_core lives at the repo root
         if _mcp not in _sys.path:
             _sys.path.insert(0, _mcp)
-        from chemkit_engine.cli import SUBCOMMAND_ALIASES  # type: ignore
+        from assay_core.cli import SUBCOMMAND_ALIASES  # type: ignore
     except Exception:
         return skill
     # Build {any accepted spelling -> canonical subcommand}
@@ -156,10 +157,10 @@ def _import_engine_cli():
     module or None if unavailable."""
     try:
         import sys as _sys
-        _mcp = str(_REPO / "mcp_server")
+        _mcp = str(_REPO)  # assay_core lives at the repo root
         if _mcp not in _sys.path:
             _sys.path.insert(0, _mcp)
-        from chemkit_engine import cli as _cli  # type: ignore
+        from assay_core import cli as _cli  # type: ignore
         return _cli
     except Exception:
         return None
@@ -293,8 +294,49 @@ def _normalize_tool_args(raw: List[str]) -> List[str]:
     return _rejoin_multiword_solvent(out)
 
 
+def _coerce_extra_args(raw: Any) -> List[str]:
+    """Coerce the agent's `extra_args` into a proper list of argv tokens.
+
+    A correctly-formatted tool call gives a JSON array (["--no-preopt"]). But a
+    weaker model may emit the WHOLE array as a single STRING — either JSON
+    ('["--no-preopt"]') or a Python repr ("['--no-preopt']") — or a bare flag
+    string ("--no-preopt"). Iterating such a string with the historical
+    `[str(a) for a in extra_args]` explodes it into individual CHARACTERS
+    (['[', "'", '-', '-', 'n', 'o', ...]), which the engine then rejects as
+    "unrecognized arguments" — a tool-CALL FORMATTING quirk, not a chemistry
+    error (observed 2026-07-27: llama-3.1-8B passed extra_args="['--no-preopt']",
+    every affected run failed rc=1). Recover the intended tokens: parse a
+    stringified list (JSON, then Python literal), else shlex-split a bare string.
+    A genuine list is passed through (each element still normalized for
+    space-mashing via _normalize_tool_args by the caller).
+    """
+    if raw is None:
+        return []
+    if isinstance(raw, str):
+        s = raw.strip()
+        if not s:
+            return []
+        # Stringified list: try JSON, then Python literal (single-quoted repr).
+        if s[0] in "[(":
+            for parser in (json.loads, ast.literal_eval):
+                try:
+                    val = parser(s)
+                except (ValueError, SyntaxError):
+                    continue
+                if isinstance(val, (list, tuple)):
+                    return [str(x) for x in val]
+            # Looked like a list but wouldn't parse — fall through to shlex.
+        try:
+            return shlex.split(s)
+        except ValueError:
+            return [s]
+    if isinstance(raw, (list, tuple)):
+        return [str(a) for a in raw]
+    return [str(raw)]
+
+
 # Multiword gas-phase-meaning solvent values the engine treats as "no solvent"
-# (mirror mcp_server/chemkit_engine/cli.py's synonym set). If the model wrote one
+# (mirror mcp_server/assay_core/cli.py's synonym set). If the model wrote one
 # unquoted after --solvent, tokenization split it; we rejoin so the valid value
 # survives instead of leaving a stray token that argparse rejects.
 _MULTIWORD_SOLVENT_SYNONYMS = {
@@ -617,7 +659,7 @@ def _load_env_local() -> None:
 _load_env_local()
 
 # CLI --method token -> the display name the engine writes into result["method"].
-# (Confirmed in mcp_server/chemkit_engine/schema.py / a real run: xtb -> GFN2-xTB.)
+# (Confirmed in mcp_server/assay_core/schema.py / a real run: xtb -> GFN2-xTB.)
 # For dft the display name is functional/tier-dependent, so dft/hf are matched
 # loosely (token substring) rather than exact-equality.
 _METHOD_DISPLAY = {
@@ -1548,9 +1590,16 @@ def score_structure(spec: Dict[str, Any], truth: Dict[str, Any],
     got_n = reported.get("n_atoms", truth_n)  # agent may just confirm the build
     target_n = exp_n if exp_n is not None else truth_n
     if target_n is not None:
+        # Compare numerically: a model may report the count as a JSON string
+        # ("13") rather than an int (13); a correct-but-stringified count must
+        # PASS while a genuinely wrong number (or non-numeric) still FAILs.
+        try:
+            ok_n = int(got_n) == int(target_n)
+        except (TypeError, ValueError):
+            ok_n = got_n == target_n
         findings.append({
             "check": "built structure atom count",
-            "ok": got_n == target_n,
+            "ok": ok_n,
             "severity": "error",
             "expected": target_n, "got": got_n,
         })
@@ -1966,7 +2015,7 @@ _SKILL_NAMES = _agent.skill_names()
 def _typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
     """Convert the typed `chemkit` tool params into CANONICAL engine argv, via the
     ONE shared converter the MCP server also uses
-    (``chemkit_engine.arg_spec.params_to_argv``).
+    (``assay_core.arg_spec.params_to_argv``).
 
     This is the core robustness win: a model fills typed fields — now including
     the per-skill required flags (redox ``ox_charge``/``red_charge``, pka
@@ -1977,7 +2026,7 @@ def _typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
     call. The legacy alias ``xyz`` is mapped to the skill's real positional
     (``input``/``smiles``/``name``). ``extra_args`` stays as a rare escape hatch.
     """
-    from chemkit_engine import arg_spec as _A
+    from assay_core import arg_spec as _A
     skill = params.get("skill")
     if not skill:
         return []
@@ -1991,7 +2040,7 @@ def _typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
             values[pos] = values.pop("xyz")
         else:
             values.pop("xyz", None)
-    extra = [str(a) for a in (params.get("extra_args") or [])]
+    extra = _coerce_extra_args(params.get("extra_args"))
     return _A.params_to_argv(skill, values, extra_args=extra)
 
 
@@ -2010,7 +2059,7 @@ def _build_chemkit_tool() -> Dict[str, Any]:
     JSON-schema type rules mirror the server: enums are string `enum`s with
     nullability via a `["<type>","null"]` UNION, never a None enum member (a None
     enum member 500s argo's Gemini endpoint — observed 2026-07-06)."""
-    from chemkit_engine import arg_spec as _A
+    from assay_core import arg_spec as _A
 
     _PY_TO_JSON = {int: "integer", float: "number", str: "string", bool: "boolean"}
     props: Dict[str, Any] = {
@@ -2506,7 +2555,10 @@ def run_live_agent(spec: Dict[str, Any],
                     # skill-specific flags a weak model might space-mash) need
                     # normalizing, so normalize ONLY those and rebuild argv with
                     # the positional preserved intact.
-                    extra = [str(a) for a in (fargs.get("extra_args") or [])]
+                    # Coerce a stringified list ("['--no-preopt']") back into
+                    # tokens BEFORE normalizing, else iterating the string
+                    # explodes it into characters (see _coerce_extra_args).
+                    extra = _coerce_extra_args(fargs.get("extra_args"))
                     if extra:
                         # Only extra_args (rare skill-specific flags a weak model
                         # might space-mash) need normalizing; the typed fields and

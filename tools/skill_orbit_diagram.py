@@ -11,7 +11,7 @@ planet. Skills are split into two orbits:
 Solid spokes  : the agent orchestrates every skill (agent -> skill).
 Curved arcs   : composite -> primitive in-process composition (e.g. redox
                 imports sp/opt/freq). These edges are the real call graph read
-                from mcp_server/chemkit_engine/tasks/*.py.
+                from assay_core/tasks/*.py.
 
 The 20 skill names are the exact `TOOLS` registry from mcp_server/server.py.
 

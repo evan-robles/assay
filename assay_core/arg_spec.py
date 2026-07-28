@@ -13,7 +13,7 @@ many-argument skills (redox, pka): the *required* skill-specific flags
 
 This module derives, for EACH subcommand, an ordered list of typed
 :class:`Param` descriptors straight from the engine's argparse definitions (via
-``chemkit_engine.cli.describe_subcommand``), so it can never drift from the CLI.
+``assay_core.cli.describe_subcommand``), so it can never drift from the CLI.
 Callers use:
 
 - :func:`skill_params` — the typed params for a subcommand (drives the MCP tool's
