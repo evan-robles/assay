@@ -594,38 +594,93 @@ def cli_main(argv: list[str] | None = None) -> int:
         )
         return 2
 
-    # A per-subcommand help request (e.g. `assay pka --help`) is NOT a
-    # calculation: it must not spawn the server, create a live `.out` log, or get
-    # wrapped in result JSON. Print argparse's help directly, in-process, and
-    # exit. (We import the engine CLI lazily and let argparse's own --help action
-    # print + SystemExit; we translate that exit code back to an int.)
-    if "-h" in rest or "--help" in rest:
-        if str(HERE) not in sys.path:
-            sys.path.insert(0, str(HERE))
+    # `assay <sub> --help-json` — machine-readable arg spec for one subcommand,
+    # derived from the skill's own build_parser() (discovery/introspection), so it
+    # matches exactly what the MCP tool advertises. Handled before the calc path.
+    if "--help-json" in rest:
+        try:
+            from assay_core import discovery, cli as _cli  # type: ignore
+            bp = discovery.build_parser_for(subcommand)
+            if bp is not None:
+                spec = _cli.describe_parser(bp())
+                aliases = _cli.SUBCOMMAND_ALIASES.get(subcommand, [])
+                sys.stdout.write(json.dumps(
+                    {"subcommand": subcommand, "aliases": aliases,
+                     "arguments": spec}, indent=2) + "\n")
+                return 0
+        except Exception:  # noqa: BLE001 - fall through to engine CLI
+            pass
         try:
             from assay_core.cli import main as engine_main  # type: ignore
-        except Exception:  # noqa: BLE001 — fall back to the server path if import fails
-            engine_main = None
-        if engine_main is not None:
-            try:
-                return int(engine_main([subcommand, *rest]) or 0)
-            except SystemExit as e:  # argparse --help raises SystemExit(0)
-                return int(e.code or 0)
+            return int(engine_main([subcommand, *rest]) or 0)
+        except SystemExit as e:
+            return int(e.code or 0)
 
-    # Route through the shared MCP client (skills/_mcp_client.py), which speaks to
-    # this same server. It lives in skills/, a sibling of mcp_server/.
-    skills_dir = HERE.parent / "skills"
-    if str(skills_dir) not in sys.path:
-        sys.path.insert(0, str(skills_dir))
+    # A per-subcommand help request (e.g. `assay pka --help`) is NOT a
+    # calculation: it must not spawn a subprocess, create a live `.out` log, or
+    # get wrapped in result JSON. Print the SKILL's own build_parser() help
+    # directly (the inverted source of truth), in-process, and exit. Fall back to
+    # the engine CLI's help only if the skill parser isn't discoverable.
+    if "-h" in rest or "--help" in rest:
+        try:
+            from assay_core import discovery  # type: ignore
+            bp = discovery.build_parser_for(subcommand)
+        except Exception:  # noqa: BLE001
+            bp = None
+        if bp is not None:
+            try:
+                bp().parse_args(["--help"])   # argparse prints help + SystemExit(0)
+                return 0
+            except SystemExit as e:
+                return int(e.code or 0)
+        # Fallback: engine CLI help.
+        try:
+            from assay_core.cli import main as engine_main  # type: ignore
+            return int(engine_main([subcommand, *rest]) or 0)
+        except SystemExit as e:
+            return int(e.code or 0)
+        except Exception:  # noqa: BLE001
+            pass
+
+    # Dispatch the calculation by running the skill DIRECTLY (via _run_engine,
+    # which routes a converted skill to its skills/<pkg>/scripts/run.py through
+    # runlog — same path the MCP tool uses). No MCP round-trip: the human CLI is
+    # the front door to the skills, exactly like the design intends. All gates,
+    # the live `.out` log, and the integrity verdict apply because they live in
+    # the skill's run_cli spine + runlog.
+    return _dispatch_calc(subcommand, rest)
+
+
+def _dispatch_calc(subcommand: str, rest: list[str]) -> int:
+    """Run one calculation for the human CLI front door and shape its output like
+    the old `_mcp_client.run_skill`: surface the live `.out` path on stderr, print
+    the result JSON to stdout, and translate an engine error object into a stderr
+    message + nonzero exit."""
+    out = _run_engine(subcommand, rest, cwd=os.getcwd())
     try:
-        from _mcp_client import run_skill  # type: ignore
-    except ModuleNotFoundError as exc:
-        if exc.name == "mcp":
-            sys.stderr.write("assay needs the MCP client SDK: pip install mcp\n")
-            return 2
-        sys.stderr.write(f"assay: could not load the MCP client ({exc}).\n")
-        return 2
-    return run_skill(tool_name, rest)
+        parsed = json.loads(out)
+    except ValueError:
+        parsed = None
+
+    # Live-log path first on stderr, on EVERY run, so it lands at the top of the
+    # caller's terminal/Bash result regardless of --stdout mode (calc-reporting #9).
+    if isinstance(parsed, dict):
+        out_log = parsed.get("out_log")
+        if out_log:
+            sys.stderr.write(
+                f"assay: live log: {out_log}\n"
+                "# Tell the user this path immediately, while the run is going "
+                "(non-negotiable #9).\n"
+            )
+
+    if isinstance(parsed, dict) and "error" in parsed:
+        engine_stderr = parsed.get("stderr") or ""
+        if engine_stderr:
+            sys.stderr.write(engine_stderr.rstrip() + "\n")
+        sys.stderr.write(f"assay: {parsed['error']}\n")
+        return 1
+    print(out)
+    return 0
 
 
 if __name__ == "__main__":
