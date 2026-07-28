@@ -1,0 +1,33 @@
+# assay.toml — declarative configuration for the ASSAY skill suite.
+#
+# Single source of truth for how the MCP server is launched and where skills
+# live. `configure_mcp.py` reads this to generate `mcp_config.json` (the concrete
+# env->python->server wiring) with the local conda prefix patched in. Kept
+# declarative so the wiring is reproducible and each skill's `# Env:` is honored
+# (DESIGN.md §8 "Config & install").
+
+[project]
+name = "assay"
+# The chemistry engine (assay_core) and every skill share ONE conda env — the
+# skills import assay_core in-process, so there is no per-skill env split. This
+# name matches each skill's SKILL.md `# Env:` annotation and environment.yml.
+conda_env = "anl_env"
+
+[server]
+# The stdio MCP server. Installed as a console entry point by `pip install -e .`
+# (pyproject [project.scripts]); `configure_mcp.py` resolves it to the env's
+# absolute bin path so an MCP host can launch it without the env activated.
+name = "assay"
+entry_point = "assay-mcp"          # console script -> mcp_server.server:main
+module = "mcp_server.server"       # fallback: python -m mcp_server.server
+
+[skills]
+# Skills are discovered, not enumerated: assay_core.discovery walks this dir for
+# */scripts/run.py and reads each SKILL_NAME/SUBCOMMAND manifest. Listing the dir
+# (not the skills) keeps this file from drifting as skills are added.
+dir = "skills"
+
+[discovery]
+# The registry-sync lint (tools/lint_skills.py --registry) enforces that the
+# discovered skills, server.TOOLS, and the method-gate hook agree.
+lint = "tools/lint_skills.py"
