@@ -21,11 +21,14 @@ category: chemistry
 Evaluate the total electronic energy $E$ at a single fixed geometry, plus frontier-orbital data (HOMO, LUMO, gap). No relaxation — for the relaxed minimum use [geometry-optimize](../geometry-optimize/SKILL.md).
 
 ## Instructions
-A thin MCP-client script dispatches to the engine's `sp` subcommand.
+This skill is self-contained: `scripts/run.py` owns the workflow and depends only
+on the shared `assay_core` physics library. It is runnable stand-alone (own
+argparse, own I/O, own `input_configs.yaml`), and the MCP server runs this same
+`run.py`. The engine subcommand is `sp`.
 
 ```bash
 # Env: anl_env
-python skills/single-point-energy/scripts/single-point-energy.py --method <xtb|mopac|dft|hf> [args] input.xyz
+python skills/single_point_energy/scripts/run.py --method <xtb|mopac|dft|hf> [args] input.xyz
 ```
 
 1. **Input geometry** — an `.xyz` path is required; if missing, stop and ask.
@@ -58,7 +61,7 @@ python skills/single-point-energy/scripts/single-point-energy.py --method <xtb|m
 ## Examples
 ```bash
 # Env: anl_env
-python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water water.xyz
+python skills/single_point_energy/scripts/run.py --method xtb --solvent water water.xyz
 ```
 
 See [`examples/`](examples/) for a validated example with literature comparison.

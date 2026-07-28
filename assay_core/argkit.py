@@ -413,12 +413,49 @@ def run_cli(parser: argparse.ArgumentParser,
 
     out_path = args.out or _default_out(input_path, task, getattr(args, "method", "na"))
 
-    # Protect the result JSON: redirect fd 1 -> fd 2 for the whole calculation so
-    # stray backend banners (MOPAC/PySCF) land on stderr (the live .out), then
-    # restore the real stdout just before printing the JSON. fd-level dup2 is
-    # required because child processes inherit fd 1, not Python's sys.stdout.
+    from . import runlog
+    import datetime
+
+    run_cwd = os.getcwd()
+    stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    live_out = runlog.build_live_out_path(task, run_cwd, stamp)
+
+    # When the server/CLI front door runs this skill AS A SUBPROCESS, the PARENT
+    # (runlog.run_skill_subprocess) already tees a live `.out`; the child must not
+    # write a SECOND one. The parent sets ASSAY_SUPPRESS_LIVE_OUT=1 for that case.
+    _suppress_live_out = os.environ.get("ASSAY_SUPPRESS_LIVE_OUT") == "1"
+
+    # Live `.out` log the user can `tail -f` while the calc runs — the same
+    # artifact the server path produces (calc-reporting non-negotiable #9/#10), so
+    # a stand-alone `python run.py` run is equally observable. We tee ALL calc
+    # output (stdout + stderr, incl. MOPAC/PySCF banners) into it at the fd level:
+    #   - save the real stdout (fd 1) and real stderr (fd 2);
+    #   - point BOTH fd 1 and fd 2 at the log for the calc (this also gives #9 —
+    #     stray banners on fd 1 can't corrupt the result JSON, which is printed
+    #     only AFTER fd 1 is restored);
+    #   - restore both afterward; append the result banner; emit the JSON.
     _real_stdout_fd = os.dup(1)
-    os.dup2(2, 1)
+    _real_stderr_fd = os.dup(2)
+    log_fh = None
+    if not _suppress_live_out:
+        try:
+            log_fh = open(live_out, "w", buffering=1, encoding="utf-8")
+        except OSError:
+            log_fh = None
+
+    if log_fh is not None:
+        runlog.write_live_out_header(
+            log_fh, label=task, args=(argv or []),
+            command=" ".join([sys.executable, *sys.argv]),
+            cwd=run_cwd, stamp=stamp,
+        )
+        # Announce the path on the REAL stderr, at launch, before the calc blocks.
+        os.write(_real_stderr_fd, f"# assay live log: {live_out}\n".encode())
+        os.dup2(log_fh.fileno(), 1)
+        os.dup2(log_fh.fileno(), 2)
+    else:
+        # No log (e.g. read-only cwd): still protect the result JSON via fd1->fd2.
+        os.dup2(2, 1)
 
     integrity_failed = False
     try:
@@ -436,8 +473,22 @@ def run_cli(parser: argparse.ArgumentParser,
         pass
 
     sys.stdout.flush()
+    sys.stderr.flush()
     os.dup2(_real_stdout_fd, 1)
+    os.dup2(_real_stderr_fd, 2)
     os.close(_real_stdout_fd)
+    os.close(_real_stderr_fd)
+
+    # Make the .out self-contained: append the result JSON under a banner.
+    if log_fh is not None:
+        try:
+            log_fh.write("\n# " + "=" * 60 + "\n")
+            log_fh.write("# ===== RESULT JSON (stdout) =====\n")
+            log_fh.write(json.dumps(result, default=str) + "\n")
+            log_fh.flush()
+            log_fh.close()
+        except Exception:  # noqa: BLE001
+            pass
 
     stdout_mode = getattr(args, "stdout", "json")
     if stdout_mode == "json":
@@ -445,6 +496,8 @@ def run_cli(parser: argparse.ArgumentParser,
     elif stdout_mode == "path":
         print(_compact_pointer(result, out_path))
     print(f"\n# result written to: {out_path}", file=sys.stderr)
+    if log_fh is not None:
+        print(f"# assay live log: {live_out}", file=sys.stderr)
     if emit_artifact_paths is not None:
         try:
             emit_artifact_paths(result)

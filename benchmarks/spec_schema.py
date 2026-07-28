@@ -52,14 +52,18 @@ _REQUIRED_KEYS = {"name", "skill", "prompt", "intended_flags", "intended"}
 
 
 def _skill_to_taskid() -> Dict[str, Optional[str]]:
-    """Map a spec's `skill` (kebab folder name) -> the engine task-id used as the
+    """Map a spec's `skill` (kebab display name) -> the engine task-id used as the
     HEADLINE registry key. Built from the live engine, so it can't drift:
-      skill(folder) --TOOLS--> subcommand --engine--> task-id.
+      skill(tool name) --TOOLS--> subcommand --engine--> task-id.
+
+    Keyed by the MCP TOOL NAME (the kebab display name specs use), NOT the on-disk
+    folder — a converted skill's folder is underscore-named (single_point_energy)
+    while its spec still says single-point-energy.
     """
-    from server import TOOLS  # folder == tool name == spec.skill
+    from server import TOOLS  # {tool_name(kebab): (subcommand, folder)}
     from assay_core import cli  # subcommand set (validation only)
 
-    folder_to_sub = {folder: sub for (sub, folder) in TOOLS.values()}
+    folder_to_sub = {tool_name: sub for tool_name, (sub, _folder) in TOOLS.items()}
     # subcommand -> task-id: the engine's _dispatch maps subcommand to a task
     # module whose base_result task= string is the registry key. We resolve it
     # by importing the dispatch table indirectly: the result_schema HEADLINE keys

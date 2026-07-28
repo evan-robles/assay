@@ -34,6 +34,20 @@ REPO_ROOT = HERE.parent
 ENGINE_DIR = REPO_ROOT / "assay_core"
 SKILLS_DIR = REPO_ROOT / "skills"
 
+# Skills that have been INVERTED to the self-contained architecture (DESIGN.md):
+# the server runs their `skills/<pkg>/scripts/run.py` directly instead of the
+# `-m assay_core.cli <subcommand>` path. Maps engine subcommand -> skill package
+# dir (underscore-named so it is importable). As each skill is converted in later
+# phases it moves into this map; the discovery lint will keep it in sync with the
+# skill folders. Until then, unconverted subcommands fall back to the engine CLI.
+CONVERTED_SKILLS = {
+    "sp": "single_point_energy",
+}
+
+
+def _skill_run_path(pkg: str) -> Path:
+    return SKILLS_DIR / pkg / "scripts" / "run.py"
+
 # --------------------------------------------------------------------------- #
 # Live engine-subprocess registry — lets an interactive caller (the assay
 # agent REPL) hard-abort an in-flight calculation on `stop`/Ctrl-C. Each
@@ -90,7 +104,7 @@ def kill_active_engines() -> int:
 # Tool names == skill folder names (kebab-case). Mirrors the assay CLI
 # subcommands; one entry per skill.
 TOOLS = {
-    "single-point-energy":     ("sp",             "single-point-energy"),
+    "single-point-energy":     ("sp",             "single_point_energy"),
     "geometry-optimize":       ("opt",            "geometry-optimize"),
     "vibrational-analysis":    ("freq",           "vibrational-analysis"),
     "binding-energy":          ("binding",        "binding-energy"),
@@ -175,20 +189,36 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
     destinations must resolve against where the user/AI invoked the tool, not
     against the server's own directory. Defaults to the server dir if absent.
 
+    A CONVERTED skill (DESIGN.md inversion) is run via its self-contained
+    `skills/<pkg>/scripts/run.py` — the inverted arrow, the server calling the
+    skill. Every other subcommand still routes through `-m assay_core.cli
+    <subcommand>` until it is converted. Both paths are identical to the caller:
+    the same argv, the same result JSON.
+
     The heavy lifting (live `.out` log announced at launch, CHEMKIT_REMOTE_HOST
     ssh, structured error envelopes) lives in `assay_core.runlog` so a stand-alone
-    skill run gets the same behavior. This wrapper only supplies the engine
-    command + PYTHONPATH and registers the live subprocess so an interactive
-    `stop` can SIGTERM it.
+    skill run gets the same behavior. This wrapper only supplies the command +
+    PYTHONPATH and registers the live subprocess so an interactive `stop` can
+    SIGTERM it.
     """
     from assay_core import runlog
 
     env = dict(os.environ)
-    # Make `import assay_core` resolve to the repo-root assay_core/ for the subprocess.
+    # Make `import assay_core` (and `import skills.*`) resolve to the repo-root
+    # source tree for the subprocess.
     env["PYTHONPATH"] = os.pathsep.join(
         [str(REPO_ROOT), env.get("PYTHONPATH", "")]
     ).rstrip(os.pathsep)
-    cmd = [sys.executable, "-m", "assay_core.cli", subcommand, *args]
+
+    pkg = CONVERTED_SKILLS.get(subcommand)
+    if pkg is not None:
+        run_py = _skill_run_path(pkg)
+        cmd = [sys.executable, str(run_py), *args]
+        # The parent (runlog, below) already tees the live `.out`; tell the child
+        # skill's run_cli spine not to write a SECOND one.
+        env["ASSAY_SUPPRESS_LIVE_OUT"] = "1"
+    else:
+        cmd = [sys.executable, "-m", "assay_core.cli", subcommand, *args]
     return runlog.run_skill_subprocess(
         cmd, label=subcommand, args=args, cwd=cwd, env=env,
         default_cwd=str(HERE),

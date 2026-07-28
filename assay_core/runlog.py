@@ -36,6 +36,21 @@ def build_live_out_path(label: str, run_cwd: str,
     return os.path.join(run_cwd, f"{label}_{stamp}.out")
 
 
+def write_live_out_header(fh, *, label: str, args, command: str,
+                          cwd: str, stamp: str) -> None:
+    """Write the standard self-contained `.out` header block. Shared so the
+    parent (run_skill_subprocess) and the in-process spine (argkit.run_cli) emit
+    an identical header."""
+    fh.write("# assay live log\n")
+    fh.write(f"# subcommand : {label}\n")
+    fh.write(f"# args       : {' '.join(map(str, args))}\n")
+    fh.write(f"# command    : {command}\n")
+    fh.write(f"# cwd        : {cwd}\n")
+    fh.write(f"# started    : {stamp}\n")
+    fh.write("# " + "=" * 60 + "\n")
+    fh.flush()
+
+
 def run_skill_subprocess(
     cmd: Sequence[str],
     *,

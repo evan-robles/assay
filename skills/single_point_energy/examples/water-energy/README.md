@@ -16,7 +16,7 @@ ionization energy of water via Koopmans' theorem.
 
 ```bash
 # Env: anl_env
-python skills/single-point-energy/scripts/single-point-energy.py \
+python skills/single_point_energy/scripts/run.py \
     --method xtb water.xyz --out water_sp.json
 ```
 

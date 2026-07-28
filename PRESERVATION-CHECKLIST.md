@@ -9,18 +9,18 @@ Legend: ☐ not done · ☑ done · N/A not applicable
 
 ## Global (once, not per-skill)
 
-- ☐ `chemkit_engine` → `assay_core` rename; `assay_core` pip-installable
-- ☐ `assay_core.argkit` holds: normalizers (#4), `choices=` builders (#3), LoT gate (#2), `_add_chem_options` / `_add_gate_option` / `_add_stdout_option`, `run_cli()` spine
-- ☐ `assay_core.runlog` holds: live `.out` + `tail -f` at launch (#10), `CHEMKIT_REMOTE_HOST` ssh (#10), error envelopes (#10), per-tool log line (#10), fd-1→fd-2 redirect (#9)
-- ☐ `assay_core.ledger.write_input_configs` (#12)
-- ☐ `integrity.py` stays in `assay_core`; `run_cli` performs the catch/exit + `--allow-unconverged` (#8)
-- ☐ Discovery registry publishes canonical names + aliases; feeds did-you-mean (#5), `--list-skills`/`--help-json` (#6)
-- ☐ Server (`mcp_server/server.py`) builds typed tools via `run()` introspection (#1); no hand-maintained `TOOLS` dict
-- ☐ `assay`/`chemkit` CLI front-door dispatches to `skills/<n>/scripts/run.py`; `--list-skills`, alias resolution, `--help`/`--help-json` passthrough (#6)
-- ☐ PreToolUse hook `chemkit-method-gate.sh` retained; `METHOD_REQUIRED_SUBCMDS` regenerated from manifests (#11)
-- ☐ `tools/lint_skills.py`: spine lint (#10.2-1) + registry-sync lint (#10.2-2) wired into CI
-- ☐ Full `tests/` suite (test_regression.py, test_cli_interface.py) green
-- ☐ `rules/skill-standards.md` + `README.md` updated (drop "thin client"; add `run()`/`build_parser()`/`run_cli` contract)
+- ☑ `chemkit_engine` → `assay_core` rename; `assay_core` pip-installable (repo-root package, single `pip install -e .`; phase 1)
+- ☑ `assay_core.argkit` holds: normalizers (#4), `choices=` builders (#3), LoT gate (#2), `_add_chem_options` / `_add_gate_option` / `_add_stdout_option`, `run_cli()` spine (phase 2)
+- ☑ `assay_core.runlog` holds: live `.out` + `tail -f` at launch (#10), `CHEMKIT_REMOTE_HOST` ssh (#10), error envelopes (#10), per-tool log line (#10), fd-1→fd-2 redirect (#9) — used by the server AND, via `run_cli`, by stand-alone skill runs (phase 2/3)
+- ☑ `assay_core.ledger.write_input_configs` (#12) (phase 2; wired into `run_cli` phase 3)
+- ☑ `integrity.py` stays in `assay_core`; `run_cli` performs the catch/exit + `--allow-unconverged` (#8) (phase 2)
+- ☐ Discovery registry publishes canonical names + aliases; feeds did-you-mean (#5), `--list-skills`/`--help-json` (#6) *(still via cli.py SUBCOMMAND_ALIASES; unchanged)*
+- ☐ Server (`mcp_server/server.py`) builds typed tools via `run()` introspection (#1); no hand-maintained `TOOLS` dict *(still arg_spec-driven; server now runs converted skills' run.py via CONVERTED_SKILLS — full introspection is a later phase)*
+- ☐ `assay`/`chemkit` CLI front-door dispatches to `skills/<n>/scripts/run.py`; `--list-skills`, alias resolution, `--help`/`--help-json` passthrough (#6) *(front door still routes via `-m assay_core.cli`; both `assay` and `chemkit` entry points exist — phase 1)*
+- ☐ PreToolUse hook `chemkit-method-gate.sh` retained; `METHOD_REQUIRED_SUBCMDS` regenerated from manifests (#11) *(retained + matches `assay_core.cli`/`assay` — phase 1)*
+- ☐ `tools/lint_skills.py`: spine lint (#10.2-1) + registry-sync lint (#10.2-2) wired into CI *(lint_skill now accepts underscore package dirs — phase 3)*
+- ◑ Full `tests/` suite (test_regression.py, test_cli_interface.py) green *(at baseline: 146 pass / 1 skip / 1 pre-existing ferrocene-spec fail, unrelated to this refactor)*
+- ☐ `rules/skill-standards.md` + `README.md` updated (drop "thin client"; add `run()`/`build_parser()`/`run_cli` contract) *(single-point-energy SKILL.md updated; global docs later phase)*
 
 ## Per-skill grid
 
@@ -28,7 +28,7 @@ For each skill, confirm the entrypoint spine, then the applicable guardrails.
 
 | Skill | typed `run()` (#1) | uses `run_cli` spine (#2,7,8,9,12) | shared `choices`+normalizers (#3,#4) | `--stdout` modes (#7) | integrity gate verified (#8) | fd-redirect: JSON clean (#9) | live `.out` path (#10) | `input_configs.yaml` (#12) | `--out` default+on-fail (#13) | regression + example reproduce numbers |
 |---|---|---|---|---|---|---|---|---|---|---|
-| single-point-energy | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| single-point-energy | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
 | geometry-optimize | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | vibrational-analysis | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
 | conformer-search | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |

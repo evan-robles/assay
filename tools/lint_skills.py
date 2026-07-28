@@ -73,10 +73,13 @@ def lint_skill(skill_dir: Path) -> List[str]:
     else:
         if not _KEBAB.match(fm_name):
             problems.append(f"name {fm_name!r} is not kebab-case")
-        if fm_name != name:
+        # A skill converted to the inverted architecture (DESIGN.md) uses an
+        # UNDERSCORE package folder (so it is importable) with the kebab display
+        # name in frontmatter — accept folder == name OR the underscore form.
+        if fm_name != name and fm_name.replace("-", "_") != name:
             problems.append(
                 f"name {fm_name!r} != folder {name!r} "
-                "(MCP server keys the tool off the folder)")
+                "(expected the kebab name, or its underscore package form)")
 
     # description
     desc = fm.get("description")
