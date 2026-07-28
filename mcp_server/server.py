@@ -17,12 +17,10 @@ Run:  python mcp_server/server.py        # stdio MCP server
 """
 from __future__ import annotations
 
-import datetime
 import functools
 import json
 import os
 import re
-import shlex
 import subprocess
 import sys
 import threading
@@ -177,196 +175,25 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
     destinations must resolve against where the user/AI invoked the tool, not
     against the server's own directory. Defaults to the server dir if absent.
 
-    The engine prints the result JSON to stdout and human notes to stderr. On
-    failure we return a JSON error object rather than raising, so the client
-    always gets structured output.
+    The heavy lifting (live `.out` log announced at launch, CHEMKIT_REMOTE_HOST
+    ssh, structured error envelopes) lives in `assay_core.runlog` so a stand-alone
+    skill run gets the same behavior. This wrapper only supplies the engine
+    command + PYTHONPATH and registers the live subprocess so an interactive
+    `stop` can SIGTERM it.
     """
+    from assay_core import runlog
+
     env = dict(os.environ)
     # Make `import assay_core` resolve to the repo-root assay_core/ for the subprocess.
     env["PYTHONPATH"] = os.pathsep.join(
         [str(REPO_ROOT), env.get("PYTHONPATH", "")]
     ).rstrip(os.pathsep)
-    run_cwd = cwd if (cwd and os.path.isdir(cwd)) else str(HERE)
     cmd = [sys.executable, "-m", "assay_core.cli", subcommand, *args]
-
-    # --- Optional remote execution (CHEMKIT_REMOTE_HOST) -----------------------
-    # On clusters (e.g. Aurora) the agent + this server can run on a LOGIN node
-    # while the actual chemistry must run on a COMPUTE node (login nodes may lack
-    # compute resources or, on Aurora, have an fs quirk that breaks the engine's
-    # nested mkdir). If CHEMKIT_REMOTE_HOST is set, run the engine on that host
-    # via ssh. This ASSUMES a SHARED $HOME/filesystem so `cd run_cwd` and all
-    # input/--out paths resolve identically on both sides (true on Aurora, where
-    # $HOME is mounted on compute nodes). The result JSON still comes back on the
-    # ssh stdout, and the live `.out` is written locally from the tee'd stderr,
-    # so no file copy-back is needed under a shared filesystem.
-    remote_host = os.environ.get("CHEMKIT_REMOTE_HOST", "").strip()
-    if remote_host:
-        # Reproduce cwd + PYTHONPATH on the remote side, then run the same cmd.
-        # shlex.quote every piece so paths/args with spaces or shell metachars
-        # survive the single remote shell string ssh runs.
-        remote_inner = "cd {cwd} && PYTHONPATH={pp} {run}".format(
-            cwd=shlex.quote(run_cwd),
-            pp=shlex.quote(env["PYTHONPATH"]),
-            run=" ".join(shlex.quote(c) for c in cmd),
-        )
-        ssh_opts = shlex.split(os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", ""))
-        cmd = ["ssh", *ssh_opts, remote_host, remote_inner]
-
-    # Live `.out` log the user can `tail -f` while the calculation runs.
-    # Written in the CALLER's cwd so it sits next to their inputs/outputs.
-    # The engine prints the result JSON to stdout and all human/PySCF/xtb/mopac
-    # log text to stderr; we tee ONLY stderr into the .out line-by-line (stdout
-    # is kept clean so the returned JSON never gets corrupted), then append the
-    # final result JSON under a banner so the file is self-contained.
-    stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    out_path = os.path.join(run_cwd, f"{subcommand}_{stamp}.out")
-
-    def _write_header(fh):
-        fh.write("# assay live log\n")
-        fh.write(f"# subcommand : {subcommand}\n")
-        fh.write(f"# args       : {' '.join(args)}\n")
-        fh.write(f"# command    : {' '.join(cmd)}\n")
-        fh.write(f"# cwd        : {run_cwd}\n")
-        fh.write(f"# started    : {stamp}\n")
-        fh.write("# " + "=" * 60 + "\n")
-        fh.flush()
-
-    timed_out = False
-    try:
-        # line-buffered so `tail -f` sees lines as they are produced.
-        log_fh = open(out_path, "w", buffering=1, encoding="utf-8")
-    except OSError:
-        # If the .out can't be created (e.g. read-only cwd), fall back to the
-        # original buffered behavior rather than failing the calculation.
-        log_fh = None
-
-    try:
-        if log_fh is not None:
-            _write_header(log_fh)
-            proc = subprocess.Popen(
-                cmd, cwd=run_cwd, env=env, text=True, bufsize=1,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            )
-            # Register so an interactive `stop` can SIGTERM this live run.
-            _register_engine(proc)
-
-            # Reader thread: tee engine stderr -> .out as it arrives.
-            stderr_chunks: list[str] = []
-
-            def _pump_stderr():
-                assert proc.stderr is not None
-                for line in proc.stderr:
-                    stderr_chunks.append(line)
-                    log_fh.write(line)
-                    log_fh.flush()
-
-            t = threading.Thread(target=_pump_stderr, daemon=True)
-            t.start()
-
-            # Announce the live-log path AT LAUNCH (before the blocking read
-            # below), so a caller learns where the live log is while the
-            # calculation is still running — calculation-reporting-standards
-            # non-negotiable #9. Flush so it isn't buffered behind the result.
-            sys.stderr.write(f"# assay live log: {out_path}\n")
-            sys.stderr.flush()
-
-            stdout_data = ""
-            try:
-                # proc.stdout.read() blocks until the engine closes stdout,
-                # i.e. until the process is done writing its result JSON.
-                stdout_data = proc.stdout.read() if proc.stdout else ""
-                proc.wait(timeout=3600)
-            except subprocess.TimeoutExpired:
-                proc.kill()
-                proc.wait()
-                timed_out = True
-            t.join(timeout=5)
-            stderr_data = "".join(stderr_chunks)
-
-            # Make the .out self-contained: append the result JSON at the end.
-            log_fh.write("\n# " + "=" * 60 + "\n")
-            log_fh.write("# ===== RESULT JSON (stdout) =====\n")
-            log_fh.write(stdout_data.strip() + "\n")
-            log_fh.flush()
-        else:
-            # Fallback: no live log; behave like the old capture_output path.
-            try:
-                proc_run = subprocess.run(
-                    cmd, cwd=run_cwd, env=env,
-                    capture_output=True, text=True, timeout=3600,
-                )
-                stdout_data, stderr_data = proc_run.stdout, proc_run.stderr
-                returncode = proc_run.returncode
-            except subprocess.TimeoutExpired:
-                timed_out = True
-                stdout_data = stderr_data = ""
-    finally:
-        # Unregister the live subprocess (best-effort; `proc` only exists on the
-        # Popen path). Killed-by-stop runs land here too.
-        try:
-            _unregister_engine(proc)  # type: ignore[name-defined]
-        except Exception:  # noqa: BLE001 - proc may be undefined (fallback path)
-            pass
-        if log_fh is not None:
-            log_fh.close()
-
-    if timed_out:
-        return json.dumps({"error": "calculation timed out (3600 s)",
-                           "subcommand": subcommand, "args": args,
-                           "out_log": out_path})
-
-    returncode = proc.returncode if log_fh is not None else returncode
-    # (The live-log path is announced once at launch on line ~153 and is also
-    # returned to the caller under `out_log`; no end-of-run duplicate needed.)
-
-    if returncode != 0:
-        # An integrity hard-abort exits nonzero but STILL prints the full
-        # structured result (with an `integrity` block) to stdout. Preserve that
-        # structured result — augmented with an `error` key so the caller still
-        # treats it as a failure — instead of throwing it away for a truncated
-        # stdout stub. This keeps the integrity verdict, warnings, and out-path
-        # reachable by the agent while signalling that the number is untrustworthy.
-        parsed = None
-        try:
-            parsed = json.loads(stdout_data.strip())
-        except ValueError:
-            parsed = None
-        # Recognize either the full result JSON (has an `integrity` block, from
-        # --stdout json) or the compact pointer (has `status`/`trustworthy`, from
-        # --stdout path). Either way the structured verdict is worth preserving.
-        is_integrity_result = isinstance(parsed, dict) and (
-            isinstance(parsed.get("integrity"), dict)
-            or ("trustworthy" in parsed and "status" in parsed)
-        )
-        if is_integrity_result:
-            parsed["error"] = "integrity gate failed (result is not trustworthy)"
-            parsed["returncode"] = returncode
-            parsed.setdefault("out_log", out_path)
-            return json.dumps(parsed)
-        return json.dumps({
-            "error": "assay engine exited non-zero",
-            "returncode": returncode,
-            "subcommand": subcommand, "args": args,
-            "stderr": stderr_data.strip()[-4000:],
-            "stdout": stdout_data.strip()[-2000:],
-        })
-    # On success the JSON result is on stdout. Inject the live-log path under
-    # `out_log` so the caller (and ultimately the agent) learns where to
-    # `tail -f` it — calculation-reporting-standards non-negotiable #9. The
-    # server's own stderr writes (above) do NOT reach a stdio MCP caller, so the
-    # returned JSON is the only channel that crosses back to the Bash tool.
-    out = stdout_data.strip()
-    try:
-        parsed = json.loads(out)
-        if log_fh is not None and isinstance(parsed, dict) and "out_log" not in parsed:
-            parsed["out_log"] = out_path
-            return json.dumps(parsed)
-        return out
-    except ValueError:
-        wrapped = {"raw_stdout": out, "stderr": stderr_data.strip()}
-        if log_fh is not None:
-            wrapped["out_log"] = out_path
-        return json.dumps(wrapped)
+    return runlog.run_skill_subprocess(
+        cmd, label=subcommand, args=args, cwd=cwd, env=env,
+        default_cwd=str(HERE),
+        on_start=_register_engine, on_end=_unregister_engine,
+    )
 
 
 # ---------------------------------------------------------------------------
