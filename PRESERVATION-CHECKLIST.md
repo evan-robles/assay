@@ -14,8 +14,8 @@ Legend: ☐ not done · ☑ done · N/A not applicable
 - ☑ `assay_core.runlog` holds: live `.out` + `tail -f` at launch (#10), `CHEMKIT_REMOTE_HOST` ssh (#10), error envelopes (#10), per-tool log line (#10), fd-1→fd-2 redirect (#9) — used by the server AND, via `run_cli`, by stand-alone skill runs (phase 2/3)
 - ☑ `assay_core.ledger.write_input_configs` (#12) (phase 2; wired into `run_cli` phase 3)
 - ☑ `integrity.py` stays in `assay_core`; `run_cli` performs the catch/exit + `--allow-unconverged` (#8) (phase 2)
-- ☐ Discovery registry publishes canonical names + aliases; feeds did-you-mean (#5), `--list-skills`/`--help-json` (#6) *(still via cli.py SUBCOMMAND_ALIASES; unchanged)*
-- ☐ Server (`mcp_server/server.py`) builds typed tools via `run()` introspection (#1); no hand-maintained `TOOLS` dict *(still arg_spec-driven; server now runs converted skills' run.py via CONVERTED_SKILLS — full introspection is a later phase)*
+- ◑ Discovery registry publishes canonical names + aliases; feeds did-you-mean (#5), `--list-skills`/`--help-json` (#6) *(NEW `assay_core.discovery` walks skills/*/scripts/run.py + reads each SKILL_NAME/SUBCOMMAND manifest — phase 6; SUBCOMMAND_ALIASES/did-you-mean still in cli.py)*
+- ☑ Server (`mcp_server/server.py`) builds typed tools via skill `build_parser()` introspection (#1); TOOLS + CONVERTED_SKILLS are now DISCOVERED, not hand-maintained (phase 6; verified byte-identical param specs to the old CLI subparsers)
 - ☐ `assay`/`chemkit` CLI front-door dispatches to `skills/<n>/scripts/run.py`; `--list-skills`, alias resolution, `--help`/`--help-json` passthrough (#6) *(front door still routes via `-m assay_core.cli`; both `assay` and `chemkit` entry points exist — phase 1)*
 - ☐ PreToolUse hook `chemkit-method-gate.sh` retained; `METHOD_REQUIRED_SUBCMDS` regenerated from manifests (#11) *(retained + matches `assay_core.cli`/`assay` — phase 1)*
 - ☐ `tools/lint_skills.py`: spine lint (#10.2-1) + registry-sync lint (#10.2-2) wired into CI *(lint_skill now accepts underscore package dirs — phase 3)*

@@ -8,6 +8,10 @@ library (composites use sibling skills in-process via their task shims).
 Runnable stand-alone via scripts/run.py.
 """
 from __future__ import annotations
+
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "conformational-analysis"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "scan"      # engine subcommand this skill implements
 import functools
 import os
 from typing import Any, Dict, List, Optional, Sequence, Tuple

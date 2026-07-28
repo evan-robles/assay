@@ -8,6 +8,10 @@ lookup — no 3D geometry, no level of theory. Runnable stand-alone:
     python skills/name_to_smiles/scripts/run.py caffeine
 """
 from __future__ import annotations
+
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "name-to-smiles"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "resolve"      # engine subcommand this skill implements
 import argparse
 import os
 import re as _re

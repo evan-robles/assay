@@ -980,22 +980,14 @@ def list_skills(as_json: bool = False) -> str:
     return "\n".join(lines) + "\n"
 
 
-def describe_subcommand(subcommand: str) -> List[dict]:
-    """Return a structured argument spec for one engine subcommand, derived from
-    its argparse subparser. Each entry: {name, flag, required, positional, type,
-    choices, default, help}. Used to enrich the MCP tool descriptions so an agent
-    can see the exact valid arguments WITHOUT a `--help` round-trip.
+def describe_parser(parser: argparse.ArgumentParser) -> List[dict]:
+    """Structured argument spec for ANY argparse parser (a skill's build_parser()
+    or an engine subparser). Each entry: {name, flag, required, positional, type,
+    choices, default, help}. This is the introspection primitive the discovery
+    layer uses to turn a skill's parser into a typed MCP tool signature.
     """
-    parser = build_parser()
-    sub = None
-    for action in parser._actions:
-        if isinstance(action, argparse._SubParsersAction):
-            sub = action.choices.get(subcommand)
-            break
-    if sub is None:
-        return []
     spec: List[dict] = []
-    for a in sub._actions:
+    for a in parser._actions:
         if a.dest in ("help",):
             continue
         positional = not a.option_strings
@@ -1020,6 +1012,23 @@ def describe_subcommand(subcommand: str) -> List[dict]:
             "help": (a.help or "").strip(),
         })
     return spec
+
+
+def describe_subcommand(subcommand: str) -> List[dict]:
+    """Return a structured argument spec for one engine subcommand, derived from
+    its argparse subparser. Thin wrapper over describe_parser(). Used to enrich
+    MCP tool descriptions so an agent sees the exact valid arguments WITHOUT a
+    `--help` round-trip.
+    """
+    parser = build_parser()
+    sub = None
+    for action in parser._actions:
+        if isinstance(action, argparse._SubParsersAction):
+            sub = action.choices.get(subcommand)
+            break
+    if sub is None:
+        return []
+    return describe_parser(sub)
 
 
 def format_subcommand_args(subcommand: str) -> str:

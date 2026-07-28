@@ -8,6 +8,10 @@ library (composites use sibling skills in-process via their task shims).
 Runnable stand-alone via scripts/run.py.
 """
 from __future__ import annotations
+
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "reaction-profile"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "profile"      # engine subcommand this skill implements
 import os
 import shutil
 import tempfile

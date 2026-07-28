@@ -11,6 +11,10 @@ For an electrostatics analysis on a relaxed structure, run geometry-optimize
 first and pass the optimized xyz here.
 """
 from __future__ import annotations
+
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "electrostatics"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "electrostatics"      # engine subcommand this skill implements
 import argparse
 import os
 import re

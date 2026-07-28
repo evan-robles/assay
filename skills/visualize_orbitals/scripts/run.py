@@ -9,6 +9,10 @@ Runnable stand-alone via scripts/run.py.
 """
 from __future__ import annotations
 
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "visualize-orbitals"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "orbitals"      # engine subcommand this skill implements
+
 import os
 import re
 import shutil

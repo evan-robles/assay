@@ -18,6 +18,10 @@ single copy of the physics.
 """
 from __future__ import annotations
 
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "single-point-energy"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "sp"      # engine subcommand this skill implements
+
 import argparse
 import os
 from typing import Any, Dict, Optional

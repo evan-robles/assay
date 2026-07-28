@@ -34,34 +34,19 @@ REPO_ROOT = HERE.parent
 ENGINE_DIR = REPO_ROOT / "assay_core"
 SKILLS_DIR = REPO_ROOT / "skills"
 
-# Skills that have been INVERTED to the self-contained architecture (DESIGN.md):
-# the server runs their `skills/<pkg>/scripts/run.py` directly instead of the
-# `-m assay_core.cli <subcommand>` path. Maps engine subcommand -> skill package
-# dir (underscore-named so it is importable). As each skill is converted in later
-# phases it moves into this map; the discovery lint will keep it in sync with the
-# skill folders. Until then, unconverted subcommands fall back to the engine CLI.
-CONVERTED_SKILLS = {
-    "sp": "single_point_energy",
-    "opt": "geometry_optimize",
-    "freq": "vibrational_analysis",
-    "confsearch": "conformer_search",
-    "build": "build_from_smiles",
-    "resolve": "name_to_smiles",
-    "electrostatics": "electrostatics",
-    "binding": "binding_energy",
-    "solvation": "solvation",
-    "logp": "logp_partition",
-    "frontier": "frontier_orbitals",
-    "fukui": "fukui_reactivity",
-    "ts": "transition_state",
-    "irc": "intrinsic_reaction_coordinate",
-    "redox": "redox_potential",
-    "rxn-energy": "reaction_energy",
-    "pka": "pka_acidity",
-    "profile": "reaction_profile",
-    "scan": "conformational_analysis",
-    "orbitals": "visualize_orbitals",
-}
+# Skills inverted to the self-contained architecture (DESIGN.md): the server runs
+# their `skills/<pkg>/scripts/run.py` directly instead of `-m assay_core.cli
+# <subcommand>`. DISCOVERED from disk (assay_core.discovery reads each skill's
+# SKILL_NAME/SUBCOMMAND manifest), so it can never drift from the skill folders —
+# maps engine subcommand -> skill package dir. A subcommand not discovered here
+# falls back to the engine CLI path in _run_engine.
+def _discover_converted() -> dict:
+    from assay_core import discovery
+    return {info.subcommand: info.package
+            for info in discovery.discover_skills().values()}
+
+
+CONVERTED_SKILLS = _discover_converted()
 
 
 def _skill_run_path(pkg: str) -> Path:
@@ -119,32 +104,19 @@ def kill_active_engines() -> int:
                 pass
     return len(signalled)
 
-# tool name -> (engine subcommand, skill folder for its SKILL.md description)
-# Tool name is the kebab display name; the folder is the on-disk skill dir —
-# underscore-named for CONVERTED skills (importable package), kebab for the rest
-# (still generated thin clients). Mirrors the assay CLI subcommands; one per skill.
-TOOLS = {
-    "single-point-energy":     ("sp",             "single_point_energy"),
-    "geometry-optimize":       ("opt",            "geometry_optimize"),
-    "vibrational-analysis":    ("freq",           "vibrational_analysis"),
-    "binding-energy":          ("binding",        "binding_energy"),
-    "redox-potential":         ("redox",          "redox_potential"),
-    "conformer-search":        ("confsearch",     "conformer_search"),
-    "frontier-orbitals":       ("frontier",       "frontier_orbitals"),
-    "electrostatics":          ("electrostatics", "electrostatics"),
-    "solvation":               ("solvation",      "solvation"),
-    "logp-partition":          ("logp",           "logp_partition"),
-    "reaction-profile":        ("profile",        "reaction_profile"),
-    "pka-acidity":             ("pka",            "pka_acidity"),
-    "build-from-smiles":       ("build",          "build_from_smiles"),
-    "name-to-smiles":          ("resolve",        "name_to_smiles"),
-    "fukui-reactivity":        ("fukui",          "fukui_reactivity"),
-    "transition-state":        ("ts",             "transition_state"),
-    "intrinsic-reaction-coordinate": ("irc",      "intrinsic_reaction_coordinate"),
-    "reaction-energy":         ("rxn-energy",     "reaction_energy"),
-    "conformational-analysis": ("scan",           "conformational_analysis"),
-    "visualize-orbitals":      ("orbitals",       "visualize_orbitals"),
-}
+# tool name -> (engine subcommand, skill package dir) — DISCOVERED, not
+# hand-maintained. assay_core.discovery walks skills/*/scripts/run.py and reads
+# each skill's SKILL_NAME/SUBCOMMAND manifest + build_parser(), so this registry
+# can never drift from the skills on disk (DESIGN.md §10.2). The shape is
+# unchanged ({tool: (subcommand, folder)}) so every downstream use still works.
+def _discover_tools() -> dict:
+    from assay_core import discovery
+    infos = discovery.discover_skills()
+    return {info.name: (info.subcommand, info.package)
+            for info in infos.values()}
+
+
+TOOLS = _discover_tools()
 
 # Server instructions injected into every connecting MCP client (Claude Code
 # renders these as a "# MCP Server Instructions" context block automatically, and
@@ -384,14 +356,22 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
 
     Mechanics: the SDK derives a tool's JSON schema from the function signature
     (inspect.signature). We keep ONE generic body and give it a SYNTHESIZED
-    __signature__ built from arg_spec.skill_params(subcommand); the shared
+    __signature__ built by introspecting the SKILL's own build_parser() (the
+    inverted source of truth, via arg_spec.params_from_parser); the shared
     arg_spec.params_to_argv turns the validated kwargs back into engine argv.
     """
     from assay_core import arg_spec as _arg_spec_mod
+    from assay_core import discovery as _discovery
 
     description = _description(skill_folder, subcommand)
-    params = _arg_spec_mod.skill_params(subcommand)
-    allowed_flags = _arg_spec_mod.known_flags(subcommand)
+    _bp = _discovery.build_parser_for(subcommand)
+    if _bp is not None:
+        _parser = _bp()
+        params = _arg_spec_mod.params_from_parser(_parser)
+        allowed_flags = _arg_spec_mod.known_flags_from_parser(_parser)
+    else:  # pragma: no cover - a skill without a discoverable parser
+        params = _arg_spec_mod.skill_params(subcommand)
+        allowed_flags = _arg_spec_mod.known_flags(subcommand)
     param_names = {p.name for p in params}
 
     @tool_error_envelope(subcommand)

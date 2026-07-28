@@ -9,6 +9,10 @@ geometry-optimize sibling via its task shim). Runnable stand-alone:
     python skills/build_from_smiles/scripts/run.py 'CCO' --out-xyz ethanol.xyz
 """
 from __future__ import annotations
+
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "build-from-smiles"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "build"      # engine subcommand this skill implements
 import argparse
 import os
 import re as _re

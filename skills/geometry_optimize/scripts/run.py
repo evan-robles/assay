@@ -8,6 +8,10 @@ stand-alone:
     python skills/geometry_optimize/scripts/run.py --method xtb mol.xyz
 """
 from __future__ import annotations
+
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "geometry-optimize"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "opt"      # engine subcommand this skill implements
 import argparse
 import os
 import re

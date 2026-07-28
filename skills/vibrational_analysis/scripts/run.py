@@ -10,6 +10,10 @@ siblings in-process (via their task shims) — that depends only on the shared
     python skills/vibrational_analysis/scripts/run.py --method xtb mol.xyz
 """
 from __future__ import annotations
+
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "vibrational-analysis"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "freq"      # engine subcommand this skill implements
 import argparse
 import os
 import shutil

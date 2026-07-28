@@ -8,6 +8,10 @@ depends only on the shared `assay_core` physics library. Runnable stand-alone:
     python skills/conformer_search/scripts/run.py --method xtb mol.xyz
 """
 from __future__ import annotations
+
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "conformer-search"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "confsearch"      # engine subcommand this skill implements
 import argparse
 import os
 import re

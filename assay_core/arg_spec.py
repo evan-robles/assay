@@ -140,6 +140,34 @@ def skill_params(subcommand: str, *, include_plumbing: bool = False) -> List[Par
     return params
 
 
+def params_from_parser(parser, *, include_plumbing: bool = False) -> List[Param]:
+    """Typed params derived DIRECTLY from a skill's build_parser() (the inverted
+    source of truth), instead of the engine CLI subparser. Same dedupe/ordering
+    rules as skill_params — verified to produce identical output for every skill,
+    since each build_parser() composes the same shared argkit option builders."""
+    from .cli import describe_parser
+    spec = describe_parser(parser)
+    params: List[Param] = []
+    seen: set[str] = set()
+    for s in spec:
+        if not include_plumbing and s["name"] in _PLUMBING:
+            continue
+        if s["name"] in seen:
+            continue
+        seen.add(s["name"])
+        params.append(_param_from_spec(s))
+    params.sort(key=lambda p: (not p.positional, not p.required))
+    return params
+
+
+def known_flags_from_parser(parser) -> set[str]:
+    """All valid --flags for a skill's build_parser() (every option string)."""
+    flags: set[str] = set()
+    for a in parser._actions:
+        flags.update(a.option_strings)
+    return flags
+
+
 def known_flags(subcommand: str) -> set[str]:
     """All valid --flags for a subcommand (every option string, incl. aliases
     like --mult/--multiplicity and --no-gate). Used to validate extra_args."""
