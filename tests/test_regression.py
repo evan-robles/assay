@@ -1630,6 +1630,33 @@ def test_all_skills_pass_skillmd_lint():
     assert not failures, f"SKILL.md lint failures: {failures}"
 
 
+def _load_lint_module():
+    import importlib.util
+    repo = Path(__file__).resolve().parent.parent
+    spec = importlib.util.spec_from_file_location("lint_skills", repo / "tools" / "lint_skills.py")
+    lint = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lint)
+    return lint
+
+
+def test_all_skill_spines_pass_lint():
+    """Every skills/*/scripts/run.py exposes the inverted-architecture spine:
+    SKILL_NAME/SUBCOMMAND manifest, a typed keyword-only run(), build_parser(),
+    and a __main__ that routes through argkit.run_cli (DESIGN.md §10.2-1)."""
+    lint = _load_lint_module()
+    failures = lint.lint_all_spines()
+    assert not failures, f"skill spine lint failures: {failures}"
+
+
+def test_registry_in_sync():
+    """The discovery registry, the server tool list, and the PreToolUse hook's
+    METHOD_REQUIRED_SUBCMDS all agree (DESIGN.md §10.2-2). Catches a skill added/
+    renamed without updating the hook, or a server<->discovery divergence."""
+    lint = _load_lint_module()
+    problems = lint.lint_registry_sync()
+    assert not problems, "registry-sync drift:\n" + "\n".join(problems)
+
+
 def test_tool_descriptions_advertise_arg_spec():
     """Every MCP tool description embeds its derived argument spec (flags, types,
     choices) so an agent can call correctly without a `--help` round-trip."""

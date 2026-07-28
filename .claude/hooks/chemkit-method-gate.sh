@@ -47,10 +47,11 @@ MARKER_DIR="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/.chemkit-gate"
 # between runs is a level-of-theory change worth re-confirming.
 KNOBS=(--method --opt --functional --basis --tier --density-fit --solvent --charge --mult --multiplicity)
 
-# Subcommands / skill folders that REQUIRE an explicit --method (everything
-# except the pure structure builder, which uses an optional --opt instead).
+# Subcommands that REQUIRE an explicit --method (everything except the pure
+# lookup/structure skills `resolve` and `build`). Regenerated from the skill
+# manifests — kept in sync by tools/lint_skills.py --registry (DESIGN.md #11).
 # Listed for documentation / future use; the gate keys off --method presence.
-METHOD_REQUIRED_SUBCMDS="sp opt freq binding redox confsearch frontier electrostatics solvation logp profile pka fukui ts irc scan orbitals"
+METHOD_REQUIRED_SUBCMDS="binding confsearch electrostatics freq frontier fukui irc logp opt orbitals pka profile redox rxn-energy scan solvation sp ts"
 
 # ---------------------------------------------------------------------------
 # Ack mode: record the acknowledgement for a session, then exit 0.

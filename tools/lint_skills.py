@@ -116,16 +116,146 @@ def lint_skill(skill_dir: Path) -> List[str]:
     return problems
 
 
+# ---------------------------------------------------------------------------
+# Spine lint (DESIGN.md §10.2-1): every self-contained skill's scripts/run.py
+# must expose the inverted-architecture contract so a skill can never silently
+# lose a guardrail. We check statically (AST) so the lint runs without importing
+# heavy chemistry deps.
+# ---------------------------------------------------------------------------
+
+def lint_skill_spine(run_py: Path) -> List[str]:
+    """Return problems with one skill's scripts/run.py spine ([] = clean)."""
+    import ast
+    problems: List[str] = []
+    try:
+        tree = ast.parse(run_py.read_text())
+    except (OSError, SyntaxError) as e:
+        return [f"run.py unparseable: {e}"]
+
+    top_assigns = {t.id for node in tree.body if isinstance(node, ast.Assign)
+                   for t in node.targets if isinstance(t, ast.Name)}
+    funcs = {n.name for n in tree.body if isinstance(n, ast.FunctionDef)}
+
+    # (a) discovery manifest
+    for const in ("SKILL_NAME", "SUBCOMMAND"):
+        if const not in top_assigns:
+            problems.append(f"missing module-level {const} manifest constant")
+    # (b) typed keyword-only run()
+    run_fn = next((n for n in tree.body
+                   if isinstance(n, ast.FunctionDef) and n.name == "run"), None)
+    if run_fn is None:
+        problems.append("no top-level run() function")
+    else:
+        a = run_fn.args
+        # keyword-only args after the first positional(s) is the typed contract
+        if not a.kwonlyargs:
+            problems.append("run() has no keyword-only args (typed contract expected)")
+    # (c) build_parser()
+    if "build_parser" not in funcs:
+        problems.append("no build_parser() function")
+    # (d) __main__ routes through argkit.run_cli
+    src = run_py.read_text()
+    if "run_cli(" not in src:
+        problems.append("__main__ does not call argkit.run_cli (spine bypass)")
+    if '__name__ == "__main__"' not in src and "__name__ == '__main__'" not in src:
+        problems.append("no `if __name__ == \"__main__\"` entrypoint")
+    return problems
+
+
+def lint_all_spines() -> Dict[str, List[str]]:
+    out: Dict[str, List[str]] = {}
+    for d in sorted(_SKILLS.iterdir()):
+        if not d.is_dir() or d.name.startswith((".", "_")):
+            continue
+        run_py = d / "scripts" / "run.py"
+        if not run_py.is_file():
+            out[d.name] = ["no scripts/run.py (skill not converted to the inverted contract)"]
+            continue
+        probs = lint_skill_spine(run_py)
+        if probs:
+            out[d.name] = probs
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Registry-sync lint (DESIGN.md §10.2-2): the discovery registry, the server tool
+# list, `assay --list-skills`, and the PreToolUse hook's METHOD_REQUIRED_SUBCMDS
+# are all derived from the same skills — verify they agree so #5/#6/#11 can never
+# silently diverge from the actual skill set.
+# ---------------------------------------------------------------------------
+
+def _hook_method_required_subcmds() -> Optional[set]:
+    hook = _REPO / ".claude" / "hooks" / "chemkit-method-gate.sh"
+    if not hook.is_file():
+        return None
+    m = re.search(r'METHOD_REQUIRED_SUBCMDS="([^"]*)"', hook.read_text())
+    return set(m.group(1).split()) if m else None
+
+
+# Subcommands that legitimately take NO --method (so they must NOT be in the
+# hook's method-required list): pure lookup / structure build.
+_NO_METHOD_SUBCMDS = {"resolve", "build"}
+
+
+def lint_registry_sync() -> List[str]:
+    """Return cross-registry drift problems ([] = in sync). Imports assay_core."""
+    problems: List[str] = []
+    import sys
+    if str(_REPO) not in sys.path:
+        sys.path.insert(0, str(_REPO))
+    try:
+        from assay_core import discovery
+    except Exception as e:  # noqa: BLE001
+        return [f"cannot import assay_core.discovery: {e}"]
+
+    infos = discovery.discover_skills(refresh=True)
+    disc_subs = {info.subcommand for info in infos.values()}
+
+    # server TOOLS
+    try:
+        from mcp_server import server
+        server_subs = {sub for (sub, _folder) in server.TOOLS.values()}
+        if server_subs != disc_subs:
+            problems.append(
+                f"server.TOOLS subcommands != discovery: "
+                f"only-server={server_subs - disc_subs}, only-disc={disc_subs - server_subs}")
+    except Exception as e:  # noqa: BLE001
+        problems.append(f"cannot import mcp_server.server: {e}")
+
+    # hook METHOD_REQUIRED_SUBCMDS: must equal discovered subcommands that take
+    # --method (i.e. all discovered minus the no-method ones).
+    hook_subs = _hook_method_required_subcmds()
+    if hook_subs is None:
+        problems.append("could not read METHOD_REQUIRED_SUBCMDS from the hook")
+    else:
+        expected = disc_subs - _NO_METHOD_SUBCMDS
+        if hook_subs != expected:
+            problems.append(
+                f"hook METHOD_REQUIRED_SUBCMDS out of sync with skills: "
+                f"missing={sorted(expected - hook_subs)}, "
+                f"extra={sorted(hook_subs - expected)} "
+                f"(regenerate from manifests)")
+    return problems
+
+
 def main() -> int:
-    ap = argparse.ArgumentParser(description="lint SKILL.md against skill-standards")
+    ap = argparse.ArgumentParser(description="lint SKILL.md + skill spine + registry sync")
     ap.add_argument("skill", nargs="?", help="one skill name (default: all)")
+    ap.add_argument("--spine", action="store_true", help="also run the run.py spine lint")
+    ap.add_argument("--registry", action="store_true", help="also run the registry-sync lint")
+    ap.add_argument("--all", action="store_true", help="run every lint")
     args = ap.parse_args()
+
+    if args.all:
+        args.spine = args.registry = True
 
     if args.skill:
         dirs = [_SKILLS / args.skill]
     else:
         dirs = sorted(d for d in _SKILLS.iterdir()
                       if d.is_dir() and not d.name.startswith("_"))
+
+    rc = 0
 
     n_bad = 0
     for d in dirs:
@@ -136,9 +266,36 @@ def main() -> int:
             for p in problems:
                 print(f"        - {p}")
     total = len(dirs)
-    print(f"\n{total - n_bad}/{total} skills pass SKILL.md lint"
+    print(f"{total - n_bad}/{total} skills pass SKILL.md lint"
           + (f" ({n_bad} with problems)" if n_bad else " — all clean"))
-    return 1 if n_bad else 0
+    if n_bad:
+        rc = 1
+
+    if args.spine:
+        spine_bad = lint_all_spines()
+        if args.skill:
+            spine_bad = {k: v for k, v in spine_bad.items() if k == args.skill}
+        for name, probs in sorted(spine_bad.items()):
+            print(f"[SPINE FAIL] {name}")
+            for p in probs:
+                print(f"        - {p}")
+        n = len(list(_SKILLS.glob("*/scripts/run.py")))
+        print(f"{n - len(spine_bad)}/{n} skill spines OK"
+              + (f" ({len(spine_bad)} with problems)" if spine_bad else " — all clean"))
+        if spine_bad:
+            rc = 1
+
+    if args.registry:
+        reg = lint_registry_sync()
+        if reg:
+            print("[REGISTRY-SYNC FAIL]")
+            for p in reg:
+                print(f"        - {p}")
+            rc = 1
+        else:
+            print("registry in sync (discovery == server.TOOLS == hook subcmds)")
+
+    return rc
 
 
 if __name__ == "__main__":
