@@ -17,10 +17,10 @@ Legend: ☐ not done · ☑ done · N/A not applicable
 - ◑ Discovery registry publishes canonical names + aliases; feeds did-you-mean (#5), `--list-skills`/`--help-json` (#6) *(NEW `assay_core.discovery` walks skills/*/scripts/run.py + reads each SKILL_NAME/SUBCOMMAND manifest — phase 6; SUBCOMMAND_ALIASES/did-you-mean still in cli.py)*
 - ☑ Server (`mcp_server/server.py`) builds typed tools via skill `build_parser()` introspection (#1); TOOLS + CONVERTED_SKILLS are now DISCOVERED, not hand-maintained (phase 6; verified byte-identical param specs to the old CLI subparsers)
 - ☑ `assay`/`chemkit` CLI front-door dispatches to `skills/<n>/scripts/run.py` (phase 7: `_dispatch_calc` → `_run_engine` → skill run.py via runlog, no MCP round-trip); `--help`/`--help-json` served from the skill's `build_parser()`; alias resolution + did-you-mean + `--list-skills` preserved; both `assay` and `chemkit` entry points exist
-- ☐ PreToolUse hook `chemkit-method-gate.sh` retained; `METHOD_REQUIRED_SUBCMDS` regenerated from manifests (#11) *(retained + matches `assay_core.cli`/`assay` — phase 1)*
-- ☐ `tools/lint_skills.py`: spine lint (#10.2-1) + registry-sync lint (#10.2-2) wired into CI *(lint_skill now accepts underscore package dirs — phase 3)*
-- ◑ Full `tests/` suite (test_regression.py, test_cli_interface.py) green *(at baseline: 146 pass / 1 skip / 1 pre-existing ferrocene-spec fail, unrelated to this refactor)*
-- ☐ `rules/skill-standards.md` + `README.md` updated (drop "thin client"; add `run()`/`build_parser()`/`run_cli` contract) *(single-point-energy SKILL.md updated; global docs later phase)*
+- ☑ PreToolUse hook `chemkit-method-gate.sh` retained; `METHOD_REQUIRED_SUBCMDS` regenerated from manifests + kept in sync by the registry-sync lint (#11; phase 8a)
+- ☑ `tools/lint_skills.py`: spine lint (#10.2-1) + registry-sync lint (#10.2-2) wired into CI via test_all_skill_spines_pass_lint + test_registry_in_sync (phase 8a)
+- ◑ Full `tests/` suite (test_regression.py, test_cli_interface.py) green *(at baseline: 148 pass / 1 skip / 1 pre-existing ferrocene-spec fail — +2 new lint tests; the fail is unrelated to this refactor)*
+- ☑ `rules/skill-standards.md` + `README.md` updated: dropped "thin client"; documented the `run()`/`build_parser()`/`run_cli` + `SKILL_NAME`/`SUBCOMMAND` manifest contract, `assay_core` library, and discovery (phase 8c)
 
 ## Per-skill grid
 

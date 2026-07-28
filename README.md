@@ -7,14 +7,18 @@
 A computational chemistry suite powered by **xtb** (GFN2), **MOPAC** (PM7), and
 **PySCF** (DFT / HF), with optional implicit solvation (ALPB / COSMO / PCM). ASE
 provides the geometry-I/O and calculator-driver layer; the quantum chemistry runs
-in those backends. Twenty task-focused skills sit behind a single unified
-engine exposed over the open Model Context Protocol.
+in those backends. Twenty task-focused, self-contained skills share one physics
+library (`assay_core`) and are exposed over the open Model Context Protocol by a
+thin discovery-driven server.
 
 ## Layout
 
-A single unified chemistry engine lives behind an **MCP server**; each skill is a
-thin client that calls it over the open Model Context Protocol. The engine is not
-duplicated into the skills — each skill is a compact wrapper (~18 lines).
+**Everything is a skill.** Each of the 20 skills is *self-contained*: it owns its
+whole workflow in `scripts/run.py` and depends only on the shared physics library
+`assay_core`. A thin **MCP server** discovers the skills and runs each skill's
+`run.py` directly — the dependency arrow points from the server *to* the skills,
+not the other way around. The physics lives once (in `assay_core`), never
+duplicated into the skills.
 
 ```
 ~/chem-skills/
@@ -22,31 +26,57 @@ duplicated into the skills — each skill is a compact wrapper (~18 lines).
 │   ├── skill-standards.md            # how to author one atomic skill
 │   ├── research-standards.md         # how to find/verify/cite literature (binding)
 │   └── workflow-standards.md         # how to compose skills into a vetted workflow
+├── assay_core/            # the shared physics LIBRARY (installed once, on PYTHONPATH)
+│   ├── calculators.py integrity.py schema.py io.py resolve.py constants.py
+│   ├── argkit.py          # shared arg spine: normalizers, gates, run_cli() entrypoint
+│   ├── runlog.py          # live .out logging + subprocess orchestration
+│   ├── ledger.py          # input_configs.yaml parameter persistence
+│   ├── discovery.py       # walks skills/ + reads each SKILL_NAME/SUBCOMMAND manifest
+│   ├── cli.py             # `assay_core.cli` engine CLI (+ describe_parser introspection)
+│   ├── tasks/             # thin shims re-exporting each skill's run() (single copy of physics)
+│   └── backends/pyscf/    # DFT/HF backend
 ├── mcp_server/
-│   ├── server.py          # MCP server (FastMCP, stdio) — exposes 20 tools
-│   ├── chemkit_engine/   # the ONE chemistry engine (cli, calculators, tasks, backends, schema)
-│   ├── requirements.txt   # engine + server deps
-│   └── README.md          # how to wire the server into any MCP client
+│   └── server.py          # thin FastMCP dispatcher — DISCOVERS skills, runs their run.py
 ├── skills/
-│   ├── _mcp_client.py                         # shared thin MCP client
-│   ├── single-point-energy/                   # kebab-case skill name
-│   │   ├── SKILL.md                           # the skill doc (frontmatter + sections)
-│   │   ├── scripts/single-point-energy.py     # ~18-line thin client -> MCP tool
-│   │   ├── requirements.txt                   # just the `mcp` client SDK
+│   ├── single_point_energy/                   # underscore package dir (importable)
+│   │   ├── SKILL.md                           # frontmatter (kebab `name:`) + sections
+│   │   ├── scripts/run.py                     # SELF-CONTAINED: run() + build_parser() + run_cli
+│   │   ├── requirements.txt                   # real deps (assay_core, ase, numpy, pyscf)
 │   │   └── examples/<calc-name>/              # README.md + generated .json/.xyz/.png
 │   └── (20 skill folders total)
-├── workflows/
-│   └── name-to-3d-structure.md    # multi-step procedures chaining skills (rules/workflow-standards.md)
-├── tools/build_skill_folders.py   # regenerates the thin clients
-└── tests/                         # regression suite (drives the thin clients)
+├── assay.toml            # declarative config (conda env, server entry, skills dir)
+├── configure_mcp.py      # generates mcp_config.json wiring from assay.toml
+├── workflows/            # multi-step procedures chaining skills (rules/workflow-standards.md)
+├── tools/lint_skills.py  # SKILL.md + spine + registry-sync lints
+└── tests/                # regression suite
 ```
 
-Skill folders are **kebab-case** and conform to `rules/skill-standards.md`
-(frontmatter with `name`/`description`/`category`, Goal/Instructions/Examples/
-Constraints/References sections, a `scripts/` client, and a validated `examples/`
-folder). The MCP server speaks the open protocol, so **any** MCP-capable client
-can drive it (not just one vendor). See `mcp_server/README.md` for a generic
-client config.
+Each skill's `scripts/run.py` exposes the inverted-architecture **contract**:
+
+- a **typed `run()`** — the workflow (keyword-only scientific args);
+- a **`build_parser()`** composing the shared `assay_core.argkit` option builders
+  (so choices/normalizers/gates are identical across every skill);
+- a **discovery manifest** — module-level `SKILL_NAME` (kebab display name) and
+  `SUBCOMMAND` (engine subcommand);
+- a `__main__` that routes through `argkit.run_cli(...)`, the single spine that
+  applies the level-of-theory gate, the integrity gate, the live `.out` log, and
+  `input_configs.yaml` persistence — so a skill *cannot* bypass a guardrail.
+
+It is runnable stand-alone —
+`python skills/single_point_energy/scripts/run.py --method xtb mol.xyz` — with
+every guardrail intact; the MCP server and the `assay` CLI run this same file.
+The server builds each typed MCP tool by introspecting the skill's own
+`build_parser()`, and its tool registry is *discovered*, never hand-maintained
+(`tools/lint_skills.py --registry` enforces that discovery, the server, and the
+method-gate hook stay in sync).
+
+Skill folders are **underscore-named** (importable Python packages, so a
+composite skill can import a sibling's `run()` in-process) with the **kebab**
+display name in the SKILL.md frontmatter. They conform to
+`rules/skill-standards.md` (frontmatter `name`/`description`/`category`,
+Goal/Instructions/Examples/Constraints/References, and a validated `examples/`).
+The MCP server speaks the open protocol, so **any** MCP-capable client can drive
+it. See `mcp_server/README.md` for a generic client config.
 
 ## The `rules/` standards
 
@@ -150,27 +180,50 @@ searches on the xtb/dft/hf backends), `mcp`, `ase`, `numpy`, and `openai`.
 
 ## Usage
 
-Run a skill directly from the shell; the thin client starts and communicates with
-the engine automatically:
+Run a skill directly from the shell — either the self-contained `run.py`, or the
+`assay` CLI front door (both run the same skill, with every guardrail):
 
 ```bash
-python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water mol.xyz
-python skills/single-point-energy/scripts/single-point-energy.py --help
+# self-contained skill script
+python skills/single_point_energy/scripts/run.py --method xtb --solvent water mol.xyz
+
+# equivalent via the `assay` front door (accepts the kebab name or its subcommand)
+assay single-point-energy --method xtb --solvent water mol.xyz
+assay sp --help
 ```
 
 Or start the MCP server and connect any MCP-capable client:
 
 ```bash
-chemkit-mcp
+assay-mcp
 ```
 
 ```json
-{ "mcpServers": { "chemkit": { "command": "chemkit-mcp" } } }
+{ "mcpServers": { "assay": { "command": "assay-mcp" } } }
 ```
 
+On connection the server injects its operating rules into the client as MCP
+server instructions (Claude Code renders these as a context block automatically),
+so every session is oriented on ASSAY's skills and integrity rules with no
+per-session setup. The text lives in `mcp_server/INSTRUCTIONS.md` and ships with
+the package.
+
+### Claude Code
+
+Register the server once; it then connects automatically in every session and
+loads the ASSAY context:
+
+```bash
+claude mcp add assay --scope user -- assay-mcp
+```
+
+Use `--scope user` to make it available in all projects, or `--scope project`
+(writes `.mcp.json` into the repo, shareable with collaborators) to scope it to
+this project. Verify with `/mcp` inside Claude Code.
+
 See `mcp_server/README.md` for uvx, OpenAI Agents SDK, and run-from-checkout
-configurations. Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to point the
-thin clients at a specific server.
+configurations, or run `python configure_mcp.py --install` to generate the wiring
+from `assay.toml` and merge it into `./.mcp.json`.
 
 ## Example commands
 
@@ -227,14 +280,16 @@ Each skill follows the same pipeline:
    [`rules/research-standards.md`](rules/research-standards.md).
 
 This keeps the heavy lifting (geometry I/O, calculator setup, parsing program
-output into a stable schema) in the one engine behind the MCP server, while the
-`SKILL.md` encodes the *judgment calls* — when to ask the user for
+output into a stable schema) in the shared `assay_core` library, while each
+skill's `SKILL.md` encodes the *judgment calls* — when to ask the user for
 clarification, what's worth flagging as a caveat, and how to translate raw JSON
 into something a chemist would actually want to read.
 
-> Regenerating the thin clients: `tools/build_skill_folders.py` rewrites each
-> `skills/<name>/scripts/<name>.py` as the standard ~18-line MCP client (and refreshes
-> `requirements.txt`). The engine and tool list live in `mcp_server/`.
+> Skill contract: each `skills/<pkg>/scripts/run.py` exposes a typed `run()`, a
+> `build_parser()`, the `SKILL_NAME`/`SUBCOMMAND` discovery manifest, and a
+> `__main__` routing through `assay_core.argkit.run_cli`. `tools/lint_skills.py
+> --all` enforces this (SKILL.md + spine + registry-sync); the server and the
+> `assay` CLI discover skills from disk, so there is no generator to re-run.
 
 ## Validation & examples
 

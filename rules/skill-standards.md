@@ -26,6 +26,36 @@ Each skill must reside in its own subdirectory with the following structure:
     └── reference_data.json
 ```
 
+### Self-contained skill contract (ASSAY / chemkit chemistry skills)
+
+In this repository the chemistry skills follow the **inverted, self-contained**
+architecture (see `DESIGN.md`): the skill owns its whole workflow and the MCP
+server *calls the skill*, not the reverse. Concretely, each such skill:
+
+- lives in an **underscore-named package dir** (e.g. `single_point_energy/`) so
+  it is importable — a composite skill imports a sibling primitive's `run()`
+  in-process — while its SKILL.md frontmatter `name:` stays **kebab-case**
+  (`single-point-energy`), the display/tool name;
+- exposes everything from `scripts/run.py`, which MUST contain:
+  - a **typed `run()`** — the workflow, with keyword-only scientific arguments;
+  - a **`build_parser()`** that composes the shared `assay_core.argkit` option
+    builders (`_add_chem_options` / `_add_gate_option` / `_add_stdout_option`),
+    never re-listing `choices=` by hand;
+  - a **discovery manifest**: module-level `SKILL_NAME` (kebab) and `SUBCOMMAND`
+    (the engine subcommand);
+  - a `__main__` that returns `assay_core.argkit.run_cli(build_parser(), run,
+    task=SUBCOMMAND, ...)` — the single spine enforcing the level-of-theory gate,
+    the integrity gate, the live `.out` log, and `input_configs.yaml`;
+- depends only on the shared **`assay_core`** library (installed once, on
+  PYTHONPATH) plus its declared sibling skills — never a forked copy of the
+  engine. The matching `assay_core/tasks/<x>.py` is a thin shim re-exporting the
+  skill's `run()` so the engine CLI and composites use one copy of the physics.
+
+`tools/lint_skills.py --all` enforces this contract (SKILL.md + the `run.py`
+spine + registry-sync between discovery, the server, and the method-gate hook).
+The server and the `assay` CLI **discover** skills from disk (reading each
+manifest); there is no hand-maintained tool table to update when adding a skill.
+
 ## SKILL.md Format
 
 The `SKILL.md` file must follow this standardized structure:
