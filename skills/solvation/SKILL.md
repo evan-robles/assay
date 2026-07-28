@@ -26,7 +26,7 @@ Estimate the solvation free energy $\Delta G_\text{solv} = E_\text{solvated} - E
 
 ```bash
 # Env: anl_env
-python skills/solvation/scripts/solvation.py --method <xtb|mopac|dft|hf> --solvent <S> [--charge N] [--mult N] [--tier <T>] [--functional <F>] [--basis <B>] [--out <path>] input.xyz
+python skills/solvation/scripts/run.py --method <xtb|mopac|dft|hf> --solvent <S> [--charge N] [--mult N] [--tier <T>] [--functional <F>] [--basis <B>] [--out <path>] input.xyz
 ```
 
 Arguments:
@@ -50,7 +50,7 @@ Read the JSON — it is already written to `--out` (default `<stem>_solvation_<m
 ## Examples
 ```bash
 # Env: anl_env
-python skills/solvation/scripts/solvation.py --method xtb --solvent water mol.xyz
+python skills/solvation/scripts/run.py --method xtb --solvent water mol.xyz
 ```
 See [`examples/`](examples/) for a validated example with literature comparison.
 

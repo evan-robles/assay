@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""logp-partition — self-contained assay skill.
+
+Octanol-water partition coefficient (logP) from a solvation-free-energy cycle.
+
+Owns its workflow; depends only on the shared `assay_core` physics
+library (composites use sibling skills in-process via their task shims).
+Runnable stand-alone via scripts/run.py.
+"""
+from __future__ import annotations
+import os
+from typing import Any, Dict, Optional
+
+from assay_core.tasks import sp as sp_task
+from assay_core.calculators import program_label
+from assay_core.io import read_geometry
+from assay_core.integrity import finalize
+from assay_core.schema import (
+    base_result, EV_TO_KCAL, element_warnings, SINGLE_CONFORMER_WARNING,
+)
+
+# RT * ln(10) at 298.15 K, in kcal/mol.
+#   R = 1.987204e-3 kcal/(mol·K); RT = 0.5925 kcal/mol; * ln10 = 1.3643.
+RT_LN10_KCAL_MOL_298K = 1.3643
+
+
+def run(
+    input_path: str,
+    *,
+    method: str,
+    charge: int = 0,
+    multiplicity: int = 1,
+    cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
+    density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
+) -> Dict[str, Any]:
+    """logP from ΔG_solv(water) − ΔG_solv(octanol). Pinned to 298.15 K.
+
+    logP > 0 → prefers octanol (lipophilic). For ionizable molecules use logD,
+    which is pH-dependent and out of scope here.
+    """
+    if charge != 0:
+        raise ValueError(
+            "logP is defined for the neutral species (charge=0). For ionizable "
+            "molecules, consider logD (pH-dependent), which is out of scope for "
+            "chemkit."
+        )
+
+    gas = sp_task.run(input_path, method=method, charge=charge,
+                      multiplicity=multiplicity, solvent=None, cli=cli,
+                      tier=tier, functional=functional, basis=basis,
+                      density_fit=density_fit,
+                      solvent_model=solvent_model,
+                      gate_integrity=False)
+    water = sp_task.run(input_path, method=method, charge=charge,
+                        multiplicity=multiplicity, solvent="water", cli=cli,
+                        tier=tier, functional=functional, basis=basis,
+                        density_fit=density_fit,
+                        solvent_model=solvent_model,
+                        gate_integrity=False)
+    octanol = sp_task.run(input_path, method=method, charge=charge,
+                          multiplicity=multiplicity, solvent="octanol", cli=cli,
+                          tier=tier, functional=functional, basis=basis,
+                          density_fit=density_fit,
+                          solvent_model=solvent_model,
+                          gate_integrity=False)
+
+    dG_w_kcal = (water["total_energy_eV"]   - gas["total_energy_eV"]) * EV_TO_KCAL
+    dG_o_kcal = (octanol["total_energy_eV"] - gas["total_energy_eV"]) * EV_TO_KCAL
+    ddG = dG_w_kcal - dG_o_kcal
+    logp = ddG / RT_LN10_KCAL_MOL_298K
+
+    atoms = read_geometry(input_path)
+    symbols = atoms.get_chemical_symbols()
+    result = base_result(
+        task="logp",
+        method=gas["method"], program=program_label(method),
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms), atoms=symbols,
+        charge=charge, multiplicity=multiplicity, solvent=None, cli=cli,
+    )
+    result.update({
+        "logp": logp,
+        "delta_G_solv_water_kcal_mol": dG_w_kcal,
+        "delta_G_solv_octanol_kcal_mol": dG_o_kcal,
+        "delta_delta_G_kcal_mol": ddG,
+        "RT_ln10_kcal_mol_at_298K": RT_LN10_KCAL_MOL_298K,
+        "water_solvent_key": "water",
+        "octanol_solvent_key": "octanol",
+        "energy_gas_eV": gas["total_energy_eV"],
+        "energy_water_eV": water["total_energy_eV"],
+        "energy_octanol_eV": octanol["total_energy_eV"],
+    })
+
+    warns = []
+    if abs(dG_w_kcal) < 1e-4 or abs(dG_o_kcal) < 1e-4:
+        warns.append(
+            "ΔG_solv ≈ 0 in water or octanol — implicit solvent may have been "
+            "silently dropped. Check xtb-python / MOPAC version."
+        )
+    warns += [
+        "logP from semi-empirical ΔG_solv differences is screening-grade; "
+        "±1 log unit typical.",
+        # Tightened 2026-07-07: keep the electronic-only + standard-state caveat,
+        # cut the prose. (Dropped the separate 'consider RDKit Crippen/XLogP'
+        # suggestion — a tool recommendation, not a caveat about THIS result, so
+        # it should not be a mandatory verbatim warning.)
+        "Electronic-only ΔG_solv on a single frozen geometry (no "
+        "ZPE/thermal/entropy). The 1 atm→1 M standard-state term cancels in the "
+        "water−octanol difference (logP is insensitive to it), but the "
+        "individual delta_G_solv_* legs are not corrected ΔG*_solv.",
+        SINGLE_CONFORMER_WARNING,
+    ]
+    warns += element_warnings(symbols, method)
+    result["warnings"] = warns
+
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
+
+
+def build_parser():
+    import argparse
+    from assay_core import argkit
+    p = argparse.ArgumentParser(prog="logp-partition",
+        description="Estimate logP from ΔG_solv(water) − ΔG_solv(octanol).")
+    argkit._add_chem_options(p, with_solvent=False)
+    return p
+
+
+def _call_run(args, cli, pyscf_kwargs):
+    return run(args.input, method=args.method, charge=args.charge,
+               multiplicity=args.multiplicity, cli=cli, **pyscf_kwargs)
+
+
+if __name__ == "__main__":
+    from assay_core import argkit
+    raise SystemExit(argkit.run_cli(build_parser(), run, task="logp",
+                                    call_run=_call_run))

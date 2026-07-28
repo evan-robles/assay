@@ -32,22 +32,22 @@ For each skill, confirm the entrypoint spine, then the applicable guardrails.
 | geometry-optimize | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
 | vibrational-analysis | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
 | conformer-search | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
-| conformational-analysis | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| conformational-analysis | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
 | build-from-smiles | ☑ | ☑ | ☑ (`--opt` not `--method`) | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
 | name-to-smiles | ☑ | ☑ | N/A (no QM knobs) | ☑ | N/A | ☑ | ☑ | ☑ | ☑ | ☑ |
-| binding-energy | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| redox-potential | ☐ | ☐ | ☐ (+`--ref`,`--mode`) | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| pka-acidity | ☐ | ☐ | ☐ (+`--mode`; `--accept-defaults`) | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| logp-partition | ☐ | ☐ | ☐ (solvent pinned) | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| solvation | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| frontier-orbitals | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| binding-energy | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| redox-potential | ☑ | ☑ | ☑ (+`--ref`,`--mode`) | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| pka-acidity | ☑ | ☑ | ☑ (+`--mode`; `--accept-defaults`) | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| logp-partition | ☑ | ☑ | ☑ (solvent pinned) | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| solvation | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| frontier-orbitals | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
 | electrostatics | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
-| fukui-reactivity | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| transition-state | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| intrinsic-reaction-coordinate | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| reaction-energy | ☐ | ☐ | ☐ (+`--mode`) | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| reaction-profile | ☐ | ☐ | ☐ (+`--accept-defaults`) | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
-| visualize-orbitals | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ | ☐ |
+| fukui-reactivity | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| transition-state | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| intrinsic-reaction-coordinate | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| reaction-energy | ☑ | ☑ | ☑ (+`--mode`) | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| reaction-profile | ☑ | ☑ | ☑ (+`--accept-defaults`) | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
+| visualize-orbitals | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ | ☑ |
 
 ## Composite-specific (skill→skill in-process, #5 of DESIGN)
 
@@ -57,16 +57,16 @@ and its declared `depends_on:` must match its imports (DAG lint).
 | Composite | imports (sibling skill run()) | `depends_on:` declared | sub-step still integrity-gated (#8) |
 |---|---|---|---|
 | vibrational-analysis | opt, conformer-search | ☐ (composes via the opt/confsearch task shims → skills, not yet direct sibling imports) | ☑ (sub-steps run through the skill run()s, which gate) |
-| conformational-analysis | conformer-search, opt | ☐ | ☐ |
-| binding-energy | single-point-energy | ☐ | ☐ |
-| logp-partition | single-point-energy | ☐ | ☐ |
-| solvation | single-point-energy | ☐ | ☐ |
-| fukui-reactivity | electrostatics | ☐ | ☐ |
-| redox-potential | sp, opt, freq | ☐ | ☐ |
-| reaction-energy | sp, opt, freq | ☐ | ☐ |
-| pka-acidity | freq | ☐ | ☐ |
-| transition-state | freq | ☐ | ☐ |
-| reaction-profile | opt, freq, ts, irc | ☐ | ☐ |
+| conformational-analysis | conformer-search, opt | ☐ (via task shims → skills) | ☑ (sub-steps gate) |
+| binding-energy | single-point-energy | ☐ (via sp task shim → skill) | ☑ (sub-steps gate) |
+| logp-partition | single-point-energy | ☐ (via sp task shim → skill) | ☑ (sub-steps gate) |
+| solvation | single-point-energy | ☐ (via sp task shim → skill) | ☑ (sub-steps gate) |
+| fukui-reactivity | electrostatics | ☐ (via electrostatics task shim → skill) | ☑ (sub-steps gate) |
+| redox-potential | sp, opt, freq | ☐ (via task shims → skills) | ☑ (sub-steps gate) |
+| reaction-energy | sp, opt, freq | ☐ (via task shims → skills) | ☑ (sub-steps gate) |
+| pka-acidity | freq | ☐ (via freq task shim → skill) | ☑ (sub-steps gate) |
+| transition-state | freq | ☐ (via freq task shim → skill) | ☑ (sub-steps gate) |
+| reaction-profile | opt, freq, ts, irc | ☐ (via task shims → skills) | ☑ (sub-steps gate) |
 | build-from-smiles | opt (optional QM refine) | ☐ (composes via the opt task shim → skill, not yet a direct sibling import) | ☑ (the --opt step runs through opt's skill run(), which gates) |
 
 ## Sign-off gate
