@@ -15,20 +15,16 @@ source, and convergence state that produced it.
 ## Quick start
 
 ```bash
-# 1. install (creates the `chemkit` conda env with all backends)
-conda env create -f environment.yml
-conda activate chemkit
-pip install -e .
-
-# 2. run a calculation
-assay single-point-energy --method xtb water.xyz
-
-# 3. or connect an agent (see "Use with an agent" below)
-assay-mcp
+pixi install                                          # get pixi at pixi.sh
+pixi run assay single-point-energy --method xtb water.xyz
+pixi run assay-mcp                                    # or serve to an agent
 ```
 
-`assay <skill> --help` shows a skill's arguments; `assay --list-skills` lists them
-all. Don't have a geometry? `assay build-from-smiles 'O' --out-xyz water.xyz`.
+Conda works too: `conda env create -f environment.yml && conda activate chemkit`,
+then `assay ...` without the `pixi run` prefix.
+
+`assay <skill> --help` lists a skill's arguments; `assay --list-skills` lists all.
+No geometry? `assay build-from-smiles 'O' --out-xyz water.xyz`.
 
 ## Skills
 
@@ -129,19 +125,18 @@ qsub -l select=1 tools/aurora_nodeholder.pbs        # publishes .sweep_nodes
 Keep `name-to-smiles` / `build-from-smiles` local — compute nodes have no
 outbound internet.
 
-## Installation notes
+## Installation
 
-The conda env installs everything in one step. If you manage Python with pip
-instead, install the conda-forge binaries first (none are pip-installable):
+The `xtb`, `mopac`, and `openbabel` backends are conda-forge only (not on PyPI).
 
 ```bash
-conda install -c conda-forge xtb xtb-python mopac openbabel rdkit
-pip install -e .
+pixi install                                  # everything, all platforms
+conda env create -f environment.yml           # or conda
+conda install -c conda-forge xtb xtb-python mopac openbabel rdkit && pip install -e .  # or pip + conda backends
 ```
 
-Per-backend binaries: `xtb`/`xtb-python` (xtb), `mopac` (mopac), `openbabel`
-(SMILES/name/conformers), `rdkit` (structure handling). pip brings the rest
-(`pyscf`, `sella`, `ase`, `numpy`, `matplotlib`, `mcp`).
+**Windows:** all backends work except PySCF (no Windows build), so `--method
+dft`/`hf` require Linux/macOS or WSL.
 
 ## Architecture
 

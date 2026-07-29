@@ -47,7 +47,10 @@ def run_mopac(keywords: Sequence[str], atoms, symbols, *, title: str = "chemkit"
     """
     mopac_exe = shutil.which("mopac")
     if mopac_exe is None:
-        raise FileNotFoundError("mopac executable not found in PATH.")
+        raise FileNotFoundError(
+            "mopac (--method mopac) not found on PATH. Install: "
+            "conda install -c conda-forge mopac"
+        )
     if workdir is None:
         workdir = tempfile.mkdtemp(prefix=f"chemkit_{stem}_")
     mop_name = f"{stem}.mop"

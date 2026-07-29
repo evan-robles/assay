@@ -84,3 +84,6 @@ benchmarks/*.png
 # would otherwise re-include it).
 .DS_Store
 **/.DS_Store
+
+# pixi: ignore the local env cache; DO commit pixi.lock (reproducible installs).
+.pixi/

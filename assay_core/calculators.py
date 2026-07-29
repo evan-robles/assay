@@ -520,8 +520,14 @@ def import_xtb_python():
     install hint; sp soft-returns to skip xtb HOMO/LUMO). Centralizes the import
     so the three call sites don't each spell out the module paths.
     """
-    from xtb.interface import Calculator, Param
-    from xtb.libxtb import VERBOSITY_MUTED
+    try:
+        from xtb.interface import Calculator, Param
+        from xtb.libxtb import VERBOSITY_MUTED
+    except ImportError as e:
+        raise ImportError(
+            "xtb-python (--method xtb) not installed. Install: "
+            "conda install -c conda-forge xtb xtb-python"
+        ) from e
     return Calculator, Param, VERBOSITY_MUTED
 
 
@@ -635,7 +641,10 @@ class _XtbCliCalculator:
 
     def __init__(self, *, charge=0, uhf=0, solvent=None, workdir):
         if not shutil.which("xtb"):
-            raise FileNotFoundError("xtb CLI not found and xtb-python unavailable.")
+            raise FileNotFoundError(
+                "xtb (--method xtb) not found. Install: "
+                "conda install -c conda-forge xtb xtb-python"
+            )
         self.charge = charge
         self.uhf = uhf
         self.solvent = solvent

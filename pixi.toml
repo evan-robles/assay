@@ -1,0 +1,41 @@
+# pixi manifest: `pixi install` gets the conda-forge backends + the Python
+# package in one reproducible step. See README for the conda/pip alternatives.
+
+[project]
+name = "assay"
+description = "Agentic Simulation Suite for Automated chemistrY — computational-chemistry skills over MCP"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
+
+# Conda-forge backends (no PyPI wheels).
+[dependencies]
+python = "3.12.*"
+xtb = ">=6.7"          # --method xtb (GFN2-xTB)
+xtb-python = ">=22"    # the `import xtb` API
+mopac = ">=22"         # --method mopac (PM7)
+openbabel = ">=3.1"    # SMILES->3D, name resolution, conformers
+rdkit = ">=2023.3"     # structure handling
+
+# The package + its pip deps (pyscf/sella/ase/mcp/... from pyproject).
+[pypi-dependencies]
+chemkit-mcp = { path = ".", editable = true }
+
+# PySCF (--method dft/hf) has no Windows build; installed only where it exists.
+[target.linux-64.dependencies]
+pyscf = ">=2.5"
+[target.osx-arm64.dependencies]
+pyscf = ">=2.5"
+[target.osx-64.dependencies]
+pyscf = ">=2.5"
+
+[tasks]
+assay = "assay"
+mcp = "assay-mcp"
+test = "pytest tests/ -q"
+lint = "python tools/lint_skills.py --all"
+
+[feature.dev.dependencies]
+pytest = ">=8"
+
+[environments]
+default = { features = ["dev"], solve-group = "default" }
