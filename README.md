@@ -225,19 +225,46 @@ See `mcp_server/README.md` for uvx, OpenAI Agents SDK, and run-from-checkout
 configurations, or run `python configure_mcp.py --install` to generate the wiring
 from `assay.toml` and merge it into `./.mcp.json`.
 
+### Running on Aurora (remote compute nodes)
+
+The engine can run on a remote compute node transparently to the agent: every
+skill run ssh's to the node and streams the result JSON back **synchronously**, in
+the same tool call. Enable the `[remote]` block in `assay.toml` (or force it at
+generate time), then regenerate the wiring:
+
+```bash
+# hold an allocation (publishes compute-node hostnames to .sweep_nodes)
+qsub -l select=1 tools/aurora_nodeholder.pbs
+
+# wire the server to run on that node (auto-picks the first host from .sweep_nodes),
+# then install into ./.mcp.json
+python configure_mcp.py --remote --install
+# …or pin a host explicitly:
+python configure_mcp.py --remote-host x4712c0s1b0n0 --install
+```
+
+This injects `CHEMKIT_REMOTE_HOST` into the server env; the `runlog` layer does
+the ssh (assuming a shared filesystem, true on Aurora). It fits calcs that finish
+within the tool timeout (~1 h) — xtb / PM7 / small DFT. For long DFT use the
+**async** submit/collect flow in `tools/aurora_submit.py` instead. Keep
+`name-to-smiles` / `build-from-smiles` local (compute nodes have no outbound
+internet for the PubChem/OPSIN lookups).
+
 ## Example commands
 
 ```bash
-python skills/single-point-energy/scripts/single-point-energy.py --method xtb --solvent water mol.xyz
-python skills/geometry-optimize/scripts/geometry-optimize.py      --method mopac --charge 0 mol.xyz
-python skills/single-point-energy/scripts/single-point-energy.py  --method dft --tier standard mol.xyz
-python skills/vibrational-analysis/scripts/vibrational-analysis.py --method xtb mol_opt.xyz
-python skills/binding-energy/scripts/binding-energy.py --method xtb --monomer A.xyz --monomer B.xyz complex.xyz
-python skills/redox-potential/scripts/redox-potential.py --method xtb --ref SHE --solvent water mol.xyz
-python skills/pka-acidity/scripts/pka-acidity.py --method xtb --mode reference mol.xyz
-python skills/reaction-profile/scripts/reaction-profile.py --method xtb reactant.xyz ts.xyz product.xyz
-python skills/conformer-search/scripts/conformer-search.py --method xtb mol.xyz
-python skills/build-from-smiles/scripts/build-from-smiles.py 'CCO'   # SMILES → 3D xyz (use name-to-smiles for a name)
+# via the `assay` front door (accepts the kebab skill name or its subcommand);
+# equivalently `python skills/<pkg>/scripts/run.py <args>`.
+assay single-point-energy --method xtb --solvent water mol.xyz
+assay geometry-optimize   --method mopac --charge 0 mol.xyz
+assay single-point-energy --method dft --tier standard mol.xyz
+assay vibrational-analysis --method xtb mol_opt.xyz
+assay binding-energy --method xtb --monomer A.xyz --monomer B.xyz complex.xyz
+assay redox-potential --method xtb --ox-charge 0 --red-charge -1 --ref SHE --solvent water mol.xyz
+assay pka-acidity --method xtb --mode reference --ha HA.xyz --a-minus A_minus.xyz
+assay reaction-profile --method xtb --reactant reactant.xyz --product product.xyz --ts-guess ts.xyz
+assay conformer-search --method xtb mol.xyz
+assay build-from-smiles 'CCO'   # SMILES → 3D xyz (use name-to-smiles for a name)
 ```
 
 All tasks write a single JSON file with a common header:

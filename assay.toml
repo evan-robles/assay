@@ -31,3 +31,34 @@ dir = "skills"
 # The registry-sync lint (tools/lint_skills.py --registry) enforces that the
 # discovered skills, server.TOOLS, and the method-gate hook agree.
 lint = "tools/lint_skills.py"
+
+[remote]
+# Optional: run every calculation on a REMOTE compute node over ssh, transparently
+# to the agent. When enabled, `configure_mcp.py` injects CHEMKIT_REMOTE_HOST (and
+# CHEMKIT_REMOTE_SSH_OPTS) into the generated mcp_config.json server env; the
+# runlog layer then ssh'es each skill run to that host and streams the result JSON
+# back — synchronously, in the same MCP tool call. This is the "agent runs the
+# engine on Aurora, gets the output, returns it to the user" path.
+#
+# ASSUMES a SHARED filesystem (cwd + input/--out paths resolve identically on both
+# sides — true on Aurora, where $HOME/flare mount on compute nodes) and that the
+# host is ssh-reachable from where the server runs (a login node, with a live
+# allocation). Only fits calcs that finish within the tool timeout (~3600 s):
+# xtb/PM7/small DFT. For long DFT use the async tools/aurora_submit.py instead.
+# Compute nodes have no outbound internet, so name-to-smiles / build-from-smiles
+# (PubChem/OPSIN lookups) should stay LOCAL — run those off the remote server.
+
+# Master switch. false (default) = the server runs the engine locally.
+enabled = false
+
+# The compute-node hostname to ssh to. Leave empty to auto-pick the first host
+# from `nodes_file` (the node list the aurora_nodeholder.pbs job publishes).
+host = ""
+
+# File listing allocated compute-node hostnames (one per line); the nodeholder
+# writes this. Used only when `host` is empty. Path is relative to the repo root.
+nodes_file = ".sweep_nodes"
+
+# Extra ssh options (shlex-split into CHEMKIT_REMOTE_SSH_OPTS), e.g. a
+# ControlMaster socket or "-o BatchMode=yes". Empty by default.
+ssh_opts = ""

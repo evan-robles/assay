@@ -71,8 +71,48 @@ def _conda_prefix(env_name: str) -> Path | None:
     return None
 
 
-def build_config(cfg: dict, env_name: str) -> dict:
-    """Build the {mcpServers: {name: {command, args, env}}} wiring."""
+def resolve_remote(cfg: dict, *, force: bool | None = None,
+                   host_override: str | None = None) -> dict:
+    """Resolve the [remote] block into env vars for the server, or {} if remote is
+    off. `force` overrides the `enabled` switch (True=on, False=off, None=use cfg).
+    `host_override` wins over both the cfg `host` and the nodes_file auto-pick.
+
+    Raises SystemExit with a clear message if remote is requested but no host can
+    be resolved (better than silently running local when the user asked for Aurora).
+    """
+    remote = cfg.get("remote", {})
+    enabled = remote.get("enabled", False) if force is None else force
+    if not enabled:
+        return {}
+
+    host = (host_override or remote.get("host", "") or "").strip()
+    if not host:
+        nodes_file = remote.get("nodes_file", ".sweep_nodes")
+        nf = _REPO / nodes_file if not os.path.isabs(nodes_file) else Path(nodes_file)
+        if nf.is_file():
+            for line in nf.read_text().splitlines():
+                if line.strip():
+                    host = line.strip()
+                    break
+        if not host:
+            sys.exit(
+                f"configure_mcp: remote is enabled but no host resolved — set "
+                f"[remote].host, pass --remote-host, or ensure {nodes_file} lists a "
+                f"compute node (the aurora_nodeholder.pbs job publishes it).")
+
+    env = {"CHEMKIT_REMOTE_HOST": host}
+    ssh_opts = (remote.get("ssh_opts", "") or "").strip()
+    if ssh_opts:
+        env["CHEMKIT_REMOTE_SSH_OPTS"] = ssh_opts
+    return env
+
+
+def build_config(cfg: dict, env_name: str, *, remote_env: dict | None = None) -> dict:
+    """Build the {mcpServers: {name: {command, args, env}}} wiring.
+
+    `remote_env` (from resolve_remote) is merged into the server env so every MCP
+    tool call runs on the remote compute node via runlog's ssh path.
+    """
     server = cfg.get("server", {})
     name = server.get("name", "assay")
     entry = server.get("entry_point", "assay-mcp")
@@ -83,7 +123,7 @@ def build_config(cfg: dict, env_name: str) -> dict:
         # Preferred: the installed console script in the env — no activation needed.
         command = str(prefix / "bin" / entry)
         args: list[str] = []
-        env = {}
+        env: dict[str, str] = {}
     elif prefix is not None:
         # Env exists but the package isn't installed there yet: run the module
         # with that env's python + repo on PYTHONPATH.
@@ -96,6 +136,17 @@ def build_config(cfg: dict, env_name: str) -> dict:
         command = entry
         args = []
         env = {"PYTHONPATH": str(_REPO)}
+
+    if remote_env:
+        env = {**env, **remote_env}
+        # runlog reproduces PYTHONPATH on the remote side (PYTHONPATH={pp} in the
+        # ssh command). Under a shared filesystem the repo path is identical on
+        # both nodes, so pin it here so `import assay_core` / `from skills.` resolve
+        # on the compute node even when the server was launched via the installed
+        # console script (which otherwise carries no PYTHONPATH).
+        existing_pp = env.get("PYTHONPATH", "")
+        parts = [str(_REPO)] + ([existing_pp] if existing_pp else [])
+        env["PYTHONPATH"] = os.pathsep.join(parts)
 
     return {"mcpServers": {name: {"command": command, "args": args, "env": env}}}
 
@@ -121,11 +172,22 @@ def main(argv: list[str] | None = None) -> int:
                     help="merge into a specific MCP config path instead of ./.mcp.json")
     ap.add_argument("--print", dest="print_only", action="store_true",
                     help="print the config to stdout and write nothing")
+    ap.add_argument("--remote", dest="remote", action="store_true", default=None,
+                    help="force remote execution ON (overrides [remote].enabled): "
+                         "inject CHEMKIT_REMOTE_HOST so every tool call runs on the "
+                         "compute node over ssh")
+    ap.add_argument("--no-remote", dest="remote", action="store_false",
+                    help="force remote execution OFF (run the engine locally)")
+    ap.add_argument("--remote-host", default=None,
+                    help="compute-node hostname to ssh to (wins over [remote].host "
+                         "and the nodes_file auto-pick); implies --remote")
     args = ap.parse_args(argv)
 
     cfg = _load_toml(_TOML)
     env_name = args.conda_env or cfg.get("project", {}).get("conda_env", "anl_env")
-    config = build_config(cfg, env_name)
+    force = True if args.remote_host else args.remote
+    remote_env = resolve_remote(cfg, force=force, host_override=args.remote_host)
+    config = build_config(cfg, env_name, remote_env=remote_env)
     blob = json.dumps(config, indent=2)
 
     if args.print_only:
@@ -134,7 +196,9 @@ def main(argv: list[str] | None = None) -> int:
 
     out_path = _REPO / "mcp_config.json"
     out_path.write_text(blob + "\n")
-    print(f"wrote {out_path.relative_to(_REPO)} (conda_env={env_name})")
+    remote_note = (f", remote={remote_env['CHEMKIT_REMOTE_HOST']}"
+                   if remote_env else ", local")
+    print(f"wrote {out_path.relative_to(_REPO)} (conda_env={env_name}{remote_note})")
 
     if args.install or args.install_into:
         target = Path(args.install_into) if args.install_into else (_REPO / ".mcp.json")
