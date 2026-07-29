@@ -1,20 +1,20 @@
-# chemkit live log
+# assay live log
 # subcommand : pka
-# args       : --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpq68bdcjw/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpq68bdcjw/truth.json
+# args       : --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp60ipw525/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp60ipw525/truth.json
 # cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/engine-reference
-# started    : 20260711-174351
+# started    : 20260727-220754
 # ============================================================
 
 
-          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:43.
+          MOPAC Job: "mopac.mop" ended normally on Jul 27, 2026, at 22:07.
 
 
 
-          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:43.
+          MOPAC Job: "mopac.mop" ended normally on Jul 27, 2026, at 22:07.
 
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpq68bdcjw/truth.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp60ipw525/truth.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -37,7 +37,7 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": "water",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpq68bdcjw/truth.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp60ipw525/truth.json",
   "mode": "absolute",
   "temperature_K": 298.15,
   "pressure_Pa": 101325.0,
@@ -61,7 +61,7 @@
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": null,
       "n_soft_imaginary_modes": null,
-      "optimized_xyz": "/tmp/chemkit_optfreq_uob9rlew/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_3366z1a2/preopt.xyz"
     },
     "A_minus": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz",
@@ -74,7 +74,7 @@
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": null,
       "n_soft_imaginary_modes": null,
-      "optimized_xyz": "/tmp/chemkit_optfreq_gxdqrbdf/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_s137py3t/preopt.xyz"
     }
   },
   "warnings": [

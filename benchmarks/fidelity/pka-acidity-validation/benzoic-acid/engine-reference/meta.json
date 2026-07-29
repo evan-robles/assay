@@ -11,20 +11,20 @@
     "--solvent",
     "water",
     "--ha",
-    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/ha.xyz",
+    "/home/erobles/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/ha.xyz",
     "--a-minus",
-    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/a_minus.xyz",
+    "/home/erobles/chem-skills/benchmarks/fidelity/pka-acidity-validation/benzoic-acid/a_minus.xyz",
     "--ref-ha",
-    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz",
+    "/home/erobles/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz",
     "--ref-a-minus",
-    "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz"
+    "/home/erobles/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz"
   ],
   "positional": null,
   "expect": "compute",
-  "spec_hash": "738106e4b53f6541",
+  "spec_hash": "b2928d55cef20046",
   "determinism_ok": true,
   "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
   "engine_failed": false,
-  "git_commit": "d5b24b761",
-  "timestamp": "2026-07-11T17:44:07"
+  "git_commit": "fc8ef5d29",
+  "timestamp": "2026-07-27T15:37:20"
 }

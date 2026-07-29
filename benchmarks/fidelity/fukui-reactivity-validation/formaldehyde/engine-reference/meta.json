@@ -1,0 +1,26 @@
+{
+  "spec_name": "formaldehyde_fukui_reactivity",
+  "skill": "fukui-reactivity",
+  "flags": [
+    "--method",
+    "dft",
+    "--charge",
+    "0",
+    "--mult",
+    "1",
+    "--tier",
+    "standard",
+    "--functional",
+    "b3lyp",
+    "--basis",
+    "def2-tzvp"
+  ],
+  "positional": "/home/erobles/chem-skills/benchmarks/fidelity/fukui-reactivity-validation/formaldehyde/formaldehyde.xyz",
+  "expect": "compute",
+  "spec_hash": "ff54609386c4c3af",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "fc8ef5d29",
+  "timestamp": "2026-07-27T08:39:44"
+}

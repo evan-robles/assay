@@ -1,20 +1,20 @@
-# chemkit live log
+# assay live log
 # subcommand : pka
-# args       : --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7bgrmq7r/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7bgrmq7r/truth.json
+# args       : --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpo7lhfzms/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpo7lhfzms/truth.json
 # cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/engine-reference
-# started    : 20260711-174427
+# started    : 20260727-220937
 # ============================================================
 
 
-          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:44.
+          MOPAC Job: "mopac.mop" ended normally on Jul 27, 2026, at 22:09.
 
 
 
-          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:44.
+          MOPAC Job: "mopac.mop" ended normally on Jul 27, 2026, at 22:09.
 
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7bgrmq7r/truth.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpo7lhfzms/truth.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -32,7 +32,7 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": "water",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp7bgrmq7r/truth.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpo7lhfzms/truth.json",
   "mode": "absolute",
   "temperature_K": 298.15,
   "pressure_Pa": 101325.0,
@@ -69,7 +69,7 @@
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": null,
       "n_soft_imaginary_modes": null,
-      "optimized_xyz": "/tmp/chemkit_optfreq_yfqhnz42/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_7q5f2t09/preopt.xyz"
     }
   },
   "warnings": [

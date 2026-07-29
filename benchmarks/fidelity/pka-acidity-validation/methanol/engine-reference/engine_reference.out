@@ -1,20 +1,20 @@
-# chemkit live log
+# assay live log
 # subcommand : pka
-# args       : --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpyo5ov26z/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpyo5ov26z/truth.json
+# args       : --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi9yxv5iv/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi9yxv5iv/truth.json
 # cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/engine-reference
-# started    : 20260711-174432
+# started    : 20260727-220954
 # ============================================================
 
 
-          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:44.
+          MOPAC Job: "mopac.mop" ended normally on Jul 27, 2026, at 22:09.
 
 
 
-          MOPAC Job: "mopac.mop" ended normally on Jul 11, 2026, at 17:44.
+          MOPAC Job: "mopac.mop" ended normally on Jul 27, 2026, at 22:09.
 
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpyo5ov26z/truth.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi9yxv5iv/truth.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -35,7 +35,7 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": "water",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpyo5ov26z/truth.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method mopac --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi9yxv5iv/truth.json",
   "mode": "absolute",
   "temperature_K": 298.15,
   "pressure_Pa": 101325.0,
@@ -59,7 +59,7 @@
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": null,
       "n_soft_imaginary_modes": null,
-      "optimized_xyz": "/tmp/chemkit_optfreq_82shqjcb/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_sasd9w5x/preopt.xyz"
     },
     "A_minus": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methanol/a_minus.xyz",
@@ -72,7 +72,7 @@
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": null,
       "n_soft_imaginary_modes": null,
-      "optimized_xyz": "/tmp/chemkit_optfreq_az6ast8g/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_2fcdln5p/preopt.xyz"
     }
   },
   "warnings": [

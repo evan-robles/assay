@@ -119,13 +119,37 @@ phenol,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.220
 pyridine,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,29.33,7.45,3.33,26.93,1.58,41500.2,3435.4,44935.6
 toluene,argo:o4-mini,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,24.84,10.53,4.71,22.92,1.77,32368.8,2709.2,35078.0
 
+model: meta-llama/Meta-Llama-3.1-8B-Instruct
+model latency: llm_s=13.76 ± 19.28 (SE 2.87) [n=45]  turns=2.51 ± 0.84 (SE 0.13) [n=45]  tool_calls=1.42 ± 0.69 (SE 0.1) [n=45]
+aniline,meta-llama/Meta-Llama-3.1-8B-Instruct,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x4,GFN2-xTB,,,,,logp,2.29941,2.29941,29.62,30.51,13.64,27.52,1.75,41631.2,547.2,42178.4
+benzene,meta-llama/Meta-Llama-3.1-8B-Instruct,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x3,PM7,,,,,logp,-0.196167,-0.196167,6.87,0.6,0.27,5.16,1.7,34463.2,418.4,34881.6
+diethyl-ether,meta-llama/Meta-Llama-3.1-8B-Instruct,compute,live,2,0,5,0.4,FAIL,integrity verdict surfaced x5; method x3; charge x3; multiplicity x3; reported logp x3,GFN2-xTB,,,,,logp,1.55248,1.55248,20.56,19.51,8.72,16.62,0.65,66944.2,481.0,67425.2
+ethanol,meta-llama/Meta-Llama-3.1-8B-Instruct,compute,live,4,0,5,0.8,PASS,integrity verdict surfaced x4; method x1; charge x1; multiplicity x1; reported logp x1,GFN2-xTB,,,,,logp,1.10216,0.762,7.89,1.95,0.87,5.53,1.41,41365.4,454.8,41820.2
+ibuprofen,meta-llama/Meta-Llama-3.1-8B-Instruct,compute,live,3,0,5,0.6,PASS,integrity verdict surfaced x5; method x2; charge x2; multiplicity x2; reported logp x2,GFN2-xTB,,,,,logp,3.66313,3.66313,19.61,25.83,11.55,17.39,1.02,44677.0,444.4,45121.4
+methanol,meta-llama/Meta-Llama-3.1-8B-Instruct,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x4,PM7,,,,,logp,-0.575027,-0.575027,37.95,28.48,12.74,35.96,1.61,38032.8,486.2,38519.0
+phenol,meta-llama/Meta-Llama-3.1-8B-Instruct,compute,live,4,0,5,0.8,PASS,integrity verdict surfaced x3; method x1; charge x1; multiplicity x1; reported logp x1,GFN2-xTB,,,,,logp,2.22083,2.22083,7.51,1.34,0.6,5.11,1.29,41353.4,384.0,41737.4
+pyridine,meta-llama/Meta-Llama-3.1-8B-Instruct,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x3,GFN2-xTB,,,,,logp,1.34282,1.34282,8.44,3.14,1.41,5.75,1.8,41641.6,344.4,41986.0
+toluene,meta-llama/Meta-Llama-3.1-8B-Instruct,compute,live,5,0,5,1.0,PASS,integrity verdict surfaced x5,GFN2-xTB,,,,,logp,2.33443,2.33443,7.26,1.43,0.64,4.79,1.82,41544.6,342.0,41886.6
+
+model: openai/gpt-oss-120b
+model latency: llm_s=26.42 ± 16.8 (SE 2.5) [n=45]  turns=3.91 ± 1.59 (SE 0.24) [n=45]  tool_calls=1.02 ± 0.15 (SE 0.02) [n=45]
+aniline,openai/gpt-oss-120b,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.29941,2.29941,32.77,23.83,10.66,30.68,2.08,51665.8,1633.0,53298.8
+benzene,openai/gpt-oss-120b,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.196167,-0.196167,25.53,3.97,1.78,23.48,2.04,61276.2,1670.8,62947.0
+diethyl-ether,openai/gpt-oss-120b,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.55248,1.55248,24.39,7.04,3.15,22.46,1.91,87410.2,1574.6,88984.8
+ethanol,openai/gpt-oss-120b,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.10216,1.10216,23.11,5.73,2.56,21.33,1.75,61975.4,1419.0,63394.4
+ibuprofen,openai/gpt-oss-120b,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,3.66313,3.66313,44.59,27.47,12.28,42.42,2.16,51277.0,1385.4,52662.4
+methanol,openai/gpt-oss-120b,compute,live,5,0,5,1.0,PASS,,PM7,,,,,logp,-0.575027,-0.575027,32.22,9.28,4.15,30.52,1.68,87614.6,2365.4,89980.0
+phenol,openai/gpt-oss-120b,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.22083,2.22083,22.55,8.77,3.92,20.59,1.94,62146.4,1516.0,63662.4
+pyridine,openai/gpt-oss-120b,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,1.34282,1.34282,31.18,31.08,13.9,29.55,1.62,60856.6,1595.6,62452.2
+toluene,openai/gpt-oss-120b,compute,live,5,0,5,1.0,PASS,,GFN2-xTB,,,,,logp,2.33443,2.33443,18.68,0.94,0.42,16.77,1.88,50630.4,1558.6,52189.0
+
 # engine (DFT compute) wall-time per molecule — TASK-bound (independent of the calling model)
-engine_s[aniline]: 2.12 ± 0.74 (SE 0.1) [n=50]
-engine_s[benzene]: 2.0 ± 0.65 (SE 0.09) [n=50]
-engine_s[diethyl-ether]: 1.8 ± 0.45 (SE 0.06) [n=50]
-engine_s[ethanol]: 1.74 ± 0.35 (SE 0.05) [n=50]
-engine_s[ibuprofen]: 2.01 ± 0.52 (SE 0.07) [n=50]
-engine_s[methanol]: 1.75 ± 0.44 (SE 0.06) [n=50]
-engine_s[phenol]: 1.89 ± 0.49 (SE 0.07) [n=50]
-engine_s[pyridine]: 1.84 ± 0.51 (SE 0.07) [n=50]
-engine_s[toluene]: 1.8 ± 0.34 (SE 0.05) [n=50]
+engine_s[aniline]: 2.09 ± 0.69 (SE 0.09) [n=60]
+engine_s[benzene]: 1.98 ± 0.61 (SE 0.08) [n=60]
+engine_s[diethyl-ether]: 1.71 ± 0.57 (SE 0.07) [n=60]
+engine_s[ethanol]: 1.71 ± 0.39 (SE 0.05) [n=60]
+engine_s[ibuprofen]: 1.94 ± 0.61 (SE 0.08) [n=60]
+engine_s[methanol]: 1.73 ± 0.41 (SE 0.05) [n=60]
+engine_s[phenol]: 1.85 ± 0.54 (SE 0.07) [n=60]
+engine_s[pyridine]: 1.82 ± 0.48 (SE 0.06) [n=60]
+engine_s[toluene]: 1.81 ± 0.32 (SE 0.04) [n=60]

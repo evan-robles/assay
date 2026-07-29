@@ -1,12 +1,12 @@
-# chemkit live log
+# assay live log
 # subcommand : pka
-# args       : --method xtb --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpuek0jrgw/a.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method xtb --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpuek0jrgw/a.json
+# args       : --method xtb --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi40gyyp8/a.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method xtb --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi40gyyp8/a.json
 # cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/engine-reference/determinism
-# started    : 20260711-174454
+# started    : 20260727-221208
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpuek0jrgw/a.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi40gyyp8/a.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -29,44 +29,44 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": "water",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpuek0jrgw/a.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi40gyyp8/a.json",
   "mode": "absolute",
   "temperature_K": 298.15,
   "pressure_Pa": 101325.0,
-  "G_HA_kcal_mol": -17016.38871451368,
-  "G_A_minus_kcal_mol": -16926.9945149158,
+  "G_HA_kcal_mol": -17016.38871451367,
+  "G_A_minus_kcal_mol": -16926.994514915794,
   "hplus_reference": "tissandier_1998",
   "G_Hplus_aq_kcal_mol": -270.28,
   "standard_state_correction_kcal_mol": 1.8943284009764536,
   "RT_ln10_kcal_mol": 1.3642470125942985,
-  "delta_G_dissociation_kcal_mol": -178.9914720011439,
-  "pKa": -131.20165948596627,
+  "delta_G_dissociation_kcal_mol": -178.99147200114754,
+  "pKa": -131.20165948596895,
   "species": {
     "HA": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/ha.xyz",
       "charge": 0,
       "multiplicity": 1,
-      "G_kcal_mol": -17016.38871451368,
-      "H_kcal_mol": -16992.073017892828,
-      "E_kcal_mol": -17019.013729407325,
-      "ZPE_kcal_mol": 22.244446355602708,
+      "G_kcal_mol": -17016.38871451367,
+      "H_kcal_mol": -16992.073017892817,
+      "E_kcal_mol": -17019.013729407317,
+      "ZPE_kcal_mol": 22.244446355602207,
       "n_imaginary_modes": 1,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 1,
-      "optimized_xyz": "/tmp/chemkit_optfreq_7c1yexhv/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_4im1z9uy/preopt.xyz"
     },
     "A_minus": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz",
       "charge": -1,
       "multiplicity": 1,
-      "G_kcal_mol": -16926.9945149158,
-      "H_kcal_mol": -16902.694180959435,
-      "E_kcal_mol": -16922.36861641055,
-      "ZPE_kcal_mol": 15.030953431583276,
+      "G_kcal_mol": -16926.994514915794,
+      "H_kcal_mol": -16902.694180959425,
+      "E_kcal_mol": -16922.36861641054,
+      "ZPE_kcal_mol": 15.030953431583738,
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 0,
-      "optimized_xyz": "/tmp/chemkit_optfreq_f242uee3/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_d_kn2akt/preopt.xyz"
     }
   },
   "warnings": [
@@ -76,7 +76,7 @@
   ],
   "schema_version": 1,
   "headline_field": "pKa",
-  "headline_value": -131.20165948596627,
+  "headline_value": -131.20165948596895,
   "headline_units": "dimensionless",
   "integrity": {
     "status": "ok",
@@ -98,7 +98,7 @@
         "name": "pka_finite",
         "ok": true,
         "severity": "error",
-        "detail": "pKa = np.float64(-131.20165948596627) (must be finite)"
+        "detail": "pKa = np.float64(-131.20165948596895) (must be finite)"
       },
       {
         "name": "schema_header",
@@ -110,7 +110,7 @@
         "name": "schema_headline",
         "ok": true,
         "severity": "warning",
-        "detail": "headline field 'pKa' = np.float64(-131.20165948596627) (present and numeric)"
+        "detail": "headline field 'pKa' = np.float64(-131.20165948596895) (present and numeric)"
       }
     ]
   }

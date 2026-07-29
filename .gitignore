@@ -34,8 +34,12 @@ __pycache__/
 /mcp_server/*.png
 
 # Local secrets for the fidelity driver (argo username / endpoint key).
-# Never commit; an .env.example is committed instead as a template.
+# Never commit; an .env.example is committed instead as a template. Cover the
+# .bak_* backups and the Globus auth-token helper too — all carry live creds.
 benchmarks/fidelity/.env.local
+benchmarks/fidelity/.env.local.*
+benchmarks/fidelity/inference_auth_token.py
+benchmarks/fidelity/test.sh
 
 # Fidelity run artifacts (transcripts, .out logs, scored results). Scratch by
 # default; promote chosen runs into the Zenodo/GitHub-release bundle for the paper.

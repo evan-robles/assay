@@ -1,12 +1,12 @@
-# chemkit live log
+# assay live log
 # subcommand : pka
-# args       : --method xtb --mode absolute --ha-charge 1 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5_dtgcsl/b.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method xtb --mode absolute --ha-charge 1 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5_dtgcsl/b.json
+# args       : --method xtb --mode absolute --ha-charge 1 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi0enl6bx/b.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method xtb --mode absolute --ha-charge 1 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi0enl6bx/b.json
 # cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/engine-reference/determinism
-# started    : 20260711-174436
+# started    : 20260727-221032
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5_dtgcsl/b.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi0enl6bx/b.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -29,44 +29,44 @@
   "charge": 1,
   "multiplicity": 1,
   "solvent": "water",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode absolute --ha-charge 1 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp5_dtgcsl/b.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode absolute --ha-charge 1 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpi0enl6bx/b.json",
   "mode": "absolute",
   "temperature_K": 298.15,
   "pressure_Pa": 101325.0,
-  "G_HA_kcal_mol": -4845.765472660533,
-  "G_A_minus_kcal_mol": -4737.855622595872,
+  "G_HA_kcal_mol": -4845.765472660538,
+  "G_A_minus_kcal_mol": -4737.85562259587,
   "hplus_reference": "tissandier_1998",
   "G_Hplus_aq_kcal_mol": -270.28,
   "standard_state_correction_kcal_mol": 1.8943284009764536,
   "RT_ln10_kcal_mol": 1.3642470125942985,
-  "delta_G_dissociation_kcal_mol": -160.47582153436184,
-  "pKa": -117.62959350682071,
+  "delta_G_dissociation_kcal_mol": -160.47582153435548,
+  "pKa": -117.62959350681604,
   "species": {
     "HA": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/ha.xyz",
       "charge": 1,
       "multiplicity": 1,
-      "G_kcal_mol": -4845.765472660533,
-      "H_kcal_mol": -4828.440552925725,
-      "E_kcal_mol": -4878.207506143861,
-      "ZPE_kcal_mol": 46.985488724133134,
+      "G_kcal_mol": -4845.765472660538,
+      "H_kcal_mol": -4828.440552925729,
+      "E_kcal_mol": -4878.207506143866,
+      "ZPE_kcal_mol": 46.98548872413364,
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 0,
-      "optimized_xyz": "/tmp/chemkit_optfreq_z4own4vy/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_wqnf7msg/preopt.xyz"
     },
     "A_minus": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/methylammonium/a_minus.xyz",
       "charge": 0,
       "multiplicity": 1,
-      "G_kcal_mol": -4737.855622595872,
-      "H_kcal_mol": -4720.81062991712,
-      "E_kcal_mol": -4762.744995922029,
-      "ZPE_kcal_mol": 39.23203597328987,
+      "G_kcal_mol": -4737.85562259587,
+      "H_kcal_mol": -4720.810629917119,
+      "E_kcal_mol": -4762.744995922028,
+      "ZPE_kcal_mol": 39.23203597329036,
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 0,
-      "optimized_xyz": "/tmp/chemkit_optfreq_8xmyq5jq/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_b9v9yjp1/preopt.xyz"
     }
   },
   "warnings": [
@@ -75,7 +75,7 @@
   ],
   "schema_version": 1,
   "headline_field": "pKa",
-  "headline_value": -117.62959350682071,
+  "headline_value": -117.62959350681604,
   "headline_units": "dimensionless",
   "integrity": {
     "status": "ok",
@@ -91,7 +91,7 @@
         "name": "pka_finite",
         "ok": true,
         "severity": "error",
-        "detail": "pKa = np.float64(-117.62959350682071) (must be finite)"
+        "detail": "pKa = np.float64(-117.62959350681604) (must be finite)"
       },
       {
         "name": "schema_header",
@@ -103,7 +103,7 @@
         "name": "schema_headline",
         "ok": true,
         "severity": "warning",
-        "detail": "headline field 'pKa' = np.float64(-117.62959350682071) (present and numeric)"
+        "detail": "headline field 'pKa' = np.float64(-117.62959350681604) (present and numeric)"
       }
     ]
   }

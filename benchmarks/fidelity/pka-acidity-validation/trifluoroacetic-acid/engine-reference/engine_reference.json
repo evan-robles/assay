@@ -17,7 +17,7 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": "water",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpee1_i_l1/truth.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode absolute --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpy07pfzls/truth.json",
   "mode": "absolute",
   "temperature_K": 298.15,
   "pressure_Pa": 101325.0,
@@ -41,7 +41,7 @@
       "n_imaginary_modes": 1,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 1,
-      "optimized_xyz": "/tmp/chemkit_optfreq_ixrwecd7/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_7i03rqme/preopt.xyz"
     },
     "A_minus": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/trifluoroacetic-acid/a_minus.xyz",
@@ -54,7 +54,7 @@
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 0,
-      "optimized_xyz": "/tmp/chemkit_optfreq_d7ygsjq7/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_reft4j7j/preopt.xyz"
     }
   },
   "warnings": [
@@ -86,7 +86,7 @@
         "name": "pka_finite",
         "ok": true,
         "severity": "error",
-        "detail": "pKa = np.float64(-131.20165948598495) (must be finite)"
+        "detail": "pKa = np.float64(-131.20165948597162) (must be finite)"
       },
       {
         "name": "schema_header",
@@ -98,7 +98,7 @@
         "name": "schema_headline",
         "ok": true,
         "severity": "warning",
-        "detail": "headline field 'pKa' = np.float64(-131.20165948598495) (present and numeric)"
+        "detail": "headline field 'pKa' = np.float64(-131.20165948597162) (present and numeric)"
       }
     ]
   },

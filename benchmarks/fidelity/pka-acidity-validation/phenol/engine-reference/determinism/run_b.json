@@ -22,7 +22,7 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": "water",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp04wkmxug/b.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp1xkdk_rt/b.json",
   "mode": "reference",
   "temperature_K": 298.15,
   "pressure_Pa": 101325.0,
@@ -46,7 +46,7 @@
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 0,
-      "optimized_xyz": "/tmp/chemkit_optfreq_bgv4inyq/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_baq9rj8s/preopt.xyz"
     },
     "A_minus": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz",
@@ -59,7 +59,7 @@
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 0,
-      "optimized_xyz": "/tmp/chemkit_optfreq_ygewagoz/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_qd_8c1pd/preopt.xyz"
     },
     "ref_HA": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz",
@@ -72,7 +72,7 @@
       "n_imaginary_modes": 1,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 1,
-      "optimized_xyz": "/tmp/chemkit_optfreq_jim6yyul/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_ota_wzcc/preopt.xyz"
     },
     "ref_A_minus": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz",
@@ -85,7 +85,7 @@
       "n_imaginary_modes": 1,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 1,
-      "optimized_xyz": "/tmp/chemkit_optfreq_e_63lm62/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_0rnh24se/preopt.xyz"
     }
   },
   "warnings": [
@@ -117,7 +117,7 @@
         "name": "pka_finite",
         "ok": true,
         "severity": "error",
-        "detail": "pKa = np.float64(16.655344716667333) (must be finite)"
+        "detail": "pKa = np.float64(16.655344716654) (must be finite)"
       },
       {
         "name": "schema_header",
@@ -129,7 +129,7 @@
         "name": "schema_headline",
         "ok": true,
         "severity": "warning",
-        "detail": "headline field 'pKa' = np.float64(16.655344716667333) (present and numeric)"
+        "detail": "headline field 'pKa' = np.float64(16.655344716654) (present and numeric)"
       }
     ]
   },

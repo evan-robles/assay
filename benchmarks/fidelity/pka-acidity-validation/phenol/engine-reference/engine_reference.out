@@ -1,12 +1,12 @@
-# chemkit live log
+# assay live log
 # subcommand : pka
-# args       : --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpezp_tqte/truth.json
-# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpezp_tqte/truth.json
+# args       : --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp8mmaxorr/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli pka --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp8mmaxorr/truth.json
 # cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/engine-reference
-# started    : 20260711-174450
+# started    : 20260727-221105
 # ============================================================
 
-# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpezp_tqte/truth.json
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp8mmaxorr/truth.json
 
 # ============================================================
 # ===== RESULT JSON (stdout) =====
@@ -34,44 +34,44 @@
   "charge": 0,
   "multiplicity": 1,
   "solvent": "water",
-  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpezp_tqte/truth.json",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py pka --method xtb --mode reference --pka-ref 4.76 --solvent water --ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz --a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz --ref-ha /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz --ref-a-minus /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp8mmaxorr/truth.json",
   "mode": "reference",
   "temperature_K": 298.15,
   "pressure_Pa": 101325.0,
-  "G_HA_kcal_mol": -12479.919230417618,
-  "G_A_minus_kcal_mol": -12347.402454886993,
+  "G_HA_kcal_mol": -12479.919230417621,
+  "G_A_minus_kcal_mol": -12347.402454886991,
   "RT_ln10_kcal_mol": 1.3642470125942985,
   "G_ref_HA_kcal_mol": -9059.874424382657,
-  "G_ref_A_minus_kcal_mol": -8943.58583734551,
+  "G_ref_A_minus_kcal_mol": -8943.585837345501,
   "reference_pka": 4.76,
-  "delta_G_isodesmic_kcal_mol": 16.22818849347823,
-  "pKa": 16.655344716656664,
+  "delta_G_isodesmic_kcal_mol": 16.22818849347459,
+  "pKa": 16.655344716654,
   "species": {
     "HA": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/ha.xyz",
       "charge": 0,
       "multiplicity": 1,
-      "G_kcal_mol": -12479.919230417618,
-      "H_kcal_mol": -12457.523850908068,
+      "G_kcal_mol": -12479.919230417621,
+      "H_kcal_mol": -12457.523850908072,
       "E_kcal_mol": -12525.061627379137,
-      "ZPE_kcal_mol": 63.38320443108338,
+      "ZPE_kcal_mol": 63.38320443108494,
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 0,
-      "optimized_xyz": "/tmp/chemkit_optfreq_kp9vqf4p/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_jx8ukzrx/preopt.xyz"
     },
     "A_minus": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/phenol/a_minus.xyz",
       "charge": -1,
       "multiplicity": 1,
-      "G_kcal_mol": -12347.402454886993,
-      "H_kcal_mol": -12325.321802761184,
-      "E_kcal_mol": -12384.903082482397,
-      "ZPE_kcal_mol": 55.62825998224794,
+      "G_kcal_mol": -12347.402454886991,
+      "H_kcal_mol": -12325.321802761182,
+      "E_kcal_mol": -12384.903082482393,
+      "ZPE_kcal_mol": 55.62825998224724,
       "n_imaginary_modes": 0,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 0,
-      "optimized_xyz": "/tmp/chemkit_optfreq_gjvb0rv6/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_bsdr2m2p/preopt.xyz"
     },
     "ref_HA": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/ha.xyz",
@@ -80,24 +80,24 @@
       "G_kcal_mol": -9059.874424382657,
       "H_kcal_mol": -9039.080624829674,
       "E_kcal_mol": -9079.709784980616,
-      "ZPE_kcal_mol": 37.097170532180556,
+      "ZPE_kcal_mol": 37.097170532180385,
       "n_imaginary_modes": 1,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 1,
-      "optimized_xyz": "/tmp/chemkit_optfreq__cxpjl7m/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq_1_ki14wa/preopt.xyz"
     },
     "ref_A_minus": {
       "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/pka-acidity-validation/acetic-acid/a_minus.xyz",
       "charge": -1,
       "multiplicity": 1,
-      "G_kcal_mol": -8943.58583734551,
-      "H_kcal_mol": -8923.060291439178,
-      "E_kcal_mol": -8956.346450190164,
-      "ZPE_kcal_mol": 29.914725521675706,
+      "G_kcal_mol": -8943.585837345501,
+      "H_kcal_mol": -8923.06029143917,
+      "E_kcal_mol": -8956.346450190156,
+      "ZPE_kcal_mol": 29.91472552167624,
       "n_imaginary_modes": 1,
       "n_saddle_imaginary_modes": 0,
       "n_soft_imaginary_modes": 1,
-      "optimized_xyz": "/tmp/chemkit_optfreq_57jop2b5/preopt.xyz"
+      "optimized_xyz": "/tmp/chemkit_optfreq__jj22d0e/preopt.xyz"
     }
   },
   "warnings": [
@@ -107,7 +107,7 @@
   ],
   "schema_version": 1,
   "headline_field": "pKa",
-  "headline_value": 16.655344716656664,
+  "headline_value": 16.655344716654,
   "headline_units": "dimensionless",
   "integrity": {
     "status": "ok",
@@ -129,7 +129,7 @@
         "name": "pka_finite",
         "ok": true,
         "severity": "error",
-        "detail": "pKa = np.float64(16.655344716656664) (must be finite)"
+        "detail": "pKa = np.float64(16.655344716654) (must be finite)"
       },
       {
         "name": "schema_header",
@@ -141,7 +141,7 @@
         "name": "schema_headline",
         "ok": true,
         "severity": "warning",
-        "detail": "headline field 'pKa' = np.float64(16.655344716656664) (present and numeric)"
+        "detail": "headline field 'pKa' = np.float64(16.655344716654) (present and numeric)"
       }
     ]
   }
