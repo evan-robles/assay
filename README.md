@@ -21,7 +21,7 @@ not the other way around. The physics lives once (in `assay_core`), never
 duplicated into the skills.
 
 ```
-~/chem-skills/
+chem-skills/
 ├── rules/
 │   ├── skill-standards.md            # how to author one atomic skill
 │   ├── research-standards.md         # how to find/verify/cite literature (binding)
@@ -51,32 +51,21 @@ duplicated into the skills.
 └── tests/                # regression suite
 ```
 
-Each skill's `scripts/run.py` exposes the inverted-architecture **contract**:
+A skill runs the same way everywhere — its `run.py` directly, the `assay` CLI, or
+an MCP tool — and always through one spine (`argkit.run_cli`) that applies the
+level-of-theory gate, the integrity gate, and the live `.out` log, so no path can
+skip a guardrail:
 
-- a **typed `run()`** — the workflow (keyword-only scientific args);
-- a **`build_parser()`** composing the shared `assay_core.argkit` option builders
-  (so choices/normalizers/gates are identical across every skill);
-- a **discovery manifest** — module-level `SKILL_NAME` (kebab display name) and
-  `SUBCOMMAND` (engine subcommand);
-- a `__main__` that routes through `argkit.run_cli(...)`, the single spine that
-  applies the level-of-theory gate, the integrity gate, the live `.out` log, and
-  `input_configs.yaml` persistence — so a skill *cannot* bypass a guardrail.
+```bash
+python skills/single_point_energy/scripts/run.py --method xtb mol.xyz
+```
 
-It is runnable stand-alone —
-`python skills/single_point_energy/scripts/run.py --method xtb mol.xyz` — with
-every guardrail intact; the MCP server and the `assay` CLI run this same file.
-The server builds each typed MCP tool by introspecting the skill's own
-`build_parser()`, and its tool registry is *discovered*, never hand-maintained
-(`tools/lint_skills.py --registry` enforces that discovery, the server, and the
-method-gate hook stay in sync).
-
-Skill folders are **underscore-named** (importable Python packages, so a
-composite skill can import a sibling's `run()` in-process) with the **kebab**
-display name in the SKILL.md frontmatter. They conform to
-`rules/skill-standards.md` (frontmatter `name`/`description`/`category`,
-Goal/Instructions/Examples/Constraints/References, and a validated `examples/`).
-The MCP server speaks the open protocol, so **any** MCP-capable client can drive
-it. See `mcp_server/README.md` for a generic client config.
+Folders are underscore-named importable packages (so a composite skill can call a
+sibling's `run()` in-process) with the kebab display name in the SKILL.md
+frontmatter. The server discovers skills from disk and builds each tool's typed
+schema from the skill's own `build_parser()` — no hand-maintained tool table.
+Any MCP-capable client can drive it; see `mcp_server/README.md` for a client
+config.
 
 ## The `rules/` standards
 
@@ -251,21 +240,18 @@ python configure_mcp.py --remote --install          # auto-picks from .sweep_nod
 python configure_mcp.py --remote-host x4712c0s1b0n0 --install
 ```
 
-**Long jobs (async):** for DFT that can't finish in the tool timeout, submit a
-real PBS job and collect later:
+**Long jobs (async):** the synchronous paths above assume a shared filesystem
+(true on Aurora) and fit calcs finishing within the tool timeout (~1 h) — xtb,
+PM7, small DFT. For a long DFT job, submit a real PBS job and collect later:
 
 ```bash
-python tools/aurora_submit.py submit --skill sp --skill-args --method dft --tier standard benzene.xyz
+python tools/aurora_submit.py submit --skill sp --skill-args --method dft --tier accurate big.xyz
 python tools/aurora_submit.py status  <jobid>
 python tools/aurora_submit.py collect <jobid>
 ```
 
-This injects `CHEMKIT_REMOTE_HOST` into the server env; the `runlog` layer does
-the ssh (assuming a shared filesystem, true on Aurora). It fits calcs that finish
-within the tool timeout (~1 h) — xtb / PM7 / small DFT. For long DFT use the
-**async** submit/collect flow in `tools/aurora_submit.py` instead. Keep
-`name-to-smiles` / `build-from-smiles` local (compute nodes have no outbound
-internet for the PubChem/OPSIN lookups).
+Keep `name-to-smiles` / `build-from-smiles` local — compute nodes have no
+outbound internet for their PubChem/OPSIN lookups.
 
 ## Example commands
 
@@ -287,53 +273,21 @@ assay build-from-smiles 'CCO'   # SMILES → 3D xyz (use name-to-smiles for a na
 All tasks write a single JSON file with a common header:
 `{task, method, program, input_file, n_atoms, atoms, charge, multiplicity, solvent, cli_invocation, ...}`
 
-## How the agentic skills work
+## How the skills work
 
-Each skill folder pairs a runnable Python script with a `SKILL.md` that turns it
-into something an agent can drive directly. The `SKILL.md` is a Markdown skill
-file with YAML frontmatter so it shows up as a slash command
-(`/single-point-energy`, `/geometry-optimize`, `/vibrational-analysis`,
-`/binding-energy`, `/redox-potential`, `/conformer-search`,
-`/conformational-analysis`, `/transition-state`, `/reaction-profile`, ...).
+Each skill folder pairs a runnable script (`scripts/run.py`) with a `SKILL.md`.
+The script does the chemistry; the `SKILL.md` tells an agent how to drive it —
+what the skill is for (and what it isn't), which arguments are required, when to
+stop and ask the user, and which result fields to report with what units and
+caveats. The heavy lifting (geometry I/O, calculator setup, the result schema)
+lives once in `assay_core`; each `SKILL.md` carries the judgment calls.
 
-Each skill follows the same pipeline:
-
-1. **Trigger** — the frontmatter `description:` is what the agent matches against
-   the user's request (e.g. "binding energy", "what's the energy of this
-   structure"); it also states what the skill should *not* be used for, to
-   disambiguate from neighboring skills (e.g. `single-point-energy` vs. `geometry-optimize`).
-2. **Parse arguments** — the skill spells out which flags `$ARGUMENTS` should
-   contain (an `.xyz` path is always required) and which are optional
-   (`--method`, `--solvent`, `--charge`, `--mult`, `--tier`, task-specific flags
-   like `--ref` for redox or `--mode` for pKa). If something required is missing,
-   the skill tells the agent to stop and either ask directly or use
-   **AskUserQuestion** (e.g. method selection for `single-point-energy`).
-3. **Invoke the script** — the skill gives the literal
-   `python <skill>.py ...` invocation to run as a subprocess.
-4. **Read the JSON** — every skill prints one JSON result with the
-   common header above plus task-specific fields. The skill tells
-   the agent to copy this to `<basename>_<task>_<method>.json` next to the
-   user's input (and, for tasks that produce structures, to copy the
-   accompanying `.xyz` files too) so results persist outside the tmp work
-   directory.
-5. **Report** — the skill enumerates exactly which fields to surface and how
-   (units, which `code_specific` keys matter, caveats to mention — e.g. that
-   xtb/MOPAC energy zeros aren't comparable, or that a single surviving
-   conformer after post-opt is the converged answer, not a bug). When a value is
-   reported from the literature, the report follows
-   [`rules/research-standards.md`](rules/research-standards.md).
-
-This keeps the heavy lifting (geometry I/O, calculator setup, parsing program
-output into a stable schema) in the shared `assay_core` library, while each
-skill's `SKILL.md` encodes the *judgment calls* — when to ask the user for
-clarification, what's worth flagging as a caveat, and how to translate raw JSON
-into something a chemist would actually want to read.
-
-> Skill contract: each `skills/<pkg>/scripts/run.py` exposes a typed `run()`, a
-> `build_parser()`, the `SKILL_NAME`/`SUBCOMMAND` discovery manifest, and a
-> `__main__` routing through `assay_core.argkit.run_cli`. `tools/lint_skills.py
-> --all` enforces this (SKILL.md + spine + registry-sync); the server and the
-> `assay` CLI discover skills from disk, so there is no generator to re-run.
+The **skill contract**, enforced by `tools/lint_skills.py --all`: every
+`scripts/run.py` exposes a typed `run()`, a `build_parser()`, the
+`SKILL_NAME`/`SUBCOMMAND` manifest, and a `__main__` that routes through
+`assay_core.argkit.run_cli`. The server and the `assay` CLI discover skills from
+disk and introspect that `build_parser()` for the tool schema — nothing is
+hand-maintained.
 
 ## Validation & examples
 

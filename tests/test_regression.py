@@ -74,12 +74,8 @@ _SUBCMD_TO_SKILL = {
 
 
 def _skill_script(subcmd: str) -> str:
-    """Path to the runnable script for a subcommand.
-
-    A skill converted to the inverted architecture (DESIGN.md) is invoked via its
-    self-contained `skills/<pkg>/scripts/run.py`; unconverted skills still use the
-    generated thin client `skills/<name>/scripts/<name>.py`. The server's
-    CONVERTED_SKILLS map is the single source of truth for which is which."""
+    """Path to a subcommand's runnable script: `skills/<pkg>/scripts/run.py`,
+    resolved via the server's discovered CONVERTED_SKILLS map."""
     import importlib
     _MCP = str(Path(__file__).parent.parent / "mcp_server")
     if _MCP not in sys.path:
@@ -305,7 +301,7 @@ def test_sp_emits_only_json(tmp_run, method):
     )
     # single-point-energy is a converted self-contained skill: besides the result
     # JSON it also persists input_configs.yaml (skill-standards Parameter
-    # Persistence), which the old thin client did not.
+    # Persistence), which the pre-inversion skill stub did not.
     expected = sorted(["h2o.xyz", f"h2o_sp_{method}.json", "input_configs.yaml"])
     assert non_logs == expected, (
         f"{method} sp emitted unexpected files: {non_logs}"
@@ -1684,32 +1680,6 @@ def test_tool_descriptions_advertise_arg_spec():
     assert "--charge (optional, int)" in sp_desc
 
 
-def test_thin_client_scripts_match_generator():
-    """The 20 per-skill thin-client scripts are generated from one template
-    (tools/build_skill_folders.py). This guards against a hand-edit drifting a
-    script away from the generator — regenerating must yield no diff."""
-    import importlib.util
-    repo = Path(__file__).resolve().parent.parent
-    spec = importlib.util.spec_from_file_location(
-        "build_skill_folders", repo / "tools" / "build_skill_folders.py")
-    bsf = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(bsf)
-    # Skills converted to the inverted architecture (DESIGN.md) no longer have a
-    # generated thin client — they own a self-contained scripts/run.py instead.
-    # Skip those (the server's CONVERTED_SKILLS map is the source of truth); the
-    # remaining unconverted skills must still match the generator exactly.
-    server = importlib.import_module("server")
-    converted_kebab = {pkg.replace("_", "-") for pkg in server.CONVERTED_SKILLS.values()}
-    drift = {}
-    for name in bsf.TOOLS:
-        if name in converted_kebab:
-            continue
-        p = repo / "skills" / name / "scripts" / f"{name}.py"
-        if not p.is_file():
-            drift[name] = "script missing (run tools/build_skill_folders.py)"
-        elif p.read_text() != bsf.CLIENT_TEMPLATE.format(name=name):
-            drift[name] = "differs from generator (run tools/build_skill_folders.py)"
-    assert not drift, f"thin-client drift: {drift}"
 
 
 def test_populated_specs_pass_static_schema():

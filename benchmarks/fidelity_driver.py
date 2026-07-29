@@ -24,7 +24,7 @@ comparison against verified reference data.
 
 Two halves so the comparison core runs today without an API key:
 
-  Half 1 (no API): run the engine reference via the thin client, then score a
+  Half 1 (no API): run the engine reference via the skill's run.py, then score a
      supplied *agent-run record* (JSON) against it. Validate against fixtures.
   Half 2 (--live): run a real LLM agent against an OpenAI-compatible endpoint
      (argo-proxy by default) with native function-calling; it drives chemkit via
@@ -109,47 +109,36 @@ _RUNS_DIR = _REPO / "benchmarks" / "runs"
 
 
 def _resolve_skill_name(skill: str) -> str:
-    """Normalize a skill name to an existing skills/<folder> before the driver
-    builds the script path (skills/<skill>/scripts/<skill>.py).
+    """Normalize a skill spelling to its skill package dir (skills/<pkg>).
 
-    A model may spell the CORRECT skill non-canonically — the terse engine
-    subcommand (`frontier` for frontier-orbitals) or a near-miss
-    (`frontier-orbital`). We map those spelling-variants back to the real skill
-    FOLDER via the engine's SUBCOMMAND_ALIASES so the run proceeds. This does
-    NOT rescue a genuinely-wrong skill choice: a name that maps to a DIFFERENT
-    skill (e.g. `orbitals` -> visualize-orbitals) is left as-is, so calling the
-    wrong skill for a task still FAILs — that is a real fidelity error the
-    benchmark must keep measuring.
+    A model may name the CORRECT skill non-canonically — the kebab display name
+    (`frontier-orbitals`), the terse subcommand (`frontier`), or a near-miss. Map
+    those to the real package via discovery. A name that maps to a DIFFERENT skill
+    (e.g. `orbitals` -> visualize-orbitals) is left as-is, so calling the wrong
+    skill for a task still fails — a real fidelity error the benchmark measures.
 
-    Returns the resolved folder name if (and only if) skills/<resolved>/ exists;
-    otherwise returns the input unchanged (letting the caller error as before).
+    Returns the package dir if resolvable, else the input unchanged.
     """
-    if (_REPO / "skills" / skill).is_dir():
-        return skill  # already a real skill folder
+    import sys as _sys
+    if str(_REPO) not in _sys.path:
+        _sys.path.insert(0, str(_REPO))
     try:
-        import sys as _sys
-        _mcp = str(_REPO)  # assay_core lives at the repo root
-        if _mcp not in _sys.path:
-            _sys.path.insert(0, _mcp)
-        from assay_core.cli import SUBCOMMAND_ALIASES  # type: ignore
+        from assay_core import discovery
     except Exception:
         return skill
-    # Build {any accepted spelling -> canonical subcommand}
-    spelling_to_canon = {}
-    for canon, aliases in SUBCOMMAND_ALIASES.items():
-        spelling_to_canon[canon] = canon
-        for a in aliases:
-            spelling_to_canon[a] = canon
-    canon = spelling_to_canon.get(skill)
-    if canon is None:
-        return skill
-    # canonical subcommand -> skill folder: the folder whose OWN name aliases to
-    # this canonical subcommand (i.e. the descriptive alias that is a real folder).
-    candidates = [canon] + SUBCOMMAND_ALIASES.get(canon, [])
-    for c in candidates:
-        if (_REPO / "skills" / c).is_dir():
-            return c
+    infos = discovery.discover_skills()
+    # by display name, by package dir, or by subcommand
+    if skill in infos:
+        return infos[skill].package
+    for info in infos.values():
+        if skill in (info.package, info.subcommand):
+            return info.package
     return skill
+
+
+def _skill_run_script(pkg: str) -> "Path":
+    """Path to a skill package's runnable script (scripts/run.py)."""
+    return _REPO / "skills" / pkg / "scripts" / "run.py"
 
 
 def _import_engine_cli():
@@ -195,7 +184,17 @@ def _engine_skill_help_json(skill: str) -> str:
     _cli = _import_engine_cli()
     if _cli is None:
         return json.dumps({"error": "engine unavailable; cannot describe skill"})
-    canon = _cli._alias_to_canonical().get(_resolve_skill_name(skill), None)
+    # Resolve the spelling to its package, then to the engine subcommand.
+    pkg = _resolve_skill_name(skill)
+    canon = None
+    try:
+        from assay_core import discovery
+        for info in discovery.discover_skills().values():
+            if pkg == info.package:
+                canon = info.subcommand
+                break
+    except Exception:
+        canon = None
     if canon is None:
         canon = _cli._alias_to_canonical().get(skill)
     if canon is None:
@@ -859,7 +858,7 @@ def run_engine(skill: str, flags: List[str], positional: Optional[str], out_path
                keep_dir: Optional[Path] = None, label: str = "run",
                tolerate_failure: bool = False,
                model: Optional[str] = None) -> Dict[str, Any]:
-    """Run a chemkit skill via its thin client; return the parsed result JSON.
+    """Run a skill via its scripts/run.py; return the parsed result JSON.
 
     `model` (live agent runs only) is stamped into the persisted `.out` log so
     each agent-call artifact records which agent produced it.
@@ -880,7 +879,7 @@ def run_engine(skill: str, flags: List[str], positional: Optional[str], out_path
     the caller's temp dir. This satisfies calculation-reporting-standards §9.
     """
     skill = _resolve_skill_name(skill)
-    script = _REPO / "skills" / skill / "scripts" / f"{skill}.py"
+    script = _skill_run_script(skill)
     # Drop any model-supplied --out and its value.
     clean: List[str] = []
     skip = False
@@ -985,7 +984,7 @@ def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratc
     with open(out_path) as fh:
         result = json.load(fh)
 
-    # The thin client prints the live .out log path on stderr ("tail -f <path>");
+    # The skill prints the live .out log path on stderr ("tail -f <path>");
     # the --out JSON itself does not carry it. Parse it so we can persist it.
     out_log = result.get("out_log") or _parse_out_log(proc.stderr)
 
@@ -1092,7 +1091,7 @@ def _capture_artifacts(result: Dict[str, Any], keep_dir: Path, label: str) -> No
 
 
 def _parse_out_log(stderr: str) -> Optional[str]:
-    """Extract the live .out log path from the thin client's stderr.
+    """Extract the live .out log path from the skill run's stderr.
 
     Matches the surfaced line "chemkit: live log: <path>" (and the server's
     "# chemkit live log: <path>"). A trailing "# Tell the user..." comment line
@@ -1997,7 +1996,7 @@ def score_layer_b(
 # Talks to any OpenAI-compatible /v1 endpoint (argo-proxy at Argonne by default)
 # using the `openai` SDK + native function-calling. The model is given ONE
 # generic `chemkit` tool (skill + CLI args); the driver executes it through the
-# same thin client used for the engine reference, feeds the JSON back, asks the model
+# same skill run.py used for the engine reference, feeds the JSON back, asks the model
 # for a final STRUCTURED report so Layer B scores automatically.
 
 # argo-proxy defaults; override via env. The key here is the Argonne username.

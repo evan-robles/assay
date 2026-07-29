@@ -1,142 +1,107 @@
-# chemkit MCP server
+# ASSAY MCP server
 
-One unified chemistry engine, exposed over the open **Model Context Protocol**
-so any MCP-capable client (not just one vendor) can drive it. The engine lives
-once in `chemkit_engine/`; each skill under `../skills/` is a thin client that
-calls a tool here.
+Exposes the 20 ASSAY chemistry skills over the open **Model Context Protocol**,
+so any MCP-capable client can drive them. The server discovers the skills on disk
+and runs each skill's `scripts/run.py` directly; the shared physics lives once in
+`assay_core/`.
 
 ## What it exposes
 
-One MCP tool per skill (20 total). Tool names are **kebab-case** (hyphens),
-matching the skill folder names: `single-point-energy`, `geometry-optimize`,
-`vibrational-analysis`, `binding-energy`, `redox-potential`, `conformer-search`,
-`frontier-orbitals`, `electrostatics`, `solvation`, `logp-partition`,
-`reaction-profile`, `pka-acidity`, `build-from-smiles`, `name-to-smiles`,
-`fukui-reactivity`, `transition-state`, `intrinsic-reaction-coordinate`,
-`reaction-energy`, `conformational-analysis`, `visualize-orbitals`.
+One MCP tool per skill (kebab-case, matching the skill's display name):
+`single-point-energy`, `geometry-optimize`, `vibrational-analysis`,
+`binding-energy`, `redox-potential`, `conformer-search`, `frontier-orbitals`,
+`electrostatics`, `solvation`, `logp-partition`, `reaction-profile`,
+`pka-acidity`, `build-from-smiles`, `name-to-smiles`, `fukui-reactivity`,
+`transition-state`, `intrinsic-reaction-coordinate`, `reaction-energy`,
+`conformational-analysis`, `visualize-orbitals`.
 
-Each tool takes:
-- `args`: the chemkit CLI tokens for that task, e.g.
-  `["--method", "xtb", "mol.xyz", "--out", "mol_sp.json"]`. Use `["--help"]` to
-  list a task's arguments.
-- `cwd` (optional): the directory to resolve relative input/output paths against
-  (the caller's working directory). The thin clients set this automatically.
+Each tool advertises its own typed parameters (the exact flags that skill takes,
+introspected from its `build_parser()`), plus:
 
-The tool returns the engine's result JSON. Each call runs the engine in an
-isolated subprocess so long, stateful QM jobs don't leak across calls.
+- `cwd` — directory for resolving relative input/output paths.
+- `run_on` — `local` (default) or `aurora` (run this call on a remote compute
+  node over ssh; see the main README's Aurora section).
+- `args` — a raw CLI token list, accepted for back-compat.
+
+The tool returns the result JSON. Each call runs in an isolated subprocess so
+stateful QM jobs don't leak across calls.
 
 ## Install & run
 
 ```bash
-pip install chemkit-mcp            # core: server + xtb/mopac paths
-pip install "chemkit-mcp[qm]"      # also pyscf + matplotlib (DFT/HF, plots)
-# from a checkout instead:  pip install -e ".[qm]"
+conda install -c conda-forge xtb xtb-python mopac openbabel rdkit   # non-pip backends
+pip install chemkit-mcp        # or, from a checkout: pip install -e .
 
-# External binaries are NOT pip-installable — install once:
-conda install -c conda-forge xtb mopac openbabel
-
-chemkit-mcp                        # start the stdio MCP server
+assay-mcp                      # start the stdio MCP server
 ```
+
+`--method dft`/`hf` use PySCF, installed by pip with everything else.
 
 ## Wire it into any MCP client
 
-The server speaks MCP over stdio and ships a `chemkit-mcp` console command, so
-the **same path-free config works in every MCP host** — Claude Desktop, Cursor,
-VS Code, custom agents:
+The server speaks MCP over stdio and ships an `assay-mcp` console command, so the
+same path-free config works in every host (Claude Desktop, Cursor, VS Code,
+custom agents):
 
 ```json
-{ "mcpServers": { "chemkit": { "command": "chemkit-mcp" } } }
+{ "mcpServers": { "assay": { "command": "assay-mcp" } } }
 ```
 
-Or run it on demand with `uvx` (no install step):
+Or run it on demand with `uvx`:
 
 ```json
-{ "mcpServers": { "chemkit": { "command": "uvx", "args": ["chemkit-mcp"] } } }
+{ "mcpServers": { "assay": { "command": "uvx", "args": ["chemkit-mcp"] } } }
 ```
-
-> Prerequisite: install the non-pip binaries once
-> (`conda install -c conda-forge xtb mopac openbabel`). `--method dft`/`hf`
-> additionally need the `[qm]` extra.
-
-Then call e.g. the `single-point-energy` tool with
-`{"args": ["--method", "xtb", "mol.xyz"]}`.
 
 ### OpenAI Agents SDK
-
-The SDK speaks MCP natively — point `MCPServerStdio` at the same command:
 
 ```python
 from agents import Agent
 from agents.mcp import MCPServerStdio
 
-async with MCPServerStdio(name="chemkit",
-                          params={"command": "chemkit-mcp", "args": []}) as chemkit:
-    agent = Agent(name="Chem assistant", mcp_servers=[chemkit], model="gpt-4o")
+async with MCPServerStdio(name="assay",
+                          params={"command": "assay-mcp", "args": []}) as assay:
+    agent = Agent(name="Chem assistant", mcp_servers=[assay], model="gpt-4o")
     # ... Runner.run(agent, "Build acetone and compute its HOMO/LUMO with xtb.")
 ```
 
-Relative input/output paths resolve against the agent process's working
-directory; the conda binaries must be installed first.
-
 ### Run from a checkout (no install)
 
-The older path-based form still works if you don't want to install:
-
 ```json
-{
-  "mcpServers": {
-    "chemkit": {
-      "command": "python",
-      "args": ["/abs/path/to/chem-skills/mcp_server/server.py"]
-    }
-  }
-}
+{ "mcpServers": { "assay": {
+    "command": "python",
+    "args": ["/abs/path/to/chem-skills/mcp_server/server.py"] } } }
 ```
 
 ## Run from the shell
 
-After `pip install -e .` (or `pip install chemkit-mcp`) two console commands exist:
+Two console commands (`chemkit`/`chemkit-mcp` are aliases):
 
-- **`chemkit`** — the human-facing CLI. Run one calculation:
+- **`assay`** — human CLI, runs one calculation by dispatching to the skill:
   ```bash
-  chemkit sp --method xtb mol.xyz
-  chemkit redox --method dft --tier standard --ox-charge 0 --red-charge -1 mol.xyz
-  chemkit sp --help          # per-subcommand arguments
-  chemkit                    # list subcommands
+  assay sp --method xtb mol.xyz
+  assay redox --method dft --tier standard --ox-charge 0 --red-charge -1 mol.xyz
+  assay sp --help          # per-subcommand arguments
+  assay --list-skills      # list skills
   ```
-  `chemkit <subcommand>` routes **through the MCP server** — the same path the
-  skill scripts use — so it gets the live `.out` log (surfaced for `tail -f`) and
-  the level-of-theory / integrity gates, identically to every other entry point.
+  Every path (this CLI, an MCP tool, or the skill's `run.py` directly) runs the
+  same skill through the same guardrails: the level-of-theory gate, the integrity
+  gate, and the live `.out` log.
 
-- **`chemkit-mcp`** — starts the stdio MCP server (this is what *agents* connect
-  to; it runs no calculation itself).
-
-Equivalent forms (no install, or for scripting a specific skill):
-
-```bash
-# the per-skill wrapper script (what agents invoke)
-python ../skills/single-point-energy/scripts/single-point-energy.py --method xtb mol.xyz
-# the engine module directly (no server, no live-log streaming)
-PYTHONPATH=. python -m chemkit_engine.cli sp --method xtb mol.xyz
-```
-
-Set `CHEMKIT_MCP=/abs/path/to/mcp_server/server.py` to pin a specific server.
+- **`assay-mcp`** — starts the stdio server for agents to connect to.
 
 ## DFT/HF defaults: density fitting is OFF
 
-By default, `--method dft`/`hf` use **exact four-center two-electron integrals**
-— i.e. true `RKS`/`UKS`/`RHF`/`UHF`, matching a hand-written PySCF run. chemkit
-does **not** silently apply the density-fitting (RI) approximation.
+By default `--method dft`/`hf` use **exact four-center integrals** (`RKS`/`UKS`/
+`RHF`/`UHF`), matching a hand-written PySCF run — no silent density-fitting (RI)
+approximation.
 
-Pass **`--density-fit`** to opt into the RI approximation: a **~3–10× faster SCF**
-for a typically negligible **~0.1–0.8 mEh** error (it largely cancels in energy
-*differences*). chemkit picks the matching auxiliary basis automatically (JK-fit
-for hybrids/HF, J-fit for pure functionals) and reports the treatment honestly in
-the result JSON (`code_specific.integral_treatment`, `density_fit`, `scf_class`).
+Pass **`--density-fit`** to opt into RI: ~3–10× faster SCF for a typically
+negligible ~0.1–0.8 mEh error (it largely cancels in energy *differences*). The
+auxiliary basis is chosen automatically and the treatment is reported in the
+result JSON.
 
 ```bash
-# exact integrals (default) — reproducible against your own PySCF RKS/UKS
-chemkit sp --method dft --tier standard mol.xyz
-# RI / density fitting — faster, ~sub-mEh approximation
-chemkit sp --method dft --tier standard --density-fit mol.xyz
+assay sp --method dft --tier standard mol.xyz                # exact (default)
+assay sp --method dft --tier standard --density-fit mol.xyz  # RI, faster
 ```

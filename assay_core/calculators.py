@@ -649,9 +649,8 @@ class _XtbCliCalculator:
 
         --grad writes an ORCA-style `.engrad` (energy in Eh, then 3N gradient
         components in Eh/Bohr). ASE forces are the NEGATIVE gradient, converted to
-        eV/Å. Computing forces here is what lets ASE optimizers/Hessian drivers
-        (BFGS, vibrations) use this CLI fallback — previously `forces` was
-        advertised but never produced, so any force-driven task crashed."""
+        eV/Å. Caching forces here lets ASE optimizers/Hessian drivers (BFGS,
+        vibrations) use this CLI fallback."""
         from ase.io import write as ase_write
         import re, subprocess
         import numpy as np

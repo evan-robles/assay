@@ -1,27 +1,19 @@
-"""Per-skill typed argument spec — the single source of truth for the MCP
-server's per-tool signatures and the benchmark driver's tool schema.
+"""Per-skill typed argument spec — the source of truth for the MCP server's
+per-tool signatures and the benchmark driver's tool schema.
 
-Both the MCP server (``mcp_server/server.py``) and the fidelity benchmark driver
-(``benchmarks/fidelity_driver.py``) used to hand-maintain their OWN copy of a
-typed→argv converter, each flattening every skill to the same 8 common fields
-(``xyz/method/charge/multiplicity/solvent/functional/basis/tier``) plus a
-free-form ``extra_args`` escape hatch. That is exactly why agents fail on the
-many-argument skills (redox, pka): the *required* skill-specific flags
-(``--ox-charge``/``--red-charge``, ``--ha``/``--a-minus``) lived only in
-``extra_args`` and were invisible to the model, while the wrapper injected
-``xyz``/``--charge``/``--mult`` that those subcommands reject.
+Derives, for each skill, an ordered list of typed :class:`Param` descriptors by
+introspecting its argparse parser (a skill's ``build_parser()`` via
+:func:`params_from_parser`, or an engine subparser via
+``assay_core.cli.describe_subcommand``), so the tool schema can never drift from
+the CLI. Every real scientific flag is exposed as its own typed param — including
+required skill-specific ones (``--ox-charge``/``--red-charge``, ``--ha``) — so an
+agent sees the exact arguments a skill takes, not a generic bag.
 
-This module derives, for EACH subcommand, an ordered list of typed
-:class:`Param` descriptors straight from the engine's argparse definitions (via
-``assay_core.cli.describe_subcommand``), so it can never drift from the CLI.
 Callers use:
 
-- :func:`skill_params` — the typed params for a subcommand (drives the MCP tool's
-  synthesized signature and the driver's JSON schema).
-- :func:`params_to_argv` — turn a dict of validated kwargs into the exact CLI
-  token list the engine expects (the ONE converter both callers share).
-- :func:`known_flags` — the set of valid ``--flags`` for a subcommand, for
-  validating a slim ``extra_args`` escape hatch.
+- :func:`params_from_parser` / :func:`skill_params` — typed params for a skill.
+- :func:`params_to_argv` — validated kwargs → the exact engine CLI token list.
+- :func:`known_flags` — valid ``--flags`` for validating the ``extra_args`` hatch.
 
 The typing rules:
 - a positional argument (``input``/``smiles``/``name``) → a param whose CLI form

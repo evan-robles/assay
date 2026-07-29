@@ -261,9 +261,7 @@ def run(
             # MOPAC's IRC=N takes small mass-weighted steps and stops after N
             # points — it doesn't walk to the minimum. To make the connectivity
             # check robust, relax each IRC endpoint with a regular opt before
-            # comparing to the supplied R/P minima. This was previously masked
-            # by the IRC=N* keyword bug (the trailing * accidentally requested
-            # walk-to-convergence behavior).
+            # comparing to the supplied R/P minima.
             fwd_end = _relax_endpoint(
                 _last_xyz_frame(fwd_xyz), atoms_template=ts_xyz, label="fwd",
                 workdir=workdir, **common_kw,

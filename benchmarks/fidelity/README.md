@@ -78,7 +78,7 @@ python benchmarks/fidelity_driver.py \
 Half 2 runs a real LLM agent against any OpenAI-compatible `/v1` endpoint —
 **argo-proxy** (Argonne's gateway) by default — using the `openai` SDK and
 native function-calling. The model is given one generic `chemkit` tool; the
-driver executes each call through the same thin client used for the engine
+driver executes each call through the same skill run.py used for the engine
 reference, feeds the JSON back, and requires the model to submit a structured
 `final_report`, so **Layer B scores automatically** (no manual prose mapping).
 

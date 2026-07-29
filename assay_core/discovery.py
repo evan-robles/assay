@@ -7,12 +7,9 @@ the lints all build their view of "what skills exist" from THIS function instead
 of a hand-maintained table, so the registry can never drift from the skills on
 disk (DESIGN.md §10.2 registry-sync).
 
-Each skill's ``build_parser()`` is the authoritative arg spec: it composes the
-same shared ``assay_core.argkit`` option builders the engine CLI used, and was
-verified to produce byte-identical param specs to the old per-subcommand CLI
-subparsers. So introspecting the skill parser (via
-``assay_core.arg_spec.params_from_parser``) yields exactly the typed tool
-signature the server advertised before the inversion.
+Each skill's ``build_parser()`` is the authoritative arg spec; introspecting it
+(via ``assay_core.arg_spec.params_from_parser``) gives the server each tool's
+typed signature.
 """
 from __future__ import annotations
 

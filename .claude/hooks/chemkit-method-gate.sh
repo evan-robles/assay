@@ -92,19 +92,14 @@ fi
 
 # Is this a chemkit calculation command? Match any of the ways a calculation is
 # launched from a shell:
-#   * a skill wrapper script under skills/<name>/scripts/<name>.py
+#   * a skill run script: skills/<pkg>/scripts/run.py
 #   * a direct engine module call: python -m assay_core.cli <subcommand>
 #     (the legacy `chemkit_engine.cli` spelling is still matched for back-compat)
-#   * the shared MCP client (_mcp_client)
 #   * the `assay` / `chemkit` console command: `assay <subcommand> ...`
-# The `assay`/`chemkit` front door routes through the server like the skill
-# scripts, so it MUST be gated here too — otherwise it would be a short, obvious,
-# UNGATED path that an agent would naturally prefer.
 is_chemkit=0
 if [[ "$CMD" == *"skills/"*"/scripts/"*".py"* ]] \
    || [[ "$CMD" == *"assay_core.cli"* ]] \
    || [[ "$CMD" == *"chemkit_engine.cli"* ]] \
-   || [[ "$CMD" == *"_mcp_client"* ]] \
    || [[ "$CMD" =~ (^|[[:space:]\;\&\|\(])(assay|chemkit)[[:space:]] ]]; then
   is_chemkit=1
 fi

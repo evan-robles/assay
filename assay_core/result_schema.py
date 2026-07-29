@@ -1,38 +1,18 @@
-"""Typed, canonicalizing result-schema layer for chemkit.
+"""Typed, canonicalizing result-schema layer.
 
-This is the structural counterpart to ``integrity.py``. Where integrity checks
-*computation correctness* (did the SCF converge, is the geometry a minimum),
-this module checks *result shape*: that every task emits the common header, and
-that the one headline quantity a task reports is exposed under a single, stable,
-machine-discoverable key — regardless of the per-task field name.
+The structural counterpart to ``integrity.py``: where integrity checks
+computation correctness (did the SCF converge, is the geometry a minimum), this
+checks result *shape* — that every task emits the common header, and that a
+task's one headline quantity is discoverable under a stable key regardless of its
+per-task field name.
 
-Why it exists
--------------
-Each task historically hand-assembles its own dict, and the same physical
-quantity is emitted under different names across tasks (a single-point energy is
-``total_energy_eV``; the same electronic energy inside a frequency run is
-``electronic_energy_eV``). Readers compensated with hand-kept fallback chains
-(e.g. ``reaction_energy.py``: ``r.get("electronic_energy_eV") or
-r.get("total_energy_eV")``), and the fidelity Layer-C scorer relied on a
-per-spec ``report_value_field`` to know which key holds the number it must
-compare. That makes "we scored the right field" rest on hand-maintained maps.
-
-This layer makes the headline field *discoverable from the result itself*:
-``canonicalize()`` stamps a stable ``headline_field`` / ``headline_value`` /
-``headline_units`` pointer onto every result whose task reports a scalar
-headline. It is **purely additive** — it never renames or removes a task's own
-keys — so the 170 fidelity specs, the regression tests, and every archived run
-keep reading exactly what they read before.
-
-Design (mirrors integrity.py deliberately)
-------------------------------------------
-- Pure stdlib + ``typing`` (``TypedDict``). No pydantic: the per-call engine
-  subprocess must stay import-light (core deps are mcp/ase/numpy).
-- Wired into ``integrity.finalize()`` so it runs at the single seam every task
-  already calls, alongside ``_promote_method_provenance``.
-- Validation findings are emitted through the same ``IntegrityCheck`` shape and
-  fold into the existing ``integrity`` block, at ``warning`` severity — turning
-  the schema on cannot fail any existing run.
+``canonicalize()`` stamps ``headline_field`` / ``headline_value`` /
+``headline_units`` onto every result whose task reports a scalar headline. It is
+purely additive — it never renames or removes a task's own keys. It runs inside
+``integrity.finalize()`` (the seam every task already calls); validation findings
+fold into the ``integrity`` block at ``warning`` severity, so enabling it cannot
+fail an existing run. Pure stdlib + ``typing`` to keep the per-call subprocess
+import-light.
 """
 from __future__ import annotations
 

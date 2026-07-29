@@ -103,11 +103,11 @@ action.
 
 - **Reference skills by their exact kebab-case names** (`geometry-optimize`,
   `conformer-search`, `vibrational-analysis`, `redox-potential`, `pka-acidity`,
-  …) and link them: `[geometry-optimize](../skills/geometry-optimize/SKILL.md)`.
+  …) and link them: `[geometry-optimize](../skills/geometry_optimize/SKILL.md)`.
 - **Give the literal invocation** where helpful, matching the skill's own CLI:
   ````markdown
   ```bash
-  python chem-skills/skills/conformer-search/scripts/conformer-search.py \
+  python chem-skills/skills/conformer_search/scripts/run.py \
       --method xtb --postopt mol.xyz
   ```
   ````

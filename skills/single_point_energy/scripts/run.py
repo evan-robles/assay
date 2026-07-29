@@ -1,20 +1,9 @@
 #!/usr/bin/env python3
-"""single-point-energy — self-contained assay skill.
+"""single-point-energy — total electronic energy at a fixed geometry.
 
-Computes the total electronic energy at a fixed geometry (plus frontier-orbital
-data) with no relaxation. This is the FIRST skill converted to the inverted
-architecture (DESIGN.md): it owns its whole workflow here and depends only on
-the shared `assay_core` physics library. It is runnable stand-alone —
-
-    python skills/single_point_energy/scripts/run.py --method xtb mol.xyz
-
-— with the same level-of-theory gate, integrity gate, live `.out` log, and
-input_configs.yaml persistence the MCP server path provides, because the
-`__main__` below routes through the shared `assay_core.argkit.run_cli` spine.
-
-The engine's `assay_core.tasks.sp` now re-exports `run` from here (a thin shim),
-so the CLI / composite skills that still reference the task keep working with a
-single copy of the physics.
+Evaluates the energy (plus frontier-orbital data) without relaxing the structure.
+Self-contained: owns its workflow, depends only on `assay_core`. Runnable stand-
+alone (`python .../run.py --method xtb mol.xyz`) or via the `assay` CLI / MCP tool.
 """
 from __future__ import annotations
 
@@ -38,9 +27,6 @@ from assay_core.schema import (
     scf_convergence_warnings,
 )
 from assay_core.constants import HARTREE_TO_EV, ANGSTROM_TO_BOHR
-
-SKILL = "single-point-energy"   # kebab display name (matches SKILL.md frontmatter)
-TASK = "sp"                      # engine subcommand / default-out label
 
 
 def run(
@@ -185,4 +171,4 @@ def _xtb_homo_lumo(atoms, calc) -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    raise SystemExit(argkit.run_cli(build_parser(), run, task=TASK))
+    raise SystemExit(argkit.run_cli(build_parser(), run, task=SUBCOMMAND))

@@ -11,22 +11,12 @@ from typing import Any, Dict, List
 from ase.io import read as ase_read
 
 
-# ── Structured warnings (additive; non-breaking) ──────────────────────────────
-# Every task emits `warnings` as a list of free-text strings. That list is left
-# UNCHANGED (all existing consumers — the scorer's `warnings preserved` check,
-# the CLI compact pointer, the MCP server — keep reading it verbatim). In
-# ADDITION we derive `warnings_structured`: the same warnings, each wrapped as
-# {"code", "text"} with a short STABLE code. The code lets a downstream interface
-# (e.g. the benchmark's final_report) let an agent surface warnings BY REFERENCE
-# (short code) instead of retyping long paragraphs verbatim — reducing the
-# transcription burden that weak models (observed: gpt-4.1-nano on logp) fail by
-# dropping warnings entirely. This is purely additive: it changes NO existing
-# field and NO scoring; it only exposes a machine-stable handle on each warning.
-#
-# The code = "<category>_<hash8>" where category is inferred from keywords (so a
-# reader gets a human hint) and hash8 is the first 8 hex of sha256(text) (so the
-# code is deterministic and stable for identical warning text across runs, with
-# no hand-maintained per-string table across the 19 emitting tasks).
+# ── Structured warnings (additive) ────────────────────────────────────────────
+# The free-text `warnings` list is left unchanged; in addition we derive
+# `warnings_structured` — each warning wrapped as {"code", "text"} with a stable
+# code, so an interface can surface a warning by reference instead of retyping it.
+# code = "<category>_<hash8>": category inferred from keywords (a human hint),
+# hash8 = first 8 hex of sha256(text) (deterministic + stable across runs).
 _WARN_CATEGORY_KEYWORDS = (
     ("screening_grade", ("screening-grade", "screening grade", "± ", "±1", "±2", "±3", "typical")),
     ("single_conformer", ("single-conformer", "single conformer", "conformational", "boltzmann")),

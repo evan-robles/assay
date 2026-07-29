@@ -406,22 +406,15 @@ def _snake(tool_name: str) -> str:
 
 
 def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
-    """Register one MCP tool with its OWN typed signature.
+    """Register one MCP tool with its own typed signature.
 
-    Instead of the old shared generic signature (xyz/method/charge/.../extra_args),
-    each tool advertises exactly the arguments its skill actually has — required
-    scientific flags included (e.g. redox-potential shows ox_charge/red_charge;
-    pka-acidity shows ha/a_minus). The MCP SDK validates types/enums before the
-    call, so an agent cannot invent a flag, mistype an enum, or (the key fix for
-    the many-arg skills) fill a field the skill does not have: the wrapper only
-    ever emits params that exist for THIS subcommand, so nothing gets injected
-    that the subcommand would reject.
-
-    Mechanics: the SDK derives a tool's JSON schema from the function signature
-    (inspect.signature). We keep ONE generic body and give it a SYNTHESIZED
-    __signature__ built by introspecting the SKILL's own build_parser() (the
-    inverted source of truth, via arg_spec.params_from_parser); the shared
-    arg_spec.params_to_argv turns the validated kwargs back into engine argv.
+    Each tool advertises exactly the arguments its skill takes (required scientific
+    flags included — e.g. redox-potential's ox_charge/red_charge), so the SDK
+    validates types/enums before the call and an agent can't invent a flag or fill
+    one the skill lacks. The SDK derives the JSON schema from the function
+    signature, so we give one generic body a synthesized __signature__ built from
+    the skill's build_parser() (via arg_spec.params_from_parser); params_to_argv
+    turns the validated kwargs back into engine argv.
     """
     from assay_core import arg_spec as _arg_spec_mod
     from assay_core import discovery as _discovery
@@ -563,16 +556,10 @@ def main() -> None:
 
 
 # ---------------------------------------------------------------------------
-# `assay` human-facing CLI front door.
-#
-# Routes a shell call `assay <subcommand> <args...>` THROUGH the MCP server
-# (via the shared _mcp_client), exactly like the per-skill wrapper scripts do —
-# so it inherits every server-path guarantee: the live `.out` log is streamed
-# and its path surfaced (calculation-reporting-standards #9), and the in-engine
-# --accept-defaults level-of-theory gate + integrity gate still apply.
-#
-# Subcommand -> MCP tool name is derived from TOOLS (the single source of truth),
-# so this never drifts from the server's own dispatch table.
+# `assay` human-facing CLI front door. `assay <subcommand> <args...>` dispatches
+# to the skill's run.py (via _dispatch_calc, below) — the same path every other
+# entry point takes, so the live `.out` log, the level-of-theory gate, and the
+# integrity gate all apply. TOOLS is discovered, so this map never drifts.
 # ---------------------------------------------------------------------------
 
 # subcommand (e.g. "sp") -> tool name (e.g. "single-point-energy")
