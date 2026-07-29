@@ -240,6 +240,14 @@ LIVE_INSTRUCTIONS = (
     "integrity.trustworthy verdict, AND the full path of EVERY file the run "
     "generated — the result JSON, the live `.out` log, and any geometry (.xyz), "
     "plot (.png), trajectory, cube, or molden files listed in the result JSON. "
+    "If the result JSON carries a `remote_host` field, the calculation ran on a "
+    "REMOTE compute node (e.g. Aurora), not locally — say so in your summary "
+    "(e.g. 'computed on Aurora node <remote_host>'); it is part of the run's "
+    "provenance, like the `.out` path. If an error result carries `remote_host`, "
+    "the remote run itself failed (ssh/allocation) — report that plainly; and if "
+    "a name-to-smiles/build-from-smiles lookup fails with `remote_host` set, note "
+    "those internet-dependent skills must run locally (compute nodes have no "
+    "outbound internet). "
     "Always tell the user exactly what files were written and where. For a "
     "follow-up question about a run you "
     "already did (e.g. 'what was the HOMO-LUMO gap?'), answer from the JSON you "
@@ -427,7 +435,8 @@ def _last_calculation_result(
 
 # Result-JSON keys whose values are always metadata, never a generated artifact
 # path — excluded from generic file-path discovery so we don't list the input.
-_NON_ARTIFACT_PATH_KEYS = {"input_file", "input_path", "cli", "cli_invocation"}
+_NON_ARTIFACT_PATH_KEYS = {"input_file", "input_path", "cli", "cli_invocation",
+                           "remote_host", "remote_ssh_opts"}
 # Substrings marking a key as an output-artifact path (covers current task keys:
 # optimized_xyz, best_xyz, diagram_png, molden_path, cube_paths, *_trajectory,
 # reaction_profile, plot, ensemble_xyz, out_log, out, …) and any future ones.

@@ -689,6 +689,9 @@ _DETERMINISM_IGNORE = {
     "xyz_path", "molden_path", "plot", "mgf_path", "cube_paths",
     "trajectory", "forward_trajectory", "reverse_trajectory",
     "xtb_workdir",
+    # run-environment provenance, not chemistry: a run on compute node A vs B (or
+    # local vs remote) is still deterministic.
+    "remote_host", "remote_ssh_opts",
 }
 
 

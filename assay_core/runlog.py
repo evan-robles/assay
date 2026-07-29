@@ -100,6 +100,18 @@ def run_skill_subprocess(
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     out_path = build_live_out_path(label, run_cwd, stamp)
 
+    def _augment(d: dict) -> dict:
+        """Stamp the live-log path and, when the run executed on a remote compute
+        node, the remote host — so the agent can see (and report) that the result
+        came from e.g. an Aurora compute node, not the local machine."""
+        d.setdefault("out_log", out_path)
+        if remote_host:
+            d.setdefault("remote_host", remote_host)
+            ssh_opts_str = os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", "").strip()
+            if ssh_opts_str:
+                d.setdefault("remote_ssh_opts", ssh_opts_str)
+        return d
+
     def _write_header(fh):
         fh.write("# assay live log\n")
         fh.write(f"# subcommand : {label}\n")
@@ -182,9 +194,8 @@ def run_skill_subprocess(
             log_fh.close()
 
     if timed_out:
-        return json.dumps({"error": f"calculation timed out ({_TIMEOUT_S} s)",
-                           "subcommand": label, "args": list(args),
-                           "out_log": out_path})
+        return json.dumps(_augment({"error": f"calculation timed out ({_TIMEOUT_S} s)",
+                                    "subcommand": label, "args": list(args)}))
 
     if log_fh is not None and proc is not None:
         returncode = proc.returncode
@@ -206,27 +217,33 @@ def run_skill_subprocess(
         if is_integrity_result:
             parsed["error"] = "integrity gate failed (result is not trustworthy)"
             parsed["returncode"] = returncode
-            parsed.setdefault("out_log", out_path)
-            return json.dumps(parsed)
-        return json.dumps({
+            return json.dumps(_augment(parsed))
+        return json.dumps(_augment({
             "error": "assay engine exited non-zero",
             "returncode": returncode,
             "subcommand": label, "args": list(args),
             "stderr": stderr_data.strip()[-4000:],
             "stdout": stdout_data.strip()[-2000:],
-        })
+        }))
 
-    # Success: inject the live-log path under `out_log` so the caller learns where
-    # to tail -f it (the server's own stderr does not reach a stdio MCP caller).
+    # Success: inject the live-log path (and remote host, if any) so the caller
+    # learns where to tail -f it and whether it ran remotely — the server's own
+    # stderr does not reach a stdio MCP caller.
     out = stdout_data.strip()
     try:
         parsed = json.loads(out)
-        if log_fh is not None and isinstance(parsed, dict) and "out_log" not in parsed:
-            parsed["out_log"] = out_path
+        if isinstance(parsed, dict):
+            # Only stamp out_log when we actually wrote a live log locally.
+            if log_fh is not None:
+                parsed.setdefault("out_log", out_path)
+            if remote_host:
+                parsed.setdefault("remote_host", remote_host)
             return json.dumps(parsed)
         return out
     except ValueError:
         wrapped = {"raw_stdout": out, "stderr": stderr_data.strip()}
         if log_fh is not None:
             wrapped["out_log"] = out_path
+        if remote_host:
+            wrapped["remote_host"] = remote_host
         return json.dumps(wrapped)
