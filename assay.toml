@@ -33,12 +33,22 @@ dir = "skills"
 lint = "tools/lint_skills.py"
 
 [remote]
-# Optional: run every calculation on a REMOTE compute node over ssh, transparently
-# to the agent. When enabled, `configure_mcp.py` injects CHEMKIT_REMOTE_HOST (and
-# CHEMKIT_REMOTE_SSH_OPTS) into the generated mcp_config.json server env; the
-# runlog layer then ssh'es each skill run to that host and streams the result JSON
-# back — synchronously, in the same MCP tool call. This is the "agent runs the
-# engine on Aurora, gets the output, returns it to the user" path.
+# Run calculations on a REMOTE compute node (e.g. Aurora) over ssh, transparently
+# to the agent, in the SAME synchronous tool call. Two ways to trigger it:
+#
+#   * PER-CALL (recommended): every skill tool exposes a `run_on` parameter —
+#     the agent sets `run_on="aurora"` on an individual call to run just that
+#     calculation remotely (and `run_on="local"`, the default, to run it here).
+#     The host is resolved from this block: [remote].host, else the first line of
+#     [remote].nodes_file (the node the aurora_nodeholder.pbs job publishes), else
+#     the CHEMKIT_REMOTE_HOST env var. `enabled` is NOT required for per-call use.
+#
+#   * SESSION-WIDE: set `enabled = true` and run `configure_mcp.py`, which injects
+#     CHEMKIT_REMOTE_HOST into the generated mcp_config.json server env so EVERY
+#     call runs remotely by default (no per-call flag needed).
+#
+# Either way the runlog layer ssh'es the run to the host and streams the result
+# JSON back; the result carries a `remote_host` field naming the node it ran on.
 #
 # ASSUMES a SHARED filesystem (cwd + input/--out paths resolve identically on both
 # sides — true on Aurora, where $HOME/flare mount on compute nodes) and that the

@@ -52,6 +52,48 @@ CONVERTED_SKILLS = _discover_converted()
 def _skill_run_path(pkg: str) -> Path:
     return SKILLS_DIR / pkg / "scripts" / "run.py"
 
+
+# --------------------------------------------------------------------------- #
+# Per-call remote (Aurora) routing. Every skill tool exposes a `run_on` param
+# (local | aurora); when a call sets run_on=aurora we resolve an Aurora compute
+# node and set CHEMKIT_REMOTE_HOST for THAT call's subprocess, so runlog ssh's it
+# to the node and streams the result back in the same call — identical to a local
+# call, just executed on Aurora. Host resolution order:
+#   1. env CHEMKIT_REMOTE_HOST (already set = the deployment pinned a host)
+#   2. [remote].host in assay.toml
+#   3. first line of [remote].nodes_file (the nodeholder publishes .sweep_nodes)
+# Returns (host, ssh_opts) or (None, "") if none resolves.
+# --------------------------------------------------------------------------- #
+_ASSAY_TOML = REPO_ROOT / "assay.toml"
+
+
+def _load_remote_cfg() -> dict:
+    try:
+        import tomllib
+        with open(_ASSAY_TOML, "rb") as fh:
+            return (tomllib.load(fh).get("remote") or {})
+    except Exception:  # noqa: BLE001 - missing toml / py<3.11 → no config-based host
+        return {}
+
+
+def resolve_aurora_host() -> tuple[str | None, str]:
+    """Resolve an Aurora compute-node host + ssh opts for a run_on=aurora call."""
+    env_host = os.environ.get("CHEMKIT_REMOTE_HOST", "").strip()
+    if env_host:
+        return env_host, os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", "").strip()
+    cfg = _load_remote_cfg()
+    host = (cfg.get("host") or "").strip()
+    ssh_opts = (cfg.get("ssh_opts") or "").strip()
+    if not host:
+        nodes_file = cfg.get("nodes_file", ".sweep_nodes")
+        nf = Path(nodes_file) if os.path.isabs(nodes_file) else (REPO_ROOT / nodes_file)
+        if nf.is_file():
+            for line in nf.read_text().splitlines():
+                if line.strip():
+                    host = line.strip()
+                    break
+    return (host or None), ssh_opts
+
 # --------------------------------------------------------------------------- #
 # Live engine-subprocess registry — lets an interactive caller (the assay
 # agent REPL) hard-abort an in-flight calculation on `stop`/Ctrl-C. Each
@@ -174,7 +216,8 @@ def _description(skill_folder: str, subcommand: str) -> str:
     return (desc or f"assay {subcommand}") + args_block + usage
 
 
-def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str:
+def _run_engine(subcommand: str, args: list[str], cwd: str | None = None,
+                run_on: str = "local") -> str:
     """Run the engine CLI as an isolated subprocess; return its JSON stdout.
 
     `cwd` is the CALLER's working directory: relative input paths and `--out`
@@ -201,6 +244,26 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
     env["PYTHONPATH"] = os.pathsep.join(
         [str(REPO_ROOT), env.get("PYTHONPATH", "")]
     ).rstrip(os.pathsep)
+
+    # Per-call remote routing: run_on=aurora → resolve a compute node and set
+    # CHEMKIT_REMOTE_HOST for THIS call so runlog ssh's it there (shared FS →
+    # identical paths; result JSON streams back in the same call). run_on=local
+    # (default) leaves the env untouched → runs locally. An explicit aurora
+    # request that can't resolve a host is a clear error, never a silent local run.
+    if str(run_on).strip().lower() in ("aurora", "remote"):
+        host, ssh_opts = resolve_aurora_host()
+        if not host:
+            return json.dumps({
+                "error": ("run_on=aurora requested but no Aurora compute node "
+                          "resolved. Set [remote].host in assay.toml, or ensure the "
+                          "nodeholder published .sweep_nodes (qsub "
+                          "tools/aurora_nodeholder.pbs), or export "
+                          "CHEMKIT_REMOTE_HOST."),
+                "subcommand": subcommand, "run_on": "aurora",
+            })
+        env["CHEMKIT_REMOTE_HOST"] = host
+        if ssh_opts:
+            env["CHEMKIT_REMOTE_SSH_OPTS"] = ssh_opts
 
     pkg = CONVERTED_SKILLS.get(subcommand)
     if pkg is not None:
@@ -382,8 +445,12 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
         raw = kwargs.pop("args", None)
         cwd = kwargs.pop("cwd", None)
         extra = kwargs.pop("extra_args", None)
+        # Per-call location: local (default) or aurora (run on an Aurora compute
+        # node over ssh, result returned in this same call). Routing param — it is
+        # NOT passed to the engine argparse.
+        run_on = kwargs.pop("run_on", None) or "local"
         if raw:
-            return _run_engine(subcommand, list(raw), cwd=cwd)
+            return _run_engine(subcommand, list(raw), cwd=cwd, run_on=run_on)
         # Validate the slim escape hatch: reject any unknown flag rather than
         # passing it through to argparse blindly (with a did-you-mean hint).
         if extra:
@@ -398,7 +465,7 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
                 })
         typed = {k: v for k, v in kwargs.items() if k in param_names}
         argv = _arg_spec_mod.params_to_argv(subcommand, typed, extra_args=extra)
-        return _run_engine(subcommand, argv, cwd=cwd)
+        return _run_engine(subcommand, argv, cwd=cwd, run_on=run_on)
 
     # Build the per-skill signature: the skill's typed params + the three
     # cross-cutting wrapper params (extra_args / args / cwd), all keyword-only.
@@ -416,6 +483,9 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
         for p in params
     ]
     sig_params += [
+        inspect.Parameter("run_on", inspect.Parameter.KEYWORD_ONLY,
+                          annotation=_Optional[_Literal["local", "aurora"]],
+                          default=None),
         inspect.Parameter("extra_args", inspect.Parameter.KEYWORD_ONLY,
                           annotation=_Optional[_List[str]], default=None),
         inspect.Parameter("args", inspect.Parameter.KEYWORD_ONLY,
@@ -465,6 +535,15 @@ _TOOL_DOC = (
     "(unknown flags are rejected with a suggestion). `cwd` resolves relative "
     "input/output paths. (`args`, a raw CLI token list, is still accepted for "
     "back-compat and takes precedence when given.)\n\n"
+    "WHERE IT RUNS — `run_on`: 'local' (default) runs on this server's machine; "
+    "'aurora' runs THIS call on an Aurora compute node over ssh and returns the "
+    "result in the same call (identical output, just executed remotely). Use "
+    "'aurora' for heavier DFT when an allocation is available; the result JSON "
+    "will carry a `remote_host` field naming the node it ran on — report it. Only "
+    "fits calcs that finish within ~1h; and the internet-dependent lookups "
+    "(name-to-smiles, build-from-smiles) should stay local (compute nodes have no "
+    "outbound internet). If 'aurora' is requested but no node is available the "
+    "call returns an error rather than silently running local.\n\n"
     "REPORTING CONTRACT — surface warnings verbatim. If the result JSON has a "
     "`warnings` array, you MUST relay EVERY warning to the user verbatim (none "
     "dropped, summarized, or paraphrased). The result includes a ready-to-paste "

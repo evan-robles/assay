@@ -17,13 +17,17 @@ Usage:
     # one-time: copy the template and fill in your project + env
     cp tools/aurora.example.yaml ~/.assay/aurora.yaml && $EDITOR ~/.assay/aurora.yaml
 
-    # submit the fidelity suite (engine-only; see the --live warning below):
+    # submit ONE skill calculation to a compute node (the common case):
     python tools/aurora_submit.py submit \
-        --suite benchmarks/fidelity/logp-partition-validation \
-        --queue debug --walltime 01:00:00
+        --queue debug --walltime 01:00:00 \
+        --skill sp --skill-args --method dft --tier standard benzene.xyz
 
     # or submit an arbitrary command:
     python tools/aurora_submit.py submit --cmd "python -m assay_core.cli sp --method xtb mol.xyz"
+
+    # or the fidelity benchmark suite (engine-only; see the --live warning below):
+    python tools/aurora_submit.py submit \
+        --suite benchmarks/fidelity/logp-partition-validation
 
     python tools/aurora_submit.py status  <jobid>
     python tools/aurora_submit.py collect <jobid-or-rundir>
@@ -202,10 +206,25 @@ def build_pbs_script(cfg: Dict[str, Any], run_cmd: str, run_dir: str, job_name: 
     return "\n".join(lines)
 
 
+import shlex
+
+
 def _resolve_run_cmd(args: argparse.Namespace) -> str:
-    """Turn --cmd / --suite (+ suite flags) into the literal shell command."""
+    """Turn --cmd / --skill / --suite (+ flags) into the literal shell command."""
     if args.cmd:
         return args.cmd
+    # --skill: run ONE assay skill on the compute node via the engine CLI. This is
+    # the common "submit a single calculation to Aurora" path. The skill args (the
+    # geometry path + --method/--charge/... exactly as you'd pass the `assay` CLI)
+    # follow verbatim. We run `python -m assay_core.cli <skill> <args>` so it works
+    # from the repo checkout with no console-script install required, and force
+    # --stdout json so the full result lands in the PBS .o log for `collect`.
+    if args.skill:
+        skill_argv = list(args.skill_args or [])
+        if "--stdout" not in skill_argv:
+            skill_argv += ["--stdout", "json"]
+        parts = ["python", "-m", "assay_core.cli", args.skill, *skill_argv]
+        return " ".join(shlex.quote(p) for p in parts)
     # --suite: expand into a run_suite.py invocation. repo_path is used at runtime
     # via the script's cd + env; reference run_suite.py by its repo-relative path.
     suite_cmd = [
@@ -240,11 +259,9 @@ def cmd_submit(args: argparse.Namespace) -> int:
     }
     cfg = load_config(args.config, overrides)
 
-    if not args.cmd and not args.suite:
-        sys.stderr.write("error: pass exactly one of --cmd or --suite\n")
-        return 2
-    if args.cmd and args.suite:
-        sys.stderr.write("error: pass only one of --cmd or --suite\n")
+    sources = [bool(args.cmd), bool(args.skill), bool(args.suite)]
+    if sum(sources) != 1:
+        sys.stderr.write("error: pass exactly one of --cmd, --skill, or --suite\n")
         return 2
 
     run_cmd = _resolve_run_cmd(args)
@@ -262,7 +279,14 @@ def cmd_submit(args: argparse.Namespace) -> int:
 
     # Run dir under project space. The repo checkout is expected to live there.
     stamp = _stamp()
-    job_name = args.name or (f"assay_{Path(args.suite).name}" if args.suite else "assay_cmd")
+    if args.name:
+        job_name = args.name
+    elif args.suite:
+        job_name = f"assay_{Path(args.suite).name}"
+    elif args.skill:
+        job_name = f"assay_{args.skill}"
+    else:
+        job_name = "assay_cmd"
     base = args.run_dir or cfg.get("repo_path") or cfg["project_root"]
     run_dir = str(Path(base).resolve()) if args.run_dir else base
     script_path = Path(cfg["repo_path"]) / f"{job_name}_{stamp}.pbs"
@@ -447,6 +471,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     sp.add_argument("--config", default=None, help="path to aurora.yaml (default ~/.assay/aurora.yaml)")
     src = sp.add_argument_group("what to run (choose one)")
     src.add_argument("--cmd", default=None, help="literal shell command to run on the node")
+    src.add_argument("--skill", default=None,
+                     help="run ONE assay skill via `python -m assay_core.cli <skill>` "
+                          "(e.g. --skill sp). Pass its args with --skill-args.")
+    src.add_argument("--skill-args", nargs=argparse.REMAINDER, default=None,
+                     help="args for --skill, verbatim as you'd pass the `assay` CLI "
+                          "(geometry path + --method/--charge/...). Must come LAST.")
     src.add_argument("--suite", default=None, help="suite folder -> runs benchmarks/run_suite.py <folder>")
     sp.add_argument("--live", action="store_true", help="(suite) pass --live (see compute-node internet warning)")
     sp.add_argument("--model", nargs="*", default=None, help="(suite) one or more --model values")

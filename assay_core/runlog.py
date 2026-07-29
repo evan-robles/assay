@@ -87,14 +87,19 @@ def run_skill_subprocess(
     # $HOME/filesystem so paths resolve identically on both sides; the result
     # JSON returns on ssh stdout and the live .out is written locally from the
     # tee'd stderr, so no file copy-back is needed.
-    remote_host = os.environ.get("CHEMKIT_REMOTE_HOST", "").strip()
+    # Read the remote host from the PASSED env (the caller's intent — e.g. the
+    # server sets it per-call for run_on=aurora), falling back to the process env
+    # for the stand-alone / server-launch-pinned case.
+    remote_host = (env.get("CHEMKIT_REMOTE_HOST")
+                   or os.environ.get("CHEMKIT_REMOTE_HOST", "")).strip()
     if remote_host:
         remote_inner = "cd {cwd} && PYTHONPATH={pp} {run}".format(
             cwd=shlex.quote(run_cwd),
             pp=shlex.quote(env.get("PYTHONPATH", "")),
             run=" ".join(shlex.quote(c) for c in cmd),
         )
-        ssh_opts = shlex.split(os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", ""))
+        ssh_opts = shlex.split(env.get("CHEMKIT_REMOTE_SSH_OPTS")
+                               or os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", ""))
         cmd = ["ssh", *ssh_opts, remote_host, remote_inner]
 
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -107,7 +112,8 @@ def run_skill_subprocess(
         d.setdefault("out_log", out_path)
         if remote_host:
             d.setdefault("remote_host", remote_host)
-            ssh_opts_str = os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", "").strip()
+            ssh_opts_str = (env.get("CHEMKIT_REMOTE_SSH_OPTS")
+                            or os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", "")).strip()
             if ssh_opts_str:
                 d.setdefault("remote_ssh_opts", ssh_opts_str)
         return d

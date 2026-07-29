@@ -227,20 +227,37 @@ from `assay.toml` and merge it into `./.mcp.json`.
 
 ### Running on Aurora (remote compute nodes)
 
-The engine can run on a remote compute node transparently to the agent: every
-skill run ssh's to the node and streams the result JSON back **synchronously**, in
-the same tool call. Enable the `[remote]` block in `assay.toml` (or force it at
-generate time), then regenerate the wiring:
+Any skill can run on a remote compute node transparently to the agent: the run
+ssh's to the node and streams the result JSON back **synchronously**, in the same
+tool call. The result carries a `remote_host` field naming the node it ran on.
+First hold an allocation:
 
 ```bash
-# hold an allocation (publishes compute-node hostnames to .sweep_nodes)
+# publishes the compute-node hostname(s) to .sweep_nodes
 qsub -l select=1 tools/aurora_nodeholder.pbs
+```
 
-# wire the server to run on that node (auto-picks the first host from .sweep_nodes),
-# then install into ./.mcp.json
-python configure_mcp.py --remote --install
+**Per call (the agent chooses):** every skill's MCP tool has a `run_on` parameter
+— `local` (default) or `aurora`. The agent sets `run_on="aurora"` on the calls it
+wants remote; the host is resolved from `assay.toml [remote]` (its `host`, else
+the first line of `.sweep_nodes`). No wiring regen needed. Requesting `aurora`
+with no node available returns an error, never a silent local run.
+
+**Session-wide (every call remote):** bake the host into the server env instead:
+
+```bash
+python configure_mcp.py --remote --install          # auto-picks from .sweep_nodes
 # …or pin a host explicitly:
 python configure_mcp.py --remote-host x4712c0s1b0n0 --install
+```
+
+**Long jobs (async):** for DFT that can't finish in the tool timeout, submit a
+real PBS job and collect later:
+
+```bash
+python tools/aurora_submit.py submit --skill sp --skill-args --method dft --tier standard benzene.xyz
+python tools/aurora_submit.py status  <jobid>
+python tools/aurora_submit.py collect <jobid>
 ```
 
 This injects `CHEMKIT_REMOTE_HOST` into the server env; the `runlog` layer does
