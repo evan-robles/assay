@@ -129,10 +129,37 @@ outbound internet.
 
 The `xtb`, `mopac`, and `openbabel` backends are conda-forge only (not on PyPI).
 
+### pixi (recommended)
+
+[pixi](https://pixi.sh) installs the conda backends and the Python package
+together, cross-platform, from one lockfile. Install pixi itself:
+
 ```bash
-pixi install                                  # everything, all platforms
-conda env create -f environment.yml           # or conda
-conda install -c conda-forge xtb xtb-python mopac openbabel rdkit && pip install -e .  # or pip + conda backends
+curl -fsSL https://pixi.sh/install.sh | bash        # macOS / Linux
+# Windows (PowerShell): iwr -useb https://pixi.sh/install.ps1 | iex
+# already on conda? conda install -c conda-forge pixi
+```
+
+Then, from the repo root:
+
+```bash
+pixi install          # resolve + install the env (writes pixi.lock the first time)
+pixi run assay --list-skills
+pixi run assay sp --method xtb water.xyz
+pixi shell            # or drop into the env, then use `assay ...` directly
+```
+
+`pixi run` executes a command inside the project env without activating it;
+`pixi shell` activates it. Predefined shortcuts: `pixi run test`, `pixi run lint`,
+`pixi run mcp` (start the MCP server). To update after pulling new deps, run
+`pixi install` again; commit the refreshed `pixi.lock`.
+
+### conda or pip
+
+```bash
+conda env create -f environment.yml && conda activate chemkit    # conda
+# — or — pip, with the conda-only backends installed first:
+conda install -c conda-forge xtb xtb-python mopac openbabel rdkit && pip install -e .
 ```
 
 **Windows:** all backends work except PySCF (no Windows build), so `--method
