@@ -1,0 +1,17 @@
+{
+  "name": "assay",
+  "description": "Computational-chemistry skills (xtb, MOPAC, PySCF) over MCP — energies, geometry optimization, frequencies, pKa, redox, reaction profiles, and more.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Evan S. Robles",
+    "url": "https://github.com/evan-robles/assay"
+  },
+  "homepage": "https://github.com/evan-robles/assay",
+  "mcpServers": {
+    "assay": {
+      "command": "assay-mcp",
+      "args": [],
+      "env": {}
+    }
+  }
+}
