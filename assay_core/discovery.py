@@ -59,9 +59,8 @@ def discover_skills(*, refresh: bool = False) -> Dict[str, SkillInfo]:
     """Map kebab tool name -> SkillInfo for every self-contained skill on disk.
 
     Imports each skill's run.py to read its manifest. Cached after the first call
-    (pass refresh=True to rescan). A skill folder that lacks the SKILL_NAME /
-    SUBCOMMAND / build_parser manifest is skipped with a note on stderr — it is
-    not yet converted to the inverted contract.
+    (pass refresh=True to rescan). A folder lacking the SKILL_NAME / SUBCOMMAND /
+    build_parser manifest is skipped with a note on stderr.
     """
     global _CACHE
     if _CACHE is not None and not refresh:

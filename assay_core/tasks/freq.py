@@ -1,11 +1,4 @@
-"""Vibrational-analysis (opt-freq) task — thin shim over the self-contained skill.
-
-The workflow now lives in ``skills/vibrational_analysis/scripts/run.py``
-(DESIGN.md inversion). It is a composite: it uses the geometry-optimize and
-conformer-search siblings in-process (through their task shims). This module
-re-exports its ``run`` so the engine CLI and composite callers keep working
-against a single copy of the physics.
-"""
+"""Re-exports the vibrational-analysis skill's ``run`` for the engine CLI."""
 from __future__ import annotations
 
 import os

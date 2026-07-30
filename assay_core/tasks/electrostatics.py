@@ -1,11 +1,4 @@
-"""Electrostatics task — thin shim over the self-contained skill.
-
-The workflow (dipole + partial charges) now lives in the self-contained skill at
-``skills/electrostatics/scripts/run.py`` (DESIGN.md inversion). This module
-re-exports its ``run`` so the engine CLI and any composite that does
-``from .tasks import electrostatics`` keep working against a single copy of the
-physics.
-"""
+"""Re-exports the electrostatics skill's ``run`` for the engine CLI."""
 from __future__ import annotations
 
 import os

@@ -284,10 +284,9 @@ def _dispatch(args, parser, cli: str, pyscf_kwargs: dict):
 # spellings work everywhere (CLI, MCP front door, benchmark), and an unknown one
 # still gets a `did you mean` suggestion (see _suggest_subcommand).
 #
-# Maps canonical subcommand -> list of accepted aliases. Kept in ONE place so
-# subcommand_names()/the consistency check/--list-skills all report it.
-# (Observed confusions from the 2026-07-03 fidelity runs: models called
-# `orbitals`/`frontier` for frontier-orbitals, hence the descriptive aliases.)
+# Maps canonical subcommand -> accepted aliases, in one place so
+# subcommand_names() / the consistency check / --list-skills all agree. The
+# descriptive aliases let a caller say `frontier-orbitals` for `frontier`.
 SUBCOMMAND_ALIASES = {
     "sp":          ["single-point-energy", "single-point", "singlepoint"],
     "opt":         ["geometry-optimize", "geometry-optimization", "optimize"],

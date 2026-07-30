@@ -33,32 +33,13 @@ dir = "skills"
 lint = "tools/lint_skills.py"
 
 [remote]
-# Run calculations on a REMOTE compute node (e.g. Aurora) over ssh, transparently
-# to the agent, in the SAME synchronous tool call. Two ways to trigger it:
-#
-#   * PER-CALL (recommended): every skill tool exposes a `run_on` parameter —
-#     the agent sets `run_on="aurora"` on an individual call to run just that
-#     calculation remotely (and `run_on="local"`, the default, to run it here).
-#     The host is resolved from this block: [remote].host, else the first line of
-#     [remote].nodes_file (the node the aurora_nodeholder.pbs job publishes), else
-#     the CHEMKIT_REMOTE_HOST env var. `enabled` is NOT required for per-call use.
-#
-#   * SESSION-WIDE: set `enabled = true` and run `configure_mcp.py`, which injects
-#     CHEMKIT_REMOTE_HOST into the generated mcp_config.json server env so EVERY
-#     call runs remotely by default (no per-call flag needed).
-#
-# Either way the runlog layer ssh'es the run to the host and streams the result
-# JSON back; the result carries a `remote_host` field naming the node it ran on.
-#
-# ASSUMES a SHARED filesystem (cwd + input/--out paths resolve identically on both
-# sides — true on Aurora, where $HOME/flare mount on compute nodes) and that the
-# host is ssh-reachable from where the server runs (a login node, with a live
-# allocation). Only fits calcs that finish within the tool timeout (~3600 s):
-# xtb/PM7/small DFT. For long DFT use the async tools/aurora_submit.py instead.
-# Compute nodes have no outbound internet, so name-to-smiles / build-from-smiles
-# (PubChem/OPSIN lookups) should stay LOCAL — run those off the remote server.
+# Run calculations on a remote compute node over ssh (see the README's Aurora
+# section for per-call `run_on` vs. session-wide use). Assumes a shared filesystem
+# so paths resolve on both sides, and fits calcs under the tool timeout (~3600 s):
+# xtb/PM7/small DFT — long DFT uses the async tools/aurora_submit.py. Compute nodes
+# have no outbound internet, so keep name-to-smiles / build-from-smiles local.
 
-# Master switch. false (default) = the server runs the engine locally.
+# false (default) = run locally. true = every call runs remotely (via configure_mcp).
 enabled = false
 
 # The compute-node hostname to ssh to. Leave empty to auto-pick the first host

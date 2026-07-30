@@ -1,30 +1,18 @@
-"""Reusable agent loop for ASSAY/chemkit — shared by the benchmark and the CLI.
+"""Reusable agent loop for ASSAY — shared by the benchmark and the CLI.
 
-This module owns the *benchmark-agnostic* pieces of the agentic loop that were
-historically welded inside ``benchmarks/fidelity_driver.py``:
+The benchmark-agnostic pieces of the agentic loop:
 
   * the tool schemas the model sees (``CHEMKIT_TOOL``, ``LIST_SKILLS_TOOL``,
     ``SKILL_HELP_TOOL``) — one typed ``chemkit`` tool plus two discovery tools;
   * the system prompt (``LIVE_INSTRUCTIONS``) and rule injection (``load_rules``);
-  * engine dispatch for a tool call (``_dispatch_tool``), routed IN-PROCESS through
-    the MCP server's ``_run_engine`` so every call keeps the integrity gate, the
-    live ``.out`` log, and the level-of-theory gate;
-  * a single turn driver (``run_agent_turn``) that both the interactive REPL and
-    (optionally) the benchmark can reuse.
+  * tool dispatch (``_dispatch_tool``), routed in-process through the MCP server's
+    ``_run_engine`` so every call keeps the integrity gate, the live ``.out`` log,
+    and the level-of-theory gate;
+  * a single turn driver (``run_agent_turn``) reused by the REPL and the benchmark.
 
-Design references (DESIGN.md):
-  * §11 proposes this exact interactive REPL and its tool set
-    (``chemkit``/``final_report``/``list_skills``/``skill_help``); this module is
-    the "factor the loop into one reusable function" answer to §11 open-Q #2.
-  * §11 open-Q #1 is resolved to **in-process** engine execution; the ONLY place
-    that touches the engine is ``_dispatch_tool`` → ``server._run_engine``, so the
-    planned migration (§10 item 10: move that logic to ``assay_core.runlog``) is a
-    one-function change here.
-  * Skill names are NOT hardcoded — they are derived from the authoritative
-    registry ``server.TOOLS`` — so this survives the discovery-driven server of §3.
-
-``final_report`` itself and all scoring stay in ``fidelity_driver.py``; this
-module deliberately knows nothing about specs or grading.
+Skill names come from ``server.TOOLS`` (the discovered registry), not hardcoded.
+Scoring and ``final_report`` live in ``fidelity_driver.py``; this module knows
+nothing about specs or grading.
 """
 from __future__ import annotations
 
@@ -559,16 +547,10 @@ def summarize_calculation_result(result: Dict[str, Any]) -> str:
 
 
 def _mentions_headline_value(text: str, hv: Any) -> bool:
-    """True if ``text`` reports the headline value — accepting the model's SENSIBLE
-    ROUNDING, not just a full-precision verbatim paste.
-
-    The old check required ``str(hv)`` as an exact substring, which rejected a
-    good model summary that wrote e.g. "−2077.998 eV" for a stored
-    -2077.9982313705, forcing the robotic engine fallback. Here we pass if:
-      • the exact string appears (fast path, also covers non-numeric headlines), OR
-      • any number in the text equals hv when both are rounded to a shared
-        precision — matched to 4 significant figures (a tolerance that accepts a
-        few-decimal rounding of an energy while still requiring the right number).
+    """True if ``text`` reports the headline value, accepting sensible rounding
+    (e.g. "−2077.998 eV" for -2077.9982313705). Passes if the exact string appears
+    (also covers non-numeric headlines), or if any number in the text equals hv
+    when both are rounded to 4 significant figures.
     """
     if hv is None:
         return True

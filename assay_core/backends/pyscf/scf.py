@@ -197,12 +197,10 @@ def pack_scf_result(mf) -> Dict[str, Any]:
     except Exception:
         pass
 
-    # Orbital eigenvalues. For UKS/UHF, mo_energy is a (2, n_mo) array or a
-    # 2-tuple — α and β channels. The reported HOMO is the highest occupied
-    # across BOTH channels, and LUMO is the lowest unoccupied across both;
-    # the gap is the difference. (Previously the α channel was reported
-    # alone, which is wrong whenever β HOMO sits above α HOMO — common in
-    # high-spin systems with significant exchange splitting.)
+    # Orbital eigenvalues. For UKS/UHF, mo_energy spans α and β channels; HOMO is
+    # the highest occupied across both channels and LUMO the lowest unoccupied
+    # across both (β HOMO can sit above α HOMO in high-spin systems), and the gap
+    # is their difference.
     try:
         mo_energy = mf.mo_energy
         mo_occ = mf.mo_occ

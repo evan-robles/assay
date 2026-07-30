@@ -166,15 +166,12 @@ and which result fields to report. Authoring a skill is governed by
 
 ## Research integrity
 
-Any literature lookup, citation, or comparison to a published value is governed by
-[`rules/research-standards.md`](rules/research-standards.md), which is binding. It
-requires a hard verification gate — every DOI/URL is link-checked and its metadata
-matched to the citation before it's shown — plus honest experimental-vs-computed
-provenance and ACS-formatted citations. Unverifiable sources get an honest "not
-found," never a guess. Each skill's `examples/` folder validates against a
-published value under this gate.
+Any literature lookup, citation, or comparison to a published value follows
+[`rules/research-standards.md`](rules/research-standards.md): every DOI/URL is
+link-checked and metadata-matched before it's shown, provenance is labeled
+experimental vs. computed, citations are ACS-formatted, and an unverifiable source
+gets a "not found" rather than a guess. Each skill's `examples/` validates against
+a published value under this gate.
 
-The three standards ([`skill`](rules/skill-standards.md),
-[`research`](rules/research-standards.md),
-[`workflow`](rules/workflow-standards.md)) load automatically for the matching
-task.
+The three [`rules/`](rules/) standards (skill, research, workflow) load
+automatically for the matching task.

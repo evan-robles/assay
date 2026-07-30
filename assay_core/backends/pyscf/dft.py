@@ -16,11 +16,10 @@ from .scf import build_mean_field, pack_scf_result, _report_auxbasis
 # wB97X-D3BJ would be a hair better at the standard tier but requires
 # pyscf-dispersion, which currently fails to load on Python 3.13.
 #
-# NOTE on density fitting: the auxiliary basis is NOT pinned here. It is chosen
-# in build_mean_field() to match the functional — a JK-fit auxbasis for hybrids
-# (standard = B3LYP, accurate = wB97M-V, both carry exact exchange) and a
-# J-only auxbasis for pure functionals (fast = r2scan). Hard-coding a J-only
-# auxbasis previously mis-fit the exchange (K) matrix of the hybrid tiers.
+# Density fitting: the auxiliary basis is chosen in build_mean_field() to match
+# the functional — a JK-fit auxbasis for hybrids (standard = B3LYP, accurate =
+# wB97M-V, both carry exact exchange), a J-only auxbasis for pure functionals
+# (fast = r2scan). It is deliberately not pinned here.
 #
 # `density_fit` is each tier's DF profile, surfaced to the user when offering
 # tier choices and on the command line: the screening-grade fast/standard tiers

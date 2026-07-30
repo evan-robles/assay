@@ -1,10 +1,4 @@
-"""Geometry-optimization task — thin shim over the self-contained skill.
-
-The workflow now lives in ``skills/geometry_optimize/scripts/run.py`` (DESIGN.md
-inversion). This module re-exports its ``run`` (and the ``_run_mopac`` helper,
-which the confsearch and scan tasks reuse) so the engine CLI and sibling tasks
-keep working against a single copy of the physics.
-"""
+"""Re-exports the geometry-optimize skill's ``run`` (and the `_run_mopac` helper reused by confsearch/scan) for the engine CLI."""
 from __future__ import annotations
 
 import os

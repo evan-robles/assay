@@ -1,9 +1,4 @@
-"""redox-potential task — thin shim over the self-contained skill.
-
-The workflow now lives in ``skills/redox_potential/scripts/run.py``
-(DESIGN.md inversion). This module re-exports its ``run`` so the engine
-CLI and composite callers keep working against a single copy.
-"""
+"""Re-exports the redox-potential skill's ``run`` for the engine CLI."""
 from __future__ import annotations
 
 import os

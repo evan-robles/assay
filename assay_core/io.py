@@ -58,11 +58,10 @@ def _structure_warnings(warnings: Any) -> List[Dict[str, str]]:
     return out
 
 
-# Header line prepended to the copy-ready warnings block. Kept short and
-# imperative so an agent relaying the block to a user carries an explicit
-# instruction with it.
+# Header prepended to the copy-ready warnings block — an explicit relay
+# instruction travels with the block.
 _WARNINGS_BLOCK_HEADER = (
-    "⚠️ Tool warnings — surface ALL of these to the user verbatim "
+    "Tool warnings — surface these to the user verbatim "
     "(do not drop, summarize, or paraphrase any):"
 )
 
@@ -70,12 +69,10 @@ _WARNINGS_BLOCK_HEADER = (
 def _warnings_block(warnings: Any) -> str:
     """Build a single copy-ready markdown string listing every warning verbatim.
 
-    The agent can relay THIS ONE FIELD to its user in a single paste, instead of
-    reconstructing a list from the `warnings[]` array — which is where weak
-    models drop warnings (observed gpt-4.1-nano). The block is derived from the
-    exact warning text (verbatim), so relaying it satisfies the
-    'echo every warning verbatim' requirement (calculation-reporting-standards
-    §7). Returns '' when there are no warnings (caller then omits the field)."""
+    An agent can relay this one field in a single paste instead of reconstructing
+    the list from `warnings[]`, which satisfies the echo-every-warning-verbatim
+    requirement (calculation-reporting-standards §7). Returns '' when there are
+    no warnings (caller omits the field)."""
     if not isinstance(warnings, (list, tuple)):
         return ""
     texts = []
@@ -124,10 +121,9 @@ def write_result(result: Dict[str, Any], out_path: str) -> str:
     # existing consumer is unaffected):
     #   * `warnings_structured` = [{code, text}] — a machine-stable handle per
     #     warning (reference by short code instead of retyping).
-    #   * `warnings_block` = ONE copy-ready markdown string of all warnings
-    #     verbatim, headed by a "surface these to the user" instruction. An agent
-    #     relays this single field in one paste instead of reconstructing the
-    #     list — the step where weak models drop warnings (observed gpt-4.1-nano).
+    #   * `warnings_block` = one copy-ready markdown string of all warnings
+    #     verbatim, headed by a "surface these to the user" instruction, relayed
+    #     in a single paste instead of reconstructing the list.
     # Both are added only when there are warnings.
     if isinstance(result, dict) and result.get("warnings"):
         _w = result.get("warnings")

@@ -45,7 +45,7 @@ def run(
     gate_integrity: bool = True,
     allow_unconverged: bool = False,
 ) -> Dict[str, Any]:
-    """Single-point energy workflow (was assay_core/tasks/sp.py::run)."""
+    """Single-point energy workflow."""
     atoms = read_geometry(input_path)
     symbols = atoms.get_chemical_symbols()
     calc = build_calculator(

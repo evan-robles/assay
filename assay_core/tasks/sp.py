@@ -1,16 +1,4 @@
-"""Single-point energy task — thin shim over the self-contained skill.
-
-The skill-inversion (DESIGN.md) moved the single-point workflow OUT of the engine
-and INTO its self-contained skill at
-``skills/single_point_energy/scripts/run.py``. This module now re-exports that
-skill's ``run`` so the engine CLI and composite skills that still do
-``from .tasks import sp`` keep working against a SINGLE copy of the physics
-(no fork).
-
-``skills/`` is a workflow tree kept on PYTHONPATH rather than pip-installed, so
-ensure the repo root (the parent of the installed ``assay_core`` package) is
-importable before pulling the skill in.
-"""
+"""Re-exports the single-point-energy skill's ``run`` (and the xtb HOMO/LUMO helper) for the engine CLI."""
 from __future__ import annotations
 
 import os

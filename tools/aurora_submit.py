@@ -81,7 +81,7 @@ _DEFAULTS: Dict[str, Any] = {
     "proxy": False,                  # inject ALCF proxy exports (compute-node internet)
 }
 
-# ALCF proxy (compute nodes only) -- confirmed this session: proxy.alcf.anl.gov:3128.
+# ALCF proxy (compute nodes only): proxy.alcf.anl.gov:3128.
 _PROXY_HOST = "http://proxy.alcf.anl.gov:3128"
 
 # Marker echoed at the end of the job so `collect` can confirm completion + rc.

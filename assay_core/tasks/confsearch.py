@@ -1,10 +1,4 @@
-"""Conformer-search task — thin shim over the self-contained skill.
-
-The workflow now lives in ``skills/conformer_search/scripts/run.py`` (DESIGN.md
-inversion). This module re-exports its ``run`` plus the three dihedral helpers the
-scan task reuses, so the engine CLI and sibling tasks keep working against a
-single copy of the physics.
-"""
+"""Re-exports the conformer-search skill's ``run`` (and the dihedral helpers reused by scan) for the engine CLI."""
 from __future__ import annotations
 
 import os

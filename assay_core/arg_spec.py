@@ -179,8 +179,7 @@ def known_flags(subcommand: str) -> set[str]:
     return flags
 
 
-# Solvent synonyms that mean "gas phase" -> omit --solvent entirely. Mirrors the
-# historical behavior of both _typed_args_to_argv copies this module replaces.
+# Solvent synonyms that mean "gas phase" -> omit --solvent entirely.
 _GAS_SYNONYMS = {"none", "gas", "gas phase", "gas-phase", "vacuum", ""}
 
 
@@ -222,9 +221,8 @@ def params_to_argv(subcommand: str, values: Dict[str, Any],
     This is the ONE converter shared by the MCP server and the benchmark driver.
     Only params that exist for this subcommand are emitted; a value for a param
     the skill does not have is ignored (so nothing gets injected that the
-    subcommand would reject — the core fix). Positionals are appended last.
-    ``extra_args`` (already-validated raw tokens) are appended before the
-    positional, matching the historical ordering.
+    subcommand would reject). Positionals are appended last; ``extra_args``
+    (already-validated raw tokens) go just before the positional.
     """
     params = {p.name: p for p in skill_params(subcommand)}
     argv: List[str] = []

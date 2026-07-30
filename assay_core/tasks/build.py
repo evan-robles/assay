@@ -1,9 +1,4 @@
-"""Build-from-SMILES task — thin shim over the self-contained skill.
-
-The workflow now lives in ``skills/build_from_smiles/scripts/run.py`` (DESIGN.md
-inversion). This module re-exports its ``run`` so the engine CLI keeps working
-against a single copy of the logic.
-"""
+"""Re-exports the build-from-smiles skill's ``run`` for the engine CLI."""
 from __future__ import annotations
 
 import os

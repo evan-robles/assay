@@ -218,7 +218,7 @@ class RemoteHostUnreachable(RuntimeError):
     consume a repeat slot: a run that hits it is flagged ERRORED (exit 2) with no
     scored result, so resume re-runs that slot once live nodes are back. Without
     this, a dead node makes every attempt score `engine_s=0.0` FAIL and pollute
-    the benchmark with artifacts (see the 2026-07-03 fukui dead-node incident)."""
+    the benchmark with artifacts."""
 
 
 # ssh transport-failure signatures. `ssh` exits 255 for ANY connection-level
@@ -299,12 +299,10 @@ def _coerce_extra_args(raw: Any) -> List[str]:
     A correctly-formatted tool call gives a JSON array (["--no-preopt"]). But a
     weaker model may emit the WHOLE array as a single STRING — either JSON
     ('["--no-preopt"]') or a Python repr ("['--no-preopt']") — or a bare flag
-    string ("--no-preopt"). Iterating such a string with the historical
-    `[str(a) for a in extra_args]` explodes it into individual CHARACTERS
-    (['[', "'", '-', '-', 'n', 'o', ...]), which the engine then rejects as
-    "unrecognized arguments" — a tool-CALL FORMATTING quirk, not a chemistry
-    error (observed 2026-07-27: llama-3.1-8B passed extra_args="['--no-preopt']",
-    every affected run failed rc=1). Recover the intended tokens: parse a
+    string ("--no-preopt"). Iterating such a string with `[str(a) for a in
+    extra_args]` explodes it into individual characters (['[', "'", '-', ...]),
+    which the engine rejects as "unrecognized arguments" — a tool-call formatting
+    quirk, not a chemistry error. Recover the intended tokens: parse a
     stringified list (JSON, then Python literal), else shlex-split a bare string.
     A genuine list is passed through (each element still normalized for
     space-mashing via _normalize_tool_args by the caller).
@@ -439,36 +437,19 @@ def _has_encoding_corruption(*texts: Any) -> bool:
     return False
 
 
-# Fragments of the model's tool-calling machinery that must NEVER appear in the
-# agent's natural-language report. When the argo proxy garbles a response, the
-# internal tool-call scaffolding sometimes leaks verbatim into the report prose
-# (observed 2026-07-06: a gpt-4o run whose provenance text came back as
-# "ucingtion.finisha,smulti_tool_use.parallel(return<size/group/api ... sancicator
-# ... woulbx ...") — token-salad interleaved with tool-call tokens). These markers
-# are specific to that scaffolding and do not occur in legitimate chemistry prose,
-# so matching them does not false-positive on a real (if wrong) model answer.
-# NOTE: markers must be strict enough that they CANNOT collide with legitimate
-# report prose OR with metric keys that ride along in a result (e.g. the timing
-# field carries "tool_calls": N — so a bare "tool_call" substring would match
-# every clean run and wrongly flag it corrupt; verified 2026-07-06). Each entry
-# below is a scaffolding token that has no legitimate reason to appear in the
-# agent's natural-language chemistry report.
+# Tool-call scaffolding tokens that must not appear in the agent's report. When
+# the proxy garbles a response, internal tool-call framing can leak verbatim into
+# the report prose or into a parsed field value. These markers are specific to
+# that scaffolding and don't occur in legitimate chemistry prose, so matching them
+# never false-positives on a real (if wrong) answer. They must stay strict enough
+# not to collide with a metric key that rides along in a result (e.g. a
+# "tool_calls": N timing field — hence no bare "tool_call" marker).
 _TOOLCALL_LEAK_MARKERS = (
-    "multi_tool_use.parallel",   # the exact leaked scaffolding seen in the wild
-    "multi_tool_use",            # any form of the parallel-tool wrapper
-    "<|im_start|>", "<|im_end|>",  # chat-template delimiters leaking into prose
+    "multi_tool_use.parallel",
+    "multi_tool_use",
+    "<|im_start|>", "<|im_end|>",  # chat-template delimiters
     "<|eot_id|>", "<|start_header_id|>",
-    # Tool-call XML-envelope delimiters leaking verbatim into a parsed FIELD value
-    # (observed 2026-07-07: claude-haiku-4.5 frontier-orbitals runs whose
-    # final_report `value`/`integrity_trustworthy` fields came back as e.g.
-    # "true</integrity_trustworthy>\n</invoke>" and a prose tail of
-    # "<parameter name=\"value\">7.43..." — the tool-call envelope tags bled INTO
-    # the field data instead of framing it, so the structured `value` was lost and
-    # the model was scored FAIL despite computing the right answer in prose). These
-    # are harness/transport tool-call framing tokens; they never legitimately
-    # appear inside a chemistry report field. They are distinct from a real model
-    # error (e.g. gemini reporting a clean-but-WRONG number in `value` — no tags,
-    # correctly stays FAIL).
+    # Tool-call XML-envelope tags leaking into a field value or prose tail.
     "</invoke>", "<invoke",
     "<parameter", "</parameter>",
     "</integrity_trustworthy>", "</prose>", "</provenance>",
@@ -950,7 +931,7 @@ def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratc
         # 2, no scored result, no repeat slot consumed) instead of scoring a bogus
         # engine_s=0.0 FAIL against the model. This must fire even for
         # tolerate_failure specs: a dead node is never an "expected chemistry
-        # failure". (See the 2026-07-03 fukui dead-node incident.)
+        # failure".
         if _is_ssh_unreachable(proc.returncode, proc.stderr):
             raise RemoteHostUnreachable(
                 f"CHEMKIT_REMOTE_HOST={os.environ.get('CHEMKIT_REMOTE_HOST','')!r} "
@@ -1658,12 +1639,11 @@ def _canonical_smiles(smi: str) -> Optional[str]:
 
 def _identity_mismatch(spec: Dict[str, Any], truth: Dict[str, Any],
                        agent_run: Dict[str, Any]) -> Optional[str]:
-    """Detect a run whose agent output describes a DIFFERENT molecule than the
+    """Detect a run whose agent output describes a different molecule than the
     spec asked for — the signature of an argo-proxy content swap or a model
-    hallucination that mixes cases (see the 2026-07 cross-contamination incident:
-    a `water_build` run whose stream referenced morphine's SMILES and `c1ccccc`).
+    hallucination that mixes cases.
 
-    Returns a human-readable reason string on a CONFIRMED mismatch, else None.
+    Returns a human-readable reason string on a confirmed mismatch, else None.
 
     Conservative by construction — it only fires on a clear POSITIVE mismatch
     where both the expected and the reported identity are known and canonically
@@ -1843,10 +1823,10 @@ def score_layer_b(
             "field": field,
         })
     elif truth_val is None:
-        # A non-null report_value_field that is ABSENT from the engine output is a
-        # spec/engine field-name mismatch (e.g. a casing typo). This must FAIL
-        # loudly, not silently skip — otherwise the value gate is dead and any
-        # number (including a fabricated one) would pass. (Audit blocker fix.)
+        # A non-null report_value_field absent from the engine output is a
+        # spec/engine field-name mismatch (e.g. a casing typo). Fail loudly rather
+        # than silently skip — otherwise the value gate is dead and any number
+        # (including a fabricated one) would pass.
         findings.append({
             "check": f"reported {field}", "ok": False, "severity": "error",
             "detail": (f"report_value_field {field!r} is not present in the engine "
@@ -2059,8 +2039,8 @@ def _build_chemkit_tool() -> Dict[str, Any]:
     is avoided for argo-proxy compatibility).
 
     JSON-schema type rules mirror the server: enums are string `enum`s with
-    nullability via a `["<type>","null"]` UNION, never a None enum member (a None
-    enum member 500s argo's Gemini endpoint — observed 2026-07-06)."""
+    nullability via a `["<type>","null"]` union, never a None enum member (which
+    500s argo's Gemini endpoint)."""
     from assay_core import arg_spec as _A
 
     _PY_TO_JSON = {int: "integer", float: "number", str: "string", bool: "boolean"}
@@ -2123,10 +2103,8 @@ def _build_chemkit_tool() -> Dict[str, Any]:
     }
 
 
-# Tool schemas are the single source of truth in mcp_server/agent.py (verified
-# byte-identical to the former local copies). Import them so the benchmark and the
-# interactive CLI can never drift. The local `_build_chemkit_tool` above is kept
-# only for reference/back-compat and is no longer used.
+# Tool schemas live in mcp_server/agent.py; import them so the benchmark and the
+# interactive CLI share one definition and can't drift.
 _CHEMKIT_TOOL = _agent.CHEMKIT_TOOL
 _LIST_SKILLS_TOOL = _agent.LIST_SKILLS_TOOL
 _SKILL_HELP_TOOL = _agent.SKILL_HELP_TOOL
@@ -2376,17 +2354,15 @@ def run_live_agent(spec: Dict[str, Any],
     # spent in client.chat.completions.create (model latency+thinking); engine =
     # time spent in run_engine (the chemistry). turns = LLM round-trips. Recorded
     # in the returned record's "timing" block so per-(model,task) speed is
-    # analyzable (e.g. gpt-4o is much slower than gemini on fukui).
+    # analyzable.
     _t0 = time.monotonic()
     _llm_s = 0.0
     _eng_s = 0.0
-    # Per-run token usage, accumulated across every LLM round-trip in this agent
-    # loop. argo returns an OpenAI-style `usage` object per response (verified
-    # 2026-07-07: all 10 argo models populate prompt/completion/total). We sum it
-    # so the run record carries the true token cost of the whole task, not just
-    # one call. Defensive: if a response omits usage (None) we skip it rather than
-    # crash, and _tok_seen tracks whether ANY usage was captured so a run with no
-    # usage data reports null (honest "not measured") instead of a misleading 0.
+    # Per-run token usage, accumulated across every LLM round-trip. argo returns
+    # an OpenAI-style `usage` object per response; we sum it so the record carries
+    # the whole task's token cost, not one call. If a response omits usage we skip
+    # it; _tok_seen tracks whether any usage was captured, so a run with none
+    # reports null ("not measured") instead of a misleading 0.
     _tok_prompt = 0
     _tok_completion = 0
     _tok_total = 0
@@ -2526,10 +2502,10 @@ def run_live_agent(spec: Dict[str, Any],
                     # correct option (e.g. --symmetry for a symmetric molecule)
                     # legitimately produces FEWER warnings than a naive reference
                     # run. "warnings preserved" must therefore be graded against the
-                    # agent's OWN engine warnings, not the fixed reference's — else a
+                    # agent's own engine warnings, not the fixed reference's — else a
                     # model is penalized for eliminating a warning by doing the right
-                    # thing (observed: Opus setting --symmetry on vibrational-analysis
-                    # suppressed the symmetry warning the reference still carried).
+                    # thing (e.g. passing --symmetry suppresses a symmetry warning the
+                    # reference still carried).
                     "engine_warnings": _engine_warnings,
                 }
             if fn == "chemkit":

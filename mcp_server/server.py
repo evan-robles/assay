@@ -1,19 +1,12 @@
 #!/usr/bin/env python3
-"""assay MCP server — one unified engine behind the open MCP protocol.
+"""assay MCP server (FastMCP over stdio).
 
-Exposes every assay skill as an MCP tool. The chemistry engine lives once, in
-the repo-root `assay_core/` library; this server owns it and dispatches each tool
-call to the engine's CLI. Built on the official `mcp` SDK (FastMCP) over stdio,
-so it works with ANY MCP-capable client, not just one vendor.
+Discovers the skills on disk and exposes each as an MCP tool. A tool runs the
+skill's scripts/run.py (or `python -m assay_core.cli <task>`) as an isolated
+subprocess and returns its result JSON — a fresh process per call so stateful QM
+jobs (pyscf globals, matplotlib backends, chdir/tmpdirs) don't leak across calls.
 
-Each tool mirrors a assay subcommand. A tool takes the same arguments the CLI
-takes, as a list of CLI tokens (`args`), runs `python -m assay_core.cli
-<task> <args>` as an isolated subprocess, and returns the JSON result the engine
-prints.
-Running each calculation in its own process keeps long, stateful QM jobs (pyscf
-globals, matplotlib backends, chdir/tmpdirs) from leaking across calls.
-
-Run:  python mcp_server/server.py        # stdio MCP server
+Run:  python mcp_server/server.py
 """
 from __future__ import annotations
 
@@ -34,12 +27,9 @@ REPO_ROOT = HERE.parent
 ENGINE_DIR = REPO_ROOT / "assay_core"
 SKILLS_DIR = REPO_ROOT / "skills"
 
-# Skills inverted to the self-contained architecture (DESIGN.md): the server runs
-# their `skills/<pkg>/scripts/run.py` directly instead of `-m assay_core.cli
-# <subcommand>`. DISCOVERED from disk (assay_core.discovery reads each skill's
-# SKILL_NAME/SUBCOMMAND manifest), so it can never drift from the skill folders —
-# maps engine subcommand -> skill package dir. A subcommand not discovered here
-# falls back to the engine CLI path in _run_engine.
+# subcommand -> skill package dir, for skills the server runs via their
+# scripts/run.py. Discovered from disk; a subcommand not here falls back to the
+# `-m assay_core.cli` path in _run_engine.
 def _discover_converted() -> dict:
     from assay_core import discovery
     return {info.subcommand: info.package
@@ -146,11 +136,7 @@ def kill_active_engines() -> int:
                 pass
     return len(signalled)
 
-# tool name -> (engine subcommand, skill package dir) — DISCOVERED, not
-# hand-maintained. assay_core.discovery walks skills/*/scripts/run.py and reads
-# each skill's SKILL_NAME/SUBCOMMAND manifest + build_parser(), so this registry
-# can never drift from the skills on disk (DESIGN.md §10.2). The shape is
-# unchanged ({tool: (subcommand, folder)}) so every downstream use still works.
+# tool name -> (engine subcommand, skill package dir), discovered from disk.
 def _discover_tools() -> dict:
     from assay_core import discovery
     infos = discovery.discover_skills()

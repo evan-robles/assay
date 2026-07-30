@@ -207,7 +207,7 @@ def _add_stdout_option(p):
     copy, so choosing 'path' avoids re-ingesting the full blob into context
     (calculation-reporting-standards §9.1).
 
-      json  full indented result JSON on stdout (legacy default; verbose)
+      json  full indented result JSON on stdout (default)
       path  a compact one-line pointer ({"out":...,"converged":...,"warnings":[...]})
       none  nothing on stdout (the file is still written; paths still go to stderr)
     """

@@ -1,9 +1,4 @@
-"""reaction-energy task — thin shim over the self-contained skill.
-
-The workflow now lives in ``skills/reaction_energy/scripts/run.py``
-(DESIGN.md inversion). This module re-exports its ``run`` (plus helpers reused elsewhere) so the engine
-CLI and composite callers keep working against a single copy.
-"""
+"""Re-exports the reaction-energy skill's ``run`` (and the species-spec parser) for the engine CLI."""
 from __future__ import annotations
 
 import os

@@ -1,9 +1,4 @@
-"""transition-state task — thin shim over the self-contained skill.
-
-The workflow now lives in ``skills/transition_state/scripts/run.py``
-(DESIGN.md inversion). This module re-exports its ``run`` so the engine
-CLI and composite callers keep working against a single copy.
-"""
+"""Re-exports the transition-state skill's ``run`` for the engine CLI."""
 from __future__ import annotations
 
 import os
