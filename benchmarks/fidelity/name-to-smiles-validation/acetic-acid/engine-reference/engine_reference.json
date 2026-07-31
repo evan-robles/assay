@@ -1,0 +1,31 @@
+{
+  "task": "name_to_smiles",
+  "program": "PubChem",
+  "input": "acetic acid",
+  "smiles": "CC(=O)O",
+  "smiles_source": {
+    "smiles": "CC(=O)O",
+    "name_input": "acetic acid",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 176, Acetic Acid. https://pubchem.ncbi.nlm.nih.gov/compound/176 (accessed 2026-06-17).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/176",
+    "identifier": "CID 176",
+    "from_cache": true,
+    "warnings": []
+  },
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py resolve acetic acid --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpgq9ig4_e/truth.json",
+  "schema_version": 1,
+  "integrity": {
+    "status": "warning",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
+      }
+    ]
+  }
+}

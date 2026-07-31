@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "chemkit-mcp"
-# Single-sourced from chemkit_engine.__version__ (see [tool.setuptools.dynamic]).
+# Single-sourced from assay_core.__version__ (see [tool.setuptools.dynamic]).
 dynamic = ["version"]
 description = "chemkit: computational-chemistry MCP server (xtb, MOPAC, PySCF, Open Babel) over stdio"
 readme = "README.md"
@@ -43,11 +43,13 @@ dependencies = [
 ]
 
 [project.scripts]
-# chemkit       : human-facing CLI — runs ONE calculation through the MCP server
-#                 (`chemkit sp --method xtb mol.xyz`). Routes via the same path as
-#                 the skill scripts, so the live .out log + level-of-theory and
-#                 integrity gates all apply.
-# chemkit-mcp   : starts the stdio MCP server (for agents to connect to).
+# assay         : human-facing CLI — runs ONE calculation by dispatching to the
+#                 skill's run.py (`assay sp --method xtb mol.xyz`), with the live
+#                 .out log + level-of-theory and integrity gates.
+# assay-mcp     : starts the stdio MCP server (for agents to connect to).
+# chemkit / chemkit-mcp : retained aliases for the same two entry points.
+assay       = "mcp_server.server:cli_main"
+assay-mcp   = "mcp_server.server:main"
 chemkit     = "mcp_server.server:cli_main"
 chemkit-mcp = "mcp_server.server:main"
 
@@ -56,21 +58,25 @@ Homepage   = "https://github.com/evan-robles/assay"
 Repository = "https://github.com/evan-robles/assay"
 
 [tool.setuptools]
-# Two top-level installs: mcp_server (server; entry target) and chemkit_engine (the
-# engine, imported by the per-call subprocess as `-m chemkit_engine.cli`). package-dir
-# maps the import name chemkit_engine to its on-disk home mcp_server/chemkit_engine so
-# the source stays nested while the name is importable top-level after install.
-# Explicit list (autodiscovery is confused by the dual-top-level + package-dir remap).
-packages = ["mcp_server", "chemkit_engine", "chemkit_engine.tasks",
-            "chemkit_engine.backends", "chemkit_engine.backends.pyscf"]
+# Repo-root top-level packages:
+#   assay_core : the shared physics LIBRARY (was mcp_server/chemkit_engine; now
+#                lives at the repo root, imported as `assay_core`). During the
+#                skill-inversion migration it still carries cli.py + tasks/ so the
+#                `-m assay_core.cli` path and the existing tests keep working.
+#   mcp_server : the FastMCP dispatcher (server entry target).
+#   skills     : self-contained skill workflows; importable so composite skills
+#                can import a sibling primitive's run() in-process (DESIGN §5).
+# Explicit list — autodiscovery is confused by the multi-top-level layout.
+packages = [
+    "assay_core", "assay_core.tasks",
+    "assay_core.backends", "assay_core.backends.pyscf",
+    "mcp_server",
+]
 
-[tool.setuptools.package-dir]
-"chemkit_engine" = "mcp_server/chemkit_engine"
-
-# Version is read from chemkit_engine/__init__.py::__version__ at build time, so
+# Version is read from assay_core/__init__.py::__version__ at build time, so
 # the package has ONE version source (no pyproject<->__init__ drift).
 [tool.setuptools.dynamic]
-version = { attr = "chemkit_engine.__version__" }
+version = { attr = "assay_core.__version__" }
 
 [tool.pytest.ini_options]
 markers = [

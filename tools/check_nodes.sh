@@ -10,11 +10,11 @@
 #   * sibling nodes are queried over ssh with a short timeout.
 #
 # Usage:
-#   tools/check_nodes.sh            # count chemkit_engine procs per node
+#   tools/check_nodes.sh            # count assay_core engine procs per node
 #   tools/check_nodes.sh <pattern>  # count procs matching a custom pgrep pattern
 set -u
 
-PATTERN="${1:-chemkit_engine}"
+PATTERN="${1:-assay_core}"
 
 # --- Resolve the node list ----------------------------------------------------
 if [ -n "${PBS_NODEFILE:-}" ] && [ -f "$PBS_NODEFILE" ]; then

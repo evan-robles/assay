@@ -1,49 +1,125 @@
+"""Per-(skill, model) pass-rate heatmap, read directly from the benchmark CSVs.
+
+The matrix is NOT hardcoded: each cell is the mean of the model's per-case
+`pass_rate` values in that skill's `benchmarks/fidelity/<suite>/summary.csv`
+(real `argo:` rows only), so the figure can never drift from the data. Cells are
+rounded UP to two decimals (ceiling) for display.
+
+Rows are the 10 benchmarked models (fixed order); columns are the 13 benchmarked
+skills (fixed order, matching the paper).
+
+Usage:
+    python data/heatmap-with-warnings.py            # show
+    python data/heatmap-with-warnings.py --out heatmap-with-warnings.png
+"""
+import argparse
+import csv
+import math
+import statistics
+from collections import defaultdict
+from pathlib import Path
+
 import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
 import pandas as pd
+import seaborn as sns
 
-np.random.seed(42)
+_FIDELITY = Path(__file__).resolve().parent.parent / "benchmarks" / "fidelity"
 
-data = pd.DataFrame(
-   {
-        "single-point": np.random.uniform(0.7, 1.0, 10), 
-        "name-to-smiles": [0.98, 1, 1, 1, 1, 0.56, 1, 1, 0.98, 1],
-        "build-from-smiles": [0.98, 1, 1, 1, 0.98, 0.91, 1, 1, 0.98, 0.98],
-        "conformer-search": [0.82, 1, 1, 1, 1, 0.96, 1, 1, 1, 1],
-        "conformational-analysis": [1, 1, 0.93, 0.96, 0.91, 0.44,  1, 1, 1, 1],
-        "solvation": [1, 1, 1, 1, 1, 0.89, 1, 1, 1, 1],
-        "vibrational-analysis": [1, 1, 1, 1, 1, 0.96, 1, 1, 1, 0.93],
-        "logp-partition": [1, 1, 1, 1, 1, 0.78, 1, 1, 1, 1],
-        "electrostatics": [1, 1, 1, 1, 1, 0.98, 1, 1, 1, 1],
-        "redox-potential": np.random.uniform(0.7, 1.0, 10),
-        "pka-acidity": np.random.uniform(0.7, 1.0, 10),
-        "fukui-analysis": [1, 1, 1, 1, 1, 0.93, 1, 1, 1, 1],
-        "frontier-orbitals": [1, 1, 1, 1, 0.98, 1, 1, 0.91, 0.93, 1]
-    }, index=[
-        "argo:claude-haiku-4.5",
-        "argo:claude-opus-4.8",
-        "argo:claude-sonnet-4.6",
-        "argo:gemini-2.5-flash",
-        "argo:gemini-2.5-pro",
-        "argo:gpt-4.1-nano",
-        "argo:gpt-4o",
-        "argo:gpt-5.5",
-        "argo:o3",
-        "argo:o4-mini",
-    ],
-)
+# Column label (as shown in the figure) -> suite folder. Order = x-axis order.
+SKILLS = [
+    ("single-point", "single-point-validation"),
+    ("name-to-smiles", "name-to-smiles-validation"),
+    ("build-from-smiles", "build-validation"),
+    ("conformer-search", "conformer-search-validation"),
+    ("conformational-analysis", "conformational-analysis-validation"),
+    ("solvation", "solvation-validation"),
+    ("vibrational-analysis", "vibrational-analysis-validation"),
+    ("logp-partition", "logp-partition-validation"),
+    ("electrostatics", "electrostatics-validation"),
+    ("redox-potential", "redox-potential-validation"),
+    ("pka-acidity", "pka-acidity-validation"),
+    ("fukui-analysis", "fukui-reactivity-validation"),
+    ("frontier-orbitals", "frontier-orbitals-validation"),
+]
 
-plt.figure(figsize=(14, 6))
+# Row order = y-axis order. Each entry is (display label shown on the axis,
+# raw model id used to look the model up in the CSVs). Keep these separate: the
+# CSV rows are keyed by the 'argo:' id, while the figure should show clean names.
+MODELS = [
+    ("Claude Haiku 4.5", "argo:claude-haiku-4.5"),
+    ("Claude Opus 4.8", "argo:claude-opus-4.8"),
+    ("Claude Sonnet 4.6", "argo:claude-sonnet-4.6"),
+    ("Gemini 2.5 Flash", "argo:gemini-2.5-flash"),
+    ("Gemini 2.5 Pro", "argo:gemini-2.5-pro"),
+    ("GPT 4.1 Nano", "argo:gpt-4.1-nano"),
+    ("GPT 4o", "argo:gpt-4o"),
+    ("GPT 5.5", "argo:gpt-5.5"),
+    ("GPT o3", "argo:o3"),
+    ("GPT o4 Mini", "argo:o4-mini"),
+]
 
-sns.heatmap(
-    data,
-    annot=True,
-    fmt=".2f",
-    cmap="YlGnBu",
-    linewidths=0.5,
-)
 
-plt.xticks(rotation=45, ha="right")
-plt.tight_layout()
-plt.show()
+def _ceil2(x: float) -> float:
+    """Ceiling to two decimals (round-up), with an epsilon guard against float
+    dust so an exact 0.98 stored as 0.98000001 is not bumped to 0.99."""
+    return math.ceil(round(x, 9) * 100) / 100
+
+
+def _skill_pass_rates(suite: str):
+    """model -> mean per-case pass_rate for one suite's summary.csv."""
+    p = _FIDELITY / suite / "summary.csv"
+    by_model = defaultdict(list)
+    if p.is_file():
+        with p.open() as fh:
+            for r in csv.DictReader(fh):
+                m = (r.get("model") or "").strip()
+                if not m.startswith("argo:"):
+                    continue
+                try:
+                    by_model[m].append(float(r["pass_rate"]))
+                except (TypeError, ValueError):
+                    pass
+    return {m: statistics.fmean(v) for m, v in by_model.items() if v}
+
+
+def build_dataframe() -> pd.DataFrame:
+    labels = [disp for disp, _id in MODELS]      # y-axis display names
+    ids = [mid for _disp, mid in MODELS]         # raw 'argo:' lookup keys
+    cols = {}
+    for label, suite in SKILLS:
+        means = _skill_pass_rates(suite)
+        cols[label] = [
+            (_ceil2(means[mid]) if mid in means else float("nan")) for mid in ids
+        ]
+    return pd.DataFrame(cols, index=labels)
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--out", default=None,
+                    help="save to this path instead of showing interactively")
+    args = ap.parse_args()
+
+    data = build_dataframe()
+
+    plt.figure(figsize=(14, 6))
+    sns.heatmap(
+        data,
+        annot=True,
+        fmt=".2f",
+        cmap="YlGnBu",
+        linewidths=0.5,
+    )
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+
+    if args.out:
+        plt.savefig(args.out, dpi=300, bbox_inches="tight")
+        print(f"wrote {args.out}")
+    else:
+        plt.show()
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,90 @@
+{
+  "task": "single_point",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/ferrocene_sp_mopac/ferrocene.xyz",
+  "n_atoms": 21,
+  "atoms": [
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "Fe",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py sp --method mopac --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/ferrocene_sp_mopac/ferrocene.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpe7_21lsz/a.json",
+  "total_energy_eV": 2.1805826,
+  "total_energy_hartree": 0.080134933,
+  "total_energy_kcal_mol": 50.28543,
+  "energy_zero": "elements in their standard states (PM7 heat of formation)",
+  "final_heat_of_formation_kcal_mol": 50.2854,
+  "code_specific": {
+    "heat_of_formation_kcal_mol": 50.2854,
+    "ionization_potential_eV": 10.1323,
+    "dipole_debye": 0.00235049,
+    "homo_eV": -10.132,
+    "lumo_eV": -0.275,
+    "homo_lumo_gap_eV": 9.857,
+    "electron_nuclear_energy_eV": -2568.8399,
+    "electron_electron_energy_eV": 1125.3088,
+    "nuclear_nuclear_repulsion_eV": 7870.4132,
+    "electronic_total_energy_eV": -1760.9552
+  },
+  "warnings": [
+    "PM7 has poorly validated parameters for: ['Fe']. Treat absolute energies and barriers with skepticism."
+  ],
+  "schema_version": 1,
+  "electronic_energy_eV": 2.1805826,
+  "headline_field": "total_energy_eV",
+  "headline_value": 2.1805826,
+  "headline_units": "eV",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = 2.1805826112060074 (must be a finite number)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'total_energy_eV' = 2.1805826112060074 (present and numeric)"
+      }
+    ]
+  },
+  "warnings_structured": [
+    {
+      "code": "element_param_0b4ba7f3",
+      "text": "PM7 has poorly validated parameters for: ['Fe']. Treat absolute energies and barriers with skepticism."
+    }
+  ],
+  "warnings_block": "\u26a0\ufe0f Tool warnings \u2014 surface ALL of these to the user verbatim (do not drop, summarize, or paraphrase any):\n- PM7 has poorly validated parameters for: ['Fe']. Treat absolute energies and barriers with skepticism."
+}

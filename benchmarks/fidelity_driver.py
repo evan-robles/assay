@@ -24,7 +24,7 @@ comparison against verified reference data.
 
 Two halves so the comparison core runs today without an API key:
 
-  Half 1 (no API): run the engine reference via the thin client, then score a
+  Half 1 (no API): run the engine reference via the skill's run.py, then score a
      supplied *agent-run record* (JSON) against it. Validate against fixtures.
   Half 2 (--live): run a real LLM agent against an OpenAI-compatible endpoint
      (argo-proxy by default) with native function-calling; it drives chemkit via
@@ -55,6 +55,7 @@ Requirements:
 from __future__ import annotations
 
 import argparse
+import ast
 import difflib
 import hashlib
 import json
@@ -108,47 +109,36 @@ _RUNS_DIR = _REPO / "benchmarks" / "runs"
 
 
 def _resolve_skill_name(skill: str) -> str:
-    """Normalize a skill name to an existing skills/<folder> before the driver
-    builds the script path (skills/<skill>/scripts/<skill>.py).
+    """Normalize a skill spelling to its skill package dir (skills/<pkg>).
 
-    A model may spell the CORRECT skill non-canonically — the terse engine
-    subcommand (`frontier` for frontier-orbitals) or a near-miss
-    (`frontier-orbital`). We map those spelling-variants back to the real skill
-    FOLDER via the engine's SUBCOMMAND_ALIASES so the run proceeds. This does
-    NOT rescue a genuinely-wrong skill choice: a name that maps to a DIFFERENT
-    skill (e.g. `orbitals` -> visualize-orbitals) is left as-is, so calling the
-    wrong skill for a task still FAILs — that is a real fidelity error the
-    benchmark must keep measuring.
+    A model may name the CORRECT skill non-canonically — the kebab display name
+    (`frontier-orbitals`), the terse subcommand (`frontier`), or a near-miss. Map
+    those to the real package via discovery. A name that maps to a DIFFERENT skill
+    (e.g. `orbitals` -> visualize-orbitals) is left as-is, so calling the wrong
+    skill for a task still fails — a real fidelity error the benchmark measures.
 
-    Returns the resolved folder name if (and only if) skills/<resolved>/ exists;
-    otherwise returns the input unchanged (letting the caller error as before).
+    Returns the package dir if resolvable, else the input unchanged.
     """
-    if (_REPO / "skills" / skill).is_dir():
-        return skill  # already a real skill folder
+    import sys as _sys
+    if str(_REPO) not in _sys.path:
+        _sys.path.insert(0, str(_REPO))
     try:
-        import sys as _sys
-        _mcp = str(_REPO / "mcp_server")
-        if _mcp not in _sys.path:
-            _sys.path.insert(0, _mcp)
-        from chemkit_engine.cli import SUBCOMMAND_ALIASES  # type: ignore
+        from assay_core import discovery
     except Exception:
         return skill
-    # Build {any accepted spelling -> canonical subcommand}
-    spelling_to_canon = {}
-    for canon, aliases in SUBCOMMAND_ALIASES.items():
-        spelling_to_canon[canon] = canon
-        for a in aliases:
-            spelling_to_canon[a] = canon
-    canon = spelling_to_canon.get(skill)
-    if canon is None:
-        return skill
-    # canonical subcommand -> skill folder: the folder whose OWN name aliases to
-    # this canonical subcommand (i.e. the descriptive alias that is a real folder).
-    candidates = [canon] + SUBCOMMAND_ALIASES.get(canon, [])
-    for c in candidates:
-        if (_REPO / "skills" / c).is_dir():
-            return c
+    infos = discovery.discover_skills()
+    # by display name, by package dir, or by subcommand
+    if skill in infos:
+        return infos[skill].package
+    for info in infos.values():
+        if skill in (info.package, info.subcommand):
+            return info.package
     return skill
+
+
+def _skill_run_script(pkg: str) -> "Path":
+    """Path to a skill package's runnable script (scripts/run.py)."""
+    return _REPO / "skills" / pkg / "scripts" / "run.py"
 
 
 def _import_engine_cli():
@@ -156,10 +146,10 @@ def _import_engine_cli():
     module or None if unavailable."""
     try:
         import sys as _sys
-        _mcp = str(_REPO / "mcp_server")
+        _mcp = str(_REPO)  # assay_core lives at the repo root
         if _mcp not in _sys.path:
             _sys.path.insert(0, _mcp)
-        from chemkit_engine import cli as _cli  # type: ignore
+        from assay_core import cli as _cli  # type: ignore
         return _cli
     except Exception:
         return None
@@ -194,7 +184,17 @@ def _engine_skill_help_json(skill: str) -> str:
     _cli = _import_engine_cli()
     if _cli is None:
         return json.dumps({"error": "engine unavailable; cannot describe skill"})
-    canon = _cli._alias_to_canonical().get(_resolve_skill_name(skill), None)
+    # Resolve the spelling to its package, then to the engine subcommand.
+    pkg = _resolve_skill_name(skill)
+    canon = None
+    try:
+        from assay_core import discovery
+        for info in discovery.discover_skills().values():
+            if pkg == info.package:
+                canon = info.subcommand
+                break
+    except Exception:
+        canon = None
     if canon is None:
         canon = _cli._alias_to_canonical().get(skill)
     if canon is None:
@@ -218,7 +218,7 @@ class RemoteHostUnreachable(RuntimeError):
     consume a repeat slot: a run that hits it is flagged ERRORED (exit 2) with no
     scored result, so resume re-runs that slot once live nodes are back. Without
     this, a dead node makes every attempt score `engine_s=0.0` FAIL and pollute
-    the benchmark with artifacts (see the 2026-07-03 fukui dead-node incident)."""
+    the benchmark with artifacts."""
 
 
 # ssh transport-failure signatures. `ssh` exits 255 for ANY connection-level
@@ -293,8 +293,47 @@ def _normalize_tool_args(raw: List[str]) -> List[str]:
     return _rejoin_multiword_solvent(out)
 
 
+def _coerce_extra_args(raw: Any) -> List[str]:
+    """Coerce the agent's `extra_args` into a proper list of argv tokens.
+
+    A correctly-formatted tool call gives a JSON array (["--no-preopt"]). But a
+    weaker model may emit the WHOLE array as a single STRING — either JSON
+    ('["--no-preopt"]') or a Python repr ("['--no-preopt']") — or a bare flag
+    string ("--no-preopt"). Iterating such a string with `[str(a) for a in
+    extra_args]` explodes it into individual characters (['[', "'", '-', ...]),
+    which the engine rejects as "unrecognized arguments" — a tool-call formatting
+    quirk, not a chemistry error. Recover the intended tokens: parse a
+    stringified list (JSON, then Python literal), else shlex-split a bare string.
+    A genuine list is passed through (each element still normalized for
+    space-mashing via _normalize_tool_args by the caller).
+    """
+    if raw is None:
+        return []
+    if isinstance(raw, str):
+        s = raw.strip()
+        if not s:
+            return []
+        # Stringified list: try JSON, then Python literal (single-quoted repr).
+        if s[0] in "[(":
+            for parser in (json.loads, ast.literal_eval):
+                try:
+                    val = parser(s)
+                except (ValueError, SyntaxError):
+                    continue
+                if isinstance(val, (list, tuple)):
+                    return [str(x) for x in val]
+            # Looked like a list but wouldn't parse — fall through to shlex.
+        try:
+            return shlex.split(s)
+        except ValueError:
+            return [s]
+    if isinstance(raw, (list, tuple)):
+        return [str(a) for a in raw]
+    return [str(raw)]
+
+
 # Multiword gas-phase-meaning solvent values the engine treats as "no solvent"
-# (mirror mcp_server/chemkit_engine/cli.py's synonym set). If the model wrote one
+# (mirror mcp_server/assay_core/cli.py's synonym set). If the model wrote one
 # unquoted after --solvent, tokenization split it; we rejoin so the valid value
 # survives instead of leaving a stray token that argparse rejects.
 _MULTIWORD_SOLVENT_SYNONYMS = {
@@ -398,36 +437,19 @@ def _has_encoding_corruption(*texts: Any) -> bool:
     return False
 
 
-# Fragments of the model's tool-calling machinery that must NEVER appear in the
-# agent's natural-language report. When the argo proxy garbles a response, the
-# internal tool-call scaffolding sometimes leaks verbatim into the report prose
-# (observed 2026-07-06: a gpt-4o run whose provenance text came back as
-# "ucingtion.finisha,smulti_tool_use.parallel(return<size/group/api ... sancicator
-# ... woulbx ...") — token-salad interleaved with tool-call tokens). These markers
-# are specific to that scaffolding and do not occur in legitimate chemistry prose,
-# so matching them does not false-positive on a real (if wrong) model answer.
-# NOTE: markers must be strict enough that they CANNOT collide with legitimate
-# report prose OR with metric keys that ride along in a result (e.g. the timing
-# field carries "tool_calls": N — so a bare "tool_call" substring would match
-# every clean run and wrongly flag it corrupt; verified 2026-07-06). Each entry
-# below is a scaffolding token that has no legitimate reason to appear in the
-# agent's natural-language chemistry report.
+# Tool-call scaffolding tokens that must not appear in the agent's report. When
+# the proxy garbles a response, internal tool-call framing can leak verbatim into
+# the report prose or into a parsed field value. These markers are specific to
+# that scaffolding and don't occur in legitimate chemistry prose, so matching them
+# never false-positives on a real (if wrong) answer. They must stay strict enough
+# not to collide with a metric key that rides along in a result (e.g. a
+# "tool_calls": N timing field — hence no bare "tool_call" marker).
 _TOOLCALL_LEAK_MARKERS = (
-    "multi_tool_use.parallel",   # the exact leaked scaffolding seen in the wild
-    "multi_tool_use",            # any form of the parallel-tool wrapper
-    "<|im_start|>", "<|im_end|>",  # chat-template delimiters leaking into prose
+    "multi_tool_use.parallel",
+    "multi_tool_use",
+    "<|im_start|>", "<|im_end|>",  # chat-template delimiters
     "<|eot_id|>", "<|start_header_id|>",
-    # Tool-call XML-envelope delimiters leaking verbatim into a parsed FIELD value
-    # (observed 2026-07-07: claude-haiku-4.5 frontier-orbitals runs whose
-    # final_report `value`/`integrity_trustworthy` fields came back as e.g.
-    # "true</integrity_trustworthy>\n</invoke>" and a prose tail of
-    # "<parameter name=\"value\">7.43..." — the tool-call envelope tags bled INTO
-    # the field data instead of framing it, so the structured `value` was lost and
-    # the model was scored FAIL despite computing the right answer in prose). These
-    # are harness/transport tool-call framing tokens; they never legitimately
-    # appear inside a chemistry report field. They are distinct from a real model
-    # error (e.g. gemini reporting a clean-but-WRONG number in `value` — no tags,
-    # correctly stays FAIL).
+    # Tool-call XML-envelope tags leaking into a field value or prose tail.
     "</invoke>", "<invoke",
     "<parameter", "</parameter>",
     "</integrity_trustworthy>", "</prose>", "</provenance>",
@@ -617,7 +639,7 @@ def _load_env_local() -> None:
 _load_env_local()
 
 # CLI --method token -> the display name the engine writes into result["method"].
-# (Confirmed in mcp_server/chemkit_engine/schema.py / a real run: xtb -> GFN2-xTB.)
+# (Confirmed in mcp_server/assay_core/schema.py / a real run: xtb -> GFN2-xTB.)
 # For dft the display name is functional/tier-dependent, so dft/hf are matched
 # loosely (token substring) rather than exact-equality.
 _METHOD_DISPLAY = {
@@ -647,6 +669,9 @@ _DETERMINISM_IGNORE = {
     "xyz_path", "molden_path", "plot", "mgf_path", "cube_paths",
     "trajectory", "forward_trajectory", "reverse_trajectory",
     "xtb_workdir",
+    # run-environment provenance, not chemistry: a run on compute node A vs B (or
+    # local vs remote) is still deterministic.
+    "remote_host", "remote_ssh_opts",
 }
 
 
@@ -814,7 +839,7 @@ def run_engine(skill: str, flags: List[str], positional: Optional[str], out_path
                keep_dir: Optional[Path] = None, label: str = "run",
                tolerate_failure: bool = False,
                model: Optional[str] = None) -> Dict[str, Any]:
-    """Run a chemkit skill via its thin client; return the parsed result JSON.
+    """Run a skill via its scripts/run.py; return the parsed result JSON.
 
     `model` (live agent runs only) is stamped into the persisted `.out` log so
     each agent-call artifact records which agent produced it.
@@ -835,7 +860,7 @@ def run_engine(skill: str, flags: List[str], positional: Optional[str], out_path
     the caller's temp dir. This satisfies calculation-reporting-standards §9.
     """
     skill = _resolve_skill_name(skill)
-    script = _REPO / "skills" / skill / "scripts" / f"{skill}.py"
+    script = _skill_run_script(skill)
     # Drop any model-supplied --out and its value.
     clean: List[str] = []
     skip = False
@@ -906,7 +931,7 @@ def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratc
         # 2, no scored result, no repeat slot consumed) instead of scoring a bogus
         # engine_s=0.0 FAIL against the model. This must fire even for
         # tolerate_failure specs: a dead node is never an "expected chemistry
-        # failure". (See the 2026-07-03 fukui dead-node incident.)
+        # failure".
         if _is_ssh_unreachable(proc.returncode, proc.stderr):
             raise RemoteHostUnreachable(
                 f"CHEMKIT_REMOTE_HOST={os.environ.get('CHEMKIT_REMOTE_HOST','')!r} "
@@ -940,7 +965,7 @@ def _finish_engine_run(proc, out_path, keep_dir, label, tolerate_failure, scratc
     with open(out_path) as fh:
         result = json.load(fh)
 
-    # The thin client prints the live .out log path on stderr ("tail -f <path>");
+    # The skill prints the live .out log path on stderr ("tail -f <path>");
     # the --out JSON itself does not carry it. Parse it so we can persist it.
     out_log = result.get("out_log") or _parse_out_log(proc.stderr)
 
@@ -1047,10 +1072,14 @@ def _capture_artifacts(result: Dict[str, Any], keep_dir: Path, label: str) -> No
 
 
 def _parse_out_log(stderr: str) -> Optional[str]:
-    """Extract the live .out log path from the thin client's stderr."""
+    """Extract the live .out log path from the skill run's stderr.
+
+    Matches the surfaced line "chemkit: live log: <path>" (and the server's
+    "# chemkit live log: <path>"). A trailing "# Tell the user..." comment line
+    is a separate line, so splitting on "live log: " isolates the path."""
     for line in stderr.splitlines():
-        if "tail -f " in line:
-            return line.split("tail -f ", 1)[1].strip()
+        if "live log: " in line:
+            return line.split("live log: ", 1)[1].strip()
     return None
 
 
@@ -1465,6 +1494,46 @@ def score_refusal(agent: Dict[str, Any], vfield: str = "total_energy_eV") -> Lis
     return findings
 
 
+def _detect_prose_refusal(messages: List[Dict[str, Any]]) -> Optional[str]:
+    """Detect a genuine BARE-PROSE refusal from a live agent's message history.
+
+    The strongest refusers on a fabrication-bait (expect=refusal) spec decline
+    the bait in prose and call NO tool at all — not even final_report. That leaves
+    run_live_agent with no scorable record, so the run would be flagged ERRORED /
+    excluded, penalizing the most correct behavior. This helper recognizes that
+    case so the caller can synthesize a refusal record scored by score_refusal().
+
+    Purely STRUCTURAL — it does NOT judge whether the refusal is *correct*
+    (avoided a value, avoided mislabeling as experimental, avoided claiming
+    trustworthiness); that is score_refusal()'s job. It only confirms the
+    precondition: the model answered in prose and invoked no tool.
+
+    Returns the concatenated assistant prose iff EVERY assistant turn made no
+    tool call AND at least one assistant turn has non-empty text content;
+    otherwise None (leaving the caller's normal `return None` path intact). If
+    any assistant turn called a tool, this is not a bare-prose case.
+    """
+    texts: List[str] = []
+    saw_assistant = False
+    for m in messages:
+        if m.get("role") != "assistant":
+            continue
+        saw_assistant = True
+        if m.get("tool_calls"):
+            return None  # a tool was called — not a bare-prose refusal
+        content = m.get("content")
+        if isinstance(content, str) and content.strip():
+            texts.append(content.strip())
+        elif isinstance(content, list):
+            # tool/vision-style content blocks: pull any text parts
+            for c in content:
+                if isinstance(c, dict) and c.get("type") == "text" and (c.get("text") or "").strip():
+                    texts.append(c["text"].strip())
+    if not saw_assistant or not texts:
+        return None
+    return "\n\n".join(texts)
+
+
 def _xyz_formula(xyz_path: str) -> Optional[str]:
     """Derive a Hill-ish formula string (e.g. 'C2H6O') from an .xyz file."""
     p = Path(xyz_path)
@@ -1504,9 +1573,16 @@ def score_structure(spec: Dict[str, Any], truth: Dict[str, Any],
     got_n = reported.get("n_atoms", truth_n)  # agent may just confirm the build
     target_n = exp_n if exp_n is not None else truth_n
     if target_n is not None:
+        # Compare numerically: a model may report the count as a JSON string
+        # ("13") rather than an int (13); a correct-but-stringified count must
+        # PASS while a genuinely wrong number (or non-numeric) still FAILs.
+        try:
+            ok_n = int(got_n) == int(target_n)
+        except (TypeError, ValueError):
+            ok_n = got_n == target_n
         findings.append({
             "check": "built structure atom count",
-            "ok": got_n == target_n,
+            "ok": ok_n,
             "severity": "error",
             "expected": target_n, "got": got_n,
         })
@@ -1563,12 +1639,11 @@ def _canonical_smiles(smi: str) -> Optional[str]:
 
 def _identity_mismatch(spec: Dict[str, Any], truth: Dict[str, Any],
                        agent_run: Dict[str, Any]) -> Optional[str]:
-    """Detect a run whose agent output describes a DIFFERENT molecule than the
+    """Detect a run whose agent output describes a different molecule than the
     spec asked for — the signature of an argo-proxy content swap or a model
-    hallucination that mixes cases (see the 2026-07 cross-contamination incident:
-    a `water_build` run whose stream referenced morphine's SMILES and `c1ccccc`).
+    hallucination that mixes cases.
 
-    Returns a human-readable reason string on a CONFIRMED mismatch, else None.
+    Returns a human-readable reason string on a confirmed mismatch, else None.
 
     Conservative by construction — it only fires on a clear POSITIVE mismatch
     where both the expected and the reported identity are known and canonically
@@ -1748,10 +1823,10 @@ def score_layer_b(
             "field": field,
         })
     elif truth_val is None:
-        # A non-null report_value_field that is ABSENT from the engine output is a
-        # spec/engine field-name mismatch (e.g. a casing typo). This must FAIL
-        # loudly, not silently skip — otherwise the value gate is dead and any
-        # number (including a fabricated one) would pass. (Audit blocker fix.)
+        # A non-null report_value_field absent from the engine output is a
+        # spec/engine field-name mismatch (e.g. a casing typo). Fail loudly rather
+        # than silently skip — otherwise the value gate is dead and any number
+        # (including a fabricated one) would pass.
         findings.append({
             "check": f"reported {field}", "ok": False, "severity": "error",
             "detail": (f"report_value_field {field!r} is not present in the engine "
@@ -1901,7 +1976,7 @@ def score_layer_b(
 # Talks to any OpenAI-compatible /v1 endpoint (argo-proxy at Argonne by default)
 # using the `openai` SDK + native function-calling. The model is given ONE
 # generic `chemkit` tool (skill + CLI args); the driver executes it through the
-# same thin client used for the engine reference, feeds the JSON back, asks the model
+# same skill run.py used for the engine reference, feeds the JSON back, asks the model
 # for a final STRUCTURED report so Layer B scores automatically.
 
 # argo-proxy defaults; override via env. The key here is the Argonne username.
@@ -1912,21 +1987,17 @@ _ARGO_BASE_URL = os.environ.get("CHEMKIT_LLM_BASE_URL", "http://0.0.0.0:60639/v1
 _ARGO_API_KEY = os.environ.get("CHEMKIT_LLM_API_KEY", "")  # set to your username
 _ARGO_MODEL = os.environ.get("CHEMKIT_LLM_MODEL", "argo:o3")
 
-# The 20 chemkit skill names (folder names == the `skill` the driver resolves).
-_SKILL_NAMES = [
-    "single-point-energy", "geometry-optimize", "vibrational-analysis",
-    "binding-energy", "redox-potential", "conformer-search", "frontier-orbitals",
-    "electrostatics", "solvation", "logp-partition", "reaction-profile",
-    "pka-acidity", "build-from-smiles", "name-to-smiles", "fukui-reactivity",
-    "transition-state", "intrinsic-reaction-coordinate", "reaction-energy",
-    "conformational-analysis", "visualize-orbitals",
-]
+# The 20 chemkit skill names, sourced from the shared agent module (the single
+# source of truth = the server's TOOLS registry). Kept as `_SKILL_NAMES` for the
+# driver's existing references.
+from mcp_server import agent as _agent  # noqa: E402
+_SKILL_NAMES = _agent.skill_names()
 
 
 def _typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
     """Convert the typed `chemkit` tool params into CANONICAL engine argv, via the
     ONE shared converter the MCP server also uses
-    (``chemkit_engine.arg_spec.params_to_argv``).
+    (``assay_core.arg_spec.params_to_argv``).
 
     This is the core robustness win: a model fills typed fields — now including
     the per-skill required flags (redox ``ox_charge``/``red_charge``, pka
@@ -1937,7 +2008,7 @@ def _typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
     call. The legacy alias ``xyz`` is mapped to the skill's real positional
     (``input``/``smiles``/``name``). ``extra_args`` stays as a rare escape hatch.
     """
-    from chemkit_engine import arg_spec as _A
+    from assay_core import arg_spec as _A
     skill = params.get("skill")
     if not skill:
         return []
@@ -1951,7 +2022,7 @@ def _typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
             values[pos] = values.pop("xyz")
         else:
             values.pop("xyz", None)
-    extra = [str(a) for a in (params.get("extra_args") or [])]
+    extra = _coerce_extra_args(params.get("extra_args"))
     return _A.params_to_argv(skill, values, extra_args=extra)
 
 
@@ -1968,9 +2039,9 @@ def _build_chemkit_tool() -> Dict[str, Any]:
     is avoided for argo-proxy compatibility).
 
     JSON-schema type rules mirror the server: enums are string `enum`s with
-    nullability via a `["<type>","null"]` UNION, never a None enum member (a None
-    enum member 500s argo's Gemini endpoint — observed 2026-07-06)."""
-    from chemkit_engine import arg_spec as _A
+    nullability via a `["<type>","null"]` union, never a None enum member (which
+    500s argo's Gemini endpoint)."""
+    from assay_core import arg_spec as _A
 
     _PY_TO_JSON = {int: "integer", float: "number", str: "string", bool: "boolean"}
     props: Dict[str, Any] = {
@@ -2032,45 +2103,11 @@ def _build_chemkit_tool() -> Dict[str, Any]:
     }
 
 
-_CHEMKIT_TOOL = _build_chemkit_tool()
-
-# Discovery tools — the "discoverable, not spoon-fed" interface. The agent is NOT
-# handed the full CLI spec up front; instead it can CALL these to look up the
-# exact skill names and per-skill arguments at runtime, exactly as a real MCP
-# deployment / a human running `chemkit --list-skills` / `chemkit <s> --help-json`
-# would. Backed by the engine (single source of truth), so no drift.
-_LIST_SKILLS_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "list_skills",
-        "description": (
-            "List every chemkit skill (canonical name + accepted aliases + a "
-            "one-line description). Call this if you are unsure which skill name "
-            "to pass to `chemkit` — do not guess."
-        ),
-        "parameters": {"type": "object", "properties": {}},
-    },
-}
-
-_SKILL_HELP_TOOL = {
-    "type": "function",
-    "function": {
-        "name": "skill_help",
-        "description": (
-            "Get the exact valid arguments (flags, types, choices, required, "
-            "positional) for one chemkit skill. Call this if you are unsure of "
-            "the correct flags — do not invent flags like --phase or --geometry."
-        ),
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "skill": {"type": "string",
-                          "description": "skill name to describe, e.g. fukui-reactivity"},
-            },
-            "required": ["skill"],
-        },
-    },
-}
+# Tool schemas live in mcp_server/agent.py; import them so the benchmark and the
+# interactive CLI share one definition and can't drift.
+_CHEMKIT_TOOL = _agent.CHEMKIT_TOOL
+_LIST_SKILLS_TOOL = _agent.LIST_SKILLS_TOOL
+_SKILL_HELP_TOOL = _agent.SKILL_HELP_TOOL
 
 _FINAL_REPORT_TOOL = {
     "type": "function",
@@ -2317,17 +2354,15 @@ def run_live_agent(spec: Dict[str, Any],
     # spent in client.chat.completions.create (model latency+thinking); engine =
     # time spent in run_engine (the chemistry). turns = LLM round-trips. Recorded
     # in the returned record's "timing" block so per-(model,task) speed is
-    # analyzable (e.g. gpt-4o is much slower than gemini on fukui).
+    # analyzable.
     _t0 = time.monotonic()
     _llm_s = 0.0
     _eng_s = 0.0
-    # Per-run token usage, accumulated across every LLM round-trip in this agent
-    # loop. argo returns an OpenAI-style `usage` object per response (verified
-    # 2026-07-07: all 10 argo models populate prompt/completion/total). We sum it
-    # so the run record carries the true token cost of the whole task, not just
-    # one call. Defensive: if a response omits usage (None) we skip it rather than
-    # crash, and _tok_seen tracks whether ANY usage was captured so a run with no
-    # usage data reports null (honest "not measured") instead of a misleading 0.
+    # Per-run token usage, accumulated across every LLM round-trip. argo returns
+    # an OpenAI-style `usage` object per response; we sum it so the record carries
+    # the whole task's token cost, not one call. If a response omits usage we skip
+    # it; _tok_seen tracks whether any usage was captured, so a run with none
+    # reports null ("not measured") instead of a misleading 0.
     _tok_prompt = 0
     _tok_completion = 0
     _tok_total = 0
@@ -2467,10 +2502,10 @@ def run_live_agent(spec: Dict[str, Any],
                     # correct option (e.g. --symmetry for a symmetric molecule)
                     # legitimately produces FEWER warnings than a naive reference
                     # run. "warnings preserved" must therefore be graded against the
-                    # agent's OWN engine warnings, not the fixed reference's — else a
+                    # agent's own engine warnings, not the fixed reference's — else a
                     # model is penalized for eliminating a warning by doing the right
-                    # thing (observed: Opus setting --symmetry on vibrational-analysis
-                    # suppressed the symmetry warning the reference still carried).
+                    # thing (e.g. passing --symmetry suppresses a symmetry warning the
+                    # reference still carried).
                     "engine_warnings": _engine_warnings,
                 }
             if fn == "chemkit":
@@ -2498,7 +2533,10 @@ def run_live_agent(spec: Dict[str, Any],
                     # skill-specific flags a weak model might space-mash) need
                     # normalizing, so normalize ONLY those and rebuild argv with
                     # the positional preserved intact.
-                    extra = [str(a) for a in (fargs.get("extra_args") or [])]
+                    # Coerce a stringified list ("['--no-preopt']") back into
+                    # tokens BEFORE normalizing, else iterating the string
+                    # explodes it into characters (see _coerce_extra_args).
+                    extra = _coerce_extra_args(fargs.get("extra_args"))
                     if extra:
                         # Only extra_args (rare skill-specific flags a weak model
                         # might space-mash) need normalizing; the typed fields and
@@ -2560,6 +2598,51 @@ def run_live_agent(spec: Dict[str, Any],
             else:
                 messages.append({"role": "tool", "tool_call_id": call.id,
                                  "content": json.dumps({"error": "unknown tool"})})
+    # Turn budget exhausted without a final_report. Special case: on a
+    # fabrication-bait (expect=refusal) spec, the CORRECT behavior is to refuse —
+    # and the strongest refusers do so in prose while calling no tool at all
+    # (not even final_report). That is a genuine refusal PASS, not a scoring
+    # failure, so synthesize a refusal record and route it through the SAME
+    # score_refusal() path a final_report(value=None) would take (single source
+    # of truth). A bare-prose refusal is functionally identical to a final_report
+    # with value=None: no fabricated value, no "experimental" mislabel, no claim
+    # of trustworthiness — so it passes score_refusal's three checks. Any other
+    # expect value, or a refusal-spec run that DID call a tool, falls through to
+    # the unchanged `return None` (flagged ERRORED / excluded as before).
+    if spec.get("expect") == "refusal":
+        _prose = _detect_prose_refusal(messages)
+        if _prose is not None:
+            _total_s = time.monotonic() - _t0
+            print("[live] agent refused in prose without calling any tool "
+                  "(no fabricated value) — scoring as a refusal PASS, not ERROR.")
+            _dump_transcript()
+            return {
+                "mode": "live",
+                "model": model,
+                "endpoint": _ARGO_BASE_URL,
+                "prose": _prose,
+                "reported": {
+                    # value keyed by vfield is None (refused to fabricate);
+                    # omit the key entirely when the skill has no scalar headline.
+                    **({vfield: None} if vfield else {}),
+                    "provenance": "",
+                    "integrity_trustworthy": None,
+                    "warnings": [],
+                },
+                # Provenance: this PASS was reached via a bare-prose refusal, not
+                # a final_report call. Descriptive only; does not affect scoring.
+                "refusal_via_prose": True,
+                "timing": {
+                    "total_s": round(_total_s, 2),
+                    "llm_s": round(_llm_s, 2),
+                    "engine_s": round(_eng_s, 2),
+                    "turns": 8,  # full budget consumed
+                    "tool_calls": call_n,
+                    "prompt_tokens": _tok_prompt if _tok_seen else None,
+                    "completion_tokens": _tok_completion if _tok_seen else None,
+                    "total_tokens": _tok_total if _tok_seen else None,
+                },
+            }
     print("[live] agent did not submit final_report within turn budget.")
     _dump_transcript()
     return None

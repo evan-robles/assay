@@ -1,7 +1,0 @@
-# This skill is a thin client for the chemkit MCP server; it carries no
-# chemistry engine. It needs only the MCP client SDK:
-mcp
-
-# The actual computation runs in the chemkit MCP server. Install the server's
-# dependencies once (see mcp_server/requirements.txt): ase, numpy, pyscf,
-# matplotlib, plus the external binaries xtb / mopac / openbabel.

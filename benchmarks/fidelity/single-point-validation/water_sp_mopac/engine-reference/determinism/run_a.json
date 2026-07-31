@@ -1,0 +1,62 @@
+{
+  "task": "single_point",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_mopac/water_mopac.xyz",
+  "n_atoms": 3,
+  "atoms": [
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py sp --method mopac --charge 0 --mult 1 /home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_mopac/water_mopac.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmp2i7o060h/a.json",
+  "total_energy_eV": -2.506424,
+  "total_energy_hartree": -0.092109382,
+  "total_energy_kcal_mol": -57.79951,
+  "energy_zero": "elements in their standard states (PM7 heat of formation)",
+  "final_heat_of_formation_kcal_mol": -57.7995,
+  "code_specific": {
+    "heat_of_formation_kcal_mol": -57.7995,
+    "ionization_potential_eV": 12.117,
+    "dipole_debye": 2.12784,
+    "homo_eV": -12.117,
+    "lumo_eV": 4.047,
+    "homo_lumo_gap_eV": 16.164,
+    "electron_nuclear_energy_eV": -533.0006,
+    "electron_electron_energy_eV": 236.4103,
+    "nuclear_nuclear_repulsion_eV": 146.5151,
+    "electronic_total_energy_eV": -322.6792
+  },
+  "schema_version": 1,
+  "electronic_energy_eV": -2.506424,
+  "headline_field": "total_energy_eV",
+  "headline_value": -2.506424,
+  "headline_units": "eV",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -2.506423957043377 (must be a finite number)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'total_energy_eV' = -2.506423957043377 (present and numeric)"
+      }
+    ]
+  }
+}

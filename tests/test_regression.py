@@ -74,6 +74,16 @@ _SUBCMD_TO_SKILL = {
 
 
 def _skill_script(subcmd: str) -> str:
+    """Path to a subcommand's runnable script: `skills/<pkg>/scripts/run.py`,
+    resolved via the server's discovered CONVERTED_SKILLS map."""
+    import importlib
+    _MCP = str(Path(__file__).parent.parent / "mcp_server")
+    if _MCP not in sys.path:
+        sys.path.insert(0, _MCP)
+    server = importlib.import_module("server")
+    pkg = server.CONVERTED_SKILLS.get(subcmd)
+    if pkg is not None:
+        return str(SKILLS_DIR / pkg / "scripts" / "run.py")
     name = _SUBCMD_TO_SKILL[subcmd]
     return str(SKILLS_DIR / name / "scripts" / f"{name}.py")
 
@@ -289,7 +299,11 @@ def test_sp_emits_only_json(tmp_run, method):
     assert len(out_logs) == 1, (
         f"{method} sp expected exactly one live .out log, got: {out_logs}"
     )
-    assert non_logs == sorted(["h2o.xyz", f"h2o_sp_{method}.json"]), (
+    # single-point-energy is a converted self-contained skill: besides the result
+    # JSON it also persists input_configs.yaml (skill-standards Parameter
+    # Persistence), which the pre-inversion skill stub did not.
+    expected = sorted(["h2o.xyz", f"h2o_sp_{method}.json", "input_configs.yaml"])
+    assert non_logs == expected, (
         f"{method} sp emitted unexpected files: {non_logs}"
     )
 
@@ -1214,13 +1228,13 @@ def test_orbitals_open_shell_o2_triplet_hf(tmp_run):
 
 import importlib  # noqa: E402
 
-_MCP = str(Path(__file__).parent.parent / "mcp_server")
+_MCP = str(Path(__file__).parent.parent)  # repo root (assay_core lives here)
 if _MCP not in sys.path:
     sys.path.insert(0, _MCP)
 
 
 def _integrity():
-    return importlib.import_module("chemkit_engine.integrity")
+    return importlib.import_module("assay_core.integrity")
 
 
 # ---- 1) module unit tests (no QM) ----------------------------------------
@@ -1488,7 +1502,7 @@ def test_gate_binding_charge_mismatch_aborts(tmp_run):
 # are pure-dict unit tests (no engine run), mirroring the integrity unit tests.
 # ===========================================================================
 def _result_schema():
-    return importlib.import_module("chemkit_engine.result_schema")
+    return importlib.import_module("assay_core.result_schema")
 
 
 def test_schema_canonicalize_stamps_headline_pointer():
@@ -1579,14 +1593,14 @@ def _server_tools():
 
 
 def test_tools_cli_consistency():
-    cli = importlib.import_module("chemkit_engine.cli")
+    cli = importlib.import_module("assay_core.cli")
     tools_subs = [sub for (sub, _folder) in _server_tools().values()]
     problems = cli.check_tools_cli_consistency(tools_subs)
     assert not problems, "TOOLS<->CLI mismatch:\n" + "\n".join(problems)
 
 
 def test_tools_cli_consistency_detects_a_phantom_tool():
-    cli = importlib.import_module("chemkit_engine.cli")
+    cli = importlib.import_module("assay_core.cli")
     tools_subs = [sub for (sub, _folder) in _server_tools().values()]
     # inject a subcommand the engine has no subparser for -> must be flagged
     problems = cli.check_tools_cli_consistency(tools_subs + ["not_a_subcommand"])
@@ -1612,40 +1626,60 @@ def test_all_skills_pass_skillmd_lint():
     assert not failures, f"SKILL.md lint failures: {failures}"
 
 
+def _load_lint_module():
+    import importlib.util
+    repo = Path(__file__).resolve().parent.parent
+    spec = importlib.util.spec_from_file_location("lint_skills", repo / "tools" / "lint_skills.py")
+    lint = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lint)
+    return lint
+
+
+def test_all_skill_spines_pass_lint():
+    """Every skills/*/scripts/run.py exposes the inverted-architecture spine:
+    SKILL_NAME/SUBCOMMAND manifest, a typed keyword-only run(), build_parser(),
+    and a __main__ that routes through argkit.run_cli (DESIGN.md §10.2-1)."""
+    lint = _load_lint_module()
+    failures = lint.lint_all_spines()
+    assert not failures, f"skill spine lint failures: {failures}"
+
+
+def test_registry_in_sync():
+    """The discovery registry, the server tool list, and the PreToolUse hook's
+    METHOD_REQUIRED_SUBCMDS all agree (DESIGN.md §10.2-2). Catches a skill added/
+    renamed without updating the hook, or a server<->discovery divergence."""
+    lint = _load_lint_module()
+    problems = lint.lint_registry_sync()
+    assert not problems, "registry-sync drift:\n" + "\n".join(problems)
+
+
+def test_dependency_dag():
+    """Each composite skill's declared depends_on: frontmatter matches its actual
+    direct sibling-skill imports, every declared dep exists, and the graph is
+    acyclic (DESIGN.md §5). Catches a composite importing a sibling without
+    declaring it, a stale declaration, or an accidental import cycle."""
+    lint = _load_lint_module()
+    problems = lint.lint_dependency_dag()
+    assert not problems, "dependency-DAG problems:\n" + "\n".join(problems)
+
+
 def test_tool_descriptions_advertise_arg_spec():
     """Every MCP tool description embeds its derived argument spec (flags, types,
     choices) so an agent can call correctly without a `--help` round-trip."""
     server = importlib.import_module("server")
-    cli = importlib.import_module("chemkit_engine.cli")
+    cli = importlib.import_module("assay_core.cli")
     for tool_name, (sub, folder) in server.TOOLS.items():
         spec = cli.describe_subcommand(sub)
         assert spec, f"{sub}: empty arg spec"
         desc = server._description(folder, sub)
-        assert f"Arguments (chemkit `{sub}`)" in desc, f"{tool_name}: no args block"
+        assert f"Arguments (assay `{sub}`)" in desc, f"{tool_name}: no args block"
     # spot-check that choices/types are surfaced for a representative subcommand
-    sp_desc = server._description("single-point-energy", "sp")
+    # (single-point-energy is the converted skill; its folder is underscore-named)
+    sp_desc = server._description("single_point_energy", "sp")
     assert "{xtb|mopac|dft|hf}" in sp_desc
     assert "--charge (optional, int)" in sp_desc
 
 
-def test_thin_client_scripts_match_generator():
-    """The 20 per-skill thin-client scripts are generated from one template
-    (tools/build_skill_folders.py). This guards against a hand-edit drifting a
-    script away from the generator — regenerating must yield no diff."""
-    import importlib.util
-    repo = Path(__file__).resolve().parent.parent
-    spec = importlib.util.spec_from_file_location(
-        "build_skill_folders", repo / "tools" / "build_skill_folders.py")
-    bsf = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(bsf)
-    drift = {}
-    for name in bsf.TOOLS:
-        p = repo / "skills" / name / "scripts" / f"{name}.py"
-        if not p.is_file():
-            drift[name] = "script missing (run tools/build_skill_folders.py)"
-        elif p.read_text() != bsf.CLIENT_TEMPLATE.format(name=name):
-            drift[name] = "differs from generator (run tools/build_skill_folders.py)"
-    assert not drift, f"thin-client drift: {drift}"
 
 
 def test_populated_specs_pass_static_schema():
@@ -1659,7 +1693,7 @@ def test_populated_specs_pass_static_schema():
         "spec_schema", repo / "benchmarks" / "spec_schema.py")
     ss = importlib.util.module_from_spec(spec_mod)
     spec_mod.loader.exec_module(ss)
-    rs = importlib.import_module("chemkit_engine.result_schema")
+    rs = importlib.import_module("assay_core.result_schema")
     skill_to_task = ss._skill_to_taskid()
     headline = rs.HEADLINE
     base = repo / "benchmarks" / "fidelity"

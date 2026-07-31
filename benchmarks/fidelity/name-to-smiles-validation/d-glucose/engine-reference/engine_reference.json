@@ -1,0 +1,31 @@
+{
+  "task": "name_to_smiles",
+  "program": "PubChem",
+  "input": "D-glucose",
+  "smiles": "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O",
+  "smiles_source": {
+    "smiles": "C([C@@H]1[C@H]([C@@H]([C@H](C(O1)O)O)O)O)O",
+    "name_input": "D-glucose",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 5793, D-Glucose. https://pubchem.ncbi.nlm.nih.gov/compound/5793 (accessed 2026-06-24).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/5793",
+    "identifier": "CID 5793",
+    "from_cache": true,
+    "warnings": []
+  },
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py resolve D-glucose --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp4h_6hcmi/truth.json",
+  "schema_version": 1,
+  "integrity": {
+    "status": "warning",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
+      }
+    ]
+  }
+}

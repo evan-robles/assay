@@ -1,0 +1,4 @@
+# chemkit live log (tail -f): /Users/evane/Desktop/Research/Argonne/chem-skills/sp_20260706-140600.out
+[chemkit] tool=single-point-energy args=[--method,xtb,--out,tests/water_sp_xtb.json,--stdout,path,tests/water.xyz] cwd=/Users/evane/Desktop/Research/Argonne/chem-skills dur=427ms ok
+chemkit: live log (watch now): tail -f /Users/evane/Desktop/Research/Argonne/chem-skills/sp_20260706-140600.out
+# Tell the user this path immediately, while the run is going (non-negotiable #9).

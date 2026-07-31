@@ -1,0 +1,13 @@
+{
+  "spec_name": "caffeine_name_to_smiles",
+  "skill": "name-to-smiles",
+  "flags": [],
+  "positional": "caffeine",
+  "expect": "smiles",
+  "spec_hash": "8e0e97e862a2fb4b",
+  "determinism_ok": true,
+  "determinism_msg": "skipped (expect=smiles)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:38:09"
+}

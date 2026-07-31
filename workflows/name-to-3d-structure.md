@@ -10,7 +10,7 @@ chemkit calculations.
 
 **Scientific problem:** Most chemkit skills (single-point, optimization,
 frequency, …) require a 3D `.xyz` as input, but users frequently start from only
-a molecule *name*. The [build-from-smiles](../skills/build-from-smiles/SKILL.md)
+a molecule *name*. The [build-from-smiles](../skills/build_from_smiles/SKILL.md)
 skill is deliberately **SMILES-only** — it does not resolve names — so name →
 structure is a two-step procedure: first resolve the name to a SMILES from a
 citable online source, then embed 3D coordinates from that SMILES. Keeping the
@@ -37,9 +37,9 @@ the build result JSON (atom count, exact `obabel` command, any warnings).
   OPSIN → NIST WebBook). Step 2 (build) needs no network.
 - **Environment:** `# Env: anl_env` for both skills.
 - **Required skills:**
-  [name-to-smiles](../skills/name-to-smiles/SKILL.md) (engine subcommand
+  [name-to-smiles](../skills/name_to_smiles/SKILL.md) (engine subcommand
   `resolve`) and
-  [build-from-smiles](../skills/build-from-smiles/SKILL.md) (engine subcommand
+  [build-from-smiles](../skills/build_from_smiles/SKILL.md) (engine subcommand
   `build`).
 - **Required inputs and assumed state:** a molecule name. For an ion or radical,
   know the intended charge/multiplicity — Open Babel does **not** infer charge, so
@@ -48,13 +48,13 @@ the build result JSON (atom count, exact `obabel` command, any warnings).
 ## Methodology
 
 ### Step 1 — Resolve the name to a SMILES
-Use [name-to-smiles](../skills/name-to-smiles/SKILL.md) to look up the SMILES,
+Use [name-to-smiles](../skills/name_to_smiles/SKILL.md) to look up the SMILES,
 trying PubChem → OPSIN → NIST WebBook in order and recording the first hit with
 an ACS-format citation.
 
 ```bash
 # Env: anl_env
-python skills/name-to-smiles/scripts/name-to-smiles.py "caffeine" \
+python skills/name_to_smiles/scripts/run.py "caffeine" \
     --out caffeine_smiles.json --stdout path
 ```
 
@@ -68,13 +68,13 @@ provenance.
 
 ### Step 2 — Build the 3D geometry from that SMILES
 Feed the resolved SMILES to
-[build-from-smiles](../skills/build-from-smiles/SKILL.md) to embed 3D coordinates
+[build-from-smiles](../skills/build_from_smiles/SKILL.md) to embed 3D coordinates
 via Open Babel `--gen3d`.
 
 ```bash
 # Env: anl_env
 # Use the SMILES read from caffeine_smiles.json (here: caffeine's isomeric SMILES).
-python skills/build-from-smiles/scripts/build-from-smiles.py \
+python skills/build_from_smiles/scripts/run.py \
     'CN1C=NC2=C1C(=O)N(C(=O)N2C)C' \
     --out-xyz caffeine.xyz --out caffeine_build.json --stdout path
 ```
@@ -90,7 +90,7 @@ non-negotiable #10). Set `--charge`/`--mult` explicitly for ions/radicals.
 
 ```bash
 # Env: anl_env
-python skills/build-from-smiles/scripts/build-from-smiles.py \
+python skills/build_from_smiles/scripts/run.py \
     'CC(=O)[O-]' --charge -1 --opt xtb \
     --out-xyz acetate.xyz --out acetate_build.json --stdout path
 ```
@@ -159,9 +159,9 @@ Before reporting the structure as trustworthy:
 ## Limitations
 - **Screening-grade geometry.** Open Babel `--gen3d` produces a single
   force-field conformer, not a Boltzmann ensemble or a QM minimum. For floppy
-  molecules, follow with [conformer-search](../skills/conformer-search/SKILL.md);
+  molecules, follow with [conformer-search](../skills/conformer_search/SKILL.md);
   for energetics, refine with
-  [geometry-optimize](../skills/geometry-optimize/SKILL.md) or the `--opt` step.
+  [geometry-optimize](../skills/geometry_optimize/SKILL.md) or the `--opt` step.
 - **Resolution depends on external databases.** Coverage and stereochemistry vary
   by source; a name absent from PubChem/OPSIN/NIST cannot be resolved here.
 - **Charge is not inferred.** obabel writes geometry only; ions/radicals need

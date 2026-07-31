@@ -1,0 +1,66 @@
+# chemkit live log
+# subcommand : sp
+# args       : --method xtb --charge 0 --mult 1 --solvent water /home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_solvated_xtb/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpxkey7vdu/a.json
+# command    : /home/erobles/.conda/envs/assay_env/bin/python -m chemkit_engine.cli sp --method xtb --charge 0 --mult 1 --solvent water /home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_solvated_xtb/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpxkey7vdu/a.json
+# cwd        : /home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_solvated_xtb/engine-reference/determinism
+# started    : 20260711-230131
+# ============================================================
+
+# result written to: /home/erobles/chem-skills/.fidelity_scratch/tmpxkey7vdu/a.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "single_point",
+  "method": "GFN2-xTB",
+  "program": "xtb",
+  "input_file": "/home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_solvated_xtb/water.xyz",
+  "n_atoms": 3,
+  "atoms": [
+    "O",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/home/erobles/chem-skills/mcp_server/chemkit_engine/cli.py sp --method xtb --charge 0 --mult 1 --solvent water /home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_solvated_xtb/water.xyz --out /home/erobles/chem-skills/.fidelity_scratch/tmpxkey7vdu/a.json",
+  "total_energy_eV": -138.23687375071745,
+  "total_energy_hartree": -5.080111410021766,
+  "total_energy_kcal_mol": -3187.8180390836965,
+  "energy_zero": "isolated atoms at infinity (xtb)",
+  "code_specific": {
+    "homo_eV": -12.146760401604435,
+    "lumo_eV": 2.2409662458705473,
+    "homo_lumo_gap_eV": 14.387726647474983
+  },
+  "schema_version": 1,
+  "electronic_energy_eV": -138.23687375071745,
+  "headline_field": "total_energy_eV",
+  "headline_value": -138.23687375071745,
+  "headline_units": "eV",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "energy_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "total/electronic energy = -138.23687375071745 (must be a finite number)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'total_energy_eV' = -138.23687375071745 (present and numeric)"
+      }
+    ]
+  }
+}

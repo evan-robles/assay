@@ -12,17 +12,15 @@
       "xyz": "benchmarks/fidelity/pka-acidity-validation/hydrogen-cyanide/a_minus.xyz"
     }
   ],
-  "prompt": "Run the pka-acidity task for hydrogen cyanide using the DFT (B3LYP/def2-TZVP, tier standard) method in implicit water (absolute mode). Pass the protonated form with --ha and the deprotonated form with --a-minus. Report the aqueous pKa as the headline value, and state the method, mode, and charges used. Note DFT absolute (standard tier) is ~\u00b13 units. Use the chemkit tools; do not guess the number.",
+  "prompt": "Run the pka-acidity task on hydrogen-cyanide using the PM7 (MOPAC) semi-empirical method in implicit water solvent, in absolute mode. Report the aqueous pKa as the headline value, and state the method, mode, solvent, and charges used. Note PM7 (semi-empirical) pKa values are screening-grade; this is a screening estimate (single-conformer, implicit solvent only). Use the chemkit tools; do not guess the number.",
   "intended_flags": [
     "--method",
-    "dft",
+    "mopac",
     "--mode",
-    "absolute",
-    "--tier",
-    "standard"
+    "absolute"
   ],
   "intended": {
-    "method": "dft",
+    "method": "mopac",
     "charge": 0,
     "multiplicity": 1,
     "solvent": "water"

@@ -1,0 +1,27 @@
+\begin{table*}[t]
+\centering
+\caption{Mean completion tokens per run by skill and model (token-instrumented suites only; $n=102$ cases per model across 12 skills). The \texttt{fukui} skill is excluded because it was not token-instrumented. Each cell is the mean over that skill's cases; the final row is the case-weighted mean over all 102 cases per model. Gem-2.5-Fl/Pro = Gemini-2.5-Flash/Pro; 4.1-nano = GPT-4.1-nano.}
+\label{tab:completion-tokens}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrrr}
+\toprule
+\textbf{Skill} & \textbf{Haiku 4.5} & \textbf{Opus 4.8} & \textbf{Sonnet 4.6} & \textbf{Gem-2.5-Fl} & \textbf{Gem-2.5-Pro} & \textbf{4.1-nano} & \textbf{GPT-4o} & \textbf{GPT-5.5} & \textbf{o3} & \textbf{o4-mini} \\
+\midrule
+build & 774 & 1173 & 991 & 270 & 251 & 260 & 205 & 559 & 986 & 2446 \\
+conformational-analysis & 1291 & 1492 & 2017 & 287 & 336 & 288 & 234 & 1009 & 1700 & 3302 \\
+conformer-search & 1297 & 1736 & 1924 & 395 & 354 & 358 & 305 & 1269 & 2236 & 3877 \\
+electrostatics & 767 & 1064 & 1105 & 312 & 130 & 154 & 234 & 690 & 1182 & 2789 \\
+frontier-orbitals & 1243 & 1470 & 1828 & 438 & 303 & 442 & 295 & 1185 & 1872 & 3197 \\
+logp-partition & 1085 & 1515 & 1596 & 496 & 287 & 442 & 301 & 794 & 1474 & 2776 \\
+name-to-smiles & 654 & 923 & 761 & 260 & 165 & 189 & 236 & 344 & 788 & 1723 \\
+pka-acidity & 1781 & 1679 & 2151 & 553 & 423 & 546 & 362 & 1079 & 1515 & 3153 \\
+redox-potential & 1656 & 1435 & 1558 & 479 & 299 & 533 & 320 & 919 & 1332 & 3003 \\
+single-point & 1033 & 1200 & 1347 & 359 & 294 & 199 & 253 & 622 & 1035 & 2832 \\
+solvation & 1103 & 984 & 1296 & 557 & 187 & 329 & 282 & 647 & 1108 & 2894 \\
+vibrational-analysis & 1190 & 1597 & 1726 & 397 & 249 & 252 & 237 & 1084 & 1679 & 4306 \\
+\midrule
+\textbf{All (mean)} & \textbf{1136} & \textbf{1353} & \textbf{1517} & \textbf{398} & \textbf{271} & \textbf{327} & \textbf{270} & \textbf{849} & \textbf{1413} & \textbf{3030} \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

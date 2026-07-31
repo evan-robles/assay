@@ -103,11 +103,11 @@ action.
 
 - **Reference skills by their exact kebab-case names** (`geometry-optimize`,
   `conformer-search`, `vibrational-analysis`, `redox-potential`, `pka-acidity`,
-  …) and link them: `[geometry-optimize](../skills/geometry-optimize/SKILL.md)`.
+  …) and link them: `[geometry-optimize](../skills/geometry_optimize/SKILL.md)`.
 - **Give the literal invocation** where helpful, matching the skill's own CLI:
   ````markdown
   ```bash
-  python chem-skills/skills/conformer-search/scripts/conformer-search.py \
+  python chem-skills/skills/conformer_search/scripts/run.py \
       --method xtb --postopt mol.xyz
   ```
   ````
@@ -184,6 +184,18 @@ screening-grade number as definitive.**
 > 4. **No undisclosed truncation.** If the workflow caps cost (sampled a subset,
 >    limited conformers, skipped a step), state exactly what was dropped.
 > 5. **Literature defers to `research-standards.md`** — always, in full.
+> 6. **Least skills to complete the task (no gratuitous runs).** Run the MINIMUM
+>    set of skills that actually answers the question, and never invoke a skill
+>    whose output you will not use. Stop as soon as the answer is in hand.
+>    Concretely: a pure *identity / lookup* question — molecular formula, atom
+>    count, canonical SMILES, a name→SMILES resolution — is answered by
+>    `name-to-smiles` (or reading the SMILES) and needs **no** 3D structure, so do
+>    NOT call `build-from-smiles`. Only build a 3D geometry when a **downstream
+>    skill requires one** (single-point, geometry-optimize, vibrational-analysis,
+>    fukui, electrostatics, …). Likewise, do not run a calculation for a question
+>    that is purely about identity or provenance. Each extra run costs compute and
+>    manufactures a step the task did not require — which is its own small
+>    dishonesty about what was necessary.
 
 ---
 

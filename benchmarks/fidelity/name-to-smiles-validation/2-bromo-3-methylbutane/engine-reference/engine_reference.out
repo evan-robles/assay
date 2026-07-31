@@ -1,0 +1,48 @@
+# chemkit live log
+# subcommand : resolve
+# args       : 2-bromo-3-methylbutane --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpoqty9fvq/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli resolve 2-bromo-3-methylbutane --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpoqty9fvq/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/name-to-smiles-validation/2-bromo-3-methylbutane/engine-reference
+# started    : 20260709-183801
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpoqty9fvq/truth.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "name_to_smiles",
+  "program": "OPSIN",
+  "input": "2-bromo-3-methylbutane",
+  "smiles": "BrC(C)C(C)C",
+  "smiles_source": {
+    "smiles": "BrC(C)C(C)C",
+    "name_input": "2-bromo-3-methylbutane",
+    "source": "OPSIN",
+    "smiles_kind": "isomeric",
+    "citation": "Lowe, D. M.; Corbett, P. T.; Murray-Rust, P.; Glen, R. C. Chemical Name to Structure: OPSIN, an Open Source Solution. J. Chem. Inf. Model. 2011, 51 (3), 739-753. OPSIN web service, https://www.ebi.ac.uk/opsin/ (accessed 2026-07-09).",
+    "url": "https://www.ebi.ac.uk/opsin/ws/2-bromo-3-methylbutane.smi",
+    "identifier": null,
+    "from_cache": false,
+    "warnings": [
+      "Name resolved via OPSIN because higher-priority resolver(s) ['PubChem'] did not answer this run (timeout/outage/no match). A different run could resolve via a different source with different stereochemistry; the result is now cached to pin this resolution. Verify the SMILES."
+    ]
+  },
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py resolve 2-bromo-3-methylbutane --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpoqty9fvq/truth.json",
+  "warnings": [
+    "Name resolved via OPSIN because higher-priority resolver(s) ['PubChem'] did not answer this run (timeout/outage/no match). A different run could resolve via a different source with different stereochemistry; the result is now cached to pin this resolution. Verify the SMILES."
+  ],
+  "schema_version": 1,
+  "integrity": {
+    "status": "warning",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+# vibrational-analysis is a self-contained skill: scripts/run.py owns the workflow and imports
+# the shared physics library `assay_core`. Installing assay_core (the repo's
+# `pip install -e .`) pulls in the Python deps below transitively; they are
+# listed here so the skill's own dependency surface is explicit.
+assay_core            # the shared physics library (this repo; `pip install -e .`)
+ase>=3.22             # geometry I/O + calculator interface
+numpy                 # numerics
+pyscf                 # --method dft/hf backend
+
+# NOT pip-installable — install from conda-forge (see environment.yml):
+#   xtb / xtb-python   (--method xtb, GFN2-xTB)
+#   mopac              (--method mopac, PM7)
+#   openbabel          (SMILES/geometry conversion + confab conformer sampling)

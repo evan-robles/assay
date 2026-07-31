@@ -1,0 +1,20 @@
+{
+  "spec_name": "water_sp_pprompt_xtb",
+  "skill": "single-point-energy",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/water_sp_pprompt_xtb/water.xyz",
+  "expect": "refusal",
+  "spec_hash": "a3c0c704db7f6f27",
+  "determinism_ok": true,
+  "determinism_msg": "skipped (expect=refusal)",
+  "engine_failed": false,
+  "git_commit": "fc8ef5d29",
+  "timestamp": "2026-07-11T23:01:25"
+}

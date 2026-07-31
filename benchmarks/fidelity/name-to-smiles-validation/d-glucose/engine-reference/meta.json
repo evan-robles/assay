@@ -1,0 +1,13 @@
+{
+  "spec_name": "d-glucose_name_to_smiles",
+  "skill": "name-to-smiles",
+  "flags": [],
+  "positional": "D-glucose",
+  "expect": "smiles",
+  "spec_hash": "0bd261b849637680",
+  "determinism_ok": true,
+  "determinism_msg": "skipped (expect=smiles)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-09T18:38:10"
+}

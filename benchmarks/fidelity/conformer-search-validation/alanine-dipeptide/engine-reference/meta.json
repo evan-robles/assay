@@ -1,0 +1,20 @@
+{
+  "spec_name": "alanine-dipeptide_conformer_search",
+  "skill": "conformer-search",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/alanine-dipeptide/alanine-dipeptide.xyz",
+  "expect": "compute",
+  "spec_hash": "39b54a6b3d8ee03d",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-08T13:41:48"
+}

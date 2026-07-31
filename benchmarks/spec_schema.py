@@ -10,7 +10,7 @@ crown-jewel fidelity benchmark).
 
 The check that matters most: `report_value_field` must be either null or the
 CANONICAL headline field the engine actually emits for that skill's task — read
-from chemkit_engine.result_schema.HEADLINE (the same registry the engine's
+from assay_core.result_schema.HEADLINE (the same registry the engine's
 canonicalize() uses). This makes "Layer C scored the right field" verifiable
 statically, not dependent on hand-kept maps.
 
@@ -29,7 +29,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 _REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(_REPO / "mcp_server"))
+sys.path.insert(0, str(_REPO))  # assay_core lives at the repo root
 
 # Allowed enum values, mirrored from the engine CLI.
 _METHODS = {"xtb", "mopac", "dft", "hf"}
@@ -52,14 +52,18 @@ _REQUIRED_KEYS = {"name", "skill", "prompt", "intended_flags", "intended"}
 
 
 def _skill_to_taskid() -> Dict[str, Optional[str]]:
-    """Map a spec's `skill` (kebab folder name) -> the engine task-id used as the
+    """Map a spec's `skill` (kebab display name) -> the engine task-id used as the
     HEADLINE registry key. Built from the live engine, so it can't drift:
-      skill(folder) --TOOLS--> subcommand --engine--> task-id.
-    """
-    from server import TOOLS  # folder == tool name == spec.skill
-    from chemkit_engine import cli  # subcommand set (validation only)
+      skill(tool name) --TOOLS--> subcommand --engine--> task-id.
 
-    folder_to_sub = {folder: sub for (sub, folder) in TOOLS.values()}
+    Keyed by the MCP TOOL NAME (the kebab display name specs use), NOT the on-disk
+    folder — a converted skill's folder is underscore-named (single_point_energy)
+    while its spec still says single-point-energy.
+    """
+    from server import TOOLS  # {tool_name(kebab): (subcommand, folder)}
+    from assay_core import cli  # subcommand set (validation only)
+
+    folder_to_sub = {tool_name: sub for tool_name, (sub, _folder) in TOOLS.items()}
     # subcommand -> task-id: the engine's _dispatch maps subcommand to a task
     # module whose base_result task= string is the registry key. We resolve it
     # by importing the dispatch table indirectly: the result_schema HEADLINE keys
@@ -166,7 +170,7 @@ def main() -> int:
     ap.add_argument("suite", nargs="?", help="one *-validation folder (default: all)")
     args = ap.parse_args()
 
-    from chemkit_engine import result_schema
+    from assay_core import result_schema
     skill_to_task = _skill_to_taskid()
     headline = result_schema.HEADLINE
 

@@ -16,7 +16,7 @@ water and compare to the experimental hydration free energy of water.
 
 ```bash
 # Env: anl_env
-python skills/solvation/scripts/solvation.py \
+python skills/solvation/scripts/run.py \
     --method xtb --solvent water water.xyz --out water_solv.json
 ```
 

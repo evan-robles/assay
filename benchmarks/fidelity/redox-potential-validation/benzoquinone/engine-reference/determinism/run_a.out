@@ -1,0 +1,112 @@
+# chemkit live log
+# subcommand : redox
+# args       : --method mopac --ox-charge 0 --red-charge -1 --ox-mult 1 --red-mult 2 --solvent water --ref SHE /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/benzoquinone/benzoquinone.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn8m3rhnc/a.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli redox --method mopac --ox-charge 0 --red-charge -1 --ox-mult 1 --red-mult 2 --solvent water --ref SHE /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/benzoquinone/benzoquinone.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn8m3rhnc/a.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/benzoquinone/engine-reference/determinism
+# started    : 20260711-152246
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn8m3rhnc/a.json
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "redox_potential",
+  "method": "PM7",
+  "program": "mopac",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/benzoquinone/benzoquinone.xyz",
+  "n_atoms": 12,
+  "atoms": [
+    "O",
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": "water",
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py redox --method mopac --ox-charge 0 --red-charge -1 --ox-mult 1 --red-mult 2 --solvent water --ref SHE /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/benzoquinone/benzoquinone.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpn8m3rhnc/a.json",
+  "mode": "adiabatic",
+  "energy_kind": "\u0394E (relaxed/adiabatic)",
+  "redox_potential_V_vs_SHE": 0.5707082430905777,
+  "delta_E_redox_eV": -4.851708243090577,
+  "delta_E_redox_kcal_mol": -111.88305000000001,
+  "n_electrons": 1,
+  "reference_potential_V_abs": 4.281,
+  "e_abs_she_V": 4.281,
+  "reference_electrode": "SHE",
+  "oxidized_state": {
+    "charge": 0,
+    "multiplicity": 1,
+    "method": "PM7",
+    "energy_eV": -1.575439589156733,
+    "geometry_source": "relaxed at this method",
+    "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/benzoquinone/engine-reference/determinism/benzoquinone_mopac_opt.xyz",
+    "converged": true,
+    "n_atoms": 12
+  },
+  "reduced_state": {
+    "charge": -1,
+    "multiplicity": 2,
+    "method": "PM7",
+    "energy_eV": -6.42714783224731,
+    "geometry_source": "relaxed at this method",
+    "optimized_xyz": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/redox-potential-validation/benzoquinone/engine-reference/determinism/benzoquinone_mopac_opt.xyz",
+    "converged": true,
+    "n_atoms": 12
+  },
+  "warnings": [
+    "mode=adiabatic: each oxidation state was geometry-optimized separately and the potential uses \u0394E between the relaxed geometries (includes reorganization). It does NOT include ZPE/thermal/entropy (\u0394E used in place of \u0394G); use mode=freq for a true \u0394G.",
+    "Solvation is implicit/continuum only (or gas phase) \u2014 no explicit solvent shell and no Born\u2013Haber solvation cycle. Semi-empirical redox potentials are screening-grade (\u2248\u00b10.3\u20130.5 V); even DFT here omits the explicit-solvation correction. Treat as a screening estimate.",
+    "E\u00b0(vs SHE) uses E_abs(SHE) = 4.281 V. The absolute SHE potential is convention-dependent (literature \u22484.28\u20134.44 V); this is a systematic offset on the reported potential. Override with --e-abs-she to match your reference convention.",
+    "Single-conformer result: every species was evaluated at ONE geometry, with no conformational/Boltzmann averaging. For a flexible molecule the Boltzmann-averaged free energy over conformers can differ from a single conformer by several kcal/mol \u2014 shifting pKa by >1 unit, E\u00b0 by >0.1 V, and logP by >0.5. If the molecule has rotatable bonds, run conformer-search first and average, or treat this as a screening estimate tied to the input geometry."
+  ],
+  "schema_version": 1,
+  "headline_field": "redox_potential_V_vs_SHE",
+  "headline_value": 0.5707082430905777,
+  "headline_units": "V",
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "oxidized_state_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "oxidized_state.converged = True (adiabatic mode)"
+      },
+      {
+        "name": "reduced_state_converged",
+        "ok": true,
+        "severity": "error",
+        "detail": "reduced_state.converged = True (adiabatic mode)"
+      },
+      {
+        "name": "potential_finite",
+        "ok": true,
+        "severity": "error",
+        "detail": "redox_potential_V_vs_SHE = 0.5707082430905777 (must be finite)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      },
+      {
+        "name": "schema_headline",
+        "ok": true,
+        "severity": "warning",
+        "detail": "headline field 'redox_potential_V_vs_SHE' = 0.5707082430905777 (present and numeric)"
+      }
+    ]
+  }
+}

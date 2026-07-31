@@ -6,8 +6,7 @@ helpers, **not** chemistry skills or MCP tools — run them directly with `pytho
 | Tool | Purpose |
 |---|---|
 | `aurora_submit.py` | Submit / monitor / collect ASSAY jobs on the Aurora supercomputer (PBS Pro). |
-| `build_skill_folders.py` | Scaffold new skill folders. |
-| `lint_skills.py` | Lint skill folders against the standards. |
+| `lint_skills.py` | Lint skill folders (SKILL.md, run.py spine, registry-sync, dependency DAG). |
 
 ---
 
@@ -66,19 +65,19 @@ template). CLI flags override the config per-run.
 
 ### Submit
 
-Run the fidelity suite (engine-only — see the `--live` note):
+Submit one skill calculation:
 
 ```bash
 python tools/aurora_submit.py submit \
-    --suite benchmarks/fidelity/logp-partition-validation \
-    --queue debug --walltime 01:00:00
+    --queue debug --walltime 01:00:00 \
+    --skill sp --skill-args --method dft --tier accurate benzene.xyz
 ```
 
-Or submit any command:
+Or the fidelity suite (engine-only — see the `--live` note), or any command:
 
 ```bash
-python tools/aurora_submit.py submit \
-    --cmd "python -m chemkit_engine.cli sp --method xtb mol.xyz"
+python tools/aurora_submit.py submit --suite benchmarks/fidelity/logp-partition-validation
+python tools/aurora_submit.py submit --cmd "python -m assay_core.cli sp --method xtb mol.xyz"
 ```
 
 `submit` writes three artifacts (into `repo_path`) **before** calling `qsub`, so

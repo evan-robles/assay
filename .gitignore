@@ -34,8 +34,12 @@ __pycache__/
 /mcp_server/*.png
 
 # Local secrets for the fidelity driver (argo username / endpoint key).
-# Never commit; an .env.example is committed instead as a template.
+# Never commit; an .env.example is committed instead as a template. Cover the
+# .bak_* backups and the Globus auth-token helper too — all carry live creds.
 benchmarks/fidelity/.env.local
+benchmarks/fidelity/.env.local.*
+benchmarks/fidelity/inference_auth_token.py
+benchmarks/fidelity/test.sh
 
 # Fidelity run artifacts (transcripts, .out logs, scored results). Scratch by
 # default; promote chosen runs into the Zenodo/GitHub-release bundle for the paper.
@@ -46,6 +50,33 @@ benchmarks/runs/
 benchmarks/error_dumps/
 benchmarks/fidelity/tested.txt
 
+# ---------------------------------------------------------------------------
+# Fidelity BENCHMARK run scratch (regenerated per run; ~1 GB, not source).
+# These are the volatile outputs of re-running the fidelity suite — per-model
+# agent transcripts, timestamped engine-run dirs and their live .out logs, and
+# ad-hoc scratch dropped at the benchmarks/ root. Curated reference data lives in
+# each example's engine-reference/ + *.spec.json (kept tracked below); everything
+# here is reproducible output that should never be committed.
+# ---------------------------------------------------------------------------
+# Per-model agent run directories (argo_<model>/ under any validation example).
+benchmarks/fidelity/**/argo_*/
+# Pre-fix archives and other dated run snapshots.
+benchmarks/fidelity/**/_pre_fix_archive*/
+# Timestamped engine-run dirs (YYYYMMDD-HHMMSS_<name>/) and their sibling .out.
+benchmarks/fidelity/**/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]_*/
+benchmarks/fidelity/**/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]_*.out
+# Per-suite rollup CSVs regenerated each run.
+benchmarks/fidelity/**/summary.csv
+# Ad-hoc scratch dropped directly at the benchmarks/ root by manual skill runs
+# (result JSON, live .out logs, geometries, cubes/moldens, plots).
+benchmarks/*.out
+benchmarks/*.json
+benchmarks/*.xyz
+benchmarks/*.err
+benchmarks/*.cube
+benchmarks/*.molden
+benchmarks/*.png
+
 # Safety net: keep committed example deliverables tracked.
 !skills/**/examples/**
 
@@ -53,3 +84,6 @@ benchmarks/fidelity/tested.txt
 # would otherwise re-include it).
 .DS_Store
 **/.DS_Store
+
+# pixi: ignore the local env cache; DO commit pixi.lock (reproducible installs).
+.pixi/

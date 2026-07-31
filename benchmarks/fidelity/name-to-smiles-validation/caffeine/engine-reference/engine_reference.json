@@ -1,0 +1,31 @@
+{
+  "task": "name_to_smiles",
+  "program": "PubChem",
+  "input": "caffeine",
+  "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+  "smiles_source": {
+    "smiles": "CN1C=NC2=C1C(=O)N(C(=O)N2C)C",
+    "name_input": "caffeine",
+    "source": "PubChem",
+    "smiles_kind": "isomeric",
+    "citation": "National Center for Biotechnology Information. PubChem Compound Summary for CID 2519, Caffeine. https://pubchem.ncbi.nlm.nih.gov/compound/2519 (accessed 2026-06-16).",
+    "url": "https://pubchem.ncbi.nlm.nih.gov/compound/2519",
+    "identifier": "CID 2519",
+    "from_cache": true,
+    "warnings": []
+  },
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py resolve caffeine --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmp0dr7d8_d/truth.json",
+  "schema_version": 1,
+  "integrity": {
+    "status": "warning",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "schema_header",
+        "ok": false,
+        "severity": "warning",
+        "detail": "required header keys present and typed (missing=['method'], wrong_type=[])"
+      }
+    ]
+  }
+}

@@ -1,28 +1,19 @@
 #!/usr/bin/env python3
-"""chemkit MCP server — one unified engine behind the open MCP protocol.
+"""assay MCP server (FastMCP over stdio).
 
-Exposes every chemkit skill as an MCP tool. The chemistry engine lives once, in
-`mcp_server/chemkit_engine/`; this server owns it and dispatches each tool call
-to the engine's CLI. Built on the official `mcp` SDK (FastMCP) over stdio, so it
-works with ANY MCP-capable client, not just one vendor.
+Discovers the skills on disk and exposes each as an MCP tool. A tool runs the
+skill's scripts/run.py (or `python -m assay_core.cli <task>`) as an isolated
+subprocess and returns its result JSON — a fresh process per call so stateful QM
+jobs (pyscf globals, matplotlib backends, chdir/tmpdirs) don't leak across calls.
 
-Each tool mirrors a chemkit subcommand. A tool takes the same arguments the CLI
-takes, as a list of CLI tokens (`args`), runs `python -m chemkit_engine.cli
-<task> <args>` as an isolated subprocess, and returns the JSON result the engine
-prints.
-Running each calculation in its own process keeps long, stateful QM jobs (pyscf
-globals, matplotlib backends, chdir/tmpdirs) from leaking across calls.
-
-Run:  python mcp_server/server.py        # stdio MCP server
+Run:  python mcp_server/server.py
 """
 from __future__ import annotations
 
-import datetime
 import functools
 import json
 import os
 import re
-import shlex
 import subprocess
 import sys
 import threading
@@ -32,40 +23,148 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 HERE = Path(__file__).resolve().parent
-ENGINE_DIR = HERE / "chemkit_engine"
-SKILLS_DIR = HERE.parent / "skills"
+REPO_ROOT = HERE.parent
+ENGINE_DIR = REPO_ROOT / "assay_core"
+SKILLS_DIR = REPO_ROOT / "skills"
 
-# tool name -> (engine subcommand, skill folder for its SKILL.md description)
-# Tool names == skill folder names (kebab-case). Mirrors the chemkit CLI
-# subcommands; one entry per skill.
-TOOLS = {
-    "single-point-energy":     ("sp",             "single-point-energy"),
-    "geometry-optimize":       ("opt",            "geometry-optimize"),
-    "vibrational-analysis":    ("freq",           "vibrational-analysis"),
-    "binding-energy":          ("binding",        "binding-energy"),
-    "redox-potential":         ("redox",          "redox-potential"),
-    "conformer-search":        ("confsearch",     "conformer-search"),
-    "frontier-orbitals":       ("frontier",       "frontier-orbitals"),
-    "electrostatics":          ("electrostatics", "electrostatics"),
-    "solvation":               ("solvation",      "solvation"),
-    "logp-partition":          ("logp",           "logp-partition"),
-    "reaction-profile":        ("profile",        "reaction-profile"),
-    "pka-acidity":             ("pka",            "pka-acidity"),
-    "build-from-smiles":       ("build",          "build-from-smiles"),
-    "name-to-smiles":          ("resolve",        "name-to-smiles"),
-    "fukui-reactivity":        ("fukui",          "fukui-reactivity"),
-    "transition-state":        ("ts",             "transition-state"),
-    "intrinsic-reaction-coordinate": ("irc",      "intrinsic-reaction-coordinate"),
-    "reaction-energy":         ("rxn-energy",     "reaction-energy"),
-    "conformational-analysis": ("scan",           "conformational-analysis"),
-    "visualize-orbitals":      ("orbitals",       "visualize-orbitals"),
-}
+# subcommand -> skill package dir, for skills the server runs via their
+# scripts/run.py. Discovered from disk; a subcommand not here falls back to the
+# `-m assay_core.cli` path in _run_engine.
+def _discover_converted() -> dict:
+    from assay_core import discovery
+    return {info.subcommand: info.package
+            for info in discovery.discover_skills().values()}
+
+
+CONVERTED_SKILLS = _discover_converted()
+
+
+def _skill_run_path(pkg: str) -> Path:
+    return SKILLS_DIR / pkg / "scripts" / "run.py"
+
+
+# --------------------------------------------------------------------------- #
+# Per-call remote (Aurora) routing. Every skill tool exposes a `run_on` param
+# (local | aurora); when a call sets run_on=aurora we resolve an Aurora compute
+# node and set CHEMKIT_REMOTE_HOST for THAT call's subprocess, so runlog ssh's it
+# to the node and streams the result back in the same call — identical to a local
+# call, just executed on Aurora. Host resolution order:
+#   1. env CHEMKIT_REMOTE_HOST (already set = the deployment pinned a host)
+#   2. [remote].host in assay.toml
+#   3. first line of [remote].nodes_file (the nodeholder publishes .sweep_nodes)
+# Returns (host, ssh_opts) or (None, "") if none resolves.
+# --------------------------------------------------------------------------- #
+_ASSAY_TOML = REPO_ROOT / "assay.toml"
+
+
+def _load_remote_cfg() -> dict:
+    try:
+        import tomllib
+        with open(_ASSAY_TOML, "rb") as fh:
+            return (tomllib.load(fh).get("remote") or {})
+    except Exception:  # noqa: BLE001 - missing toml / py<3.11 → no config-based host
+        return {}
+
+
+def resolve_aurora_host() -> tuple[str | None, str]:
+    """Resolve an Aurora compute-node host + ssh opts for a run_on=aurora call."""
+    env_host = os.environ.get("CHEMKIT_REMOTE_HOST", "").strip()
+    if env_host:
+        return env_host, os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", "").strip()
+    cfg = _load_remote_cfg()
+    host = (cfg.get("host") or "").strip()
+    ssh_opts = (cfg.get("ssh_opts") or "").strip()
+    if not host:
+        nodes_file = cfg.get("nodes_file", ".sweep_nodes")
+        nf = Path(nodes_file) if os.path.isabs(nodes_file) else (REPO_ROOT / nodes_file)
+        if nf.is_file():
+            for line in nf.read_text().splitlines():
+                if line.strip():
+                    host = line.strip()
+                    break
+    return (host or None), ssh_opts
+
+# --------------------------------------------------------------------------- #
+# Live engine-subprocess registry — lets an interactive caller (the assay
+# agent REPL) hard-abort an in-flight calculation on `stop`/Ctrl-C. Each
+# _run_engine Popen registers itself here while running and removes itself when
+# done; kill_active_engines() SIGTERMs whatever is currently live. Thread-safe
+# because the agent turn runs on a background thread while the main thread reads
+# stdin. No-op when nothing is running.
+# --------------------------------------------------------------------------- #
+_ACTIVE_ENGINES: "set[subprocess.Popen]" = set()
+_ACTIVE_ENGINES_LOCK = threading.Lock()
+
+
+def _register_engine(proc: "subprocess.Popen") -> None:
+    with _ACTIVE_ENGINES_LOCK:
+        _ACTIVE_ENGINES.add(proc)
+
+
+def _unregister_engine(proc: "subprocess.Popen") -> None:
+    with _ACTIVE_ENGINES_LOCK:
+        _ACTIVE_ENGINES.discard(proc)
+
+
+def kill_active_engines() -> int:
+    """Stop every currently-running engine subprocess. Sends SIGTERM, then
+    escalates to SIGKILL for any that do not exit within a short grace period.
+    Returns the number signalled. Used by the interactive agent to hard-stop a
+    run."""
+    with _ACTIVE_ENGINES_LOCK:
+        procs = list(_ACTIVE_ENGINES)
+    signalled = []
+    for p in procs:
+        try:
+            if p.poll() is None:
+                p.terminate()
+                signalled.append(p)
+        except Exception:  # noqa: BLE001 - best-effort; process may have exited
+            pass
+    # Escalate: give SIGTERM a moment, then SIGKILL anything still alive so a
+    # backend that traps/ignores SIGTERM cannot keep running after `stop`.
+    deadline = time.monotonic() + 2.0
+    for p in signalled:
+        try:
+            remaining = max(0.0, deadline - time.monotonic())
+            p.wait(timeout=remaining)
+        except Exception:  # noqa: BLE001 - TimeoutExpired or already-reaped
+            try:
+                if p.poll() is None:
+                    p.kill()
+            except Exception:  # noqa: BLE001
+                pass
+    return len(signalled)
+
+# tool name -> (engine subcommand, skill package dir), discovered from disk.
+def _discover_tools() -> dict:
+    from assay_core import discovery
+    infos = discovery.discover_skills()
+    return {info.name: (info.subcommand, info.package)
+            for info in infos.values()}
+
+
+TOOLS = _discover_tools()
+
+# Server instructions injected into every connecting MCP client (Claude Code
+# renders these as a "# MCP Server Instructions" context block automatically, and
+# any MCP-capable client receives them in the `initialize` response). Committed to
+# the repo so the guidance ships with the package — every user who connects gets
+# ASSAY's operating rules with no per-user setup. Kept lean deliberately: it
+# orients and points to rules/*.md rather than pasting them, since it loads into
+# context every session. Guarded so a missing file never breaks startup.
+_INSTRUCTIONS_PATH = HERE / "INSTRUCTIONS.md"
+_INSTRUCTIONS = (
+    _INSTRUCTIONS_PATH.read_text(encoding="utf-8")
+    if _INSTRUCTIONS_PATH.exists()
+    else None
+)
 
 # log_level="WARNING" keeps the SDK's per-request INFO chatter (e.g.
 # "Processing request of type CallToolRequest") off the server's stderr, which a
 # stdio caller inherits — so the caller's stderr leads with the live-log path and
 # real diagnostics, not transport noise.
-mcp = FastMCP("chemkit", log_level="WARNING")
+mcp = FastMCP("assay", log_level="WARNING", instructions=_INSTRUCTIONS)
 
 
 def _arg_spec(subcommand: str) -> str:
@@ -74,7 +173,7 @@ def _arg_spec(subcommand: str) -> str:
     an agent call correctly WITHOUT a `--help` round-trip. Best-effort: returns
     "" if the engine can't be imported (description still works without it)."""
     try:
-        from chemkit_engine.cli import format_subcommand_args
+        from assay_core.cli import format_subcommand_args
         return format_subcommand_args(subcommand)
     except Exception:  # pragma: no cover - never break tool registration
         return ""
@@ -92,7 +191,7 @@ def _description(skill_folder: str, subcommand: str) -> str:
         if m:
             desc = m.group(1).strip()
     arg_spec = _arg_spec(subcommand)
-    args_block = (f"\n\nArguments (chemkit `{subcommand}`):\n{arg_spec}"
+    args_block = (f"\n\nArguments (assay `{subcommand}`):\n{arg_spec}"
                   if arg_spec else "")
     usage = (
         "\n\nInvoke by passing these as a list of CLI tokens in `args` "
@@ -100,198 +199,72 @@ def _description(skill_folder: str, subcommand: str) -> str:
         "for relative input/output paths. Returns the result as JSON. (You can "
         "still run args=[\"--help\"] for the raw argparse help.)"
     )
-    return (desc or f"chemkit {subcommand}") + args_block + usage
+    return (desc or f"assay {subcommand}") + args_block + usage
 
 
-def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str:
+def _run_engine(subcommand: str, args: list[str], cwd: str | None = None,
+                run_on: str = "local") -> str:
     """Run the engine CLI as an isolated subprocess; return its JSON stdout.
 
     `cwd` is the CALLER's working directory: relative input paths and `--out`
     destinations must resolve against where the user/AI invoked the tool, not
     against the server's own directory. Defaults to the server dir if absent.
 
-    The engine prints the result JSON to stdout and human notes to stderr. On
-    failure we return a JSON error object rather than raising, so the client
-    always gets structured output.
+    A CONVERTED skill (DESIGN.md inversion) is run via its self-contained
+    `skills/<pkg>/scripts/run.py` — the inverted arrow, the server calling the
+    skill. Every other subcommand still routes through `-m assay_core.cli
+    <subcommand>` until it is converted. Both paths are identical to the caller:
+    the same argv, the same result JSON.
+
+    The heavy lifting (live `.out` log announced at launch, CHEMKIT_REMOTE_HOST
+    ssh, structured error envelopes) lives in `assay_core.runlog` so a stand-alone
+    skill run gets the same behavior. This wrapper only supplies the command +
+    PYTHONPATH and registers the live subprocess so an interactive `stop` can
+    SIGTERM it.
     """
+    from assay_core import runlog
+
     env = dict(os.environ)
-    # Make `import chemkit_engine` resolve to mcp_server/chemkit_engine for the subprocess.
+    # Make `import assay_core` (and `import skills.*`) resolve to the repo-root
+    # source tree for the subprocess.
     env["PYTHONPATH"] = os.pathsep.join(
-        [str(HERE), env.get("PYTHONPATH", "")]
+        [str(REPO_ROOT), env.get("PYTHONPATH", "")]
     ).rstrip(os.pathsep)
-    run_cwd = cwd if (cwd and os.path.isdir(cwd)) else str(HERE)
-    cmd = [sys.executable, "-m", "chemkit_engine.cli", subcommand, *args]
 
-    # --- Optional remote execution (CHEMKIT_REMOTE_HOST) -----------------------
-    # On clusters (e.g. Aurora) the agent + this server can run on a LOGIN node
-    # while the actual chemistry must run on a COMPUTE node (login nodes may lack
-    # compute resources or, on Aurora, have an fs quirk that breaks the engine's
-    # nested mkdir). If CHEMKIT_REMOTE_HOST is set, run the engine on that host
-    # via ssh. This ASSUMES a SHARED $HOME/filesystem so `cd run_cwd` and all
-    # input/--out paths resolve identically on both sides (true on Aurora, where
-    # $HOME is mounted on compute nodes). The result JSON still comes back on the
-    # ssh stdout, and the live `.out` is written locally from the tee'd stderr,
-    # so no file copy-back is needed under a shared filesystem.
-    remote_host = os.environ.get("CHEMKIT_REMOTE_HOST", "").strip()
-    if remote_host:
-        # Reproduce cwd + PYTHONPATH on the remote side, then run the same cmd.
-        # shlex.quote every piece so paths/args with spaces or shell metachars
-        # survive the single remote shell string ssh runs.
-        remote_inner = "cd {cwd} && PYTHONPATH={pp} {run}".format(
-            cwd=shlex.quote(run_cwd),
-            pp=shlex.quote(env["PYTHONPATH"]),
-            run=" ".join(shlex.quote(c) for c in cmd),
-        )
-        ssh_opts = shlex.split(os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", ""))
-        cmd = ["ssh", *ssh_opts, remote_host, remote_inner]
+    # Per-call remote routing: run_on=aurora → resolve a compute node and set
+    # CHEMKIT_REMOTE_HOST for THIS call so runlog ssh's it there (shared FS →
+    # identical paths; result JSON streams back in the same call). run_on=local
+    # (default) leaves the env untouched → runs locally. An explicit aurora
+    # request that can't resolve a host is a clear error, never a silent local run.
+    if str(run_on).strip().lower() in ("aurora", "remote"):
+        host, ssh_opts = resolve_aurora_host()
+        if not host:
+            return json.dumps({
+                "error": ("run_on=aurora requested but no Aurora compute node "
+                          "resolved. Set [remote].host in assay.toml, or ensure the "
+                          "nodeholder published .sweep_nodes (qsub "
+                          "tools/aurora_nodeholder.pbs), or export "
+                          "CHEMKIT_REMOTE_HOST."),
+                "subcommand": subcommand, "run_on": "aurora",
+            })
+        env["CHEMKIT_REMOTE_HOST"] = host
+        if ssh_opts:
+            env["CHEMKIT_REMOTE_SSH_OPTS"] = ssh_opts
 
-    # Live `.out` log the user can `tail -f` while the calculation runs.
-    # Written in the CALLER's cwd so it sits next to their inputs/outputs.
-    # The engine prints the result JSON to stdout and all human/PySCF/xtb/mopac
-    # log text to stderr; we tee ONLY stderr into the .out line-by-line (stdout
-    # is kept clean so the returned JSON never gets corrupted), then append the
-    # final result JSON under a banner so the file is self-contained.
-    stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    out_path = os.path.join(run_cwd, f"{subcommand}_{stamp}.out")
-
-    def _write_header(fh):
-        fh.write("# chemkit live log\n")
-        fh.write(f"# subcommand : {subcommand}\n")
-        fh.write(f"# args       : {' '.join(args)}\n")
-        fh.write(f"# command    : {' '.join(cmd)}\n")
-        fh.write(f"# cwd        : {run_cwd}\n")
-        fh.write(f"# started    : {stamp}\n")
-        fh.write("# " + "=" * 60 + "\n")
-        fh.flush()
-
-    timed_out = False
-    try:
-        # line-buffered so `tail -f` sees lines as they are produced.
-        log_fh = open(out_path, "w", buffering=1, encoding="utf-8")
-    except OSError:
-        # If the .out can't be created (e.g. read-only cwd), fall back to the
-        # original buffered behavior rather than failing the calculation.
-        log_fh = None
-
-    try:
-        if log_fh is not None:
-            _write_header(log_fh)
-            proc = subprocess.Popen(
-                cmd, cwd=run_cwd, env=env, text=True, bufsize=1,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            )
-
-            # Reader thread: tee engine stderr -> .out as it arrives.
-            stderr_chunks: list[str] = []
-
-            def _pump_stderr():
-                assert proc.stderr is not None
-                for line in proc.stderr:
-                    stderr_chunks.append(line)
-                    log_fh.write(line)
-                    log_fh.flush()
-
-            t = threading.Thread(target=_pump_stderr, daemon=True)
-            t.start()
-
-            # Announce the live-log path AT LAUNCH (before the blocking read
-            # below), so a caller learns where to `tail -f` while the
-            # calculation is still running — calculation-reporting-standards
-            # non-negotiable #9. Flush so it isn't buffered behind the result.
-            sys.stderr.write(f"# chemkit live log (tail -f): {out_path}\n")
-            sys.stderr.flush()
-
-            stdout_data = ""
-            try:
-                # proc.stdout.read() blocks until the engine closes stdout,
-                # i.e. until the process is done writing its result JSON.
-                stdout_data = proc.stdout.read() if proc.stdout else ""
-                proc.wait(timeout=3600)
-            except subprocess.TimeoutExpired:
-                proc.kill()
-                proc.wait()
-                timed_out = True
-            t.join(timeout=5)
-            stderr_data = "".join(stderr_chunks)
-
-            # Make the .out self-contained: append the result JSON at the end.
-            log_fh.write("\n# " + "=" * 60 + "\n")
-            log_fh.write("# ===== RESULT JSON (stdout) =====\n")
-            log_fh.write(stdout_data.strip() + "\n")
-            log_fh.flush()
-        else:
-            # Fallback: no live log; behave like the old capture_output path.
-            try:
-                proc_run = subprocess.run(
-                    cmd, cwd=run_cwd, env=env,
-                    capture_output=True, text=True, timeout=3600,
-                )
-                stdout_data, stderr_data = proc_run.stdout, proc_run.stderr
-                returncode = proc_run.returncode
-            except subprocess.TimeoutExpired:
-                timed_out = True
-                stdout_data = stderr_data = ""
-    finally:
-        if log_fh is not None:
-            log_fh.close()
-
-    if timed_out:
-        return json.dumps({"error": "calculation timed out (3600 s)",
-                           "subcommand": subcommand, "args": args,
-                           "out_log": out_path})
-
-    returncode = proc.returncode if log_fh is not None else returncode
-    # (The live-log path is announced once at launch on line ~153 and is also
-    # returned to the caller under `out_log`; no end-of-run duplicate needed.)
-
-    if returncode != 0:
-        # An integrity hard-abort exits nonzero but STILL prints the full
-        # structured result (with an `integrity` block) to stdout. Preserve that
-        # structured result — augmented with an `error` key so the caller still
-        # treats it as a failure — instead of throwing it away for a truncated
-        # stdout stub. This keeps the integrity verdict, warnings, and out-path
-        # reachable by the agent while signalling that the number is untrustworthy.
-        parsed = None
-        try:
-            parsed = json.loads(stdout_data.strip())
-        except ValueError:
-            parsed = None
-        # Recognize either the full result JSON (has an `integrity` block, from
-        # --stdout json) or the compact pointer (has `status`/`trustworthy`, from
-        # --stdout path). Either way the structured verdict is worth preserving.
-        is_integrity_result = isinstance(parsed, dict) and (
-            isinstance(parsed.get("integrity"), dict)
-            or ("trustworthy" in parsed and "status" in parsed)
-        )
-        if is_integrity_result:
-            parsed["error"] = "integrity gate failed (result is not trustworthy)"
-            parsed["returncode"] = returncode
-            parsed.setdefault("out_log", out_path)
-            return json.dumps(parsed)
-        return json.dumps({
-            "error": "chemkit engine exited non-zero",
-            "returncode": returncode,
-            "subcommand": subcommand, "args": args,
-            "stderr": stderr_data.strip()[-4000:],
-            "stdout": stdout_data.strip()[-2000:],
-        })
-    # On success the JSON result is on stdout. Inject the live-log path under
-    # `out_log` so the caller (and ultimately the agent) learns where to
-    # `tail -f` it — calculation-reporting-standards non-negotiable #9. The
-    # server's own stderr writes (above) do NOT reach a stdio MCP caller, so the
-    # returned JSON is the only channel that crosses back to the Bash tool.
-    out = stdout_data.strip()
-    try:
-        parsed = json.loads(out)
-        if log_fh is not None and isinstance(parsed, dict) and "out_log" not in parsed:
-            parsed["out_log"] = out_path
-            return json.dumps(parsed)
-        return out
-    except ValueError:
-        wrapped = {"raw_stdout": out, "stderr": stderr_data.strip()}
-        if log_fh is not None:
-            wrapped["out_log"] = out_path
-        return json.dumps(wrapped)
+    pkg = CONVERTED_SKILLS.get(subcommand)
+    if pkg is not None:
+        run_py = _skill_run_path(pkg)
+        cmd = [sys.executable, str(run_py), *args]
+        # The parent (runlog, below) already tees the live `.out`; tell the child
+        # skill's run_cli spine not to write a SECOND one.
+        env["ASSAY_SUPPRESS_LIVE_OUT"] = "1"
+    else:
+        cmd = [sys.executable, "-m", "assay_core.cli", subcommand, *args]
+    return runlog.run_skill_subprocess(
+        cmd, label=subcommand, args=args, cwd=cwd, env=env,
+        default_cwd=str(HERE),
+        on_start=_register_engine, on_end=_unregister_engine,
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -300,7 +273,7 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None) -> str
 # FastMCP exposes no tool middleware / before-after hooks (the @mcp.tool
 # decorator is the only seam), so boundary concerns are added as decorators that
 # wrap the tool function INSIDE _make_tool — one place that covers all 20 tools
-# (and, transitively, the `chemkit` CLI, which routes through these same tools).
+# (and, transitively, the `assay` CLI, which routes through these same tools).
 # ---------------------------------------------------------------------------
 
 # Per-tool call logging is on by default but terse; set CHEMKIT_LOG_TOOLS=0 to
@@ -352,7 +325,7 @@ def log_tool_call(tool_name: str):
                              if k not in ("cwd",) and v is not None]
                 arglist = ",".join(str(x) for x in (shown or []))
                 sys.stderr.write(
-                    f"[chemkit] tool={tool_name} args=[{arglist}] "
+                    f"[assay] tool={tool_name} args=[{arglist}] "
                     f"cwd={kw.get('cwd') or '.'} dur={dur_ms}ms {tag}\n"
                 )
                 sys.stderr.flush()
@@ -373,7 +346,7 @@ def tool_error_envelope(subcommand: str):
                 return fn(*a, **kw)
             except Exception as exc:  # noqa: BLE001 - never leak a raw transport error
                 return json.dumps({
-                    "error": f"chemkit {subcommand} failed: "
+                    "error": f"assay {subcommand} failed: "
                              f"{type(exc).__name__}: {exc}",
                     "subcommand": subcommand,
                     "args": list(kw.get("args") or []),
@@ -419,46 +392,51 @@ def _snake(tool_name: str) -> str:
 
 
 def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
-    """Register one MCP tool with its OWN typed signature.
+    """Register one MCP tool with its own typed signature.
 
-    Instead of the old shared generic signature (xyz/method/charge/.../extra_args),
-    each tool advertises exactly the arguments its skill actually has — required
-    scientific flags included (e.g. redox-potential shows ox_charge/red_charge;
-    pka-acidity shows ha/a_minus). The MCP SDK validates types/enums before the
-    call, so an agent cannot invent a flag, mistype an enum, or (the key fix for
-    the many-arg skills) fill a field the skill does not have: the wrapper only
-    ever emits params that exist for THIS subcommand, so nothing gets injected
-    that the subcommand would reject.
-
-    Mechanics: the SDK derives a tool's JSON schema from the function signature
-    (inspect.signature). We keep ONE generic body and give it a SYNTHESIZED
-    __signature__ built from arg_spec.skill_params(subcommand); the shared
-    arg_spec.params_to_argv turns the validated kwargs back into engine argv.
+    Each tool advertises exactly the arguments its skill takes (required scientific
+    flags included — e.g. redox-potential's ox_charge/red_charge), so the SDK
+    validates types/enums before the call and an agent can't invent a flag or fill
+    one the skill lacks. The SDK derives the JSON schema from the function
+    signature, so we give one generic body a synthesized __signature__ built from
+    the skill's build_parser() (via arg_spec.params_from_parser); params_to_argv
+    turns the validated kwargs back into engine argv.
     """
-    from chemkit_engine import arg_spec as _arg_spec_mod
+    from assay_core import arg_spec as _arg_spec_mod
+    from assay_core import discovery as _discovery
 
     description = _description(skill_folder, subcommand)
-    params = _arg_spec_mod.skill_params(subcommand)
-    allowed_flags = _arg_spec_mod.known_flags(subcommand)
+    _bp = _discovery.build_parser_for(subcommand)
+    if _bp is not None:
+        _parser = _bp()
+        params = _arg_spec_mod.params_from_parser(_parser)
+        allowed_flags = _arg_spec_mod.known_flags_from_parser(_parser)
+    else:  # pragma: no cover - a skill without a discoverable parser
+        params = _arg_spec_mod.skill_params(subcommand)
+        allowed_flags = _arg_spec_mod.known_flags(subcommand)
     param_names = {p.name for p in params}
 
     @tool_error_envelope(subcommand)
     @log_tool_call(tool_name)
     def impl(**kwargs) -> str:
-        # Back-compat: a raw CLI token list still wins (the `chemkit` front door,
+        # Back-compat: a raw CLI token list still wins (the `assay` front door,
         # older callers). Everything else flows through the typed → argv path.
         raw = kwargs.pop("args", None)
         cwd = kwargs.pop("cwd", None)
         extra = kwargs.pop("extra_args", None)
+        # Per-call location: local (default) or aurora (run on an Aurora compute
+        # node over ssh, result returned in this same call). Routing param — it is
+        # NOT passed to the engine argparse.
+        run_on = kwargs.pop("run_on", None) or "local"
         if raw:
-            return _run_engine(subcommand, list(raw), cwd=cwd)
+            return _run_engine(subcommand, list(raw), cwd=cwd, run_on=run_on)
         # Validate the slim escape hatch: reject any unknown flag rather than
         # passing it through to argparse blindly (with a did-you-mean hint).
         if extra:
             bad = _validate_extra_flags(extra, allowed_flags)
             if bad:
                 return json.dumps({
-                    "error": (f"chemkit {subcommand}: unknown flag(s) in "
+                    "error": (f"assay {subcommand}: unknown flag(s) in "
                               f"extra_args: {', '.join(bad)}. Use the typed "
                               f"parameters instead of raw flags where possible."),
                     "subcommand": subcommand,
@@ -466,7 +444,7 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
                 })
         typed = {k: v for k, v in kwargs.items() if k in param_names}
         argv = _arg_spec_mod.params_to_argv(subcommand, typed, extra_args=extra)
-        return _run_engine(subcommand, argv, cwd=cwd)
+        return _run_engine(subcommand, argv, cwd=cwd, run_on=run_on)
 
     # Build the per-skill signature: the skill's typed params + the three
     # cross-cutting wrapper params (extra_args / args / cwd), all keyword-only.
@@ -484,6 +462,9 @@ def _make_tool(tool_name: str, subcommand: str, skill_folder: str):
         for p in params
     ]
     sig_params += [
+        inspect.Parameter("run_on", inspect.Parameter.KEYWORD_ONLY,
+                          annotation=_Optional[_Literal["local", "aurora"]],
+                          default=None),
         inspect.Parameter("extra_args", inspect.Parameter.KEYWORD_ONLY,
                           annotation=_Optional[_List[str]], default=None),
         inspect.Parameter("args", inspect.Parameter.KEYWORD_ONLY,
@@ -526,13 +507,22 @@ def _looks_like_negative_number(s: str) -> bool:
 # Shared docstring for every generated tool (the per-skill args are advertised in
 # the tool's typed schema + its description; this covers the reporting contract).
 _TOOL_DOC = (
-    "Run this chemkit skill. Fill the TYPED parameters this tool advertises — "
+    "Run this assay skill. Fill the TYPED parameters this tool advertises — "
     "they are exactly the arguments this skill accepts (required ones have no "
     "default). Do NOT pass raw CLI flags; there is no need to guess flag names. "
     "`extra_args` is a rare escape hatch for a flag with no typed parameter "
     "(unknown flags are rejected with a suggestion). `cwd` resolves relative "
     "input/output paths. (`args`, a raw CLI token list, is still accepted for "
     "back-compat and takes precedence when given.)\n\n"
+    "WHERE IT RUNS — `run_on`: 'local' (default) runs on this server's machine; "
+    "'aurora' runs THIS call on an Aurora compute node over ssh and returns the "
+    "result in the same call (identical output, just executed remotely). Use "
+    "'aurora' for heavier DFT when an allocation is available; the result JSON "
+    "will carry a `remote_host` field naming the node it ran on — report it. Only "
+    "fits calcs that finish within ~1h; and the internet-dependent lookups "
+    "(name-to-smiles, build-from-smiles) should stay local (compute nodes have no "
+    "outbound internet). If 'aurora' is requested but no node is available the "
+    "call returns an error rather than silently running local.\n\n"
     "REPORTING CONTRACT — surface warnings verbatim. If the result JSON has a "
     "`warnings` array, you MUST relay EVERY warning to the user verbatim (none "
     "dropped, summarized, or paraphrased). The result includes a ready-to-paste "
@@ -547,21 +537,15 @@ for _name, (_sub, _folder) in TOOLS.items():
 
 
 def main() -> None:
-    """Console entry point (`chemkit-mcp`): start the stdio MCP server."""
+    """Console entry point (`assay-mcp`): start the stdio MCP server."""
     mcp.run()  # stdio transport
 
 
 # ---------------------------------------------------------------------------
-# `chemkit` human-facing CLI front door.
-#
-# Routes a shell call `chemkit <subcommand> <args...>` THROUGH the MCP server
-# (via the shared _mcp_client), exactly like the per-skill wrapper scripts do —
-# so it inherits every server-path guarantee: the live `.out` log is streamed
-# and its path surfaced (calculation-reporting-standards #9), and the in-engine
-# --accept-defaults level-of-theory gate + integrity gate still apply.
-#
-# Subcommand -> MCP tool name is derived from TOOLS (the single source of truth),
-# so this never drifts from the server's own dispatch table.
+# `assay` human-facing CLI front door. `assay <subcommand> <args...>` dispatches
+# to the skill's run.py (via _dispatch_calc, below) — the same path every other
+# entry point takes, so the live `.out` log, the level-of-theory gate, and the
+# integrity gate all apply. TOOLS is discovered, so this map never drifts.
 # ---------------------------------------------------------------------------
 
 # subcommand (e.g. "sp") -> tool name (e.g. "single-point-energy")
@@ -571,47 +555,77 @@ _SUBCOMMAND_TO_TOOL = {sub: name for name, (sub, _folder) in TOOLS.items()}
 def _chemkit_usage() -> str:
     subs = ", ".join(sorted(_SUBCOMMAND_TO_TOOL))
     return (
-        "usage: chemkit <subcommand> [args...]\n\n"
-        "Runs a chemkit calculation through the MCP server (same path as the\n"
-        "skill scripts: live .out log + level-of-theory/integrity gates apply).\n\n"
-        f"subcommands: {subs}\n\n"
-        "Run a subcommand with --help for its arguments, e.g.:\n"
-        "  chemkit sp --help\n"
-        "  chemkit sp --method xtb mol.xyz\n"
-        "  chemkit redox --method dft --tier standard --ox-charge 0 --red-charge -1 mol.xyz\n\n"
-        "To start the MCP server instead (for agents), use: chemkit-mcp\n"
+        "usage:\n"
+        "  assay <subcommand> [args...]        run ONE calculation\n"
+        "  assay [--base-url URL] [--model M]  start the interactive AGENT (REPL)\n"
+        "  assay --model M --prompt \"...\"       run ONE agent request and exit\n\n"
+        "CALCULATION mode runs a assay skill through the MCP server (live .out\n"
+        "log + level-of-theory/integrity gates apply):\n"
+        f"  subcommands: {subs}\n"
+        "  assay sp --help                       args for one subcommand\n"
+        "  assay sp --method xtb mol.xyz\n"
+        "  assay redox --method dft --tier standard --ox-charge 0 --red-charge -1 mol.xyz\n\n"
+        "AGENT mode opens a conversational assistant that drives the skills over\n"
+        "an OpenAI-compatible endpoint (env: CHEMKIT_LLM_BASE_URL / _MODEL /\n"
+        "_API_KEY). It is entered when no subcommand is given (bare `assay`) or\n"
+        "the first argument is an option:\n"
+        "  assay --base-url http://127.0.0.1:60639/v1 --model argo:o3\n"
+        "  assay --model argo:o3 --prompt \"single-point energy of water.xyz with xtb\"\n"
+        "  assay --help-agent                    full agent-mode options\n\n"
+        "Discovery:  assay --list-skills [--json]\n"
+        "MCP server (for external agents/hosts): assay-mcp\n"
     )
 
 
 def cli_main(argv: list[str] | None = None) -> int:
-    """Console entry point (`chemkit`): run one calculation via the MCP server.
+    """Console entry point (`assay`): two modes, dispatched on the first arg.
 
-    `chemkit sp --method xtb mol.xyz` -> calls the `single-point-energy` MCP
-    tool with the remaining argv. Returns the tool's exit code.
+    * ``assay sp --method xtb mol.xyz`` — run ONE calculation via the MCP
+      server (the first token is a skill subcommand).
+    * ``assay`` / ``assay --base-url X --model Y [--prompt "..."]`` — launch
+      the INTERACTIVE AGENT (a REPL, or one-shot with --prompt). Reached when
+      argv is empty or the first token is an option (starts with ``-``), so it
+      cannot collide with a subcommand.
+
+    ``-h``/``--help`` and ``--list-skills`` are reserved and handled here first.
+    Returns the underlying exit code.
     """
     argv = list(sys.argv[1:] if argv is None else argv)
-    if not argv or argv[0] in ("-h", "--help"):
+
+    if argv and argv[0] in ("-h", "--help"):
         sys.stdout.write(_chemkit_usage())
-        return 0 if argv else 2
+        return 0
 
-    subcommand = argv[0]
-    rest = argv[1:]
+    # `assay --help-agent` — full agent-mode option list (argparse --help).
+    if argv and argv[0] == "--help-agent":
+        from mcp_server.agent_cli import main as _agent_main
+        return _agent_main(["--help"])
 
-    # `chemkit --list-skills [--json]` — discovery, handled by the engine.
-    if subcommand in ("--list-skills",):
+    # `assay --list-skills [--json]` — discovery, handled by the engine.
+    if argv and argv[0] == "--list-skills":
+        rest = argv[1:]
         try:
-            from chemkit_engine.cli import list_skills  # type: ignore
+            from assay_core.cli import list_skills  # type: ignore
             sys.stdout.write(list_skills(as_json=("--json" in rest)))
             return 0
         except Exception:  # noqa: BLE001
             sys.stdout.write(_chemkit_usage())
             return 0
 
+    # Agent mode: no subcommand given (empty argv) or the first token is an
+    # option (e.g. --base-url / --model / --prompt) rather than a skill name.
+    if not argv or argv[0].startswith("-"):
+        from mcp_server.agent_cli import main as _agent_main
+        return _agent_main(argv)
+
+    subcommand = argv[0]
+    rest = argv[1:]
+
     # Resolve descriptive aliases (frontier-orbitals -> frontier, ...) to the
     # canonical subcommand via the engine's alias map (single source of truth),
-    # so `chemkit frontier-orbitals ...` works at the human/agent front door too.
+    # so `assay frontier-orbitals ...` works at the human/agent front door too.
     try:
-        from chemkit_engine.cli import _alias_to_canonical  # type: ignore
+        from assay_core.cli import _alias_to_canonical  # type: ignore
         subcommand = _alias_to_canonical().get(subcommand, subcommand)
     except Exception:  # noqa: BLE001
         pass
@@ -621,49 +635,104 @@ def cli_main(argv: list[str] | None = None) -> int:
         # did-you-mean suggestion from the engine's fuzzy matcher.
         hint = ""
         try:
-            from chemkit_engine.cli import _suggest_subcommand  # type: ignore
+            from assay_core.cli import _suggest_subcommand  # type: ignore
             sug = _suggest_subcommand(subcommand)
             if sug:
                 hint = f" did you mean {sug!r}?"
         except Exception:  # noqa: BLE001
             pass
         sys.stderr.write(
-            f"chemkit: unknown subcommand {subcommand!r}.{hint}\n\n" + _chemkit_usage()
+            f"assay: unknown subcommand {subcommand!r}.{hint}\n\n" + _chemkit_usage()
         )
         return 2
 
-    # A per-subcommand help request (e.g. `chemkit pka --help`) is NOT a
-    # calculation: it must not spawn the server, create a live `.out` log, or get
-    # wrapped in result JSON. Print argparse's help directly, in-process, and
-    # exit. (We import the engine CLI lazily and let argparse's own --help action
-    # print + SystemExit; we translate that exit code back to an int.)
-    if "-h" in rest or "--help" in rest:
-        if str(HERE) not in sys.path:
-            sys.path.insert(0, str(HERE))
+    # `assay <sub> --help-json` — machine-readable arg spec for one subcommand,
+    # derived from the skill's own build_parser() (discovery/introspection), so it
+    # matches exactly what the MCP tool advertises. Handled before the calc path.
+    if "--help-json" in rest:
         try:
-            from chemkit_engine.cli import main as engine_main  # type: ignore
-        except Exception:  # noqa: BLE001 — fall back to the server path if import fails
-            engine_main = None
-        if engine_main is not None:
-            try:
-                return int(engine_main([subcommand, *rest]) or 0)
-            except SystemExit as e:  # argparse --help raises SystemExit(0)
-                return int(e.code or 0)
+            from assay_core import discovery, cli as _cli  # type: ignore
+            bp = discovery.build_parser_for(subcommand)
+            if bp is not None:
+                spec = _cli.describe_parser(bp())
+                aliases = _cli.SUBCOMMAND_ALIASES.get(subcommand, [])
+                sys.stdout.write(json.dumps(
+                    {"subcommand": subcommand, "aliases": aliases,
+                     "arguments": spec}, indent=2) + "\n")
+                return 0
+        except Exception:  # noqa: BLE001 - fall through to engine CLI
+            pass
+        try:
+            from assay_core.cli import main as engine_main  # type: ignore
+            return int(engine_main([subcommand, *rest]) or 0)
+        except SystemExit as e:
+            return int(e.code or 0)
 
-    # Route through the shared MCP client (skills/_mcp_client.py), which speaks to
-    # this same server. It lives in skills/, a sibling of mcp_server/.
-    skills_dir = HERE.parent / "skills"
-    if str(skills_dir) not in sys.path:
-        sys.path.insert(0, str(skills_dir))
+    # A per-subcommand help request (e.g. `assay pka --help`) is NOT a
+    # calculation: it must not spawn a subprocess, create a live `.out` log, or
+    # get wrapped in result JSON. Print the SKILL's own build_parser() help
+    # directly (the inverted source of truth), in-process, and exit. Fall back to
+    # the engine CLI's help only if the skill parser isn't discoverable.
+    if "-h" in rest or "--help" in rest:
+        try:
+            from assay_core import discovery  # type: ignore
+            bp = discovery.build_parser_for(subcommand)
+        except Exception:  # noqa: BLE001
+            bp = None
+        if bp is not None:
+            try:
+                bp().parse_args(["--help"])   # argparse prints help + SystemExit(0)
+                return 0
+            except SystemExit as e:
+                return int(e.code or 0)
+        # Fallback: engine CLI help.
+        try:
+            from assay_core.cli import main as engine_main  # type: ignore
+            return int(engine_main([subcommand, *rest]) or 0)
+        except SystemExit as e:
+            return int(e.code or 0)
+        except Exception:  # noqa: BLE001
+            pass
+
+    # Dispatch the calculation by running the skill DIRECTLY (via _run_engine,
+    # which routes a converted skill to its skills/<pkg>/scripts/run.py through
+    # runlog — same path the MCP tool uses). No MCP round-trip: the human CLI is
+    # the front door to the skills, exactly like the design intends. All gates,
+    # the live `.out` log, and the integrity verdict apply because they live in
+    # the skill's run_cli spine + runlog.
+    return _dispatch_calc(subcommand, rest)
+
+
+def _dispatch_calc(subcommand: str, rest: list[str]) -> int:
+    """Run one calculation for the human CLI front door and shape its output like
+    the old `_mcp_client.run_skill`: surface the live `.out` path on stderr, print
+    the result JSON to stdout, and translate an engine error object into a stderr
+    message + nonzero exit."""
+    out = _run_engine(subcommand, rest, cwd=os.getcwd())
     try:
-        from _mcp_client import run_skill  # type: ignore
-    except ModuleNotFoundError as exc:
-        if exc.name == "mcp":
-            sys.stderr.write("chemkit needs the MCP client SDK: pip install mcp\n")
-            return 2
-        sys.stderr.write(f"chemkit: could not load the MCP client ({exc}).\n")
-        return 2
-    return run_skill(tool_name, rest)
+        parsed = json.loads(out)
+    except ValueError:
+        parsed = None
+
+    # Live-log path first on stderr, on EVERY run, so it lands at the top of the
+    # caller's terminal/Bash result regardless of --stdout mode (calc-reporting #9).
+    if isinstance(parsed, dict):
+        out_log = parsed.get("out_log")
+        if out_log:
+            sys.stderr.write(
+                f"assay: live log: {out_log}\n"
+                "# Tell the user this path immediately, while the run is going "
+                "(non-negotiable #9).\n"
+            )
+
+    if isinstance(parsed, dict) and "error" in parsed:
+        engine_stderr = parsed.get("stderr") or ""
+        if engine_stderr:
+            sys.stderr.write(engine_stderr.rstrip() + "\n")
+        sys.stderr.write(f"assay: {parsed['error']}\n")
+        return 1
+    print(out)
+    return 0
 
 
 if __name__ == "__main__":

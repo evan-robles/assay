@@ -22,10 +22,10 @@ from pathlib import Path
 import pytest
 
 # Import the engine CLI module directly.
-_MCP = Path(__file__).parent.parent / "mcp_server"
+_MCP = Path(__file__).parent.parent  # repo root (assay_core lives here)
 if str(_MCP) not in sys.path:
     sys.path.insert(0, str(_MCP))
-from chemkit_engine import cli  # noqa: E402
+from assay_core import cli  # noqa: E402
 
 
 # --------------------------------------------------------------------------- #
@@ -244,7 +244,7 @@ def _load_arg_spec():
     m = str(Path(__file__).parent.parent / "mcp_server")
     if m not in sys.path:
         sys.path.insert(0, m)
-    return importlib.import_module("chemkit_engine.arg_spec")
+    return importlib.import_module("assay_core.arg_spec")
 
 
 def test_params_to_argv_canonical_dft():

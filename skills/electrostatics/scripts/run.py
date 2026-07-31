@@ -1,0 +1,321 @@
+#!/usr/bin/env python3
+"""electrostatics — self-contained assay skill.
+
+Dipole moment + atomic partial charges at a fixed geometry (single point, no
+optimization). Self-contained: owns its workflow and depends only on the shared
+`assay_core` physics library. Runnable stand-alone:
+
+    python skills/electrostatics/scripts/run.py --method xtb mol.xyz
+
+For an electrostatics analysis on a relaxed structure, run geometry-optimize
+first and pass the optimized xyz here.
+"""
+from __future__ import annotations
+
+# Skill discovery manifest (read by assay_core.discovery / the MCP server).
+SKILL_NAME = "electrostatics"      # kebab display name (matches SKILL.md frontmatter)
+SUBCOMMAND = "electrostatics"      # engine subcommand this skill implements
+import argparse
+import os
+import re
+import tempfile
+from typing import Any, Dict, List, Optional
+
+import numpy as np
+
+from assay_core.calculators import (
+    label_calculator, apply_calc_to_atoms,
+    method_label, program_label, collect_calc_extras, mopac_chemistry_keywords,
+    register_auto_tempdir,
+)
+from assay_core.io import read_geometry
+from assay_core.integrity import finalize
+from assay_core.schema import (
+    base_result, energy_block_from_eV, element_warnings,
+    scf_convergence_warnings, KCAL_TO_EV,
+)
+from assay_core.tasks._mopac_parsers import (
+    parse_mopac_extras, _parse_aux_array, _find_with_ext, run_mopac,
+)
+from assay_core.constants import AU_TO_DEBYE, HARTREE_TO_EV
+
+
+def run(
+    input_path: str,
+    *,
+    method: str,
+    charge: int = 0,
+    multiplicity: int = 1,
+    solvent: Optional[str] = None,
+    cli: str = "",
+    tier: Optional[str] = None,
+    functional: Optional[str] = None,
+    basis: Optional[str] = None,
+    density_fit: bool = False,
+    solvent_model: str = "ddcosmo",
+    gate_integrity: bool = True,
+    allow_unconverged: bool = False,
+) -> Dict[str, Any]:
+    """Electrostatics single-point on the supplied geometry."""
+    method = method.lower()
+    atoms = read_geometry(input_path)
+    symbols = atoms.get_chemical_symbols()
+
+    calc_for_label = label_calculator(
+        method, charge=charge, multiplicity=multiplicity, solvent=solvent,
+        tier=tier, functional=functional, basis=basis, density_fit=density_fit,
+        solvent_model=solvent_model,
+    )
+
+    result = base_result(
+        task="electrostatics",
+        method=method_label(method, calc_for_label),
+        program=program_label(method),
+        input_path=os.path.abspath(input_path),
+        n_atoms=len(atoms),
+        atoms=symbols,
+        charge=charge,
+        multiplicity=multiplicity,
+        solvent=solvent,
+        cli=cli,
+    )
+
+    if method == "xtb":
+        body = _run_xtb(atoms, charge=charge, multiplicity=multiplicity, solvent=solvent)
+    elif method == "mopac":
+        body = _run_mopac(atoms, symbols, charge=charge, multiplicity=multiplicity,
+                          solvent=solvent)
+    elif method in ("dft", "hf"):
+        body = _run_generic(atoms, calc=calc_for_label, method=method)
+    else:
+        raise ValueError(f"Unknown method {method!r}")
+
+    # A dropped-solvent flag from the xtb path is surfaced as a warning and the
+    # internal carrier key removed.
+    solvent_drop = body.pop("_solvent_drop_warning", None)
+    result.update(body)
+    warns = element_warnings(symbols, method)
+    warns += scf_convergence_warnings(method, body)
+    if solvent_drop:
+        warns.append(solvent_drop)
+    if warns:
+        existing = result.get("warnings") or []
+        result["warnings"] = existing + warns
+
+    return finalize(result, gate_integrity=gate_integrity,
+                    allow_unconverged=allow_unconverged)
+
+
+# ---------------------------------------------------------------------------
+# Generic PySCF (dft/hf) backend
+# ---------------------------------------------------------------------------
+
+def _run_generic(atoms, *, calc, method) -> Dict[str, Any]:
+    """DFT/HF electrostatics via the PySCF backend.
+
+    Expects the PySCF calculator to stash a `dipole_debye` vector and
+    `partial_charges` array on `_chemkit_extras`.
+    """
+    apply_calc_to_atoms(atoms, calc)
+    energy_eV = float(atoms.get_potential_energy())
+    extras = collect_calc_extras(method, atoms, calc) or {}
+    out: Dict[str, Any] = {}
+    out.update(energy_block_from_eV(energy_eV))
+    dip_vec = extras.get("dipole_vector_debye")
+    if dip_vec is not None:
+        out["dipole_vector_debye"] = list(dip_vec)
+        out["dipole_debye"] = float(np.linalg.norm(dip_vec))
+    elif "dipole_debye" in extras:
+        out["dipole_debye"] = extras["dipole_debye"]
+    charges = extras.get("partial_charges") or extras.get("mulliken_charges")
+    if charges is not None:
+        out["partial_charges"] = list(charges)
+        out["partial_charges_scheme"] = extras.get(
+            "partial_charges_scheme", f"Mulliken ({method.upper()})",
+        )
+        out["sum_of_charges"] = float(sum(charges))
+    # Carry SCF convergence flags up so run() can promote a non-convergence to a
+    # prominent top-level warning (calculation-reporting-standards #6/#7).
+    for k in ("scf_converged", "scf_cycles"):
+        if k in extras:
+            out[k] = extras[k]
+    return out
+
+
+# ---------------------------------------------------------------------------
+# xtb backend
+# ---------------------------------------------------------------------------
+
+def _run_xtb(atoms, *, charge: int, multiplicity: int,
+             solvent: Optional[str]) -> Dict[str, Any]:
+    from assay_core.calculators import make_xtb_calculator, import_xtb_python
+    try:
+        import_xtb_python()
+    except ImportError as e:
+        raise RuntimeError(
+            "xtb-python is required for `chemkit electrostatics --method xtb`. "
+            "Install with `conda install -c conda-forge xtb-python` or `pip install xtb`."
+        ) from e
+
+    from xtb.interface import Solvent  # xtb-python's solvent enum
+    calc = make_xtb_calculator(atoms, charge=charge, multiplicity=multiplicity)
+    if solvent:
+        from assay_core.calculators import resolve_xtb_solvent
+        sol = resolve_xtb_solvent(solvent)  # ALPB name; rejects numeric eps
+        # The real API is Calculator.set_solvent(solvent: Solvent) — ONE Solvent
+        # enum member (NOT (Param, str), which silently failed and dropped the
+        # solvent to gas phase on every run). Map the ALPB name to the enum;
+        # 'water' is spelled 'h2o' there, and some ALPB solvents (e.g. octanol)
+        # have no enum member — flag those honestly rather than claim solvation.
+        enum_name = {"water": "h2o"}.get(sol, sol)
+        solvent_enum = getattr(Solvent, enum_name, None)
+        if solvent_enum is None:
+            solvent_applied = False   # no xtb-python enum for this solvent
+        else:
+            try:
+                calc.set_solvent(solvent_enum)
+                solvent_applied = True
+            except Exception:
+                # Older xtb-python lacks set_solvent — flag rather than silently
+                # run gas phase while claiming a solvent (calc-reporting #4/§4).
+                solvent_applied = False
+    else:
+        solvent_applied = None  # gas phase requested; nothing to apply
+
+    res = calc.singlepoint()
+    # Hartree -> eV.
+    energy_eV = res.get_energy() * HARTREE_TO_EV
+    charges = res.get_charges().tolist()
+    dipole_au = res.get_dipole()
+    dipole_debye_vec = (dipole_au * AU_TO_DEBYE).tolist()
+    dipole_debye_mag = float(np.linalg.norm(dipole_au) * AU_TO_DEBYE)
+
+    out: Dict[str, Any] = {}
+    out.update(energy_block_from_eV(energy_eV))
+    out["dipole_debye"] = dipole_debye_mag
+    out["dipole_vector_debye"] = dipole_debye_vec
+    out["partial_charges"] = charges
+    out["partial_charges_scheme"] = "Mulliken (GFN2-xTB)"
+    out["sum_of_charges"] = float(sum(charges))
+    if solvent_applied is False:
+        out["solvent_applied"] = False
+        out["_solvent_drop_warning"] = (
+            f"Requested solvent {solvent!r} was NOT applied: this xtb-python "
+            "build lacks set_solvent, so the calculation ran in GAS PHASE. The "
+            "reported dipole/charges are gas-phase values — upgrade xtb-python "
+            "or use the xtb CLI path for implicit solvation."
+        )
+    elif solvent_applied is True:
+        out["solvent_applied"] = True
+    return out
+
+
+# ---------------------------------------------------------------------------
+# MOPAC backend
+# ---------------------------------------------------------------------------
+
+def _run_mopac(atoms, symbols, *, charge: int, multiplicity: int,
+               solvent: Optional[str]) -> Dict[str, Any]:
+    workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_elst_"))
+
+    keywords = ["PM7", "1SCF", "AUX", "GEO-OK"]
+    keywords += mopac_chemistry_keywords(charge, multiplicity, solvent)
+    keywords += ["MULLIK", "THREADS=1"]
+
+    workdir, proc, _out_path = run_mopac(
+        keywords, atoms, symbols, title="chemkit electrostatics",
+        workdir=workdir, stem="mopac", timeout=600,
+    )
+
+    # MOPAC can fail (bad geometry, missing PM7 parameters, license) and still
+    # leave a partial/stale .out/.aux that parses into garbage or None. Detect
+    # failure explicitly rather than silently reporting whatever was scraped.
+    out_path_chk = _find_with_ext(workdir, ".out")
+    out_text_chk = ""
+    if out_path_chk and os.path.isfile(out_path_chk):
+        with open(out_path_chk) as _f:
+            out_text_chk = _f.read()
+    mopac_ok = (
+        proc.returncode == 0
+        and ("JOB ENDED NORMALLY" in out_text_chk or "== MOPAC DONE ==" in out_text_chk)
+    )
+    if not mopac_ok:
+        raise RuntimeError(
+            "MOPAC electrostatics run failed or did not complete normally "
+            f"(returncode={proc.returncode}). Charges/dipole would come from a "
+            "partial or stale output. Workdir: {wd}\nstderr: {se}".format(
+                wd=workdir, se=(proc.stderr or "").strip()[-1000:]
+            )
+        )
+
+    extras = parse_mopac_extras(workdir)
+    # Energy: PM7 reports HoF (kcal/mol); convert
+    hof = extras.get("heat_of_formation_kcal_mol")
+    energy_eV = hof * KCAL_TO_EV if hof is not None else None
+
+    # Pull partial charges from AUX (ATOM_CHARGES[N])
+    aux_path = _find_with_ext(workdir, ".aux")
+    charges: List[float] = []
+    dipole_vec_debye: Optional[List[float]] = None
+    if aux_path and os.path.isfile(aux_path):
+        with open(aux_path) as f:
+            aux_text = f.read()
+        charges = _parse_aux_array(aux_text, "ATOM_CHARGES")
+        # DIPOLE vector: AUX has "DIP_VEC:DEBYE[3]=" lines on newer MOPAC builds,
+        # else fall back to parsing the .out file.
+        vec = _parse_aux_array(aux_text, "DIP_VEC")
+        if len(vec) == 3:
+            dipole_vec_debye = vec
+
+    if dipole_vec_debye is None:
+        # Fall back: parse "DIPOLE" block in .out file
+        out_path = _find_with_ext(workdir, ".out")
+        if out_path:
+            with open(out_path) as f:
+                txt = f.read()
+            # The DIPOLE block looks like:
+            #     DIPOLE           X         Y         Z       TOTAL
+            # POINT-CHG.     ...
+            # HYBRID         ...
+            # SUM           x.xxxx   y.yyyy   z.zzzz   t.tttt
+            m = re.search(
+                r"^\s*SUM\s+([-+]?\d+\.\d+)\s+([-+]?\d+\.\d+)\s+([-+]?\d+\.\d+)\s+([-+]?\d+\.\d+)\s*$",
+                txt, re.MULTILINE,
+            )
+            if m:
+                dipole_vec_debye = [float(m.group(i)) for i in (1, 2, 3)]
+
+    out: Dict[str, Any] = {}
+    if energy_eV is not None:
+        out.update(energy_block_from_eV(energy_eV))
+    if hof is not None:
+        out["final_heat_of_formation_kcal_mol"] = hof
+    if dipole_vec_debye is not None:
+        out["dipole_vector_debye"] = dipole_vec_debye
+        out["dipole_debye"] = float(np.linalg.norm(dipole_vec_debye))
+    elif "dipole_debye" in extras:
+        out["dipole_debye"] = extras["dipole_debye"]
+    if charges:
+        out["partial_charges"] = charges
+        out["partial_charges_scheme"] = "Mulliken (PM7)"
+        out["sum_of_charges"] = float(sum(charges))
+    if "ionization_potential_eV" in extras:
+        out["ionization_potential_eV"] = extras["ionization_potential_eV"]
+    return out
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """Own argparse, composing the shared assay_core.argkit option builders so the
+    flags are identical to the engine CLI's `electrostatics` subparser."""
+    from assay_core import argkit
+    p = argparse.ArgumentParser(
+        prog="electrostatics",
+        description="Dipole + atomic partial charges (single-point, no opt).",
+    )
+    argkit._add_chem_options(p)
+    return p
+
+
+if __name__ == "__main__":
+    from assay_core import argkit
+    raise SystemExit(argkit.run_cli(build_parser(), run, task="electrostatics"))

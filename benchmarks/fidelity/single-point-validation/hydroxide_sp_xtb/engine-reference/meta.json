@@ -1,0 +1,20 @@
+{
+  "spec_name": "hydroxide_sp_xtb",
+  "skill": "single-point-energy",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "-1",
+    "--mult",
+    "1"
+  ],
+  "positional": "/home/erobles/chem-skills/benchmarks/fidelity/single-point-validation/hydroxide_sp_xtb/hydroxide.xyz",
+  "expect": "compute",
+  "spec_hash": "ac8486eb2604b29b",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "fc8ef5d29",
+  "timestamp": "2026-07-11T23:00:27"
+}

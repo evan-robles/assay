@@ -1,0 +1,20 @@
+{
+  "spec_name": "butane_conformer_search",
+  "skill": "conformer-search",
+  "flags": [
+    "--method",
+    "xtb",
+    "--charge",
+    "0",
+    "--mult",
+    "1"
+  ],
+  "positional": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/butane/butane.xyz",
+  "expect": "compute",
+  "spec_hash": "ef56a43f5d1da71b",
+  "determinism_ok": true,
+  "determinism_msg": "identical across two runs (within 1e-06 numeric tol)",
+  "engine_failed": false,
+  "git_commit": "c47165bea",
+  "timestamp": "2026-07-08T13:41:56"
+}

@@ -1,0 +1,104 @@
+# chemkit live log
+# subcommand : confsearch
+# args       : --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/12-dichloroethane/12_dichloroethane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpnuulhrn4/truth.json
+# command    : /opt/homebrew/Caskroom/miniforge/base/envs/anl_env/bin/python -m chemkit_engine.cli confsearch --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/12-dichloroethane/12_dichloroethane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpnuulhrn4/truth.json
+# cwd        : /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/12-dichloroethane/engine-reference
+# started    : 20260708-134135
+# ============================================================
+
+# result written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpnuulhrn4/truth.json
+# conformers xyz written to: /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpnuulhrn4/truth_conformers.xyz
+
+# ============================================================
+# ===== RESULT JSON (stdout) =====
+{
+  "task": "conformational_search",
+  "method": "MMFF94 confab (Open Babel)",
+  "program": "openbabel",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/12-dichloroethane/12_dichloroethane.xyz",
+  "n_atoms": 8,
+  "atoms": [
+    "Cl",
+    "Cl",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py confsearch --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/12-dichloroethane/12_dichloroethane.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpnuulhrn4/truth.json",
+  "n_conformers_found": 3,
+  "n_conformers_kept": 3,
+  "work_directory": "/tmp/chemkit_confsearch_4mxiy3rf",
+  "best_conformer_xyz": "/tmp/chemkit_confsearch_4mxiy3rf/obabel_best.xyz",
+  "all_conformers_xyz": "/tmp/chemkit_confsearch_4mxiy3rf/obabel_conformers.xyz",
+  "conformer_relative_energies_kcal_mol": [
+    0.0,
+    1.5296599999999998,
+    1.5882000000000005
+  ],
+  "postopt": {
+    "method": "PM7 (MOPAC)",
+    "n_input": 3,
+    "n_converged": 3,
+    "n_unique": 3,
+    "n_failed": 0,
+    "n_saddles_rejected": 0,
+    "rmsd_threshold_A": 0.25,
+    "ewin_kcal_mol": 6.0,
+    "lowest_hof_kcal_mol": -29.92096,
+    "ensemble_xyz": "/tmp/chemkit_confsearch_4mxiy3rf/postopt_mopac/postopt_ensemble.xyz",
+    "best_xyz": "/tmp/chemkit_confsearch_4mxiy3rf/postopt_mopac/conf_000_mopac_opt.xyz",
+    "conformers": [
+      {
+        "source_index": 0,
+        "hof_kcal_mol": -29.92096,
+        "rel_hof_kcal_mol": 0.0,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch_4mxiy3rf/postopt_mopac/conf_000_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 1,
+        "hof_kcal_mol": -29.58982,
+        "rel_hof_kcal_mol": 0.3311400000000013,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch_4mxiy3rf/postopt_mopac/conf_001_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 2,
+        "hof_kcal_mol": -29.58933,
+        "rel_hof_kcal_mol": 0.33163000000000054,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch_4mxiy3rf/postopt_mopac/conf_002_mopac_opt.xyz",
+        "converged": true
+      }
+    ],
+    "seed_source": "obabel_conformers (3)"
+  },
+  "schema_version": 1,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "conformers_found",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_conformers_found = 3 (a search must return \u22651 conformer)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      }
+    ]
+  },
+  "conformers_xyz": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpnuulhrn4/truth_conformers.xyz"
+}

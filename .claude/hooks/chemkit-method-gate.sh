@@ -47,10 +47,11 @@ MARKER_DIR="${CLAUDE_PROJECT_DIR:-$PWD}/.claude/.chemkit-gate"
 # between runs is a level-of-theory change worth re-confirming.
 KNOBS=(--method --opt --functional --basis --tier --density-fit --solvent --charge --mult --multiplicity)
 
-# Subcommands / skill folders that REQUIRE an explicit --method (everything
-# except the pure structure builder, which uses an optional --opt instead).
+# Subcommands that REQUIRE an explicit --method (everything except the pure
+# lookup/structure skills `resolve` and `build`). Regenerated from the skill
+# manifests — kept in sync by tools/lint_skills.py --registry (DESIGN.md #11).
 # Listed for documentation / future use; the gate keys off --method presence.
-METHOD_REQUIRED_SUBCMDS="sp opt freq binding redox confsearch frontier electrostatics solvation logp profile pka fukui ts irc scan orbitals"
+METHOD_REQUIRED_SUBCMDS="binding confsearch electrostatics freq frontier fukui irc logp opt orbitals pka profile redox rxn-energy scan solvation sp ts"
 
 # ---------------------------------------------------------------------------
 # Ack mode: record the acknowledgement for a session, then exit 0.
@@ -91,22 +92,21 @@ fi
 
 # Is this a chemkit calculation command? Match any of the ways a calculation is
 # launched from a shell:
-#   * a skill wrapper script under skills/<name>/scripts/<name>.py
-#   * a direct engine module call: python -m chemkit_engine.cli <subcommand>
-#   * the shared MCP client (_mcp_client)
-#   * the `chemkit` console command: `chemkit <subcommand> ...`
-# The `chemkit` front door routes through the server like the skill scripts, so
-# it MUST be gated here too — otherwise it would be a short, obvious, UNGATED
-# path that an agent would naturally prefer.
+#   * a skill run script: skills/<pkg>/scripts/run.py
+#   * a direct engine module call: python -m assay_core.cli <subcommand>
+#     (the legacy `chemkit_engine.cli` spelling is still matched for back-compat)
+#   * the `assay` / `chemkit` console command: `assay <subcommand> ...`
 is_chemkit=0
 if [[ "$CMD" == *"skills/"*"/scripts/"*".py"* ]] \
+   || [[ "$CMD" == *"assay_core.cli"* ]] \
    || [[ "$CMD" == *"chemkit_engine.cli"* ]] \
-   || [[ "$CMD" == *"_mcp_client"* ]] \
-   || [[ "$CMD" =~ (^|[[:space:]\;\&\|\(])chemkit[[:space:]] ]]; then
+   || [[ "$CMD" =~ (^|[[:space:]\;\&\|\(])(assay|chemkit)[[:space:]] ]]; then
   is_chemkit=1
 fi
-# `chemkit-mcp` only STARTS the server; it runs no calculation -> never gate it.
-if [[ "$CMD" == *"chemkit-mcp"* && "$CMD" != *"chemkit_engine.cli"* \
+# `assay-mcp` / `chemkit-mcp` only START the server; they run no calculation ->
+# never gate them.
+if [[ "$CMD" == *"-mcp"* && "$CMD" != *"assay_core.cli"* \
+      && "$CMD" != *"chemkit_engine.cli"* \
       && "$CMD" != *"skills/"*"/scripts/"* ]]; then
   is_chemkit=0
 fi
@@ -116,8 +116,9 @@ fi
 # unless it carries a QM-refine knob. Detect build-from-smiles / `build`.
 is_build=0
 if [[ "$CMD" == *"build-from-smiles"* ]] || [[ "$CMD" == *" build "* ]] \
+   || [[ "$CMD" == *"assay_core.cli build"* ]] \
    || [[ "$CMD" == *"chemkit_engine.cli build"* ]] \
-   || [[ "$CMD" =~ (^|[[:space:]])chemkit[[:space:]]+build([[:space:]]|$) ]]; then
+   || [[ "$CMD" =~ (^|[[:space:]])(assay|chemkit)[[:space:]]+build([[:space:]]|$) ]]; then
   is_build=1
 fi
 

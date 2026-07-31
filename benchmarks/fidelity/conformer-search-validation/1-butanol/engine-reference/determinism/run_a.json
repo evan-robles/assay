@@ -1,0 +1,143 @@
+{
+  "task": "conformational_search",
+  "method": "MMFF94 confab (Open Babel)",
+  "program": "openbabel",
+  "input_file": "/Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/1-butanol/1_butanol.xyz",
+  "n_atoms": 15,
+  "atoms": [
+    "O",
+    "C",
+    "C",
+    "C",
+    "C",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H",
+    "H"
+  ],
+  "charge": 0,
+  "multiplicity": 1,
+  "solvent": null,
+  "cli_invocation": "/Users/evane/Desktop/Research/Argonne/chem-skills/mcp_server/chemkit_engine/cli.py confsearch --method xtb --charge 0 --mult 1 /Users/evane/Desktop/Research/Argonne/chem-skills/benchmarks/fidelity/conformer-search-validation/1-butanol/1_butanol.xyz --out /var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpekz9qfkm/a.json",
+  "n_conformers_found": 8,
+  "n_conformers_kept": 8,
+  "work_directory": "/tmp/chemkit_confsearch__ni2qtho",
+  "best_conformer_xyz": "/tmp/chemkit_confsearch__ni2qtho/obabel_best.xyz",
+  "all_conformers_xyz": "/tmp/chemkit_confsearch__ni2qtho/obabel_conformers.xyz",
+  "conformer_relative_energies_kcal_mol": [
+    0.0,
+    0.55377,
+    1.86202,
+    1.87803,
+    1.88093,
+    2.55737,
+    3.62709,
+    11.61989
+  ],
+  "postopt": {
+    "method": "PM7 (MOPAC)",
+    "n_input": 8,
+    "n_converged": 8,
+    "n_unique": 8,
+    "n_failed": 0,
+    "n_saddles_rejected": 0,
+    "rmsd_threshold_A": 0.25,
+    "ewin_kcal_mol": 6.0,
+    "lowest_hof_kcal_mol": -67.66462,
+    "ensemble_xyz": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/postopt_ensemble.xyz",
+    "best_xyz": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/conf_000_mopac_opt.xyz",
+    "conformers": [
+      {
+        "source_index": 0,
+        "hof_kcal_mol": -67.66462,
+        "rel_hof_kcal_mol": 0.0,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/conf_000_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 2,
+        "hof_kcal_mol": -67.59012,
+        "rel_hof_kcal_mol": 0.0745,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/conf_002_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 1,
+        "hof_kcal_mol": -67.50727,
+        "rel_hof_kcal_mol": 0.15735,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/conf_001_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 3,
+        "hof_kcal_mol": -67.31678,
+        "rel_hof_kcal_mol": 0.34784,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/conf_003_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 4,
+        "hof_kcal_mol": -67.23358,
+        "rel_hof_kcal_mol": 0.43104,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/conf_004_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 6,
+        "hof_kcal_mol": -67.17784,
+        "rel_hof_kcal_mol": 0.48678,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/conf_006_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 5,
+        "hof_kcal_mol": -66.73795,
+        "rel_hof_kcal_mol": 0.92667,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/conf_005_mopac_opt.xyz",
+        "converged": true
+      },
+      {
+        "source_index": 7,
+        "hof_kcal_mol": -66.46707,
+        "rel_hof_kcal_mol": 1.19755,
+        "degeneracy": 1,
+        "xyz_path": "/tmp/chemkit_confsearch__ni2qtho/postopt_mopac/conf_007_mopac_opt.xyz",
+        "converged": true
+      }
+    ],
+    "seed_source": "obabel_conformers (8)"
+  },
+  "schema_version": 1,
+  "integrity": {
+    "status": "ok",
+    "trustworthy": true,
+    "checks": [
+      {
+        "name": "conformers_found",
+        "ok": true,
+        "severity": "error",
+        "detail": "n_conformers_found = 8 (a search must return \u22651 conformer)"
+      },
+      {
+        "name": "schema_header",
+        "ok": true,
+        "severity": "warning",
+        "detail": "common header present"
+      }
+    ]
+  },
+  "conformers_xyz": "/var/folders/ym/_02kbfyd29z17l376783nlm00000gn/T/tmpekz9qfkm/a_conformers.xyz"
+}

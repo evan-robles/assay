@@ -1,0 +1,14 @@
+{
+  "name": "assay",
+  "owner": {
+    "name": "Evan S. Robles",
+    "url": "https://github.com/evan-robles/assay"
+  },
+  "plugins": [
+    {
+      "name": "assay",
+      "source": "./plugins/assay",
+      "description": "Computational-chemistry skills (xtb, MOPAC, PySCF) over MCP — energies, geometry optimization, frequencies, pKa, redox, reaction profiles, and more."
+    }
+  ]
+}
