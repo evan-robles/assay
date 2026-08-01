@@ -404,6 +404,19 @@ def run_cli(parser: argparse.ArgumentParser,
     from . import ledger
 
     argv = _split_combined_flag_tokens(argv if argv is not None else sys.argv[1:])
+
+    # Discovery: `run.py --help-json` — machine-readable arg spec for THIS skill,
+    # handled BEFORE parse_args (which would otherwise reject the missing required
+    # positional/--method). Mirrors the engine dispatcher's --help-json branch so
+    # the `skill_help` tool and a stand-alone `python run.py --help-json` return
+    # the same spec instead of an argparse exit-2.
+    if argv and "--help-json" in argv:
+        from .cli import describe_parser
+        sys.stdout.write(json.dumps(
+            {"subcommand": task, "arguments": describe_parser(parser)},
+            indent=2) + "\n")
+        return 0
+
     parser._chemkit_argv = argv  # type: ignore[attr-defined]
     args = parser.parse_args(argv)
 
