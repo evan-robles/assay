@@ -18,7 +18,7 @@ rdkit = ">=2023.3"     # structure handling
 
 # The package + its pip deps (pyscf/sella/ase/mcp/... from pyproject).
 [pypi-dependencies]
-chemkit-mcp = { path = ".", editable = true }
+assay-chem = { path = ".", editable = true }
 
 # PySCF (--method dft/hf) has no Windows build; installed only where it exists.
 [target.linux-64.dependencies]

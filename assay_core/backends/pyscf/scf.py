@@ -3,7 +3,7 @@
 - Pick RKS/UKS (or RHF/UHF) based on multiplicity
 - Attach an implicit solvent model (ddCOSMO by default)
 - Enable density fitting (RI-J) with a matching auxiliary basis
-- Pack a converged SCF object into the chemkit JSON schema
+- Pack a converged SCF object into the assay JSON schema
 """
 from __future__ import annotations
 import sys
@@ -60,7 +60,7 @@ def build_mean_field(
 
     By default this runs EXACT (analytic four-center integral) Kohn-Sham
     (RKS/UKS) or Hartree-Fock (RHF/UHF) with NO density fitting — the most
-    accurate option and the chemkit default.
+    accurate option and the assay default.
 
     Density fitting (the resolution-of-identity / RI approximation to the
     two-electron integrals) is OFF by default. If a caller explicitly sets
@@ -107,7 +107,7 @@ def build_mean_field(
         from pyscf import solvent as solv_mod
         model = (solvent_model or "ddcosmo").lower()
         if model == "ddcosmo":
-            # Domain-decomposition COSMO (the chemkit default continuum model).
+            # Domain-decomposition COSMO (the assay default continuum model).
             mf = solv_mod.ddCOSMO(mf)
             mf.with_solvent.eps = eps
         elif model in ("cpcm", "c-pcm", "pcm", "iefpcm", "ief-pcm"):
@@ -147,7 +147,7 @@ def _report_auxbasis(mf):
 
 
 def pack_scf_result(mf) -> Dict[str, Any]:
-    """Extract the standard chemkit per-method block from a converged SCF.
+    """Extract the standard assay per-method block from a converged SCF.
 
     Returns the contents that go under `code_specific` — HOMO/LUMO, dipole,
     SCF iteration count, dispersion contribution (if applicable). The caller
@@ -260,7 +260,7 @@ def pack_scf_result(mf) -> Dict[str, Any]:
         pass
 
     # Dipole moment (Debye); cheap, always available post-SCF.
-    # Convention matches chemkit's xtb/mopac extras: `dipole_debye` is the
+    # Convention matches assay's xtb/mopac extras: `dipole_debye` is the
     # scalar magnitude (consumed by tasks like electrostatics), the vector
     # lives at `dipole_vector_debye`.
     try:

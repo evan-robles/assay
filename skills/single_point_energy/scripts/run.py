@@ -131,8 +131,8 @@ def _xtb_homo_lumo(atoms, calc) -> Dict[str, Any]:
     numbers = np.array(atoms.get_atomic_numbers(), dtype=np.int32)
     positions_bohr = np.asarray(atoms.get_positions()) * ANGSTROM_TO_BOHR
 
-    charge = float(getattr(calc, "_chemkit_charge", 0))
-    uhf = int(getattr(calc, "_chemkit_uhf", 0))
+    charge = float(getattr(calc, "_assay_charge", 0))
+    uhf = int(getattr(calc, "_assay_uhf", 0))
 
     try:
         xcalc = Calculator(Param.GFN2xTB, numbers, positions_bohr,

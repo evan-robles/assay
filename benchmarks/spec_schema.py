@@ -60,7 +60,7 @@ def _skill_to_taskid() -> Dict[str, Optional[str]]:
     folder — a converted skill's folder is underscore-named (single_point_energy)
     while its spec still says single-point-energy.
     """
-    from server import TOOLS  # {tool_name(kebab): (subcommand, folder)}
+    from mcp_server.server import TOOLS  # {tool_name(kebab): (subcommand, folder)}
     from assay_core import cli  # subcommand set (validation only)
 
     folder_to_sub = {tool_name: sub for tool_name, (sub, _folder) in TOOLS.items()}

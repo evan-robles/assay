@@ -26,12 +26,16 @@ __pycache__/
 /*.cube
 /*.molden
 /*.png
+/*_input_configs.yaml
+/input_configs.yaml
 /mcp_server/*.out
 /mcp_server/*.json
 /mcp_server/*.xyz
 /mcp_server/*.cube
 /mcp_server/*.molden
 /mcp_server/*.png
+/mcp_server/*_input_configs.yaml
+/mcp_server/input_configs.yaml
 
 # Local secrets for the fidelity driver (argo username / endpoint key).
 # Never commit; an .env.example is committed instead as a template. Cover the

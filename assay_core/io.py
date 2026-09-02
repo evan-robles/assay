@@ -95,7 +95,7 @@ def read_geometry(path: str):
 
 
 # Significant figures retained when serializing floats. Eight sig figs is more
-# than any chemkit quantity supports (a DFT total energy is meaningful to
+# than any assay quantity supports (a DFT total energy is meaningful to
 # ~µHartree on hundreds of Hartree ≈ 8 sig figs; xtb/PM7 far less), so this only
 # trims the meaningless float-repr tail (e.g. -137.96738451827179 ->
 # -137.967385) — cutting tokens and false precision without losing any real

@@ -26,6 +26,8 @@ import datetime
 import functools
 import json
 import os
+
+from . import env as _env
 import shutil
 import subprocess
 import time
@@ -36,7 +38,7 @@ from dataclasses import dataclass, field
 from typing import Callable, List, Optional
 
 _TIMEOUT = 20  # seconds per request
-_USER_AGENT = "chemkit/1.0 (https://github.com/; molecule name resolver)"
+_USER_AGENT = "assay/1.0 (https://github.com/; molecule name resolver)"
 
 # Transient HTTP/network failures worth retrying with backoff. A 404 (name not
 # in this DB) is NOT transient — the resolver chain should move on immediately,
@@ -79,7 +81,7 @@ class _TransientHTTPError(Exception):
 # structure level. Override the location with CHEMKIT_RESOLVE_CACHE; set it to
 # the empty string to disable caching.
 def _cache_path() -> Optional[str]:
-    env = os.environ.get("CHEMKIT_RESOLVE_CACHE")
+    env = _env.get("RESOLVE_CACHE") or None
     if env == "":
         return None
     if env:
@@ -87,7 +89,7 @@ def _cache_path() -> Optional[str]:
     base = os.environ.get("XDG_CACHE_HOME") or os.path.join(
         os.path.expanduser("~"), ".cache"
     )
-    return os.path.join(base, "chemkit", "name_resolution.json")
+    return os.path.join(base, "assay", "name_resolution.json")
 
 
 def _cache_key(name: str) -> str:
@@ -294,7 +296,7 @@ def _resolve_opsin(name: str) -> Optional[Resolution]:
 # ---------------------------------------------------------------------------
 
 def _inchi_to_smiles(inchi: str) -> Optional[str]:
-    """Convert an InChI to SMILES with Open Babel (already a chemkit dep)."""
+    """Convert an InChI to SMILES with Open Babel (already a assay dep)."""
     obabel = shutil.which("obabel")
     if obabel is None:
         return None

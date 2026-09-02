@@ -1,6 +1,8 @@
 """ASE calculator factory for xtb (xtb-python or CLI), MOPAC, optional COSMO solvation."""
 from __future__ import annotations
 import os
+
+from . import env as _env
 import shutil
 import tempfile
 from typing import Optional
@@ -148,7 +150,7 @@ def register_auto_tempdir(path: str) -> str:
     workdir is NOT surfaced in the result JSON (intermediate freq/opt
     preopt dirs, vibration finite-difference caches, etc.). Tasks that
     expose `*_workdir` to the user should skip this — those need to
-    survive past the chemkit process so the user can inspect the files.
+    survive past the assay process so the user can inspect the files.
 
     Returns the path so callers can write `workdir = register_auto_tempdir(
     tempfile.mkdtemp(prefix='...'))` in one line.
@@ -196,12 +198,12 @@ def build_calculator(
 
     If `workdir` is None a fresh tempdir is allocated and registered for
     auto-cleanup at process exit. Callers that want the workdir to persist
-    past the chemkit run (e.g. so result['mopac_workdir'] is still readable
+    past the assay run (e.g. so result['mopac_workdir'] is still readable
     afterwards) must pass `workdir=...` explicitly.
     """
     method = method.lower()
     if workdir is None:
-        workdir = tempfile.mkdtemp(prefix=f"chemkit_{method}_")
+        workdir = tempfile.mkdtemp(prefix=f"assay_{method}_")
         _AUTO_TEMPDIRS.append(workdir)
 
     # --solvent-model is a PySCF-only knob. For xtb/mopac, reject a non-default
@@ -256,7 +258,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
                  solvent_model="ddcosmo"):
     """Dispatch DFT/HF to the PySCF backend (lazy import).
 
-    The PySCF backend lives in chemkit.backends.pyscf and exposes an
+    The PySCF backend lives in assay_core.backends.pyscf and exposes an
     ASE-compatible Calculator class. We import lazily so users without
     PySCF installed can still use xtb/mopac.
 
@@ -264,7 +266,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
     `--functional`/`--basis` override the tier defaults. HF takes only a
     `--basis` (default def2-tzvp).
 
-    density_fit: when False (the default) chemkit runs EXACT four-center
+    density_fit: when False (the default) assay runs EXACT four-center
     integrals — true RKS/UKS and RHF/UHF, matching a hand-written PySCF run.
     The user's explicit --density-fit flag sets this True to enable the RI
     approximation. The tier table's own `density_fit` value is documentation of
@@ -287,10 +289,10 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
     # opting into a higher count owns that choice); this cap applies ONLY when
     # we fall back to cpu_count. Override the cap itself via CHEMKIT_PYSCF_MAX_AUTO_THREADS.
     try:
-        _auto_cap = max(1, int(os.environ.get("CHEMKIT_PYSCF_MAX_AUTO_THREADS", "64")))
+        _auto_cap = max(1, int(_env.get("PYSCF_MAX_AUTO_THREADS", "64")))
     except ValueError:
         _auto_cap = 64
-    n_threads_env = os.environ.get("CHEMKIT_PYSCF_THREADS")
+    n_threads_env = _env.get("PYSCF_THREADS") or None
     if n_threads_env:
         try:
             n_threads = max(1, int(n_threads_env))  # explicit request: honoured as-is
@@ -310,7 +312,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
         from .backends.pyscf.hf import HF_TIERS, DEFAULT_TIER as HF_DEFAULT_TIER
     except ImportError as e:
         raise ImportError(
-            f"chemkit.backends.pyscf is unavailable ({e}). "
+            f"assay_core.backends.pyscf is unavailable ({e}). "
             "Install pyscf to use --method dft or --method hf."
         )
 
@@ -318,7 +320,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
     # call it so the count takes effect even if numpy/pyscf were imported earlier
     # in this process. Best-effort — never fail a calculation over thread tuning.
     # Note: if PySCF was built without OpenMP, num_threads() always returns 1
-    # regardless of the request (a build limitation, not a chemkit bug).
+    # regardless of the request (a build limitation, not an assay bug).
     effective_threads = n_threads
     try:
         import warnings as _warnings
@@ -335,7 +337,7 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
     # threading `verbose` through every task signature. Defaults to 4 (rich
     # SCF/optimizer detail) so the live .out log is useful out of the box.
     try:
-        pyscf_verbose = int(os.environ.get("CHEMKIT_PYSCF_VERBOSE", "4"))
+        pyscf_verbose = int(_env.get("PYSCF_VERBOSE", "4"))
     except ValueError:
         pyscf_verbose = 4
 
@@ -359,12 +361,12 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             solvent_model=solvent_model,
             verbose=pyscf_verbose,
         )
-        calc._chemkit_tier = cfg["tier"]
-        calc._chemkit_functional = cfg["xc"]
+        calc._assay_tier = cfg["tier"]
+        calc._assay_functional = cfg["xc"]
         # Read the post-promotion basis off the calculator — PySCFCalculator
         # auto-promotes def2-tzvp → def2-tzvpd etc. for anions, so cfg["basis"]
         # would otherwise lie about what was actually used.
-        calc._chemkit_basis = calc.basis
+        calc._assay_basis = calc.basis
     else:  # hf
         used_basis = basis or HF_DEFAULT_BASIS
         hf_tier = (tier or HF_DEFAULT_TIER).lower()
@@ -383,13 +385,13 @@ def _build_pyscf(method, charge, multiplicity, solvent, workdir,
             solvent_model=solvent_model,
             verbose=pyscf_verbose,
         )
-        calc._chemkit_tier = hf_tier
-        calc._chemkit_functional = None
-        calc._chemkit_basis = calc.basis  # honors anion auto-promotion
+        calc._assay_tier = hf_tier
+        calc._assay_functional = None
+        calc._assay_basis = calc.basis  # honors anion auto-promotion
 
-    calc._chemkit_method = method
-    calc._chemkit_workdir = workdir
-    calc._chemkit_threads = effective_threads
+    calc._assay_method = method
+    calc._assay_workdir = workdir
+    calc._assay_threads = effective_threads
     return calc
 
 
@@ -412,9 +414,9 @@ def method_label(method: str, calc=None) -> str:
         return "PM7"
     if m in ("dft", "hf"):
         if calc is not None:
-            functional = getattr(calc, "_chemkit_functional", None)
-            basis = getattr(calc, "_chemkit_basis", None)
-            tier = getattr(calc, "_chemkit_tier", None)
+            functional = getattr(calc, "_assay_functional", None)
+            basis = getattr(calc, "_assay_basis", None)
+            tier = getattr(calc, "_assay_tier", None)
             if m == "hf":
                 return f"HF/{basis}" if basis else "HF"
             # DFT
@@ -462,7 +464,7 @@ def collect_calc_extras(method: str, atoms, calc) -> dict:
             from .tasks._mopac_parsers import parse_mopac_extras
         except ImportError:
             return extras
-        workdir = getattr(calc, "_chemkit_workdir", None)
+        workdir = getattr(calc, "_assay_workdir", None)
         if workdir:
             extras.update(parse_mopac_extras(workdir) or {})
     elif m in ("dft", "hf"):
@@ -472,7 +474,7 @@ def collect_calc_extras(method: str, atoms, calc) -> dict:
                 from .backends.pyscf.scf import pack_scf_result, _report_auxbasis
                 extras.update(pack_scf_result(mf))
                 # Report the integral treatment honestly, read off the actual
-                # mean-field object. chemkit runs EXACT RKS/UKS / RHF/UHF (no
+                # mean-field object. assay runs EXACT RKS/UKS / RHF/UHF (no
                 # density fitting) by default; `_report_auxbasis` returns None
                 # when no DF is attached.
                 aux = _report_auxbasis(mf)
@@ -484,9 +486,9 @@ def collect_calc_extras(method: str, atoms, calc) -> dict:
                 )
             except Exception:
                 pass
-        functional = getattr(calc, "_chemkit_functional", None)
-        basis = getattr(calc, "_chemkit_basis", None)
-        tier = getattr(calc, "_chemkit_tier", None)
+        functional = getattr(calc, "_assay_functional", None)
+        basis = getattr(calc, "_assay_basis", None)
+        tier = getattr(calc, "_assay_tier", None)
         if functional:
             extras["functional"] = functional
         if basis:
@@ -506,7 +508,7 @@ def collect_calc_extras(method: str, atoms, calc) -> dict:
             extras["scf_tol"] = scf_tol
         if max_cycle is not None:
             extras["scf_max_cycle"] = max_cycle
-        threads = getattr(calc, "_chemkit_threads", None)
+        threads = getattr(calc, "_assay_threads", None)
         if threads is not None:
             extras["n_threads"] = threads
     return extras
@@ -571,8 +573,8 @@ def _build_xtb(charge, multiplicity, solvent, workdir):
         if alpb_name:
             kwargs["solvent"] = alpb_name
         calc = XTB(**kwargs)
-        calc._chemkit_charge = charge
-        calc._chemkit_uhf = max(0, multiplicity - 1)
+        calc._assay_charge = charge
+        calc._assay_uhf = max(0, multiplicity - 1)
         return calc
     except ImportError:
         return _XtbCliCalculator(
@@ -597,7 +599,7 @@ def _build_mopac(charge, multiplicity, solvent, workdir):
         task_keywords.append(f"EPS={eps}")
     # Always request ENPART + AUX so we can recover the absolute electronic energy.
     # THREADS scales with available cores; honor CHEMKIT_MOPAC_THREADS override.
-    n_threads = int(os.environ.get("CHEMKIT_MOPAC_THREADS") or (os.cpu_count() or 1))
+    n_threads = int(_env.get("MOPAC_THREADS") or (os.cpu_count() or 1))
     task_keywords += [
         "GRADIENTS", "AUX", "ENPART", "LARGE=-1", f"THREADS={n_threads}", "GEO-OK",
     ]
@@ -607,8 +609,8 @@ def _build_mopac(charge, multiplicity, solvent, workdir):
         task=" ".join(task_keywords),
         relscf=0.01,
     )
-    calc._chemkit_keywords = task_keywords
-    calc._chemkit_workdir = workdir
+    calc._assay_keywords = task_keywords
+    calc._assay_workdir = workdir
     return calc
 
 
@@ -621,13 +623,13 @@ def apply_calc_to_atoms(atoms, calc):
     requested total charge/spin, not a per-atom partition), so we dump the
     full charge/uhf onto the first atom and zero the rest.
     """
-    if hasattr(calc, "_chemkit_charge"):
+    if hasattr(calc, "_assay_charge"):
         charges = np.zeros(len(atoms))
-        charges[0] = calc._chemkit_charge
+        charges[0] = calc._assay_charge
         atoms.set_initial_charges(charges)
 
         magmoms = np.zeros(len(atoms))
-        magmoms[0] = calc._chemkit_uhf
+        magmoms[0] = calc._assay_uhf
         atoms.set_initial_magnetic_moments(magmoms)
     atoms.calc = calc
     return atoms

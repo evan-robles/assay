@@ -1,6 +1,6 @@
 """ASE-compatible Calculator backed by PySCF.
 
-Lets every chemkit task that already speaks ASE (opt, freq, binding, scan,
+Lets every assay task that already speaks ASE (opt, freq, binding, scan,
 electrostatics, ...) pick up DFT and HF without per-task plumbing. The
 calculator caches its converged SCF object on the most recent geometry, so
 chained property requests (energy then forces; energy then dipole) avoid
@@ -31,7 +31,7 @@ HARTREE_PER_BOHR_TO_EV_PER_ANG = HARTREE_TO_EV / BOHR_RADIUS_ANG
 class PySCFCalculator(Calculator):
     """ASE Calculator delegating to PySCF for DFT (RKS/UKS) or HF (RHF/UHF).
 
-    Parameters mirror the chemkit CLI knobs. `method` selects the theory layer
+    Parameters mirror the assay CLI knobs. `method` selects the theory layer
     ('dft' or 'hf'); `xc` is required when `method == 'dft'`.
     """
 
@@ -90,12 +90,12 @@ class PySCFCalculator(Calculator):
         # tuple: any change invalidates the cached DM. The symbols guard catches
         # different fragments (shape mismatch); the rest catch the case where
         # something mutates the calculator's parameters between calls (current
-        # chemkit code doesn't, but the guard is cheap insurance against a
+        # assay code doesn't, but the guard is cheap insurance against a
         # silently-stale DM leaking through if that invariant ever breaks).
         self._cached_dm = None
         self._cached_dm_key: Optional[tuple] = None
 
-    # ---- chemkit-side accessors (used by sp.py / electrostatics / frontier) --
+    # ---- assay-side accessors (used by sp.py / electrostatics / frontier) --
 
     @property
     def method(self) -> str:

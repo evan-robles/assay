@@ -67,7 +67,7 @@ def typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
 # --------------------------------------------------------------------------- #
 # Tool schemas the model sees
 # --------------------------------------------------------------------------- #
-def _build_chemkit_tool() -> Dict[str, Any]:
+def _build_assay_tool() -> Dict[str, Any]:
     """Build the ``chemkit`` tool schema from the engine arg-spec — the SAME
     single source of truth the MCP server uses. One tool with a ``skill`` enum
     plus the UNION of every skill's typed params (all optional but ``skill``);
@@ -134,7 +134,7 @@ def _build_chemkit_tool() -> Dict[str, Any]:
     }
 
 
-CHEMKIT_TOOL = _build_chemkit_tool()
+CHEMKIT_TOOL = _build_assay_tool()
 
 LIST_SKILLS_TOOL = {
     "type": "function",

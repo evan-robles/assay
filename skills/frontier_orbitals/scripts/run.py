@@ -111,7 +111,7 @@ def _run_generic(atoms, *, calc, method, nfrontier) -> Dict[str, Any]:
     """DFT/HF frontier-orbital extraction via the PySCF backend.
 
     Relies on the PySCFCalculator stashing eigenvalues/occupations on itself
-    as `_chemkit_extras` (orbital_energies_eV, orbital_occupations). For UKS
+    as `_assay_extras` (orbital_energies_eV, orbital_occupations). For UKS
     /UHF, those fields are dicts {alpha: [...], beta: [...]} and we merge
     both channels (occupation 1.0 per electron) into a single sorted list so
     HOMO = highest occupied across both spins.
@@ -124,7 +124,7 @@ def _run_generic(atoms, *, calc, method, nfrontier) -> Dict[str, Any]:
     if eigs_eV is None or occs is None:
         raise RuntimeError(
             f"frontier ({method}): PySCF calculator did not return orbital "
-            "eigenvalues/occupations (expected on calc._chemkit_extras)."
+            "eigenvalues/occupations (expected on calc._assay_extras)."
         )
     # Unrestricted: merge α + β channels into a single sorted (energy, occ) list.
     if isinstance(eigs_eV, dict):
@@ -209,8 +209,8 @@ def _run_mopac(atoms, *, charge, multiplicity, solvent, nfrontier) -> Dict[str, 
     workdir = register_auto_tempdir(tempfile.mkdtemp(prefix="chemkit_frontier_mopac_"))
     calc = MOPAC(label=os.path.join(workdir, "mopac"),
                  task=" ".join(keywords), relscf=0.01)
-    calc._chemkit_keywords = keywords
-    calc._chemkit_workdir = workdir
+    calc._assay_keywords = keywords
+    calc._assay_workdir = workdir
     atoms.calc = calc
     total_energy_eV = float(atoms.get_potential_energy())
 

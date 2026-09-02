@@ -25,7 +25,7 @@ def base_result(
     solvent: Optional[str] = None,
     cli: str = "",
 ) -> Dict[str, Any]:
-    """Construct the common header for any chemkit result."""
+    """Construct the common header for any assay result."""
     return {
         "task": task,
         "method": method,
@@ -64,7 +64,7 @@ def energy_block_from_eV(energy_eV: float) -> Dict[str, float]:
 #     acetonitrile 35.688, DMSO 46.826, THF 7.4257, ...). This is the
 #     authoritative, higher-precision source.
 #     Source: Gaussian SCRF solvent list, https://gaussian.com/scrf/
-#     [verified: page HTTP 200 + all 14 chemkit ε matched the listed values,
+#     [verified: page HTTP 200 + all 14 assay ε matched the listed values,
 #     2026-06-30]. Gaussian cautions ε is only one of several solvent
 #     parameters, but ε is what the continuum models here consume.
 #   * MOPAC (COSMO) takes ε too, but MOPAC_SOLVENT_EPS holds ROUNDED ~25 °C

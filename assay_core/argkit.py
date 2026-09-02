@@ -212,6 +212,15 @@ def _add_stdout_option(p):
       none  nothing on stdout (the file is still written; paths still go to stderr)
     """
     p.add_argument(
+        "--outdir", default=None, metavar="DIR",
+        help="Directory to write EVERY artifact of this run into (result JSON, "
+             "live .out log, input_configs.yaml, and all sidecars: optimized "
+             ".xyz, .molden, .cube, trajectories, plots). Created if missing. "
+             "Default: the current working directory (unchanged behavior). "
+             "Input geometry paths are resolved against your ORIGINAL cwd, so "
+             "`--outdir runs/a mol.xyz` reads ./mol.xyz and writes runs/a/*.",
+    )
+    p.add_argument(
         "--stdout", choices=["json", "path", "none"], default="json",
         help="What to print on stdout. 'json' = full result (default), "
              "'path' = compact one-line pointer to the --out file plus "
@@ -343,6 +352,9 @@ def pyscf_kwargs_from_args(args) -> dict:
     effect, mirroring the engine CLI. getattr-guarded so non-QM subcommands that
     don't declare these knobs still work (None is the right 'no level of theory'
     default for them)."""
+    # Both spellings during the assay -> ASSAY rename window, so a child
+    # process reading either one sees the requested verbosity (see env.py).
+    os.environ["ASSAY_PYSCF_VERBOSE"] = str(getattr(args, "verbose", 4))
     os.environ["CHEMKIT_PYSCF_VERBOSE"] = str(getattr(args, "verbose", 4))
     return {
         "tier": getattr(args, "tier", None),
@@ -352,6 +364,56 @@ def pyscf_kwargs_from_args(args) -> dict:
         "solvent_model": getattr(args, "solvent_model", "ddcosmo"),
         "allow_unconverged": getattr(args, "allow_unconverged", False),
     }
+
+
+def _absolutize_path_args(args, base: str) -> None:
+    """Rewrite every args value that names an EXISTING file/dir into an absolute
+    path, resolved against `base` (the caller's original cwd).
+
+    This runs immediately before `run_cli` chdirs into --outdir. Skills name
+    their inputs with many different flags (`input`, `--monomer`, `--ha`,
+    `--a-minus`, `--reactant`, `--product`, `--ts-guess`, ...), so rather than
+    maintain a list that silently rots when a skill adds one, we rewrite any
+    string (or list-of-strings) that actually resolves on disk. A value that is
+    NOT an existing path — a SMILES, a molecule name, a solvent, an unwritten
+    --out — is left untouched, so it stays relative to the new cwd (the outdir),
+    which is what an output path should do.
+    """
+    def _looks_like_path(v: str) -> bool:
+        """Path-shaped: has a separator or a file extension.
+
+        This guard matters for the SMILES/name skills: `build-from-smiles O`
+        passes the SMILES for water, and a stray file named `O` in the cwd must
+        NOT turn that argument into a path. Real geometry inputs always carry an
+        extension (.xyz/.sdf/.pdb/.mol) or a directory component, so requiring
+        one separates inputs from chemistry strings cleanly. An extensionless
+        geometry file used with --outdir fails loudly (file not found) rather
+        than silently reinterpreting a SMILES.
+        """
+        seps = [c for c in (os.sep, os.altsep) if c]
+        return any(c in v for c in seps) or bool(os.path.splitext(v)[1])
+
+    def _resolved(v: str):
+        if not v or not _looks_like_path(v):
+            return None
+        cand = v if os.path.isabs(v) else os.path.join(base, v)
+        return os.path.abspath(cand) if os.path.exists(cand) else None
+
+    for name, value in list(vars(args).items()):
+        if name == "outdir":
+            continue
+        if isinstance(value, str):
+            got = _resolved(value)
+            if got:
+                setattr(args, name, got)
+        elif isinstance(value, list) and value and all(isinstance(v, str) for v in value):
+            setattr(args, name, [(_resolved(v) or v) for v in value])
+    # An explicit --out is an OUTPUT path and will not exist yet, so the loop
+    # above leaves it relative. Anchor it to the original cwd: a user who typed
+    # `--out results.json` means "next to me", not "inside the outdir".
+    out = getattr(args, "out", None)
+    if isinstance(out, str) and out and not os.path.isabs(out):
+        setattr(args, "out", os.path.abspath(os.path.join(base, out)))
 
 
 def run_cli(parser: argparse.ArgumentParser,
@@ -417,7 +479,7 @@ def run_cli(parser: argparse.ArgumentParser,
             indent=2) + "\n")
         return 0
 
-    parser._chemkit_argv = argv  # type: ignore[attr-defined]
+    parser._assay_argv = argv  # type: ignore[attr-defined]
     args = parser.parse_args(argv)
 
     resolve_gas_phase_synonyms(args)
@@ -443,6 +505,27 @@ def run_cli(parser: argparse.ArgumentParser,
 
     from . import runlog
     import datetime
+
+    # --outdir: one directory for EVERY artifact this run produces. Artifact
+    # paths are derived in two unrelated ways across the skills -- some off the
+    # result JSON path (_default_out), others straight off the input basename
+    # (geometry_optimize's out_xyz, reaction_profile's diagram .png) -- so there
+    # is no single path chokepoint to thread a directory through. Changing the
+    # process cwd is the one lever that catches all of them, including any a
+    # future skill adds. Inputs are absolutized against the ORIGINAL cwd first
+    # so relative geometry paths still resolve the way the user typed them.
+    caller_cwd = os.getcwd()
+    outdir = getattr(args, "outdir", None)
+    if outdir:
+        outdir = os.path.abspath(os.path.join(caller_cwd, outdir))
+        try:
+            os.makedirs(outdir, exist_ok=True)
+        except OSError as e:
+            print(f"{parser.prog or task}: error: cannot create --outdir "
+                  f"{outdir!r}: {e}", file=sys.stderr)
+            return 1
+        _absolutize_path_args(args, caller_cwd)
+        os.chdir(outdir)
 
     run_cwd = os.getcwd()
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")

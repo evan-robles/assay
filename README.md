@@ -20,8 +20,11 @@ pixi run assay single-point-energy --method xtb water.xyz
 pixi run assay-mcp                                    # or serve to an agent
 ```
 
-Conda works too: `conda env create -f environment.yml && conda activate chemkit`,
+Conda works too: `conda env create -f environment.yml && conda activate assay`,
 then `assay ...` without the `pixi run` prefix.
+
+Developing on it? `make install` sets up the editable install the test suite
+needs, then `make test` and `make lint`. `make help` lists the rest.
 
 `assay <skill> --help` lists a skill's arguments; `assay --list-skills` lists all.
 No geometry? `assay build-from-smiles 'O' --out-xyz water.xyz`.
@@ -69,6 +72,17 @@ assay build-from-smiles 'CCO'
 Each run writes one JSON result (headline value, method provenance, warnings,
 integrity verdict) and streams a live `.out` log you can `tail -f`.
 
+Artifacts land in the current directory by default. Pass `--outdir` to collect
+everything a run produces — result JSON, live `.out`, config ledger, and every
+sidecar (`.xyz`, `.molden`, `.cube`, trajectories, plots) — into one place:
+
+```bash
+assay geometry-optimize --method xtb --outdir runs/opt-01 mol.xyz
+```
+
+Input paths still resolve against the directory you ran from, so `mol.xyz` above
+is read from your cwd.
+
 ## Methods
 
 | `--method` | Level of theory | Solvation |
@@ -79,7 +93,8 @@ integrity verdict) and streams a live `.out` log you can `tail -f`.
 
 DFT tiers via `--tier`: `fast` (r2SCAN/def2-SVP), `standard` (B3LYP/def2-TZVP),
 `accurate` (ωB97M-V/def2-QZVPP). Override with `--functional` / `--basis`. Common
-flags: `--charge`, `--mult`, `--solvent` (gas phase if omitted), `--out`.
+flags: `--charge`, `--mult`, `--solvent` (gas phase if omitted), `--out`,
+`--outdir`.
 
 > PM7 transition-metal coverage is limited, and redox/conformer search are
 > screening-grade — both are flagged in the result `warnings` when relevant.

@@ -13,6 +13,8 @@ from __future__ import annotations
 import functools
 import json
 import os
+
+from assay_core import env as _env
 import re
 import subprocess
 import sys
@@ -276,9 +278,9 @@ def _run_engine(subcommand: str, args: list[str], cwd: str | None = None,
 # (and, transitively, the `assay` CLI, which routes through these same tools).
 # ---------------------------------------------------------------------------
 
-# Per-tool call logging is on by default but terse; set CHEMKIT_LOG_TOOLS=0 to
+# Per-tool call logging is on by default but terse; set ASSAY_LOG_TOOLS=0 to
 # silence it on a quiet host (mirrors the FastMCP log_level="WARNING" restraint).
-_LOG_TOOLS = os.environ.get("CHEMKIT_LOG_TOOLS", "1") not in ("0", "", "false", "no")
+_LOG_TOOLS = _env.flag("LOG_TOOLS", True)
 
 
 def _result_ok_tag(result: str) -> str:
@@ -303,7 +305,7 @@ def log_tool_call(tool_name: str):
     """Emit ONE structured stderr line per tool call (name, args, cwd, duration,
     ok/fail) — the per-tool observability the server otherwise lacks. Times only
     the work; never swallows the return value or raises. Gated by
-    CHEMKIT_LOG_TOOLS. stderr is the server's diagnostic channel (a stdio caller
+    ASSAY_LOG_TOOLS. stderr is the server's diagnostic channel (a stdio caller
     sees it in the Bash result, like the existing live-log line)."""
     def deco(fn):
         @functools.wraps(fn)
@@ -552,7 +554,7 @@ def main() -> None:
 _SUBCOMMAND_TO_TOOL = {sub: name for name, (sub, _folder) in TOOLS.items()}
 
 
-def _chemkit_usage() -> str:
+def _assay_usage() -> str:
     subs = ", ".join(sorted(_SUBCOMMAND_TO_TOOL))
     return (
         "usage:\n"
@@ -593,7 +595,7 @@ def cli_main(argv: list[str] | None = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
 
     if argv and argv[0] in ("-h", "--help"):
-        sys.stdout.write(_chemkit_usage())
+        sys.stdout.write(_assay_usage())
         return 0
 
     # `assay --help-agent` — full agent-mode option list (argparse --help).
@@ -609,7 +611,7 @@ def cli_main(argv: list[str] | None = None) -> int:
             sys.stdout.write(list_skills(as_json=("--json" in rest)))
             return 0
         except Exception:  # noqa: BLE001
-            sys.stdout.write(_chemkit_usage())
+            sys.stdout.write(_assay_usage())
             return 0
 
     # Agent mode: no subcommand given (empty argv) or the first token is an
@@ -642,7 +644,7 @@ def cli_main(argv: list[str] | None = None) -> int:
         except Exception:  # noqa: BLE001
             pass
         sys.stderr.write(
-            f"assay: unknown subcommand {subcommand!r}.{hint}\n\n" + _chemkit_usage()
+            f"assay: unknown subcommand {subcommand!r}.{hint}\n\n" + _assay_usage()
         )
         return 2
 

@@ -1,4 +1,4 @@
-"""Physical constants and unit conversions for chemkit — single source.
+"""Physical constants and unit conversions for ASSAY — single source.
 
 Every unit conversion the engine uses is defined here once; tasks and backends
 import from this module rather than redefining constants locally.

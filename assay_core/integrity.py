@@ -1,6 +1,6 @@
 """Computation-side integrity layer.
 
-This is the second tower of chemkit's integrity machinery. The rest of the rule
+This is the second tower of ASSAY's integrity machinery. The rest of the rule
 set (research-/calculation-reporting-standards) governs *labeling* — provenance,
 citations, screening-grade disclosure. This module governs *computation
 correctness*: it runs convergence and physical-sanity checks on a result and,

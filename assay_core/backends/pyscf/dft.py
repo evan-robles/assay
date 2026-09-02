@@ -1,6 +1,6 @@
 """DFT entry point for the PySCF backend.
 
-Exposes `run_sp(atoms, ...)` returning a chemkit-shape result dict.
+Exposes `run_sp(atoms, ...)` returning a assay-shape result dict.
 """
 from __future__ import annotations
 from typing import Any, Dict, Optional
@@ -70,7 +70,7 @@ def run_sp(
     """Run a DFT single-point and return the per-method `code_specific` block
     plus the converged total energy in Hartree.
 
-    The task layer (chemkit.tasks.sp) wraps this into the shared chemkit
+    The task layer (assay_core.tasks.sp) wraps this into the shared assay
     result schema; this function stays backend-shaped so it can be reused by
     `opt`, `freq`, `binding`, etc. without round-tripping JSON.
     """

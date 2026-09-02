@@ -453,7 +453,7 @@ class _TopParser(argparse.ArgumentParser):
                 # subcommand = first non-flag token in argv. Prefer the argv main()
                 # stashed on us (works when main() is called with explicit argv,
                 # e.g. MCP/tests); fall back to sys.argv for the shell path.
-                argv = getattr(self, "_chemkit_argv", None) or sys.argv[1:]
+                argv = getattr(self, "_assay_argv", None) or sys.argv[1:]
                 subcmd = next((t for t in argv if not t.startswith("-")), None)
                 canon = _alias_to_canonical().get(subcmd, subcmd) if subcmd else None
                 valid = _valid_flags_for(subcmd) if subcmd else []
@@ -1114,7 +1114,7 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     # Stash argv so _TopParser.error can scope a flag suggestion to the
     # subcommand actually used (works for explicit-argv callers, not just shell).
-    parser._chemkit_argv = argv  # type: ignore[attr-defined]
+    parser._assay_argv = argv  # type: ignore[attr-defined]
     args = parser.parse_args(argv)
 
     # A subcommand is required for an actual calculation (subparsers are

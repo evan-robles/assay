@@ -14,7 +14,7 @@
 # compatible build on every platform (an exact osx-arm64 lock does not resolve
 # on the linux-64 CI runner). The EXACT versions that produced the validated
 # results are recorded for reproducibility at the bottom of this file.
-name: chemkit
+name: assay
 channels:
   - conda-forge
 dependencies:
