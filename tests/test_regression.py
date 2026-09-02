@@ -115,23 +115,23 @@ def _have(binary: str) -> bool:
 
 
 def _have_pyscf() -> bool:
-    """True iff the chemkit launcher's interpreter can import pyscf.
+    """True iff the interpreter that launches the skills can import pyscf.
 
-    DFT/HF go through the PySCF backend, not a CLI binary, so `shutil.which`
-    isn't the right check — we run a tiny chemkit invocation that reaches the
-    pyscf import gate. Cached so the probe runs at most once per session.
+    DFT/HF go through the PySCF backend, not a CLI binary, so `shutil.which` is
+    not the right check. This asks the question directly rather than inferring it
+    from a skill run's stderr: the previous probe invoked `sp --method hf` on
+    /dev/null and matched the message, but the geometry check rejects /dev/null
+    BEFORE the pyscf import gate, so the marker string never appeared and the
+    probe reported pyscf PRESENT on a machine without it — turning every dft/hf
+    test into a failure instead of a skip. (It also dropped a stray .out log in
+    the cwd on every collection.) Cached; the probe runs at most once per session.
     """
     if not hasattr(_have_pyscf, "_cached"):
-        # --basis is required so the level-of-theory guard (non-negotiable #10)
-        # doesn't reject this probe before it reaches the pyscf import gate.
         probe = subprocess.run(
-            [sys.executable, _skill_script("sp"), "--method", "hf",
-             "--basis", "def2-svp", "/dev/null"],
-            capture_output=True, text=True, timeout=30,
+            [sys.executable, "-c", "import pyscf"],
+            capture_output=True, text=True, timeout=60,
         )
-        stderr = (probe.stderr or "").lower()
-        _have_pyscf._cached = ("pyscf is not installed" not in stderr
-                               and "no module named 'pyscf'" not in stderr)
+        _have_pyscf._cached = probe.returncode == 0
     return _have_pyscf._cached
 
 
@@ -300,9 +300,12 @@ def test_sp_emits_only_json(tmp_run, method):
         f"{method} sp expected exactly one live .out log, got: {out_logs}"
     )
     # single-point-energy is a converted self-contained skill: besides the result
-    # JSON it also persists input_configs.yaml (skill-standards Parameter
-    # Persistence), which the pre-inversion skill stub did not.
-    expected = sorted(["h2o.xyz", f"h2o_sp_{method}.json", "input_configs.yaml"])
+    # JSON it also persists a config ledger (skill-standards Parameter
+    # Persistence), which the pre-inversion skill stub did not. The ledger is
+    # named after the RESULT stem, not a fixed `input_configs.yaml`, so a second
+    # run in the same directory cannot silently overwrite the first one's config.
+    expected = sorted(["h2o.xyz", f"h2o_sp_{method}.json",
+                       f"h2o_sp_{method}_input_configs.yaml"])
     assert non_logs == expected, (
         f"{method} sp emitted unexpected files: {non_logs}"
     )
@@ -875,7 +878,7 @@ def _have_obabel() -> bool:
     if not hasattr(_have_obabel, "_cached"):
         probe = subprocess.run(
             [sys.executable, _skill_script("build"), "C",
-             "--out-xyz", "/tmp/_chemkit_obabel_probe.xyz"],
+             "--out-xyz", "/tmp/_assay_obabel_probe.xyz"],
             capture_output=True, text=True, timeout=60,
         )
         _have_obabel._cached = (probe.returncode == 0)
@@ -1129,6 +1132,11 @@ def test_orbitals_writes_molden(tmp_run, method):
     .mgf, PySCF dumps via `molden.from_scf`. Catches regressions in any of
     the three molden-emit paths."""
     _skip_if_unavailable(method)
+    # Every backend's molden path goes through PySCF: xtb and MOPAC produce the
+    # orbitals, but visualize-orbitals imports pyscf to load/emit the molden. So
+    # this test needs pyscf even for --method xtb/mopac.
+    if not _have_pyscf():
+        pytest.skip("pyscf not available (visualize-orbitals needs it for molden I/O)")
     out = tmp_run / f"h2o_orb_{method}.json"
     rc, _, err = _run_chemkit(
         ["orbitals", *_method_args(method),
@@ -1380,7 +1388,7 @@ def test_integrity_unknown_task_passes_vacuously():
     assert r["integrity"]["trustworthy"] is True
 
 
-def test_integrity_all_chemkit_tasks_registered():
+def test_integrity_all_assay_tasks_registered():
     """Every task chemkit can emit now has integrity checks — no silent gaps.
     A real (passing) result for each must validate without an error-severity
     failure on well-formed input."""
@@ -1705,3 +1713,117 @@ def test_populated_specs_pass_static_schema():
         if non_fixture:
             bad[str(sp.relative_to(repo))] = non_fixture
     assert not bad, f"specs with shape/headline/method problems: {bad}"
+
+
+# ---------------------------------------------------------------------------
+# --outdir: every artifact of a run lands in ONE directory
+# ---------------------------------------------------------------------------
+
+def test_outdir_collects_every_artifact(tmp_run):
+    """--outdir routes the result JSON, the live .out log, the config ledger AND
+    the sidecar geometry into one directory, leaving the caller's cwd clean.
+
+    geometry-optimize is the load-bearing case: its optimized `.xyz` path is
+    derived from the INPUT basename (scripts/run.py `out_xyz`), not from the
+    result-JSON path like the .molden/.cube sidecars are. A --outdir that only
+    threaded through the JSON path would leave that .xyz behind in the cwd, so
+    this test pins the artifact that proves the cwd-level routing works.
+    """
+    _skip_if_unavailable("xtb")
+    work = tmp_run / "outdir_case"
+    work.mkdir()
+    shutil.copy(FIXTURES / "h2o.xyz", work / "h2o.xyz")
+
+    rc, _, err = _run_chemkit(
+        ["opt", "--method", "xtb", "--outdir", "runs/a", "h2o.xyz"],
+        cwd=str(work), timeout=300,
+    )
+    assert rc == 0, err
+
+    produced = sorted(p.name for p in (work / "runs" / "a").iterdir())
+    assert "h2o_opt_xtb.json" in produced, produced
+    assert "h2o_xtb_opt.xyz" in produced, f"sidecar geometry escaped --outdir: {produced}"
+    assert "h2o_opt_xtb_input_configs.yaml" in produced, produced
+    assert any(f.startswith("opt_") and f.endswith(".out") for f in produced), produced
+
+    # The caller's cwd keeps only the input and the runs/ dir it asked for.
+    assert sorted(p.name for p in work.iterdir()) == ["h2o.xyz", "runs"]
+
+
+def test_outdir_resolves_relative_input_against_caller_cwd(tmp_run):
+    """A relative input path is read from the ORIGINAL cwd, not from --outdir.
+
+    run_cli chdirs into --outdir, so inputs must be absolutized first or
+    `--outdir runs/a mol.xyz` would look for runs/a/mol.xyz and fail.
+    """
+    _skip_if_unavailable("xtb")
+    work = tmp_run / "relinput"
+    work.mkdir()
+    shutil.copy(FIXTURES / "h2o.xyz", work / "h2o.xyz")
+
+    rc, _, err = _run_chemkit(
+        ["sp", "--method", "xtb", "--outdir", "deep/nested/dir", "h2o.xyz"],
+        cwd=str(work), timeout=300,
+    )
+    assert rc == 0, err
+    assert (work / "deep" / "nested" / "dir" / "h2o_sp_xtb.json").is_file()
+
+
+def test_input_configs_ledger_is_per_result(tmp_run):
+    """Two runs in one directory keep two config ledgers.
+
+    The ledger used to be a fixed `input_configs.yaml`, so the second run
+    silently overwrote the first one's parameters — leaving a directory of
+    uniquely-named results documented by a single config describing whichever
+    ran last, which voids the reproducibility guarantee the file exists for.
+    """
+    _skip_if_unavailable("xtb")
+    _skip_if_unavailable("mopac")
+    work = tmp_run / "two_runs"
+    work.mkdir()
+    shutil.copy(FIXTURES / "h2o.xyz", work / "h2o.xyz")
+
+    for method in ("xtb", "mopac"):
+        rc, _, err = _run_chemkit(
+            ["sp", "--method", method, "h2o.xyz"], cwd=str(work), timeout=300,
+        )
+        assert rc == 0, err
+
+    ledgers = sorted(p.name for p in work.glob("*_input_configs.yaml"))
+    assert ledgers == ["h2o_sp_mopac_input_configs.yaml",
+                       "h2o_sp_xtb_input_configs.yaml"], ledgers
+    # Each ledger points at its OWN result, not at the last run's.
+    for method in ("xtb", "mopac"):
+        text = (work / f"h2o_sp_{method}_input_configs.yaml").read_text()
+        assert f"h2o_sp_{method}.json" in text, text
+
+
+def test_outdir_routes_front_door_live_log(tmp_run):
+    """The `assay <skill>` front door honors --outdir for its live .out too.
+
+    The server/CLI front door runs the skill as a SUBPROCESS and tees its own
+    live log in the parent before the child starts (the child is told to skip
+    writing a second one). The parent therefore has to read --outdir out of the
+    arg list itself, or the log becomes the single artifact left behind in the
+    caller's cwd.
+    """
+    _skip_if_unavailable("xtb")
+    work = tmp_run / "front_door"
+    work.mkdir()
+    shutil.copy(FIXTURES / "h2o.xyz", work / "h2o.xyz")
+
+    proc = subprocess.run(
+        [sys.executable, "-c",
+         "from mcp_server.server import cli_main; import sys; "
+         "sys.argv=['assay','single-point-energy','--method','xtb',"
+         "'--outdir','runs/x','h2o.xyz','--stdout','path']; "
+         "raise SystemExit(cli_main())"],
+        cwd=str(work), capture_output=True, text=True, timeout=300,
+    )
+    assert proc.returncode == 0, proc.stderr
+
+    assert sorted(p.name for p in work.iterdir()) == ["h2o.xyz", "runs"], \
+        "front door left artifacts outside --outdir"
+    produced = sorted(p.name for p in (work / "runs" / "x").iterdir())
+    assert any(f.startswith("sp_") and f.endswith(".out") for f in produced), produced
+    assert "h2o_sp_xtb.json" in produced, produced

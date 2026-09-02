@@ -26,6 +26,8 @@ import subprocess
 import sys
 from typing import Callable, List, Optional, Sequence
 
+from . import env as _env
+
 _TIMEOUT_S = 3600
 
 
@@ -49,6 +51,27 @@ def write_live_out_header(fh, *, label: str, args, command: str,
     fh.write(f"# started    : {stamp}\n")
     fh.write("# " + "=" * 60 + "\n")
     fh.flush()
+
+
+def _outdir_from_args(args: Sequence[str], base: str) -> Optional[str]:
+    """Extract `--outdir` from a skill's arg list, resolved against `base`.
+
+    The child process chdirs into --outdir so ALL of its artifacts land there.
+    The parent tees its own live `.out` before the child starts, so without this
+    the log would be the one artifact left behind in the caller's cwd —
+    contradicting what --outdir promises. Supports both `--outdir X` and
+    `--outdir=X`.
+    """
+    args = list(args)
+    raw: Optional[str] = None
+    for i, tok in enumerate(args):
+        if tok == "--outdir" and i + 1 < len(args):
+            raw = args[i + 1]
+        elif tok.startswith("--outdir="):
+            raw = tok.split("=", 1)[1]
+    if not raw:
+        return None
+    return raw if os.path.isabs(raw) else os.path.abspath(os.path.join(base, raw))
 
 
 def run_skill_subprocess(
@@ -90,20 +113,29 @@ def run_skill_subprocess(
     # Read the remote host from the PASSED env (the caller's intent — e.g. the
     # server sets it per-call for run_on=aurora), falling back to the process env
     # for the stand-alone / server-launch-pinned case.
-    remote_host = (env.get("CHEMKIT_REMOTE_HOST")
-                   or os.environ.get("CHEMKIT_REMOTE_HOST", "")).strip()
+    remote_host = (_env.get("REMOTE_HOST", env=env)
+                   or _env.get("REMOTE_HOST")).strip()
     if remote_host:
         remote_inner = "cd {cwd} && PYTHONPATH={pp} {run}".format(
             cwd=shlex.quote(run_cwd),
             pp=shlex.quote(env.get("PYTHONPATH", "")),
             run=" ".join(shlex.quote(c) for c in cmd),
         )
-        ssh_opts = shlex.split(env.get("CHEMKIT_REMOTE_SSH_OPTS")
-                               or os.environ.get("CHEMKIT_REMOTE_SSH_OPTS", ""))
+        ssh_opts = shlex.split(_env.get("REMOTE_SSH_OPTS", env=env)
+                               or _env.get("REMOTE_SSH_OPTS"))
         cmd = ["ssh", *ssh_opts, remote_host, remote_inner]
 
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    out_path = build_live_out_path(label, run_cwd, stamp)
+    # Honor the child's --outdir for the live log too, so a --outdir run leaves
+    # NOTHING in the caller's cwd (the child creates this dir as well; makedirs
+    # is idempotent). Falls back to the caller's cwd if it cannot be created.
+    _log_dir = _outdir_from_args(args, run_cwd) or run_cwd
+    if _log_dir != run_cwd:
+        try:
+            os.makedirs(_log_dir, exist_ok=True)
+        except OSError:
+            _log_dir = run_cwd
+    out_path = build_live_out_path(label, _log_dir, stamp)
 
     def _augment(d: dict) -> dict:
         """Stamp the live-log path and, when the run executed on a remote compute

@@ -3,10 +3,10 @@ requires = ["setuptools>=64", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "chemkit-mcp"
+name = "assay-chem"
 # Single-sourced from assay_core.__version__ (see [tool.setuptools.dynamic]).
 dynamic = ["version"]
-description = "chemkit: computational-chemistry MCP server (xtb, MOPAC, PySCF, Open Babel) over stdio"
+description = "ASSAY: computational-chemistry MCP server (xtb, MOPAC, PySCF, Open Babel) over stdio"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { file = "LICENSE" }
@@ -24,7 +24,7 @@ classifiers = [
 #   sella            : transition-state saddle search (tasks/ts.py)
 #   rdkit            : structure handling (tasks/scan.py + benchmark driver)
 #   openai           : live agent scoring in the fidelity benchmark harness
-# The engine imports the heavy ones lazily, so importing chemkit stays cheap even
+# The engine imports the heavy ones lazily, so importing assay stays cheap even
 # though they're all declared here.
 #
 # NOT listed (cannot be pip-installed — install from conda-forge via environment.yml):
@@ -66,12 +66,25 @@ Repository = "https://github.com/evan-robles/assay"
 #   mcp_server : the FastMCP dispatcher (server entry target).
 #   skills     : self-contained skill workflows; importable so composite skills
 #                can import a sibling primitive's run() in-process (DESIGN §5).
-# Explicit list — autodiscovery is confused by the multi-top-level layout.
-packages = [
-    "assay_core", "assay_core.tasks",
-    "assay_core.backends", "assay_core.backends.pyscf",
-    "mcp_server",
-]
+# Discovered rather than hand-listed, so adding a skill (or a backend
+# subpackage) never needs a pyproject edit. The `include` patterns keep
+# autodiscovery from sweeping in tests/, tools/, benchmarks/ and data/, which is
+# what confuses it on this multi-top-level layout.
+#
+# `skills*` MUST be here: composite skills import a sibling primitive as
+# `skills.<name>.scripts.run` (DESIGN §5), and assay_core.discovery walks the
+# installed skills/ dir to build the tool registry. Omitting it builds a wheel
+# whose composites and discovery both fail at import time.
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["assay_core*", "mcp_server*", "skills*"]
+
+[tool.setuptools.package-data]
+# SKILL.md ships with each skill so an installed copy stays self-documenting
+# (`assay <skill> --help` and the MCP schema derivation read the manifest from
+# run.py, but the docs are what make an installed skill inspectable).
+"*" = ["SKILL.md"]
 
 # Version is read from assay_core/__init__.py::__version__ at build time, so
 # the package has ONE version source (no pyproject<->__init__ drift).

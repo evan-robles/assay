@@ -13,13 +13,22 @@ the live ``.out`` log, and the level-of-theory guidance — the same machinery t
 benchmark uses.
 
 Endpoint / model resolution mirrors the benchmark's env vars so any configured
-model (e.g. an argo-proxy model like ``argo:o3``) can back the chat:
+model can back the chat. Configuration is loaded (lowest to highest precedence):
+  1. benchmarks/fidelity/.env.local (gitignored) — the SAME file the benchmark
+     driver reads, so one config (e.g. the ALCF inference endpoint) drives both;
+  2. exported environment variables (override the file);
+  3. explicit CLI flags (override everything).
+The keys, in each source:
   --base-url / CHEMKIT_LLM_BASE_URL   (default http://127.0.0.1:60639/v1)
   --model    / CHEMKIT_LLM_MODEL      (default argo:o3)
   --api-key  / CHEMKIT_LLM_API_KEY
 
 Usage:
-    assay --base-url http://127.0.0.1:60639/v1 --model argo:o3        # REPL
+    # Uses .env.local automatically (e.g. ALCF inference: gpt-oss-120b):
+    assay                                                             # REPL
+    # Or point it explicitly at any OpenAI-compatible endpoint:
+    assay --base-url https://inference-api.alcf.anl.gov/resource_server/metis/api/v1 \
+          --model gpt-oss-120b
     assay --model argo:o3 --prompt "single-point energy of water.xyz with xtb"
 """
 from __future__ import annotations
@@ -32,6 +41,27 @@ from typing import Any, Dict, List, Optional
 
 from mcp_server import agent
 from mcp_server import server as _server
+
+
+def _load_env_local() -> None:
+    """Load benchmarks/fidelity/.env.local (gitignored, KEY=value) into os.environ
+    so the REPL shares the benchmark driver's endpoint/model/key config. Existing
+    env vars win; blank and '#' lines are ignored."""
+    from pathlib import Path
+    env_path = (Path(__file__).resolve().parent.parent
+                / "benchmarks" / "fidelity" / ".env.local")
+    if not env_path.exists():
+        return
+    for line in env_path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, val = line.partition("=")
+        key, val = key.strip(), val.strip().strip('"').strip("'")
+        os.environ.setdefault(key, val)  # don't clobber an explicit export
+
+
+_load_env_local()  # must run BEFORE the _DEFAULT_* reads below
 
 _DEFAULT_BASE_URL = os.environ.get("CHEMKIT_LLM_BASE_URL", "http://127.0.0.1:60639/v1")
 _DEFAULT_MODEL = os.environ.get("CHEMKIT_LLM_MODEL", "argo:o3")
@@ -237,12 +267,17 @@ def _print_reply(messages: List[Dict[str, Any]]) -> None:
     """Print the agent's final reply (last non-empty assistant message). With
     ``enforce_summary=True`` the turn already guarantees a complete calculation
     summary as that message; this fallback (summarize the last engine result, else
-    '(no reply)') is defense-in-depth for the no-calculation / no-prose case."""
-    for m in reversed(messages):
+    '(no reply)') is defense-in-depth for the no-calculation / no-prose case.
+
+    Scoped to the CURRENT turn (everything from the last user message onward) so a
+    turn that produced no prose never resurfaces a PRIOR turn's assistant text or
+    calculation/error summary — the same scoping ``_ensure_summary`` uses."""
+    turn = agent._current_turn_messages(messages)
+    for m in reversed(turn):
         if m.get("role") == "assistant" and (m.get("content") or "").strip():
             print(m["content"])
             return
-    result = agent._last_calculation_result(messages)
+    result = agent._last_calculation_result(turn)
     print(agent.summarize_calculation_result(result) if result else "(no reply)")
 
 

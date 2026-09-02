@@ -23,14 +23,13 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install package (no QM extras)
-        run: pip install -e .
-      - name: SKILL.md lint
-        run: python tools/lint_skills.py
-      - name: Thin-client generator drift check
         run: |
-          python tools/build_skill_folders.py
-          git diff --exit-code skills/ \
-            || (echo "::error::thin-client scripts drifted from the generator; run tools/build_skill_folders.py" && exit 1)
+          pip install -e .
+          pip install pytest
+      - name: CLI interface tests (pure argparse — no backends)
+        run: pytest tests/test_cli_interface.py -q
+      - name: Skill contract lint (SKILL.md + run.py spine + registry sync + dep DAG)
+        run: python tools/lint_skills.py --all
       - name: Static fidelity-spec schema (shape/headline/method)
         # Exit 1 only on non-fixture problems; missing fixtures are a known gap.
         run: |
@@ -48,9 +47,8 @@ jobs:
       - name: TOOLS <-> CLI consistency
         run: |
           python - <<'PY'
-          import sys; sys.path.insert(0, "mcp_server")
-          from chemkit_engine import cli
-          from server import TOOLS
+          from assay_core import cli
+          from mcp_server.server import TOOLS
           problems = cli.check_tools_cli_consistency([s for s,_ in TOOLS.values()])
           if problems:
               print("::error::TOOLS<->CLI mismatch:\n" + "\n".join(problems)); sys.exit(1)
@@ -74,14 +72,14 @@ jobs:
         with:
           environment-file: environment.yml
           cache-environment: true
-      - name: Install chemkit + dev deps
+      - name: Install assay + dev deps
         run: |
-          pip install -e ".[qm]"
+          pip install -e .
           pip install pytest pytest-cov
       - name: Regression suite (non-slow) with coverage
         run: |
           pytest tests/test_regression.py -m "not slow" -q \
-            --cov=chemkit_engine --cov-report=term-missing:skip-covered
+            --cov=assay_core --cov-report=term-missing:skip-covered
       - name: Fidelity smoke (xtb single point, recorded — no API key)
         run: |
           python benchmarks/fidelity_driver.py \

@@ -1,9 +1,9 @@
 """PySCF backend — multi-method (HF, DFT, ...) ab initio entry points.
 
 Public surface:
-    PySCFCalculator              # ASE Calculator for use by every chemkit task
+    PySCFCalculator              # ASE Calculator for use by every assay task
     run_sp_dft, run_sp_hf        # standalone single-point helpers
-    resolve_dft_tier, DFT_TIERS  # tier presets used by chemkit.calculators
+    resolve_dft_tier, DFT_TIERS  # tier presets used by assay_core.calculators
 """
 from .calculator import PySCFCalculator
 from .dft import (

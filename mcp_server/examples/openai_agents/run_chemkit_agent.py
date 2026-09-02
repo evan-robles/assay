@@ -19,8 +19,8 @@ Prerequisites
 
 Run
 ---
-    python run_chemkit_agent.py
-    python run_chemkit_agent.py "Compute the pKa of acetic acid with xtb."
+    python run_assay_agent.py
+    python run_assay_agent.py "Compute the pKa of acetic acid with xtb."
 
 The default task builds acetone and reports its HOMO/LUMO from a real GFN2-xTB
 run. Relative output paths resolve against this process's working directory.

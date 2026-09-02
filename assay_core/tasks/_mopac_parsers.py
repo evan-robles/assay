@@ -24,7 +24,7 @@ def _ff(s: str) -> float:
 # ---------------------------------------------------------------------------
 
 def write_mop(mop_path: str, keywords: Sequence[str], atoms, symbols,
-              title: str = "chemkit") -> None:
+              title: str = "assay") -> None:
     """Write a MOPAC .mop input: keyword line, title, then the Cartesian block
     with every coordinate flagged optimizable ('1'). This geometry-loop format
     was duplicated byte-for-byte across every MOPAC task."""
@@ -35,7 +35,7 @@ def write_mop(mop_path: str, keywords: Sequence[str], atoms, symbols,
             f.write(f"{sym:<3s} {x:15.8f} 1 {y:15.8f} 1 {z:15.8f} 1\n")
 
 
-def run_mopac(keywords: Sequence[str], atoms, symbols, *, title: str = "chemkit",
+def run_mopac(keywords: Sequence[str], atoms, symbols, *, title: str = "assay",
               workdir: Optional[str] = None, stem: str = "mopac",
               timeout: int = 3600):
     """Run MOPAC end-to-end: locate the binary, make a workdir if needed, write
@@ -52,7 +52,7 @@ def run_mopac(keywords: Sequence[str], atoms, symbols, *, title: str = "chemkit"
             "conda install -c conda-forge mopac"
         )
     if workdir is None:
-        workdir = tempfile.mkdtemp(prefix=f"chemkit_{stem}_")
+        workdir = tempfile.mkdtemp(prefix=f"assay_{stem}_")
     mop_name = f"{stem}.mop"
     write_mop(os.path.join(workdir, mop_name), keywords, atoms, symbols, title)
     proc = subprocess.run([mopac_exe, mop_name], cwd=workdir,

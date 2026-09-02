@@ -67,7 +67,7 @@ def typed_args_to_argv(params: Dict[str, Any]) -> List[str]:
 # --------------------------------------------------------------------------- #
 # Tool schemas the model sees
 # --------------------------------------------------------------------------- #
-def _build_chemkit_tool() -> Dict[str, Any]:
+def _build_assay_tool() -> Dict[str, Any]:
     """Build the ``chemkit`` tool schema from the engine arg-spec — the SAME
     single source of truth the MCP server uses. One tool with a ``skill`` enum
     plus the UNION of every skill's typed params (all optional but ``skill``);
@@ -134,7 +134,7 @@ def _build_chemkit_tool() -> Dict[str, Any]:
     }
 
 
-CHEMKIT_TOOL = _build_chemkit_tool()
+CHEMKIT_TOOL = _build_assay_tool()
 
 LIST_SKILLS_TOOL = {
     "type": "function",
@@ -391,6 +391,21 @@ class RunCancelled(Exception):
 # keeps measuring the model's UNAIDED reporting.
 # --------------------------------------------------------------------------- #
 
+def _current_turn_messages(
+    messages: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """The slice of ``messages`` belonging to the CURRENT user turn: everything
+    from the last ``role == "user"`` message onward. Used to scope
+    summary-enforcement to THIS turn's tool results, so a turn that ran no
+    calculation (e.g. a conceptual question answered with plain text) never
+    resurfaces a PRIOR turn's calculation/error as its summary."""
+    last_user = -1
+    for i, m in enumerate(messages):
+        if m.get("role") == "user":
+            last_user = i
+    return messages[last_user:] if last_user >= 0 else list(messages)
+
+
 def _tool_result_dicts(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """Parse every ``role == "tool"`` message's content as JSON (skip non-JSON)."""
     out: List[Dict[str, Any]] = []
@@ -410,13 +425,22 @@ def _last_calculation_result(
     messages: List[Dict[str, Any]],
 ) -> Optional[Dict[str, Any]]:
     """The most recent tool result that is a real CALCULATION — i.e. carries a
-    ``headline_value`` (the ``canonicalize()`` stamp). Discovery/lookup results
-    (list_skills, skill_help, name-to-smiles) have no headline and are skipped,
-    so identity questions are never forced to carry a calculation summary."""
+    ``headline_value`` (the ``canonicalize()`` stamp), or a calculation ERROR
+    (one that identifies itself with a ``task``/``subcommand``/``integrity`` from
+    a real skill run). Discovery/lookup results (list_skills, skill_help,
+    name-to-smiles) have no headline and are skipped, so identity questions — and
+    a bare discovery-tool failure — are never mistaken for a calculation summary."""
     for d in reversed(_tool_result_dicts(messages)):
         if "subcommands" in d or "arguments" in d:   # discovery-tool result
             continue
-        if d.get("headline_value") is not None or d.get("error"):
+        if d.get("headline_value") is not None:
+            return d
+        # An error only counts as a CALCULATION error when it carries a run
+        # identity; a bare {"error": ...} from a failed discovery/lookup call must
+        # not be surfaced as this turn's calculation summary.
+        if d.get("error") and (
+            d.get("task") or d.get("subcommand") or d.get("integrity")
+        ):
             return d
     return None
 
@@ -730,7 +754,10 @@ def _ensure_summary(client, model: str, messages: List[Dict[str, Any]]) -> None:
     model re-call (``tool_choice="none"`` so it cannot run another tool); if that
     still fails the check (or errors), append a deterministic engine summary so a
     completed run is NEVER shown without its numbers."""
-    result = _last_calculation_result(messages)
+    # Scope to THIS turn: only a calculation run since the last user message can
+    # be this turn's result. Without this, a no-tool turn (e.g. a conceptual
+    # question) would resurface the PREVIOUS turn's calculation/error summary.
+    result = _last_calculation_result(_current_turn_messages(messages))
     if result is None:
         return  # no calculation this turn (e.g. an identity/lookup answer)
 

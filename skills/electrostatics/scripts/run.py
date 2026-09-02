@@ -114,7 +114,7 @@ def _run_generic(atoms, *, calc, method) -> Dict[str, Any]:
     """DFT/HF electrostatics via the PySCF backend.
 
     Expects the PySCF calculator to stash a `dipole_debye` vector and
-    `partial_charges` array on `_chemkit_extras`.
+    `partial_charges` array on `_assay_extras`.
     """
     apply_calc_to_atoms(atoms, calc)
     energy_eV = float(atoms.get_potential_energy())

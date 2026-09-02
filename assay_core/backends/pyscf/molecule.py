@@ -1,4 +1,4 @@
-"""ASE Atoms -> pyscf.gto.Mole construction with chemkit defaults.
+"""ASE Atoms -> pyscf.gto.Mole construction with assay defaults.
 
 Responsibilities:
 - Convert ASE Atoms into a pyscf.gto.Mole
@@ -64,7 +64,7 @@ def build_mol(
     """Build a pyscf.gto.Mole from an ASE Atoms object.
 
     PySCF uses `spin = 2S = (n_alpha - n_beta)`, not the chemistry-conventional
-    multiplicity (2S+1). We translate here so the rest of chemkit stays
+    multiplicity (2S+1). We translate here so the rest of assay stays
     consistent with xtb/MOPAC's `--mult` semantics.
     """
     gto = _require_pyscf()
@@ -80,7 +80,7 @@ def build_mol(
 
     # CRITICAL: PySCF's Mole.stdout defaults to sys.stdout, and at verbose >= 4
     # gto.M() dumps a banner (including the entire input/source file) to that
-    # stream DURING build(). chemkit reserves stdout for the result JSON (cli.py
+    # stream DURING build(). assay reserves stdout for the result JSON (cli.py
     # prints it there; the MCP server parses it), so that banner would corrupt
     # the JSON. We therefore construct the Mole WITHOUT auto-building, point its
     # log stream at stderr, and only then build() — so every line of PySCF log

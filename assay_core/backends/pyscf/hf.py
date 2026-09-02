@@ -13,7 +13,7 @@ from .scf import build_mean_field, pack_scf_result, _report_auxbasis
 DEFAULT_BASIS = "def2-tzvp"
 
 # HF has no functional, but convergence still varies with how tight you want
-# the answer. Same scf_tol/max_cycle ladder as DFT so chemkit's --tier flag
+# the answer. Same scf_tol/max_cycle ladder as DFT so assay's --tier flag
 # means the same thing across methods.
 HF_TIERS = {
     "fast":     {"scf_tol": 1e-7,  "max_cycle": 80},

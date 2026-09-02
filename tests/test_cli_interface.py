@@ -319,7 +319,7 @@ def test_server_and_driver_share_one_converter():
     assert drv._typed_args_to_argv(params) == direct
 
 
-def test_driver_chemkit_tool_is_typed():
+def test_driver_assay_tool_is_typed():
     drv = _load_driver()
     props = drv._CHEMKIT_TOOL["function"]["parameters"]["properties"]
     # common fields still present
